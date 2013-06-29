@@ -1,0 +1,4 @@
+The accompanying software is licensed under Microsoft Public License (see LICENSE.txt)
+
+The following people are contributors and claim copyright to a part or parts of the original software:
+- Robert Kaufmann

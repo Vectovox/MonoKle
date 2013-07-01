@@ -13,15 +13,15 @@
     /// <summary>
     /// Mouse input class.
     /// </summary>
-    public static class MouseInput
+    public class MouseInput
     {
-        private static MouseScrollDirection currentScrollDirection;
-        private static Dictionary<MouseButton, double> heldTimeByButton;
-        private static Vector2Int32 mousePosition;
-        private static HashSet<MouseButton> previousButtons;
-        private static int previousScrollValue;
+        private MouseScrollDirection currentScrollDirection;
+        private Dictionary<MouseButton, double> heldTimeByButton;
+        private Vector2Int32 mousePosition;
+        private HashSet<MouseButton> previousButtons;
+        private int previousScrollValue;
 
-        static MouseInput()
+        internal MouseInput()
         {
             heldTimeByButton = new Dictionary<MouseButton, double>();
             previousButtons = new HashSet<MouseButton>();
@@ -33,7 +33,7 @@
         /// <summary>
         /// Gets or sets whether the virtual mouse is enabled.
         /// </summary>
-        public static bool VirtualMouseEnabled
+        public bool VirtualMouseEnabled
         {
             get;
             set;
@@ -44,7 +44,7 @@
         /// </summary>
         /// <param name="button">Enumerated value specifying the button to query.</param>
         /// <returns>The amount of time the specified button has been held down, -1 if it is not held.</returns>
-        public static double GetButtonHeldTime(MouseButton button)
+        public double GetButtonHeldTime(MouseButton button)
         {
             if (heldTimeByButton.ContainsKey(button))
             {
@@ -58,7 +58,7 @@
         /// </summary>
         /// <param name="button">Enumerated value specifying the button to query.</param>
         /// <returns>true if the button specified by button is down; false otherwise.</returns>
-        public static bool IsButtonDown(MouseButton button)
+        public bool IsButtonDown(MouseButton button)
         {
             return heldTimeByButton.ContainsKey(button);
         }
@@ -68,7 +68,7 @@
         /// </summary>
         /// <param name="button">Enumerated value specifying the button to query.</param>
         /// <returns>true if the button specified by button is held down; false otherwise.</returns>
-        public static bool IsButtonHeld(MouseButton button)
+        public bool IsButtonHeld(MouseButton button)
         {
             return IsButtonDown(button) && previousButtons.Contains(button);
         }
@@ -79,7 +79,7 @@
         /// <param name="button">Enumerated value specifying the button to query.</param>
         /// <param name="heldTime">Double value specifying the time to query for.</param>
         /// <returns>true if the button specified by button is held down; false otherwise.</returns>
-        public static bool IsButtonHeld(MouseButton button, double heldTime)
+        public bool IsButtonHeld(MouseButton button, double heldTime)
         {
             return IsButtonHeld(button) && GetButtonHeldTime(button) >= heldTime;
         }
@@ -89,7 +89,7 @@
         /// </summary>
         /// <param name="button">Enumerated value specifying the button to query.</param>
         /// <returns>true if the button specified by button is pressed; false otherwise.</returns>
-        public static bool IsButtonPressed(MouseButton button)
+        public bool IsButtonPressed(MouseButton button)
         {
             return previousButtons.Contains(button) == false && IsButtonDown(button);
         }
@@ -99,7 +99,7 @@
         /// </summary>
         /// <param name="button">Enumerated value specifying the button to query.</param>
         /// <returns>true if the button specified by button is being released; false otherwise.</returns>
-        public static bool IsButtonReleased(MouseButton button)
+        public bool IsButtonReleased(MouseButton button)
         {
             return previousButtons.Contains(button) && IsButtonUp(button);
         }
@@ -109,7 +109,7 @@
         /// </summary>
         /// <param name="button">Enumerated value specifying the button to query.</param>
         /// <returns>true if the button specified by button is up; false otherwise.</returns>
-        public static bool IsButtonUp(MouseButton button)
+        public bool IsButtonUp(MouseButton button)
         {
             return heldTimeByButton.ContainsKey(button) == false;
         }
@@ -118,7 +118,7 @@
         /// Returns the <see cref="Vector2Int32"/> representation of the current mouse position.
         /// </summary>
         /// <returns>Current mouse position.</returns>
-        public static Vector2Int32 GetMousePosition()
+        public Vector2Int32 GetMousePosition()
         {
             return mousePosition;
         }
@@ -128,12 +128,12 @@
         /// </summary>
         /// <param name="direction">Enumerated value specifying the direction to query.</param>
         /// <returns>True if the specified direction was scrolled; false otherwise.</returns>
-        public static bool IsMouseScrolled(MouseScrollDirection direction)
+        public bool IsMouseScrolled(MouseScrollDirection direction)
         {
             return direction == currentScrollDirection;
         }
 
-        internal static void Update(double seconds)
+        internal void Update(double seconds, Vector2Int32 screenSize)
         {
             MouseState currentState = Mouse.GetState();
 
@@ -166,8 +166,8 @@
             {
                 mousePosition.X += currentState.X;
                 mousePosition.Y += currentState.Y;
-                Mouse.SetPosition(GraphicsManager.ScreenCenter.X, GraphicsManager.ScreenCenter.Y);
-                ClampMousePosition();
+                Mouse.SetPosition(screenSize.X / 2, screenSize.Y / 2);
+                ClampMousePosition(screenSize);
             }
             else
             {
@@ -176,9 +176,8 @@
             }
         }
 
-        private static void ClampMousePosition()
+        private void ClampMousePosition(Vector2Int32 screenSize)
         {
-            Vector2Int32 screenSize = GraphicsManager.ScreenSize;
             if (mousePosition.X < 0)
                 mousePosition.X = 0;
             else if (mousePosition.X > screenSize.X)
@@ -190,7 +189,7 @@
                 mousePosition.Y = screenSize.Y;
         }
 
-        private static void UpdateButton(MouseButton button, bool pressed, double time)
+        private void UpdateButton(MouseButton button, bool pressed, double time)
         {
             if (pressed)
             {

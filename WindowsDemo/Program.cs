@@ -22,11 +22,13 @@ namespace WindowsDemo
         [STAThread]
         static void Main()
         {
-            StateManager.AddState("stateOne", new DemoStateOne());
-            StateManager.AddState("stateTwo", new DemoStateTwo());
-            StateManager.NextState = "stateOne";
-            game = MonoKleGame.GetInstance();
-            game.Run();
+            using (MonoKleGame game = MonoKleGame.GetInstance())
+            {
+                MonoKleGame.StateManager.AddState("stateOne", new DemoStateOne());
+                MonoKleGame.StateManager.AddState("stateTwo", new DemoStateTwo());
+                MonoKleGame.StateManager.NextState = "stateOne";
+                game.Run();
+            }
         }
     }
 }

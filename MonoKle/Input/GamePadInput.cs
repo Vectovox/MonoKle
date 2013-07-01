@@ -7,15 +7,15 @@
     using Microsoft.Xna.Framework.Input;
     using Microsoft.Xna.Framework;
 
-    public static class GamePadInput
+    public class GamePadInput
     {
         //private static GamePadState[] previousStateArray;
-        private static GamePadState[] currentState;
-        private static HashSet<Buttons>[] currentButtons;
-        private static Dictionary<Buttons, double>[] timeHeldByButton;
-        private static HashSet<Buttons>[] previousButtons;
+        private GamePadState[] currentState;
+        private HashSet<Buttons>[] currentButtons;
+        private Dictionary<Buttons, double>[] timeHeldByButton;
+        private HashSet<Buttons>[] previousButtons;
 
-        static GamePadInput()
+        internal GamePadInput()
         {
             //previousStateArray = new GamePadState[4];
             currentState = new GamePadState[4];
@@ -31,7 +31,7 @@
             }
         }
 
-        public static bool IsButtonDown(Buttons button, byte playerIndex)
+        public bool IsButtonDown(Buttons button, byte playerIndex)
         {
             if (playerIndex > 3)
             {
@@ -40,7 +40,7 @@
             return currentButtons[playerIndex].Contains(button);
         }
 
-        public static bool IsButtonUp(Buttons button, byte playerIndex)
+        public bool IsButtonUp(Buttons button, byte playerIndex)
         {
             if (playerIndex > 3)
             {
@@ -49,7 +49,7 @@
             return currentButtons[playerIndex].Contains(button) == false;
         }
 
-        public static bool IsButtonHeld(Buttons button, byte playerIndex)
+        public bool IsButtonHeld(Buttons button, byte playerIndex)
         {
             if (playerIndex > 3)
             {
@@ -58,7 +58,7 @@
             return IsButtonDown(button, playerIndex) && previousButtons[playerIndex].Contains(button);
         }
 
-        public static bool IsButtonHeld(Buttons button, byte playerIndex, double timeHeld)
+        public bool IsButtonHeld(Buttons button, byte playerIndex, double timeHeld)
         {
             if (playerIndex > 3)
             {
@@ -67,7 +67,7 @@
             return IsButtonHeld(button, playerIndex) && GetButtonHeldTime(button, playerIndex) >= timeHeld;
         }
 
-        public static bool IsButtonPressed(Buttons button, byte playerIndex)
+        public bool IsButtonPressed(Buttons button, byte playerIndex)
         {
             if (playerIndex > 3)
             {
@@ -76,7 +76,7 @@
             return IsButtonDown(button, playerIndex) && previousButtons[playerIndex].Contains(button) == false;
         }
 
-        public static bool IsButtonReleased(Buttons button, byte playerIndex)
+        public bool IsButtonReleased(Buttons button, byte playerIndex)
         {
             if (playerIndex > 3)
             {
@@ -85,7 +85,7 @@
             return IsButtonUp(button, playerIndex) && previousButtons[playerIndex].Contains(button);
         }
 
-        public static double GetButtonHeldTime(Buttons button, byte playerIndex)
+        public double GetButtonHeldTime(Buttons button, byte playerIndex)
         {
             if (playerIndex > 3)
             {
@@ -96,7 +96,7 @@
             return ret;
         }
 
-        public static bool IsConnected(byte playerIndex)
+        public bool IsConnected(byte playerIndex)
         {
             if (playerIndex > 3)
             {
@@ -105,7 +105,7 @@
             return currentState[playerIndex].IsConnected;
         }
 
-        public static Vector2 GetLeftThumbstick(byte playerIndex)
+        public Vector2 GetLeftThumbstick(byte playerIndex)
         {
             if (playerIndex > 3)
             {
@@ -114,7 +114,7 @@
             return currentState[playerIndex].ThumbSticks.Left;
         }
 
-        public static Vector2 GetRightThumbstick(byte playerIndex)
+        public Vector2 GetRightThumbstick(byte playerIndex)
         {
             if (playerIndex > 3)
             {
@@ -123,7 +123,7 @@
             return currentState[playerIndex].ThumbSticks.Right;
         }
 
-        public static float GetLeftTrigger(byte playerIndex)
+        public float GetLeftTrigger(byte playerIndex)
         {
             if (playerIndex > 3)
             {
@@ -132,7 +132,7 @@
             return currentState[playerIndex].Triggers.Left;
         }
 
-        public static float GetRightTrigger(byte playerIndex)
+        public float GetRightTrigger(byte playerIndex)
         {
             if (playerIndex > 3)
             {
@@ -141,7 +141,7 @@
             return currentState[playerIndex].Triggers.Right;
         }
 
-        public static void Update(double seconds)
+        public void Update(double seconds)
         {
             for (int i = 0; i < 4; i++)
             {

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoKle;
 using MonoKle.Assets;
 using MonoKle.Graphics;
 using MonoKle.Input;
@@ -16,31 +17,31 @@ namespace WindowsDemo
         public override void Draw(double time)
         {
             sb.Begin();
-            sb.Draw(TextureManager.GetDefaultTexture(), new Vector2(50, 50), Color.White);
-            sb.Draw(TextureManager.GetWhiteTexture(), new Vector2(150, 50), Color.Red);
+            sb.Draw(MonoKleGame.TextureManager.DefaultTexture, new Vector2(50, 50), Color.White);
+            sb.Draw(MonoKleGame.TextureManager.WhiteTexture, new Vector2(150, 50), Color.Red);
 
-            sb.Draw(TextureManager.GetTexture("testbox"), new Vector2(250, 250), Color.White);
+            sb.Draw(MonoKleGame.TextureManager.GetTexture("testbox"), new Vector2(250, 250), Color.White);
             sb.End();
         }
 
         public override void Update(double seconds)
         {
-            if (KeyboardInput.IsKeyHeld(Keys.Escape, 1))
+            if (MonoKleGame.Keyboard.IsKeyHeld(Keys.Escape, 1))
             {
-                MonoKle.MonoKleGame.GetInstance().Exit();
+                MonoKleGame.GetInstance().Exit();
             }
 
-            if (KeyboardInput.IsKeyPressed(Keys.Space))
+            if (MonoKleGame.Keyboard.IsKeyPressed(Keys.Space))
             {
-                StateManager.NextState = "stateTwo";
+                MonoKleGame.StateManager.NextState = "stateTwo";
             }
         }
 
         public override void Activated()
         {
             Console.WriteLine("State one activated!");
-            Console.WriteLine(TextureManager.Load("Assets\\", true) + " textures loaded.");
-            sb = new SpriteBatch(GraphicsManager.GetGraphicsDevice());
+            Console.WriteLine(MonoKleGame.TextureManager.Load("Assets\\", true) + " textures loaded.");
+            sb = new SpriteBatch(MonoKleGame.GraphicsManager.GetGraphicsDevice());
         }
     }
 }

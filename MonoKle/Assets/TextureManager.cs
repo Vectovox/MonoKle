@@ -13,38 +13,37 @@
     /// <summary>
     /// Loads and maintains texture assets.
     /// </summary>
-    public static class TextureManager
+    public class TextureManager
     {
-        private static Texture2D defaultTexture;
-        private static Dictionary<string, Texture2D> textureStorage = new Dictionary<string, Texture2D>();
-        private static Texture2D whiteTexture;
+        public Texture2D DefaultTexture { get; set; }
+        public Texture2D WhiteTexture { get; private set; }
 
-        public static Texture2D GetDefaultTexture()
+        private Dictionary<string, Texture2D> textureStorage = new Dictionary<string, Texture2D>();
+        private GraphicsDevice graphicsDevice;
+
+        public TextureManager(GraphicsDevice graphicsDevice)
         {
-            return defaultTexture;
+            this.graphicsDevice = graphicsDevice;
+            DefaultTexture = GraphicsHelper.BitmapToTexture2D(graphicsDevice, TextureResources.DefaultTexture);
+            WhiteTexture = GraphicsHelper.BitmapToTexture2D(graphicsDevice, TextureResources.WhiteTexture);
         }
 
-        public static Texture2D GetTexture(string id)
+        public Texture2D GetTexture(string id)
         {
             id = id.ToLower();
             if (textureStorage.ContainsKey(id))
             {
                 return textureStorage[id];
             }
-            return defaultTexture;
+            return DefaultTexture;
         }
 
-        public static Texture2D GetWhiteTexture()
-        {
-            return whiteTexture;
-        }
-
-        public static int Load(string path)
+        public int Load(string path)
         {
             return Load(path, false);
         }
 
-        public static int Load(string path, bool recurse)
+        public int Load(string path, bool recurse)
         {
             if (Directory.Exists(path))
             {
@@ -56,30 +55,19 @@
             }
         }
 
-        public static void SetDefaultTexture(Texture2D value)
-        {
-            defaultTexture = value;
-        }
-
-        public static int Unload(string id)
+        public int Unload(string id)
         {
             return textureStorage.Remove(id) ? 1 : 0;
         }
 
-        public static int UnloadAll()
+        public int UnloadAll()
         {
             int nUnloaded = textureStorage.Keys.Count;
             textureStorage.Clear();
             return nUnloaded;
         }
 
-        internal static void Initialize()
-        {
-            defaultTexture = GraphicsHelper.BitmapToTexture2D(GraphicsManager.GetGraphicsDevice(), TextureResources.DefaultTexture);
-            whiteTexture = GraphicsHelper.BitmapToTexture2D(GraphicsManager.GetGraphicsDevice(), TextureResources.WhiteTexture);
-        }
-
-        private static string GetIdentifier(string path)
+        private string GetIdentifier(string path)
         {
             int lastPeriod = path.LastIndexOf('.');
             int lastSlash = path.LastIndexOfAny(new char[] { '\\', '/' });
@@ -90,14 +78,14 @@
             return null;
         }
 
-        private static bool IsCompatible(string path)
+        private bool IsCompatible(string path)
         {
             return path.EndsWith(".gif", StringComparison.CurrentCultureIgnoreCase)
                 || path.EndsWith(".jpg", StringComparison.CurrentCultureIgnoreCase)
                 || path.EndsWith(".png", StringComparison.CurrentCultureIgnoreCase);
         }
 
-        private static int LoadDirectory(string path, bool recurse)
+        private int LoadDirectory(string path, bool recurse)
         {
             int nLoaded = 0;
             if (Directory.Exists(path))
@@ -120,7 +108,7 @@
             return nLoaded;
         }
 
-        private static int LoadFile(string path)
+        private int LoadFile(string path)
         {
             if (File.Exists(path) && IsCompatible(path))
             {
@@ -128,7 +116,7 @@
                 if (id != null && textureStorage.ContainsKey(id) == false)
                 {
                     FileStream stream = File.OpenRead(path);
-                    Texture2D tex = Texture2D.FromStream(GraphicsManager.GetGraphicsDevice(), stream);
+                    Texture2D tex = Texture2D.FromStream(graphicsDevice, stream);
                     if (tex != null)
                     {
                         textureStorage.Add(id, tex);

@@ -11,13 +11,20 @@
     using MonoKle.State;
     using MonoKle.Assets;
 
-    /// <summary>
-    /// This is the main type for your game
-    /// </summary>
     public class MonoKleGame : Game
     {
-        private static MonoKleGame gameInstance = null;
+        public static bool IsRunningSlowly { get; private set; }
+        public static TimeSpan TotalGameTime { get; private set; }
+        
+        public static StateManager StateManager { get; private set; }
+        public static TextureManager TextureManager { get; private set; }
+        public static GraphicsManager GraphicsManager { get; private set; }
+        public static MouseInput Mouse { get; private set; }
+        public static KeyboardInput Keyboard { get; private set; }
+        public static GamePadInput GamePad { get; private set; }
 
+        private static MonoKleGame gameInstance;
+        
         public static MonoKleGame GetInstance()
         {
             if (gameInstance == null)
@@ -27,17 +34,17 @@
             return gameInstance;
         }
 
-        public MonoKleGame()
+        private MonoKleGame()
             : base()
         {
-            GraphicsManager.SetGraphicsDeviceManager(new GraphicsDeviceManager(this));
             Content.RootDirectory = "Content";
+            StateManager = new StateManager();
+            GraphicsManager = new GraphicsManager(new GraphicsDeviceManager(this));
+            Mouse = new MouseInput();
+            GamePad = new GamePadInput();
+            Keyboard = new KeyboardInput();
         }
 
-        /// <summary>
-        /// This is called when the game should draw itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
             base.Draw(gameTime);
@@ -48,45 +55,21 @@
             StateManager.Draw(seconds);
         }
 
-        /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
-        /// </summary>
-        protected override void Initialize()
-        {
-            base.Initialize();
-        }
-
-        /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
-        /// </summary>
         protected override void LoadContent()
         {
-            TextureManager.Initialize();
+            TextureManager = new TextureManager(GraphicsManager.GetGraphicsDevice());
         }
 
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// all content.
-        /// </summary>
-        protected override void UnloadContent()
-        {
-        }
-
-        /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
             double seconds = gameTime.ElapsedGameTime.TotalSeconds;
-            
-            KeyboardInput.Update(seconds);
-            MouseInput.Update(seconds);
+
+            IsRunningSlowly = gameTime.IsRunningSlowly;
+            TotalGameTime = gameTime.TotalGameTime;
+
+            GamePad.Update(seconds);
+            Keyboard.Update(seconds);
+            Mouse.Update(seconds, GraphicsManager.ScreenSize);
             StateManager.Update(seconds);
         }
     }

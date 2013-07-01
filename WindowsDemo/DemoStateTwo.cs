@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Input;
+using MonoKle;
 using MonoKle.Input;
 using MonoKle.State;
 using System;
@@ -13,14 +14,14 @@ namespace WindowsDemo
 
         public override void Update(double seconds)
         {
-            if (KeyboardInput.IsKeyHeld(Keys.Escape, 1))
+            if (MonoKleGame.Keyboard.IsKeyHeld(Keys.Escape, 1))
             {
-                MonoKle.MonoKleGame.GetInstance().Exit();
+                MonoKleGame.GetInstance().Exit();
             }
 
-            if (KeyboardInput.IsKeyPressed(Keys.Space))
+            if (MonoKleGame.Keyboard.IsKeyPressed(Keys.Space))
             {
-                StateManager.NextState = "stateOne";
+                MonoKleGame.StateManager.NextState = "stateOne";
             }
         }
 

@@ -11,33 +11,33 @@ namespace MonoKle.Graphics
     /// <summary>
     /// Manages graphics.
     /// </summary>
-    public static class GraphicsManager
+    public class GraphicsManager
     {
-        private static GraphicsDeviceManager graphicsDeviceManager;
+        private GraphicsDeviceManager graphicsDeviceManager;
         
         /// <summary>
         /// Gets the current screen size.
         /// </summary>
-        public static Vector2Int32 ScreenSize { get; private set; }
+        public Vector2Int32 ScreenSize { get; private set; }
         
         /// <summary>
         /// Gets the current screen center.
         /// </summary>
-        public static Vector2Int32 ScreenCenter { get; private set; }
+        public Vector2Int32 ScreenCenter { get; private set; }
 
-        internal static void SetGraphicsDeviceManager(GraphicsDeviceManager graphicsDeviceManager)
+        public GraphicsManager(GraphicsDeviceManager graphicsDeviceManager)
         {
-            GraphicsManager.graphicsDeviceManager = graphicsDeviceManager;
-            GraphicsManager.graphicsDeviceManager.PreparingDeviceSettings += PreparingDeviceSettings;
+            this.graphicsDeviceManager = graphicsDeviceManager;
+            this.graphicsDeviceManager.PreparingDeviceSettings += PreparingDeviceSettings;
             // TODO: PerparingDeviceSettings event does not fire in the current MonoGame version.
         }
 
-        public static GraphicsDevice GetGraphicsDevice()
+        public GraphicsDevice GetGraphicsDevice()
         {
             return graphicsDeviceManager.GraphicsDevice;
         }
 
-        public static void SetScreenSize(Vector2Int32 size)
+        public void SetScreenSize(Vector2Int32 size)
         {
             graphicsDeviceManager.PreferredBackBufferWidth = size.X;
             graphicsDeviceManager.PreferredBackBufferHeight = size.Y;
@@ -47,7 +47,7 @@ namespace MonoKle.Graphics
             // TODO: ApplyChanges() does not work in the current MonoGame version.
         }
 
-        public static void SetFullscreenEnabled(bool enabled)
+        public void SetFullscreenEnabled(bool enabled)
         {
             if (enabled && graphicsDeviceManager.IsFullScreen == false ||
                 enabled == false && graphicsDeviceManager.IsFullScreen)
@@ -57,7 +57,7 @@ namespace MonoKle.Graphics
             }
         }
 
-        private static void PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
+        private void PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
         {
             Vector2Int32 value = new Vector2Int32(
                     e.GraphicsDeviceInformation.PresentationParameters.BackBufferWidth,

@@ -9,13 +9,13 @@
     /// <summary>
     /// Keyboard input class.
     /// </summary>
-    public static class KeyboardInput
+    public class KeyboardInput
     {
-        private static HashSet<Keys> currentKeys;
-        private static Dictionary<Keys, double> heldTimerByKey;
-        private static HashSet<Keys> previousKeys;
+        private HashSet<Keys> currentKeys;
+        private Dictionary<Keys, double> heldTimerByKey;
+        private HashSet<Keys> previousKeys;
 
-        static KeyboardInput()
+        internal KeyboardInput()
         {
             currentKeys = new HashSet<Keys>();
             previousKeys = new HashSet<Keys>();
@@ -27,7 +27,7 @@
         /// </summary>
         /// <param name="key">The key to query.</param>
         /// <returns></returns>
-        public static double GetKeyHeldTime(Keys key)
+        public double GetKeyHeldTime(Keys key)
         {
             double ret = 0;
             heldTimerByKey.TryGetValue(key, out ret);
@@ -39,7 +39,7 @@
         /// </summary>
         /// <param name="key">Key to query.</param>
         /// <returns></returns>
-        public static bool IsKeyDown(Keys key)
+        public bool IsKeyDown(Keys key)
         {
             return currentKeys.Contains(key);
         }
@@ -49,7 +49,7 @@
         /// </summary>
         /// <param name="key">Key to query.</param>
         /// <returns></returns>
-        public static bool IsKeyHeld(Keys key)
+        public bool IsKeyHeld(Keys key)
         {
             return IsKeyDown(key) && previousKeys.Contains(key);
         }
@@ -60,7 +60,7 @@
         /// <param name="key">Key to query.</param>
         /// <param name="timeHeld">The amount of time.</param>
         /// <returns></returns>
-        public static bool IsKeyHeld(Keys key, double timeHeld)
+        public bool IsKeyHeld(Keys key, double timeHeld)
         {
             return IsKeyHeld(key) && GetKeyHeldTime(key) >= timeHeld;
         }
@@ -70,7 +70,7 @@
         /// </summary>
         /// <param name="key">Key to query.</param>
         /// <returns></returns>
-        public static bool IsKeyPressed(Keys key)
+        public bool IsKeyPressed(Keys key)
         {
             return IsKeyDown(key) && previousKeys.Contains(key) == false;
         }
@@ -80,7 +80,7 @@
         /// </summary>
         /// <param name="key">Key to query.</param>
         /// <returns></returns>
-        public static bool IsKeyReleased(Keys key)
+        public bool IsKeyReleased(Keys key)
         {
             return IsKeyUp(key) && previousKeys.Contains(key);
         }
@@ -90,7 +90,7 @@
         /// </summary>
         /// <param name="key">Key to query.</param>
         /// <returns></returns>
-        public static bool IsKeyUp(Keys key)
+        public bool IsKeyUp(Keys key)
         {
             return currentKeys.Contains(key) == false;
         }
@@ -99,7 +99,7 @@
         /// Should be called once per frame.
         /// </summary>
         /// <param name="seconds">Time passed since last call.</param>
-        internal static void Update(double seconds)
+        internal void Update(double seconds)
         {
             previousKeys = currentKeys;
             currentKeys = new HashSet<Keys>(Keyboard.GetState().GetPressedKeys());

@@ -2,12 +2,12 @@
 {
     using System.Collections.Generic;
 
-    public static class StateManager
+    public class StateManager
     {
-        private static GameState currentState;
-        private static Dictionary<string, GameState> stateByString;
+        private GameState currentState;
+        private Dictionary<string, GameState> stateByString;
 
-        static StateManager()
+        internal StateManager()
         {
             stateByString = new Dictionary<string, GameState>();
             currentState = null;
@@ -17,7 +17,7 @@
         /// Gets or sets the state identifier for the next switched to state.
         /// If set to null, no state will be switched to.
         /// </summary>
-        public static string NextState
+        public string NextState
         {
             get;
             set;
@@ -26,7 +26,7 @@
         /// <summary>
         /// Gets a collection of the identifiers for the existing states.
         /// </summary>
-        public static ICollection<string> StateIdentifiers
+        public ICollection<string> StateIdentifiers
         {
             get { return stateByString.Keys; }
         }
@@ -36,7 +36,7 @@
         /// </summary>
         /// <param name="identifier">String identifier.</param>
         /// <param name="state">State to add.</param>
-        public static void AddState(string identifier, GameState state)
+        public void AddState(string identifier, GameState state)
         {
             if (stateByString.ContainsKey(identifier) == false)
             {
@@ -52,7 +52,7 @@
         /// Removes the state with the specified identifier.
         /// </summary>
         /// <param name="identifier">String identifier of the state to remove.</param>
-        public static void RemoveState(string identifier)
+        public void RemoveState(string identifier)
         {
             if (stateByString.ContainsKey(identifier))
             {
@@ -65,7 +65,7 @@
             }
         }
 
-        internal static void Draw(double seconds)
+        internal void Draw(double seconds)
         {
             if (currentState != null)
             {
@@ -73,7 +73,7 @@
             }
         }
 
-        internal static void Update(double seconds)
+        internal void Update(double seconds)
         {
             if (NextState != null && stateByString.ContainsKey(NextState))
             {

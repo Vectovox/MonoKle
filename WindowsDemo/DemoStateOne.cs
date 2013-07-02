@@ -33,13 +33,13 @@ namespace WindowsDemo
 
             if (MonoKleGame.Keyboard.IsKeyPressed(Keys.Space))
             {
-                MonoKleGame.StateManager.NextState = "stateTwo";
+                MonoKleGame.StateManager.SwitchState(new StateSwitchData("stateTwo", null));
             }
         }
 
-        public override void Activated()
+        public override void Activated(StateSwitchData data)
         {
-            Console.WriteLine("State one activated!");
+            Console.WriteLine("State one activated! Message: " + (string)data.Data);
             Console.WriteLine(MonoKleGame.TextureManager.Load("Assets\\", true) + " textures loaded.");
             sb = new SpriteBatch(MonoKleGame.GraphicsManager.GetGraphicsDevice());
         }

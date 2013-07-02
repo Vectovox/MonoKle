@@ -58,6 +58,7 @@
       <DependentUpon>TextureResources.resx</DependentUpon>
     </Compile>
     <Compile Include="State\GameState.cs" />
+    <Compile Include="State\StateSwitchData.cs" />
     <Compile Include="State\StateManager.cs" />
   </ItemGroup>
   <ItemGroup>

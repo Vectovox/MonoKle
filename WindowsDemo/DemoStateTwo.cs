@@ -21,13 +21,13 @@ namespace WindowsDemo
 
             if (MonoKleGame.Keyboard.IsKeyPressed(Keys.Space))
             {
-                MonoKleGame.StateManager.NextState = "stateOne";
+                MonoKleGame.StateManager.SwitchState(new StateSwitchData("stateOne", "HELLO!"));
             }
         }
 
-        public override void Activated()
+        public override void Activated(StateSwitchData data)
         {
-            Console.WriteLine("State two activated!");
+            Console.WriteLine("State two activated! Message: " + (string)data.Data);
         }
     }
 }

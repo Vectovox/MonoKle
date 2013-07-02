@@ -2,25 +2,19 @@
 {
     using System.Collections.Generic;
 
+    /// <summary>
+    /// Class maintaining game states.
+    /// </summary>
     public class StateManager
     {
         private GameState currentState;
         private Dictionary<string, GameState> stateByString;
+        private StateSwitchData switchData;
 
         internal StateManager()
         {
-            stateByString = new Dictionary<string, GameState>();
-            currentState = null;
-        }
-
-        /// <summary>
-        /// Gets or sets the state identifier for the next switched to state.
-        /// If set to null, no state will be switched to.
-        /// </summary>
-        public string NextState
-        {
-            get;
-            set;
+            this.stateByString = new Dictionary<string, GameState>();
+            this.currentState = null;
         }
 
         /// <summary>
@@ -28,7 +22,7 @@
         /// </summary>
         public ICollection<string> StateIdentifiers
         {
-            get { return stateByString.Keys; }
+            get { return this.stateByString.Keys; }
         }
 
         /// <summary>
@@ -38,9 +32,9 @@
         /// <param name="state">State to add.</param>
         public void AddState(string identifier, GameState state)
         {
-            if (stateByString.ContainsKey(identifier) == false)
+            if (this.stateByString.ContainsKey(identifier) == false)
             {
-                stateByString.Add(identifier, state);
+                this.stateByString.Add(identifier, state);
             }
             else
             {
@@ -54,10 +48,10 @@
         /// <param name="identifier">String identifier of the state to remove.</param>
         public void RemoveState(string identifier)
         {
-            if (stateByString.ContainsKey(identifier))
+            if (this.stateByString.ContainsKey(identifier))
             {
-                stateByString[identifier].Removed();
-                stateByString.Remove(identifier);
+                this.stateByString[identifier].Removed();
+                this.stateByString.Remove(identifier);
             }
             else
             {
@@ -65,30 +59,40 @@
             }
         }
 
+        /// <summary>
+        /// Prepares for a state switch using the provided data.
+        /// </summary>
+        /// <param name="data">The data to utilize when switching.</param>
+        public void SwitchState(StateSwitchData data)
+        {
+            this.switchData = data;
+        }
+
         internal void Draw(double seconds)
         {
-            if (currentState != null)
+            if (this.currentState != null)
             {
-                currentState.Draw(seconds);
+                this.currentState.Draw(seconds);
             }
         }
 
         internal void Update(double seconds)
         {
-            if (NextState != null && stateByString.ContainsKey(NextState))
+            if (this.switchData != null && this.stateByString.ContainsKey(this.switchData.NextState))
             {
-                if (currentState != null)
+                if (this.currentState != null)
                 {
-                    currentState.Deactivated();
+                    this.currentState.Deactivated(this.switchData);
                 }
-                currentState = stateByString[NextState];
-                NextState = null;
-                currentState.Activated();
+
+                this.currentState = this.stateByString[this.switchData.NextState];
+                this.currentState.Activated(this.switchData);
+                this.switchData = null;
             }
 
-            if (currentState != null)
+            if (this.currentState != null)
             {
-                currentState.Update(seconds);
+                this.currentState.Update(seconds);
             }
         }
     }

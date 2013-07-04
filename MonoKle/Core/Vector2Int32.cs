@@ -90,6 +90,16 @@
             return a.X == b.X && a.Y == b.Y;
         }
 
+        public static bool IsWithin(Vector2Int32 vector, Vector2Int32 max)
+        {
+            return IsWithin(vector, Vector2Int32.Zero, max);
+        }
+
+        public static bool IsWithin(Vector2Int32 vector, Vector2Int32 min, Vector2Int32 max)
+        {
+            return vector.X >= min.X && vector.X <= max.X && vector.Y >= min.Y && vector.Y <= max.Y;
+        }
+
         public override bool Equals(object obj)
         {
             if (obj is Vector2Int32)

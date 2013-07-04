@@ -8,7 +8,6 @@
     using Microsoft.Xna.Framework;
 
     // TODO: Implement GetHashCode()...
-
     /// <summary>
     /// Three-dimensional Int32-based vector.
     /// </summary>
@@ -57,16 +56,6 @@
             return new Vector3Int32(a.X * b, a.Y * b, a.Z * b);
         }
 
-        public static Vector3Int32 operator /(Vector3Int32 a, int b)
-        {
-            return new Vector3Int32(a.X / b, a.Y / b, a.Z / b);
-        }
-
-        public static Vector3Int32 operator /(int b, Vector3Int32 a)
-        {
-            return new Vector3Int32(a.X / b, a.Y / b, a.Z / b);
-        }
-
         public static Vector3Int32 operator +(Vector3Int32 a, Vector3Int32 b)
         {
             return new Vector3Int32(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
@@ -75,6 +64,16 @@
         public static Vector3Int32 operator -(Vector3Int32 a, Vector3Int32 b)
         {
             return new Vector3Int32(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
+        }
+
+        public static Vector3Int32 operator /(Vector3Int32 a, int b)
+        {
+            return new Vector3Int32(a.X / b, a.Y / b, a.Z / b);
+        }
+
+        public static Vector3Int32 operator /(int b, Vector3Int32 a)
+        {
+            return new Vector3Int32(a.X / b, a.Y / b, a.Z / b);
         }
 
         public static bool operator ==(Vector3Int32 a, Vector3Int32 b)
@@ -89,6 +88,11 @@
                 return this == (Vector3Int32)obj;
             }
             return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.X.GetHashCode() + this.Y.GetHashCode() * 7 + this.Z.GetHashCode() * 11;
         }
 
         public override string ToString()

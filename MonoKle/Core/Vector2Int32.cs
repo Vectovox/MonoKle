@@ -8,7 +8,6 @@
     using Microsoft.Xna.Framework;
 
     // TODO: Implement GetHashCode()...
-
     /// <summary>
     /// Two-dimensional Int32-based vector.
     /// </summary>
@@ -50,16 +49,6 @@
             return new Vector2Int32(a.X * b, a.Y * b);
         }
 
-        public static Vector2Int32 operator /(Vector2Int32 a, int b)
-        {
-            return new Vector2Int32(a.X / b, a.Y / b);
-        }
-
-        public static Vector2Int32 operator /(int b, Vector2Int32 a)
-        {
-            return new Vector2Int32(a.X / b, a.Y / b);
-        }
-
         public static Vector2Int32 operator +(Vector2Int32 a, Vector2Int32 b)
         {
             return new Vector2Int32(a.X + b.X, a.Y + b.Y);
@@ -68,6 +57,16 @@
         public static Vector2Int32 operator -(Vector2Int32 a, Vector2Int32 b)
         {
             return new Vector2Int32(a.X - b.X, a.Y - b.Y);
+        }
+
+        public static Vector2Int32 operator /(Vector2Int32 a, int b)
+        {
+            return new Vector2Int32(a.X / b, a.Y / b);
+        }
+
+        public static Vector2Int32 operator /(int b, Vector2Int32 a)
+        {
+            return new Vector2Int32(a.X / b, a.Y / b);
         }
 
         public static bool operator ==(Vector2Int32 a, Vector2Int32 b)
@@ -82,6 +81,11 @@
                 return this == (Vector2Int32)obj;
             }
             return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.X.GetHashCode() + this.Y.GetHashCode() * 7;
         }
 
         public override string ToString()

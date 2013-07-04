@@ -41,6 +41,22 @@
             this.Z = z;
         }
 
+        /// <summary>
+        /// Gets a vector with all composant set to 1.
+        /// </summary>
+        public static Vector3Int32 One
+        {
+            get { return new Vector3Int32(1, 1, 1); }
+        }
+
+        /// <summary>
+        /// Gets a vector with all composant set to 0.
+        /// </summary>
+        public static Vector3Int32 Zero
+        {
+            get { return new Vector3Int32(0, 0, 0); }
+        }
+
         public static bool operator !=(Vector3Int32 a, Vector3Int32 b)
         {
             return a.X != b.X || a.Y != b.Y || a.Z != b.Z;

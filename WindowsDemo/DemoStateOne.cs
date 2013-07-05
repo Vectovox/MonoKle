@@ -21,6 +21,9 @@ namespace WindowsDemo
             sb.Draw(MonoKleGame.TextureManager.WhiteTexture, new Vector2(150, 50), Color.Red);
 
             sb.Draw(MonoKleGame.TextureManager.GetTexture("testbox"), new Vector2(250, 250), Color.White);
+
+            MonoKleGame.FontManager.GetFont("TESTFONT").DrawString(sb, "ABCDEF abcdef",
+                new Vector2(50, 250), Color.Green);
             sb.End();
         }
 
@@ -40,7 +43,8 @@ namespace WindowsDemo
         public override void Activated(StateSwitchData data)
         {
             Console.WriteLine("State one activated! Message: " + (string)data.Data);
-            Console.WriteLine(MonoKleGame.TextureManager.Load("Assets\\", true) + " textures loaded.");
+            Console.WriteLine(MonoKleGame.TextureManager.Load("Assets\\Textures", true) + " textures loaded.");
+            Console.WriteLine(MonoKleGame.FontManager.Load("Assets\\Fonts", true) + " fonts loaded.");
             sb = new SpriteBatch(MonoKleGame.GraphicsManager.GetGraphicsDevice());
         }
     }

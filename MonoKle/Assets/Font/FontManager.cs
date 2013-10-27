@@ -5,12 +5,19 @@
     using System.IO;
 
     using Microsoft.Xna.Framework.Graphics;
+    using MonoKle.Graphics;
+    using MonoKle.Resources;
 
     /// <summary>
     /// Manages drawable fonts.
     /// </summary>
     public class FontManager
     {
+        /// <summary>
+        /// Default font that will be used when retrieving a non-existing font.
+        /// </summary>
+        public Font DefaultFont { get; set; }
+
         private Dictionary<string, Font> fontStorage = new Dictionary<string, Font>();
         private GraphicsDevice graphicsDevice;
 
@@ -21,8 +28,12 @@
         public FontManager(GraphicsDevice graphicsDevice)
         {
             this.graphicsDevice = graphicsDevice;
-            //DefaultTexture = GraphicsHelper.BitmapToTexture2D(graphicsDevice, TextureResources.DefaultTexture);
-            //WhiteTexture = GraphicsHelper.BitmapToTexture2D(graphicsDevice, TextureResources.WhiteTexture);
+
+            // Set up default font
+            Stream dataStream = new MemoryStream(FontResources.DefaultFont);
+            FontFile fontData = FontLoader.Load(dataStream);
+            Texture2D fontTexture = GraphicsHelper.BitmapToTexture2D(graphicsDevice, TextureResources.DefaultFont);
+            DefaultFont = new Font(fontData, fontTexture);
         }
 
         /// <summary>
@@ -37,8 +48,7 @@
             {
                 return fontStorage[id];
             }
-            return null;
-            //TODO: return DefaultFont;
+            return DefaultFont;
         }
 
         /// <summary>

@@ -35,8 +35,8 @@
         /// Draws a string with the given color.
         /// </summary>
         /// <param name="spriteBatch">Active spritebatch.</param>
-        /// <param name="text">Text to draw.</param>
-        /// <param name="position">The position to draw the font on.</param>
+        /// <param name="text">String to draw.</param>
+        /// <param name="position">The starting position to draw to.</param>
         /// <param name="color">The color to draw the text with.</param>
         public void DrawString(SpriteBatch spriteBatch, string text, Vector2 position, Color color)
         {
@@ -58,8 +58,8 @@
         /// Draws a string with the color white.
         /// </summary>
         /// <param name="spriteBatch">Active spritebatch.</param>
-        /// <param name="text">Text to draw.</param>
-        /// <param name="position">The position to draw the font on.</param>
+        /// <param name="text">String to draw.</param>
+        /// <param name="position">The starting position to draw to.</param>
         public void DrawString(SpriteBatch spriteBatch, string text, Vector2 position)
         {
             DrawString(spriteBatch, text, position, Color.White);

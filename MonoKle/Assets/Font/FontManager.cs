@@ -29,7 +29,7 @@
         /// Returns the font with the specified identifier.
         /// </summary>
         /// <param name="id">The identifier of the font to return.</param>
-        /// <returns>A <see cref=">Font"/></returns>
+        /// <returns>A <see cref="Font"/></returns>
         public Font GetFont(string id)
         {
             id = id.ToLower();

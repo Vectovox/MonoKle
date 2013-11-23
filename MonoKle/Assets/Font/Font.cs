@@ -32,6 +32,17 @@
         }
 
         /// <summary>
+        /// Draws a string with the color white.
+        /// </summary>
+        /// <param name="spriteBatch">Active spritebatch.</param>
+        /// <param name="text">String to draw.</param>
+        /// <param name="position">The starting position to draw to.</param>
+        public void DrawString(SpriteBatch spriteBatch, string text, Vector2 position)
+        {
+            DrawString(spriteBatch, text, position, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+        }
+
+        /// <summary>
         /// Draws a string with the given color.
         /// </summary>
         /// <param name="spriteBatch">Active spritebatch.</param>
@@ -40,29 +51,106 @@
         /// <param name="color">The color to draw the text with.</param>
         public void DrawString(SpriteBatch spriteBatch, string text, Vector2 position, Color color)
         {
+            DrawString(spriteBatch, text, position, color, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+        }
+
+        /// <summary>
+        /// Draws a string with the given color, scale, rotation.
+        /// </summary>
+        /// <param name="spriteBatch">Active spritebatch.</param>
+        /// <param name="text">String to draw.</param>
+        /// <param name="position">The starting position to draw to.</param>
+        /// <param name="color">The color to draw the text with.</param>
+        /// <param name="rotation">The rotation of the text.</param>
+        /// <param name="origin">The origin to rotate around.</param>
+        /// <param name="scale">The scale to draw the text with.</param>
+        /// <param name="effect">Applied sprite effects.</param>
+        /// <param name="depth">Depth.</param>
+        public void DrawString(SpriteBatch spriteBatch, string text, Vector2 position, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effect, float depth)
+        {
+            Vector2 drawPos = position; // Cursor
             foreach (char c in text)
             {
-                FontChar fc;
-                if (this.fontCharByChar.TryGetValue(c, out fc))
+                // Set cursor to next line
+                if (c == '\n')
                 {
-                    var sourceRectangle = new Rectangle(fc.X, fc.Y, fc.Width, fc.Height);
-                    var dPos = new Vector2(position.X + fc.XOffset, position.Y + fc.YOffset);
+                    drawPos.Y += data.Common.LineHeight * scale;
+                    drawPos.X = position.X;
+                }
+                else
+                {
+                    FontChar fc;
+                    if (this.fontCharByChar.TryGetValue(c, out fc))
+                    {
+                        var sourceRectangle = new Rectangle(fc.X, fc.Y, fc.Width, fc.Height);
+                        var destinationVector = new Vector2(drawPos.X, drawPos.Y + fc.YOffset * scale);
 
-                    spriteBatch.Draw(this.image, dPos, sourceRectangle, color);
-                    position.X += fc.XAdvance;
+                        double xd = destinationVector.X - origin.X - position.X;
+                        double yd = destinationVector.Y - origin.Y - position.Y;
+                        
+                        double x = origin.X + xd * Math.Cos(rotation) - yd * Math.Sin(rotation);
+                        double y = origin.Y + xd * Math.Sin(rotation) + yd * Math.Cos(rotation);
+                        
+                        // Translate back
+                        destinationVector.X = (float)x + position.X;
+                        destinationVector.Y = (float)y + position.Y;
+
+                        spriteBatch.Draw(this.image, destinationVector, sourceRectangle, color, rotation, Vector2.Zero, scale, effect, depth);
+                        drawPos.X += fc.XAdvance * scale;
+                    }
                 }
             }
         }
 
         /// <summary>
-        /// Draws a string with the color white.
+        /// Returns the size of the given string.
         /// </summary>
-        /// <param name="spriteBatch">Active spritebatch.</param>
-        /// <param name="text">String to draw.</param>
-        /// <param name="position">The starting position to draw to.</param>
-        public void DrawString(SpriteBatch spriteBatch, string text, Vector2 position)
+        /// <param name="text">The text to measure.</param>
+        /// <returns>A Vector2 representing the size.</returns>
+        public Vector2 MeasureString(string text)
         {
-            DrawString(spriteBatch, text, position, Color.White);
+            return MeasureString(text, 1f);
+        }
+
+        /// <summary>
+        /// Returns the size of the given string with the specified scale.
+        /// </summary>
+        /// <param name="text">The text to measure.</param>
+        /// <param name="scale">The scale.</param>
+        /// <returns>A vector2 representing the size.</returns>
+        public Vector2 MeasureString(string text, float scale)
+        {
+            float tSizeX = 0;
+            Vector2 size = Vector2.Zero;
+            foreach (char c in text)
+            {
+                if (c == '\n')
+                {
+                    size.Y += data.Common.LineHeight * scale;
+                    if (tSizeX > size.X)
+                    {
+                        size.X = tSizeX;
+                    }
+                    tSizeX = 0;
+                }
+                else
+                {
+                    FontChar fc;
+                    if (this.fontCharByChar.TryGetValue(c, out fc))
+                    {
+                        if (fc.Height > size.Y)
+                        {
+                            size.Y = fc.Height;
+                        }
+                        tSizeX += fc.XAdvance;
+                    }
+                }
+            }
+            if (tSizeX > size.X)
+            {
+                size.X = tSizeX;
+            }
+            return size * scale;
         }
     }
 }

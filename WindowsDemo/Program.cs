@@ -27,6 +27,7 @@ namespace WindowsDemo
                 MonoKleGame.StateManager.AddState("stateOne", new DemoStateOne());
                 MonoKleGame.StateManager.AddState("stateTwo", new DemoStateTwo());
                 MonoKleGame.StateManager.SwitchState(new StateSwitchData("stateOne", null));
+                MonoKleGame.GraphicsManager.SetScreenSize(new MonoKle.Core.Vector2Int32(800, 600));
                 game.Run();
             }
         }

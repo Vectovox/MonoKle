@@ -10,6 +10,7 @@
     using MonoKle.Graphics;
     using MonoKle.State;
     using MonoKle.Assets;
+    using MonoKle.Assets.Font;
 
     public class MonoKleGame : Game
     {
@@ -18,6 +19,7 @@
         
         public static StateManager StateManager { get; private set; }
         public static TextureManager TextureManager { get; private set; }
+        public static FontManager FontManager { get; private set; }
         public static GraphicsManager GraphicsManager { get; private set; }
         public static MouseInput Mouse { get; private set; }
         public static KeyboardInput Keyboard { get; private set; }
@@ -58,6 +60,7 @@
         protected override void LoadContent()
         {
             TextureManager = new TextureManager(GraphicsManager.GetGraphicsDevice());
+            FontManager = new FontManager(GraphicsManager.GetGraphicsDevice());
         }
 
         protected override void Update(GameTime gameTime)

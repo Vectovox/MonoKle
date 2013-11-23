@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoKle;
 using MonoKle.Assets;
+using MonoKle.Core;
 using MonoKle.Graphics;
 using MonoKle.Input;
 using MonoKle.State;
@@ -13,6 +14,7 @@ namespace WindowsDemo
     public class DemoStateOne : GameState
     {
         private SpriteBatch sb;
+        private Timer timer = new Timer(5);
 
         public override void Draw(double time)
         {
@@ -22,6 +24,10 @@ namespace WindowsDemo
             sb.Draw(MonoKleGame.TextureManager.WhiteTexture, new Vector2(150, 50), Color.Red);
 
             sb.Draw(MonoKleGame.TextureManager.GetTexture("testbox"), new Vector2(250, 250), Color.White);
+
+            // Test timer
+            MonoKleGame.FontManager.GetFont("TESTFONT").DrawString(sb, "Timer: " + timer.TimeLeft + " (" + timer.Duration + ") Done? " + timer.IsDone,
+                new Vector2(50, 150), Color.Green);
 
             // Test linebreak
             MonoKleGame.FontManager.GetFont("TESTFONT").DrawString(sb, "ABCDEF\nabcdef",
@@ -89,6 +95,8 @@ namespace WindowsDemo
             {
                 MonoKleGame.StateManager.SwitchState(new StateSwitchData("stateTwo", null));
             }
+
+            timer.Update(seconds);
         }
 
         public override void Activated(StateSwitchData data)
@@ -97,6 +105,7 @@ namespace WindowsDemo
             Console.WriteLine(MonoKleGame.TextureManager.Load("Assets\\Textures", true) + " textures loaded.");
             Console.WriteLine(MonoKleGame.FontManager.Load("Assets\\Fonts", true) + " fonts loaded.");
             sb = new SpriteBatch(MonoKleGame.GraphicsManager.GetGraphicsDevice());
+            timer.Reset();
         }
     }
 }

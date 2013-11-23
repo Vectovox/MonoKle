@@ -24,10 +24,10 @@
         {
             this.data = data;
             this.image = image;
-            foreach(var fc in data.Chars)
+            foreach (var fc in data.Chars)
             {
                 char c = (char)fc.ID;
-                fontCharByChar.Add(c, fc);
+                this.fontCharByChar.Add(c, fc);
             }
         }
 
@@ -74,7 +74,7 @@
                 // Set cursor to next line
                 if (c == '\n')
                 {
-                    drawPos.Y += data.Common.LineHeight * scale;
+                    drawPos.Y += this.data.Common.LineHeight * scale;
                     drawPos.X = position.X;
                 }
                 else
@@ -83,14 +83,14 @@
                     if (this.fontCharByChar.TryGetValue(c, out fc))
                     {
                         var sourceRectangle = new Rectangle(fc.X, fc.Y, fc.Width, fc.Height);
-                        var destinationVector = new Vector2(drawPos.X, drawPos.Y + fc.YOffset * scale);
+                        var destinationVector = new Vector2(drawPos.X, drawPos.Y + (fc.YOffset * scale));
 
                         double xd = destinationVector.X - origin.X - position.X;
                         double yd = destinationVector.Y - origin.Y - position.Y;
-                        
-                        double x = origin.X + xd * Math.Cos(rotation) - yd * Math.Sin(rotation);
-                        double y = origin.Y + xd * Math.Sin(rotation) + yd * Math.Cos(rotation);
-                        
+
+                        double x = origin.X + (xd * Math.Cos(rotation)) - (yd * Math.Sin(rotation));
+                        double y = origin.Y + (xd * Math.Sin(rotation)) + (yd * Math.Cos(rotation));
+
                         // Translate back
                         destinationVector.X = (float)x + position.X;
                         destinationVector.Y = (float)y + position.Y;
@@ -120,37 +120,42 @@
         /// <returns>A vector2 representing the size.</returns>
         public Vector2 MeasureString(string text, float scale)
         {
-            float tSizeX = 0;
-            Vector2 size = Vector2.Zero;
+            Vector2 rowSize = Vector2.Zero;
+            Vector2 totalSize = Vector2.Zero;
+
             foreach (char c in text)
             {
                 if (c == '\n')
                 {
-                    size.Y += data.Common.LineHeight * scale;
-                    if (tSizeX > size.X)
+                    if (totalSize.X < rowSize.X)
                     {
-                        size.X = tSizeX;
+                        totalSize.X = rowSize.X;
                     }
-                    tSizeX = 0;
+                    totalSize.Y += rowSize.Y;
+
+                    rowSize = Vector2.Zero;
                 }
                 else
                 {
                     FontChar fc;
                     if (this.fontCharByChar.TryGetValue(c, out fc))
                     {
-                        if (fc.Height > size.Y)
+                        if (fc.Height > rowSize.Y)
                         {
-                            size.Y = fc.Height;
+                            rowSize.Y = fc.Height;
                         }
-                        tSizeX += fc.XAdvance;
+                        rowSize.X += fc.XAdvance;
                     }
                 }
             }
-            if (tSizeX > size.X)
+
+            if (totalSize.X < rowSize.X)
             {
-                size.X = tSizeX;
+                totalSize.X = rowSize.X;
             }
-            return size * scale;
+            totalSize.Y += rowSize.Y;
+
+            return totalSize * scale;
         }
     }
 }

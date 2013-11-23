@@ -5,6 +5,7 @@
     using System.IO;
 
     using Microsoft.Xna.Framework.Graphics;
+
     using MonoKle.Graphics;
     using MonoKle.Resources;
 
@@ -13,16 +14,11 @@
     /// </summary>
     public class FontManager
     {
-        /// <summary>
-        /// Default font that will be used when retrieving a non-existing font.
-        /// </summary>
-        public Font DefaultFont { get; set; }
-
         private Dictionary<string, Font> fontStorage = new Dictionary<string, Font>();
         private GraphicsDevice graphicsDevice;
 
         /// <summary>
-        /// Creates a new instance of <see cref="FontManager"/>.
+        /// Initializes a new instance of the <see cref="FontManager"/> class.
         /// </summary>
         /// <param name="graphicsDevice">Graphics device</param>
         public FontManager(GraphicsDevice graphicsDevice)
@@ -37,6 +33,14 @@
         }
 
         /// <summary>
+        /// Gets or sets the default font that will be used when retrieving a non-existing font.
+        /// </summary>
+        public Font DefaultFont
+        {
+            get; set;
+        }
+
+        /// <summary>
         /// Returns the font with the specified identifier.
         /// </summary>
         /// <param name="id">The identifier of the font to return.</param>
@@ -44,9 +48,9 @@
         public Font GetFont(string id)
         {
             id = id.ToLower();
-            if (fontStorage.ContainsKey(id))
+            if (this.fontStorage.ContainsKey(id))
             {
-                return fontStorage[id];
+                return this.fontStorage[id];
             }
             return DefaultFont;
         }
@@ -86,7 +90,7 @@
         /// <returns>Integer representing the amount of unloaded fonts.</returns>
         public int Unload(string id)
         {
-            return fontStorage.Remove(id) ? 1 : 0;
+            return this.fontStorage.Remove(id) ? 1 : 0;
         }
 
         /// <summary>
@@ -95,8 +99,8 @@
         /// <returns>Integer representing the amount of unloaded fonts.</returns>
         public int UnloadAll()
         {
-            int nUnloaded = fontStorage.Keys.Count;
-            fontStorage.Clear();
+            int nUnloaded = this.fontStorage.Keys.Count;
+            this.fontStorage.Clear();
             return nUnloaded;
         }
 
@@ -154,8 +158,8 @@
         {
             if (File.Exists(path) && IsCompatible(path))
             {
-                String id = GetIdentifier(path).ToLower();
-                if (id != null && fontStorage.ContainsKey(id) == false)
+                string id = GetIdentifier(path).ToLower();
+                if (id != null && this.fontStorage.ContainsKey(id) == false)
                 {
                     DirectoryInfo parent = Directory.GetParent(path);
                     string imagePath = parent.FullName + "\\" + id + ".png";
@@ -166,12 +170,12 @@
                         dataStream.Close();
 
                         FileStream imageStream = File.OpenRead(imagePath);
-                        Texture2D tex = Texture2D.FromStream(graphicsDevice, imageStream);
+                        Texture2D tex = Texture2D.FromStream(this.graphicsDevice, imageStream);
                         imageStream.Close();
 
                         if (tex != null)
                         {
-                            fontStorage.Add(id, new Font(fontFile, tex));
+                            this.fontStorage.Add(id, new Font(fontFile, tex));
                             return 1;
                         }
                     }

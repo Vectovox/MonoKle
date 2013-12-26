@@ -18,6 +18,9 @@ namespace WindowsDemo
 
         public override void Draw(double time)
         {
+            MonoKleGame.PrimitiveDrawer.Draw2DLine(new Vector2(250, 250), new Vector2(200, 200), Color.Red);
+            MonoKleGame.PrimitiveDrawer.Draw2DLine(new Vector2(250, 550), new Vector2(500, 500), Color.Red, Color.Blue);
+
             sb.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
 
             sb.Draw(MonoKleGame.TextureManager.DefaultTexture, new Vector2(50, 50), Color.White);

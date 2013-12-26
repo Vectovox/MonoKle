@@ -24,6 +24,7 @@
         public static MouseInput Mouse { get; private set; }
         public static KeyboardInput Keyboard { get; private set; }
         public static GamePadInput GamePad { get; private set; }
+        public static PrimitiveDrawer PrimitiveDrawer { get; private set; }
 
         private static MonoKleGame gameInstance;
         
@@ -55,12 +56,14 @@
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             StateManager.Draw(seconds);
+            PrimitiveDrawer.Render();
         }
 
         protected override void LoadContent()
         {
             TextureManager = new TextureManager(GraphicsManager.GetGraphicsDevice());
             FontManager = new FontManager(GraphicsManager.GetGraphicsDevice());
+            PrimitiveDrawer = new PrimitiveDrawer(GraphicsManager.GetGraphicsDevice());
         }
 
         protected override void Update(GameTime gameTime)

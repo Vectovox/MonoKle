@@ -15,13 +15,14 @@ namespace WindowsDemo
     {
         private SpriteBatch sb;
         private Timer timer = new Timer(5);
+        private Camera2D camera = new Camera2D(new Vector2Int32(800, 600));
 
         public override void Draw(double time)
         {
             MonoKleGame.PrimitiveDrawer.Draw2DLine(new Vector2(250, 250), new Vector2(200, 200), Color.Red);
             MonoKleGame.PrimitiveDrawer.Draw2DLine(new Vector2(250, 550), new Vector2(500, 500), Color.Red, Color.Blue);
 
-            sb.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
+            sb.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullCounterClockwise, null, camera.GetTransformMatrix());
 
             sb.Draw(MonoKleGame.TextureManager.DefaultTexture, new Vector2(50, 50), Color.White);
             sb.Draw(MonoKleGame.TextureManager.WhiteTexture, new Vector2(150, 50), Color.Red);
@@ -99,6 +100,40 @@ namespace WindowsDemo
                 MonoKleGame.StateManager.SwitchState(new StateSwitchData("stateTwo", null));
             }
 
+            if(MonoKleGame.Keyboard.IsKeyHeld(Keys.I))
+            {
+                camera.SetPosition(camera.GetPosition() + new Vector2(0, -3));
+            }
+            if (MonoKleGame.Keyboard.IsKeyHeld(Keys.K))
+            {
+                camera.SetPosition(camera.GetPosition() + new Vector2(0, 3));
+            }
+            if (MonoKleGame.Keyboard.IsKeyHeld(Keys.J))
+            {
+                camera.SetPosition(camera.GetPosition() + new Vector2(-3, 0));
+            }
+            if (MonoKleGame.Keyboard.IsKeyHeld(Keys.L))
+            {
+                camera.SetPosition(camera.GetPosition() + new Vector2(3, 0));
+            }
+            if (MonoKleGame.Keyboard.IsKeyHeld(Keys.U))
+            {
+                camera.SetRotation(camera.GetRotation() + 0.05f);
+            }
+            if (MonoKleGame.Keyboard.IsKeyHeld(Keys.O))
+            {
+                camera.SetRotation(camera.GetRotation() - 0.05f);
+            }
+            if (MonoKleGame.Keyboard.IsKeyHeld(Keys.Y))
+            {
+                camera.SetScale(camera.GetScale() + 0.01f);
+            }
+            if (MonoKleGame.Keyboard.IsKeyHeld(Keys.H))
+            {
+                camera.SetScale(camera.GetScale() - 0.01f);
+            }
+
+            camera.Update(seconds);
             timer.Update(seconds);
         }
 
@@ -108,6 +143,7 @@ namespace WindowsDemo
             Console.WriteLine(MonoKleGame.TextureManager.Load("Assets\\Textures", true) + " textures loaded.");
             Console.WriteLine(MonoKleGame.FontManager.Load("Assets\\Fonts", true) + " fonts loaded.");
             sb = new SpriteBatch(MonoKleGame.GraphicsManager.GetGraphicsDevice());
+            MonoKleGame.PrimitiveDrawer.Camera = camera;
             timer.Reset();
         }
     }

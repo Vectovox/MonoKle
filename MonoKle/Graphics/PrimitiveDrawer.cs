@@ -2,7 +2,8 @@
 {
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
-using MonoKle.Core;
+
+    using MonoKle.Core;
 
     /// <summary>
     /// Class to easily draw simple primitives.
@@ -11,19 +12,12 @@ using MonoKle.Core;
     {
         private const int MAX_VERTICES = 128;
 
-        private GraphicsDevice graphicsDevice;
-        private VertexPositionColor[] vertexArray = new VertexPositionColor[MAX_VERTICES];
-        private short[] indexArray = new short[MAX_VERTICES];
-
-        private VertexBuffer vertexBuffer;
         private BasicEffect effect;
-
+        private GraphicsDevice graphicsDevice;
+        private short[] indexArray = new short[MAX_VERTICES];
         private int nVertices = 0;
-
-        /// <summary>
-        /// Gets or sets the camera transforming primitive rendering.
-        /// </summary>
-        public Camera2D Camera { get; set; }
+        private VertexPositionColor[] vertexArray = new VertexPositionColor[MAX_VERTICES];
+        private VertexBuffer vertexBuffer;
 
         internal PrimitiveDrawer(GraphicsDevice graphicsDevice)
         {
@@ -40,6 +34,15 @@ using MonoKle.Core;
             }
             this.Camera = new Camera2D(new Vector2Int32(this.graphicsDevice.Viewport.Width, this.graphicsDevice.Viewport.Height));
             this.Camera.Update(0);
+        }
+
+        /// <summary>
+        /// Gets or sets the camera transforming primitive rendering.
+        /// </summary>
+        public Camera2D Camera
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -70,9 +73,7 @@ using MonoKle.Core;
         // TODO: More shapes and stuff
         //public void Draw2DCircle(Vector2 topLeft, Vector2 bottomRight, Color color)
         //{
-
         //}
-
         internal void Render()
         {
             this.effect.Projection = this.Camera.GetTransformMatrix() * Matrix.CreateOrthographicOffCenter(0,

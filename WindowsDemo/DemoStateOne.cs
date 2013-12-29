@@ -143,6 +143,7 @@ namespace WindowsDemo
             Console.WriteLine(MonoKleGame.TextureManager.Load("Assets\\Textures", true) + " textures loaded.");
             Console.WriteLine(MonoKleGame.FontManager.Load("Assets\\Fonts", true) + " fonts loaded.");
             sb = new SpriteBatch(MonoKleGame.GraphicsManager.GetGraphicsDevice());
+            MonoKleGame.PrimitiveDrawer.Camera = camera;
             timer.Reset();
         }
     }

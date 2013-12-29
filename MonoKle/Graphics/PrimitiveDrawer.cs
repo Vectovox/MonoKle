@@ -2,9 +2,7 @@
 {
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
+using MonoKle.Core;
 
     /// <summary>
     /// Class to easily draw simple primitives.
@@ -22,6 +20,11 @@
 
         private int nVertices = 0;
 
+        /// <summary>
+        /// Gets or sets the camera transforming primitive rendering.
+        /// </summary>
+        public Camera2D Camera { get; set; }
+
         internal PrimitiveDrawer(GraphicsDevice graphicsDevice)
         {
             this.graphicsDevice = graphicsDevice;
@@ -35,6 +38,8 @@
             {
                 indexArray[i] = i;
             }
+            this.Camera = new Camera2D(new Vector2Int32(this.graphicsDevice.Viewport.Width, this.graphicsDevice.Viewport.Height));
+            this.Camera.Update(0);
         }
 
         /// <summary>
@@ -70,7 +75,7 @@
 
         internal void Render()
         {
-            this.effect.Projection = Matrix.CreateOrthographicOffCenter(0,
+            this.effect.Projection = this.Camera.GetTransformMatrix() * Matrix.CreateOrthographicOffCenter(0,
                 this.graphicsDevice.Viewport.Width,
                 this.graphicsDevice.Viewport.Height,
                 0,

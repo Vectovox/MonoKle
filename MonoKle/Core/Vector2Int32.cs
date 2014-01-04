@@ -1,13 +1,9 @@
 ﻿namespace MonoKle.Core
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Text;
 
     using Microsoft.Xna.Framework;
 
-    // TODO: Implement GetHashCode()...
     /// <summary>
     /// Two-dimensional Int32-based vector.
     /// </summary>
@@ -32,6 +28,16 @@
         {
             this.X = x;
             this.Y = y;
+        }
+
+        /// <summary>
+        /// Creates a new instance from a floating point vector, rounding down the composants to integer values.
+        /// </summary>
+        /// <param name="vector">The vector to copy values from.</param>
+        public Vector2Int32(Vector2 vector)
+        {
+            this.X = (int)vector.X;
+            this.Y = (int)vector.Y;
         }
 
         /// <summary>
@@ -90,16 +96,6 @@
             return a.X == b.X && a.Y == b.Y;
         }
 
-        public static bool IsWithin(Vector2Int32 vector, Vector2Int32 max)
-        {
-            return IsWithin(vector, Vector2Int32.Zero, max);
-        }
-
-        public static bool IsWithin(Vector2Int32 vector, Vector2Int32 min, Vector2Int32 max)
-        {
-            return vector.X >= min.X && vector.X <= max.X && vector.Y >= min.Y && vector.Y <= max.Y;
-        }
-
         public override bool Equals(object obj)
         {
             if (obj is Vector2Int32)
@@ -112,6 +108,37 @@
         public override int GetHashCode()
         {
             return this.X.GetHashCode() + this.Y.GetHashCode() * 7;
+        }
+
+        /// <summary>
+        /// Returns wether the vector, as a coordinate, is within the area created by (0, 0) and the given bottom right corner.
+        /// </summary>
+        /// <param name="bottomRight">The bottom right corner.</param>
+        /// <returns>True if within the area, else false.</returns>
+        public bool IsWithin(Vector2Int32 bottomRight)
+        {
+            return this.IsWithin(Vector2Int32.Zero, bottomRight);
+        }
+
+        /// <summary>
+        /// Returns wether the vector, as a coordinate, is within the area created by the given top left and bottom right corner.
+        /// </summary>
+        /// <param name="bottomRight">The bottom right corner.</param>
+        /// <param name="topLeft">The top left corner.</param>
+        /// <returns>True if within the area, else false.</returns>
+        public bool IsWithin(Vector2Int32 topLeft, Vector2Int32 bottomRight)
+        {
+            return this.X >= topLeft.X && this.X <= bottomRight.X && this.Y >= topLeft.Y && this.Y <= bottomRight.Y;
+        }
+
+        /// <summary>
+        /// Returns wether the vector, as a coordinate, is within the given area.
+        /// </summary>
+        /// <param name="area">The area to check for.</param>
+        /// <returns>True if within the area, else false.</returns>
+        public bool IsWithin(Rectangle area)
+        {
+            return this.IsWithin(new Vector2Int32(area.Top, area.Left), new Vector2Int32(area.Bottom, area.Right));
         }
 
         public override string ToString()

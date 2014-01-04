@@ -1,8 +1,5 @@
 ﻿namespace MonoKle.Core
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Text;
 
     using Microsoft.Xna.Framework;
@@ -38,6 +35,29 @@
         {
             this.X = x;
             this.Y = y;
+            this.Z = z;
+        }
+
+        /// <summary>
+        /// Creates a new instance from a floating point vector, rounding down to composants to integer values.
+        /// </summary>
+        /// <param name="vector">The vector to copy values from.</param>
+        public Vector3Int32(Vector3 vector)
+        {
+            this.X = (int)vector.X;
+            this.Y = (int)vector.Y;
+            this.Z = (int)vector.Z;
+        }
+
+        /// <summary>
+        /// Creates a new instance.
+        /// </summary>
+        /// <param name="xy">The XY-coordinate.</param>
+        /// <param name="z">Z-coordinate.</param>
+        public Vector3Int32(Vector2Int32 xy, int z)
+        {
+            this.X = xy.X;
+            this.Y = xy.Y;
             this.Z = z;
         }
 

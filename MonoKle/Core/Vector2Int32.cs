@@ -138,7 +138,7 @@
         /// <returns>True if within the area, else false.</returns>
         public bool IsWithin(Rectangle area)
         {
-            return this.IsWithin(new Vector2Int32(area.Top, area.Left), new Vector2Int32(area.Bottom, area.Right));
+            return this.IsWithin(new Vector2Int32(area.Left, area.Top), new Vector2Int32(area.Right, area.Bottom));
         }
 
         public override string ToString()

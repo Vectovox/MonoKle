@@ -6,6 +6,7 @@ using MonoKle.Assets;
 using MonoKle.Core;
 using MonoKle.Graphics;
 using MonoKle.Input;
+using MonoKle.Messaging;
 using MonoKle.State;
 using System;
 
@@ -133,12 +134,26 @@ namespace WindowsDemo
                 camera.SetScale(camera.GetScale() - 0.01f);
             }
 
+            if(MonoKleGame.Keyboard.IsKeyPressed(Keys.M))
+            {
+                MonoKleGame.MessagePasser.SendMessage("testChannel", new MessageEventArgs("I AM HELLO"));
+                MonoKleGame.MessagePasser.SendMessage("noChannel", new MessageEventArgs("I AM NOT HELLO"));
+            }
+
             camera.Update(seconds);
             timer.Update(seconds);
         }
 
+        public void Test(object sender, MessageEventArgs args)
+        {
+            Console.WriteLine(args.Data as string);
+        }
+
         public override void Activated(StateSwitchData data)
         {
+            MonoKleGame.MessagePasser.Subscribe("testChannel", Test);
+            MonoKleGame.MessagePasser.Subscribe("noChannel", Test);
+            MonoKleGame.MessagePasser.Unsubscribe("noChannel", Test);
             Console.WriteLine("State one activated! Message: " + (string)data.Data);
             Console.WriteLine(MonoKleGame.TextureManager.Load("Assets\\Textures", true) + " textures loaded.");
             Console.WriteLine(MonoKleGame.FontManager.Load("Assets\\Fonts", true) + " fonts loaded.");

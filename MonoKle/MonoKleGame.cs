@@ -11,6 +11,7 @@
     using MonoKle.State;
     using MonoKle.Assets;
     using MonoKle.Assets.Font;
+    using MonoKle.Messaging;
 
     public class MonoKleGame : Game
     {
@@ -25,6 +26,7 @@
         public static KeyboardInput Keyboard { get; private set; }
         public static GamePadInput GamePad { get; private set; }
         public static PrimitiveDrawer PrimitiveDrawer { get; private set; }
+        public static MessagePasser MessagePasser { get; private set; }
 
         private static MonoKleGame gameInstance;
         
@@ -46,6 +48,7 @@
             Mouse = new MouseInput();
             GamePad = new GamePadInput();
             Keyboard = new KeyboardInput();
+            MessagePasser = new MessagePasser();
         }
 
         protected override void Draw(GameTime gameTime)

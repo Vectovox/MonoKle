@@ -1,10 +1,10 @@
 ﻿namespace MonoKle.Core
 {
+    using System;
     using System.Text;
 
     using Microsoft.Xna.Framework;
 
-    // TODO: Implement GetHashCode()...
     /// <summary>
     /// Three-dimensional Int32-based vector.
     /// </summary>
@@ -117,6 +117,11 @@
             return a.X == b.X && a.Y == b.Y && a.Z == b.Z;
         }
 
+        /// <summary>
+        /// Returns whether the <see cref="Vector3Int32"/> is equal to the provided object.
+        /// </summary>
+        /// <param name="obj">The object to compare with.</param>
+        /// <returns>True if they are equal, else false.</returns>
         public override bool Equals(object obj)
         {
             if (obj is Vector3Int32)
@@ -126,11 +131,37 @@
             return false;
         }
 
+        /// <summary>
+        /// Returns the hash code representation.
+        /// </summary>
+        /// <returns>Hash code representation.</returns>
         public override int GetHashCode()
         {
             return this.X.GetHashCode() + this.Y.GetHashCode() * 7 + this.Z.GetHashCode() * 11;
         }
 
+        /// <summary>
+        /// Returns the length of the vector.
+        /// </summary>
+        /// <returns>Length of the vector.</returns>
+        public double Length()
+        {
+            return Math.Sqrt(this.LengthSquared());
+        }
+
+        /// <summary>
+        /// Returns the squared length of the vector. Faster than <see cref="Length()"/>.
+        /// </summary>
+        /// <returns>Squared length of the vector.</returns>
+        public double LengthSquared()
+        {
+            return this.X * this.X + this.Y * this.Y + this.Z * this.Z;
+        }
+
+        /// <summary>
+        /// Returns the string representation.
+        /// </summary>
+        /// <returns>String representation.</returns>
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder("( ");

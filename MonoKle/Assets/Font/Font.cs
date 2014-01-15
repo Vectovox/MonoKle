@@ -122,18 +122,17 @@
         {
             Vector2 rowSize = Vector2.Zero;
             Vector2 totalSize = Vector2.Zero;
-
+            
             foreach (char c in text)
             {
                 if (c == '\n')
                 {
-                    if (totalSize.X < rowSize.X)
+                    if(totalSize.X < rowSize.X)
                     {
                         totalSize.X = rowSize.X;
                     }
-                    totalSize.Y += rowSize.Y;
-
-                    rowSize = Vector2.Zero;
+                    rowSize.X = 0;
+                    totalSize.Y += data.Info.Size;
                 }
                 else
                 {
@@ -153,8 +152,7 @@
             {
                 totalSize.X = rowSize.X;
             }
-            totalSize.Y += rowSize.Y;
-
+            totalSize.Y += data.Info.Size;
             return totalSize * scale;
         }
     }

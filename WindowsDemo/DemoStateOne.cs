@@ -86,6 +86,13 @@ namespace WindowsDemo
             MonoKleGame.FontManager.GetFont("TESTFONT").DrawString(sb, "Five",
                 pos, Color.Black);
 
+
+            string s = "Test string\nSecond row";
+            MonoKleGame.FontManager.DefaultFont.DrawString(sb, s, new Vector2(0, 0));
+            MonoKleGame.FontManager.DefaultFont.DrawString(sb, s, new Vector2(0, MonoKleGame.FontManager.DefaultFont.MeasureString(s).Y));
+            MonoKleGame.FontManager.DefaultFont.DrawString(sb, s, new Vector2(MonoKleGame.FontManager.DefaultFont.MeasureString(s).X, 0));
+
+
             sb.End();
         }
 

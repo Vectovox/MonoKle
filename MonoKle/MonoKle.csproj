@@ -56,6 +56,11 @@
     <Compile Include="Input\GamePadInput.cs" />
     <Compile Include="Input\KeyboardInput.cs" />
     <Compile Include="Input\MouseInput.cs" />
+    <Compile Include="Logging\Log.cs" />
+    <Compile Include="Logging\LogAddedEventArgs.cs" />
+    <Compile Include="Logging\LogAddedEventHandler.cs" />
+    <Compile Include="Logging\Logger.cs" />
+    <Compile Include="Logging\Loglevel.cs" />
     <Compile Include="Messaging\MessageEventArgs.cs" />
     <Compile Include="Messaging\MessagePasser.cs" />
     <Compile Include="MonoKleGame.cs" />

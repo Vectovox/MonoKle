@@ -12,6 +12,8 @@
     using MonoKle.Assets;
     using MonoKle.Assets.Font;
     using MonoKle.Messaging;
+    using MonoKle.Logging;
+    using System.IO;
 
     public class MonoKleGame : Game
     {
@@ -27,6 +29,11 @@
         public static GamePadInput GamePad { get; private set; }
         public static PrimitiveDrawer PrimitiveDrawer { get; private set; }
         public static MessagePasser MessagePasser { get; private set; }
+        
+        /// <summary>
+        /// Loggin utility, same as <see cref="Logger.GetGlobalInstance()"/>.
+        /// </summary>
+        public static Logger Logger { get; private set; }
 
         private static MonoKleGame gameInstance;
         
@@ -49,6 +56,15 @@
             GamePad = new GamePadInput();
             Keyboard = new KeyboardInput();
             MessagePasser = new MessagePasser();
+            MonoKleGame.Logger = Logger.GetGlobalInstance();
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            MonoKleGame.Logger.AddLog(e.ExceptionObject.ToString(), LogLevel.Error);
+            FileStream fs = new FileStream("./crashdump.log", FileMode.OpenOrCreate | FileMode.Truncate);
+            MonoKleGame.Logger.WriteLog(fs); // TODO: Remove magic constant. Not into a constants class, but into settings! E.g. Settings.GetValue("crashdump").
         }
 
         protected override void Draw(GameTime gameTime)

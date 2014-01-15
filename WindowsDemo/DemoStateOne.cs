@@ -134,6 +134,12 @@ namespace WindowsDemo
                 camera.SetScale(camera.GetScale() - 0.01f);
             }
 
+            if(MonoKleGame.Keyboard.IsKeyPressed(Keys.F12))
+            {
+                // CRASH ON PURPOSE
+                object o = null; o.Equals(o);
+            }
+
             if(MonoKleGame.Keyboard.IsKeyPressed(Keys.M))
             {
                 MonoKleGame.MessagePasser.SendMessage("testChannel", new MessageEventArgs("I AM HELLO"));

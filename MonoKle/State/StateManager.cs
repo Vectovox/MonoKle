@@ -1,5 +1,6 @@
 ﻿namespace MonoKle.State
 {
+    using MonoKle.Logging;
     using System.Collections.Generic;
 
     /// <summary>
@@ -38,7 +39,7 @@
             }
             else
             {
-                // TODO: Log this
+                Logger.GetGlobalInstance().AddLog("Could not add state. Existing state exists with the identifier: " + identifier, LogLevel.Error);
             }
         }
 
@@ -55,7 +56,7 @@
             }
             else
             {
-                // TODO: Log this
+                Logger.GetGlobalInstance().AddLog("Could not remove state. There is no state with the identifier: " + identifier, LogLevel.Error);
             }
         }
 

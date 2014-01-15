@@ -8,6 +8,7 @@
 
     using MonoKle.Graphics;
     using MonoKle.Resources;
+    using MonoKle.Logging;
 
     /// <summary>
     /// Manages drawable fonts.
@@ -73,14 +74,17 @@
         /// <returns>Integer representing the amount of loaded fonts.</returns>
         public int Load(string path, bool recurse)
         {
+            int nLoaded = 0;
             if (Directory.Exists(path))
             {
-                return LoadDirectory(path, recurse);
+                nLoaded = LoadDirectory(path, recurse);
             }
             else
             {
-                return LoadFile(path);
+                nLoaded = LoadFile(path);
             }
+            Logger.GetGlobalInstance().AddLog("Font loading (" + path + ") complete. " + nLoaded + " font(s) loaded.", LogLevel.Info);
+            return nLoaded;
         }
 
         /// <summary>

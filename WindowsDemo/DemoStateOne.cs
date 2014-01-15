@@ -65,6 +65,16 @@ namespace WindowsDemo
                 new Vector2(400, 300), Color.Green, (float)MonoKleGame.TotalGameTime.TotalSeconds, o, 1f, SpriteEffects.None, 0f);
 
 
+            string s = "Testin size";
+            MonoKleGame.FontManager.DefaultFont.DrawString(sb, s, new Vector2(450, 350), Color.Green);
+            MonoKleGame.FontManager.DefaultFont.DrawString(sb, s, new Vector2(450, 350 + MonoKleGame.FontManager.DefaultFont.MeasureString(s).Y), Color.Green);
+            MonoKleGame.FontManager.DefaultFont.DrawString(sb, s, new Vector2(450, 350 + 2 * MonoKleGame.FontManager.DefaultFont.MeasureString(s).Y), Color.Green);
+
+            string s2 = "Testin size\nLol";
+            MonoKleGame.FontManager.DefaultFont.DrawString(sb, s2, new Vector2(0, 0), Color.Green);
+            MonoKleGame.FontManager.DefaultFont.DrawString(sb, s2, new Vector2(0, 0 + MonoKleGame.FontManager.DefaultFont.MeasureString(s2).Y), Color.Green);
+            MonoKleGame.FontManager.DefaultFont.DrawString(sb, s2, new Vector2(0, 0 + 2 * MonoKleGame.FontManager.DefaultFont.MeasureString(s2).Y), Color.Green);
+
             // Test size measurements.
             Vector2 pos = new Vector2(50, 450);
             MonoKleGame.FontManager.GetFont("TESTFONT").DrawString(sb, "One-",
@@ -86,72 +96,75 @@ namespace WindowsDemo
             MonoKleGame.FontManager.GetFont("TESTFONT").DrawString(sb, "Five",
                 pos, Color.Black);
 
-
-            string s = "Test string\nSecond row";
-            MonoKleGame.FontManager.DefaultFont.DrawString(sb, s, new Vector2(0, 0));
-            MonoKleGame.FontManager.DefaultFont.DrawString(sb, s, new Vector2(0, MonoKleGame.FontManager.DefaultFont.MeasureString(s).Y));
-            MonoKleGame.FontManager.DefaultFont.DrawString(sb, s, new Vector2(MonoKleGame.FontManager.DefaultFont.MeasureString(s).X, 0));
-
-
             sb.End();
         }
 
         public override void Update(double seconds)
         {
-            if (MonoKleGame.Keyboard.IsKeyHeld(Keys.Escape, 1))
+            if (MonoKleGame.Keyboard.IsKeyPressed(Keys.F1))
             {
-                MonoKleGame.GetInstance().Exit();
+                MonoKleGame.Console.IsOpen = !MonoKleGame.Console.IsOpen;
             }
 
-            if (MonoKleGame.Keyboard.IsKeyPressed(Keys.Space))
+            if(MonoKleGame.Console.IsOpen == false)
             {
-                MonoKleGame.StateManager.SwitchState(new StateSwitchData("stateTwo", null));
-            }
 
-            if(MonoKleGame.Keyboard.IsKeyHeld(Keys.I))
-            {
-                camera.SetPosition(camera.GetPosition() + new Vector2(0, -3));
-            }
-            if (MonoKleGame.Keyboard.IsKeyHeld(Keys.K))
-            {
-                camera.SetPosition(camera.GetPosition() + new Vector2(0, 3));
-            }
-            if (MonoKleGame.Keyboard.IsKeyHeld(Keys.J))
-            {
-                camera.SetPosition(camera.GetPosition() + new Vector2(-3, 0));
-            }
-            if (MonoKleGame.Keyboard.IsKeyHeld(Keys.L))
-            {
-                camera.SetPosition(camera.GetPosition() + new Vector2(3, 0));
-            }
-            if (MonoKleGame.Keyboard.IsKeyHeld(Keys.U))
-            {
-                camera.SetRotation(camera.GetRotation() + 0.05f);
-            }
-            if (MonoKleGame.Keyboard.IsKeyHeld(Keys.O))
-            {
-                camera.SetRotation(camera.GetRotation() - 0.05f);
-            }
-            if (MonoKleGame.Keyboard.IsKeyHeld(Keys.Y))
-            {
-                camera.SetScale(camera.GetScale() + 0.01f);
-            }
-            if (MonoKleGame.Keyboard.IsKeyHeld(Keys.H))
-            {
-                camera.SetScale(camera.GetScale() - 0.01f);
-            }
+                if (MonoKleGame.Keyboard.IsKeyHeld(Keys.Escape, 1))
+                {
+                    MonoKleGame.GetInstance().Exit();
+                }
 
-            if(MonoKleGame.Keyboard.IsKeyPressed(Keys.F12))
-            {
-                // CRASH ON PURPOSE
-                object o = null; o.Equals(o);
-            }
+                if (MonoKleGame.Keyboard.IsKeyPressed(Keys.Space))
+                {
+                    MonoKleGame.StateManager.SwitchState(new StateSwitchData("stateTwo", null));
+                }
 
-            if(MonoKleGame.Keyboard.IsKeyPressed(Keys.M))
-            {
-                MonoKleGame.MessagePasser.SendMessage("testChannel", new MessageEventArgs("I AM HELLO"));
-                MonoKleGame.MessagePasser.SendMessage("noChannel", new MessageEventArgs("I AM NOT HELLO"));
+                if (MonoKleGame.Keyboard.IsKeyHeld(Keys.I))
+                {
+                    camera.SetPosition(camera.GetPosition() + new Vector2(0, -3));
+                }
+                if (MonoKleGame.Keyboard.IsKeyHeld(Keys.K))
+                {
+                    camera.SetPosition(camera.GetPosition() + new Vector2(0, 3));
+                }
+                if (MonoKleGame.Keyboard.IsKeyHeld(Keys.J))
+                {
+                    camera.SetPosition(camera.GetPosition() + new Vector2(-3, 0));
+                }
+                if (MonoKleGame.Keyboard.IsKeyHeld(Keys.L))
+                {
+                    camera.SetPosition(camera.GetPosition() + new Vector2(3, 0));
+                }
+                if (MonoKleGame.Keyboard.IsKeyHeld(Keys.U))
+                {
+                    camera.SetRotation(camera.GetRotation() + 0.05f);
+                }
+                if (MonoKleGame.Keyboard.IsKeyHeld(Keys.O))
+                {
+                    camera.SetRotation(camera.GetRotation() - 0.05f);
+                }
+                if (MonoKleGame.Keyboard.IsKeyHeld(Keys.Y))
+                {
+                    camera.SetScale(camera.GetScale() + 0.01f);
+                }
+                if (MonoKleGame.Keyboard.IsKeyHeld(Keys.H))
+                {
+                    camera.SetScale(camera.GetScale() - 0.01f);
+                }
+
+                if (MonoKleGame.Keyboard.IsKeyPressed(Keys.F12))
+                {
+                    // CRASH ON PURPOSE
+                    object o = null; o.Equals(o);
+                }
+
+                if (MonoKleGame.Keyboard.IsKeyPressed(Keys.M))
+                {
+                    MonoKleGame.MessagePasser.SendMessage("testChannel", new MessageEventArgs("I AM HELLO"));
+                    MonoKleGame.MessagePasser.SendMessage("noChannel", new MessageEventArgs("I AM NOT HELLO"));
+                }
             }
+            
 
             camera.Update(seconds);
             timer.Update(seconds);
@@ -162,11 +175,22 @@ namespace WindowsDemo
             Console.WriteLine(args.Data as string);
         }
 
+        public void ConsoleMessage(object sender, MessageEventArgs args)
+        {
+            string data = args.Data as string;
+
+            if(data.Equals("reset timer"))
+            {
+                timer.Reset();
+            }
+        }
+
         public override void Activated(StateSwitchData data)
         {
             MonoKleGame.MessagePasser.Subscribe("testChannel", Test);
             MonoKleGame.MessagePasser.Subscribe("noChannel", Test);
             MonoKleGame.MessagePasser.Unsubscribe("noChannel", Test);
+            MonoKleGame.MessagePasser.Subscribe("CONSOLE", ConsoleMessage);
             Console.WriteLine("State one activated! Message: " + (string)data.Data);
             Console.WriteLine(MonoKleGame.TextureManager.Load("Assets\\Textures", true) + " textures loaded.");
             Console.WriteLine(MonoKleGame.FontManager.Load("Assets\\Fonts", true) + " fonts loaded.");

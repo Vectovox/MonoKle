@@ -1,0 +1,14 @@
+NOTES: MonoKleGame is under development and will change a lot until its first Major release. Do not expect perfect performance, features, or code.
+
+Developing MonoKle is as straight forward as installing MonoGame, OpenAL, and cloning the repository.
+
+For pull requests to the *dev* branch of the main MonoKle repository there are a couple of pointers:
+- StyleCop is followed as much as possible.
+- Code should be readable and public methods/fields/properties shall be documented.
+- Just read some code and you will get a hang of the style! ;)
+- Versioning follows x.x.x.x - Major, Minor, feature, fix. Both Major and Minor may break compatibility with existing code.
+- Although the architecture may change (especially when introducing new features deprecating old ones), it should be kept the same until otherwise noted.
+
+*Phew*
+
+So yeah, the more minor the contribution (maybe some documentation or bug fixes) the higher the chance of it being accepted instantly.

@@ -1,0 +1,9 @@
+NOTES: MonoKleGame is under development and will change a lot until its first Major release. Do not expect perfect performance, features, or code.
+
+Using MonoKle is as straight forward as installing MonoGame, OpenAL, and referencing the .DLL in your
+project.
+
+Some quick pointers:
+- To start a game, in program.cs get an instance of MonoKleGame from MonoKleGame.GetInstance() and call run() on it. (Example source will come later).
+- Everything runs in states and are added via the MonoKleGame.StateManager. It is possible to have a single state, but it is reasonable to have a state for intro, menu, and game (for instance). When you have added your states (which can be done at run-time as well) you have to set the starting state also.
+- ...

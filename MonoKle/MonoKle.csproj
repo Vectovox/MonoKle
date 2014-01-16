@@ -58,6 +58,9 @@
     <Compile Include="Input\GamePadInput.cs" />
     <Compile Include="Input\KeyboardInput.cs" />
     <Compile Include="Input\MouseInput.cs" />
+    <Compile Include="IO\StreamStructReader.cs" />
+    <Compile Include="IO\StreamStructWriter.cs" />
+    <Compile Include="IO\StructIOConstants.cs" />
     <Compile Include="Logging\Log.cs" />
     <Compile Include="Logging\LogAddedEventArgs.cs" />
     <Compile Include="Logging\LogAddedEventHandler.cs" />

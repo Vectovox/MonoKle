@@ -8,27 +8,18 @@
     using System.Text.RegularExpressions;
 
     /// <summary>
-    /// A class for reading textually defined structs.
+    /// A class for reading textually defined structs from stream.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class StreamStructReader<T>
         where T : struct
     {
-        private const string REGEX_ENTRY = REGEX_ENTRY_START + ".*?" + REGEX_ENTRY_END;
-        private const string REGEX_ENTRY_END = "end";
-        private const string REGEX_ENTRY_START = "struct";
-        private const string REGEX_FILEREPLACE = "(#.*?\n)|(\r)|(\n)";
-        private const string REGEX_PARAMETER = "<\\s*.+?\\s*=\\s*.+?\\s*>";
-        private const string REGEX_PARAMETER_NAME = "(.*?<\\s*)|(\\s*=.*?>)";
-        private const string REGEX_PARAMETER_VALUE = "(<.*?=\\s+)|(\\s*>)";
-        private const string REGEX_VALUE_NUMBER = "\\d+";
-
         private bool couldReadStruct;
         private T currentStruct;
         private StreamReader reader;
 
         /// <summary>
-        /// Initiates a new instance of <see cref="StreamStructReader"/>.
+        /// Initiates a new instance of <see cref="StreamStructReader{T}"/>. Assumes control of the stream.
         /// </summary>
         /// <param name="stream">The stream to read from.</param>
         public StreamStructReader(Stream stream)
@@ -47,7 +38,7 @@
         }
 
         /// <summary>
-        /// Closes the <see cref="StreamStructReader"/> and its underlying stream.
+        /// Closes the <see cref="StreamStructReader{T}"/> and its underlying stream.
         /// </summary>
         public void Close()
         {
@@ -139,12 +130,12 @@
         private T PullStruct(string entry)
         {
             object ret = new T();   // Boxed since it is a struct
-            string strippedEntry = Regex.Replace(entry, StreamStructReader<T>.REGEX_FILEREPLACE, "");
-            MatchCollection parameters = Regex.Matches(strippedEntry, StreamStructReader<T>.REGEX_PARAMETER, RegexOptions.IgnoreCase);
+            string strippedEntry = Regex.Replace(entry, StructIOConstants.REGEX_FILEREPLACE, "");
+            MatchCollection parameters = Regex.Matches(strippedEntry, StructIOConstants.REGEX_PARAMETER, RegexOptions.IgnoreCase);
             foreach (Match parameter in parameters)
             {
-                string name = Regex.Replace(parameter.Value, StreamStructReader<T>.REGEX_PARAMETER_NAME, "");
-                string value = Regex.Replace(parameter.Value, StreamStructReader<T>.REGEX_PARAMETER_VALUE, "");
+                string name = Regex.Replace(parameter.Value, StructIOConstants.REGEX_PARAMETER_NAME, "");
+                string value = Regex.Replace(parameter.Value, StructIOConstants.REGEX_PARAMETER_VALUE, "");
                 this.InsertValue(ret, value, name);
             }
             return (T)ret;          // Unboxed
@@ -162,16 +153,16 @@
                 string line = this.reader.ReadLine().Trim();
                 if (line.Length > 0 && line[0] != ';')
                 {
-                    if (Regex.IsMatch(line, StreamStructReader<T>.REGEX_ENTRY_START, RegexOptions.IgnoreCase))
+                    if (Regex.IsMatch(line, StructIOConstants.ENTRY_START, RegexOptions.IgnoreCase))
                     {
                         currentStructText.Clear();
                         currentStructText.Append(line);
                         hasBegin = true;
                     }
-                    else if (hasBegin && Regex.IsMatch(line, StreamStructReader<T>.REGEX_ENTRY_END, RegexOptions.IgnoreCase))
+                    else if (hasBegin && Regex.IsMatch(line, StructIOConstants.ENTRY_END, RegexOptions.IgnoreCase))
                     {
                         currentStructText.Append(line);
-                        Match match = Regex.Match(currentStructText.ToString(), StreamStructReader<T>.REGEX_ENTRY);
+                        Match match = Regex.Match(currentStructText.ToString(), StructIOConstants.REGEX_ENTRY);
                         currentStructText.Clear();
 
                         this.currentStruct = PullStruct(match.Value);

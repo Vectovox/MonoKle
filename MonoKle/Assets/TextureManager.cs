@@ -9,6 +9,7 @@
 
     using MonoKle.Graphics;
     using MonoKle.Resources;
+    using MonoKle.Logging;
 
     /// <summary>
     /// Loads and maintains texture assets.
@@ -45,14 +46,17 @@
 
         public int Load(string path, bool recurse)
         {
+            int nLoaded = 0;
             if (Directory.Exists(path))
             {
-                return LoadDirectory(path, recurse);
+                nLoaded = LoadDirectory(path, recurse);
             }
             else
             {
-                return LoadFile(path);
+                nLoaded = LoadFile(path);
             }
+            Logger.GetGlobalInstance().AddLog("Texture loading (" + path + ") complete. " + nLoaded + " texture(s) loaded.", LogLevel.Info);
+            return nLoaded;
         }
 
         public int Unload(string id)

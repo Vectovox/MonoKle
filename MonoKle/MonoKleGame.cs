@@ -13,6 +13,7 @@
     using MonoKle.Logging;
     using MonoKle.Messaging;
     using MonoKle.State;
+using MonoKle.Script;
 
     /// <summary>
     /// Main game class for MonoKle. Takes care of initiating utilities and making them draw and update themselves.
@@ -33,7 +34,17 @@
             MonoKleGame.MessagePasser = new MessagePasser();
             MonoKleGame.MessagePasser.Subscribe(GameConsole.CHANNEL_ID, MonoKleGame_ConsoleCommand);
             MonoKleGame.Logger = Logger.GetGlobalInstance();
+            MonoKleGame.ScriptInterface = new ScriptInterface();
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+        }
+
+        /// <summary>
+        /// Gets the script interface. Used for scripting.
+        /// </summary>
+        public static ScriptInterface ScriptInterface
+        {
+            get;
+            private set;
         }
 
         /// <summary>
@@ -214,6 +225,22 @@
                     if (s.Equals("exit"))
                     {
                         this.Exit();
+                    } else if(s.StartsWith("run "))
+                    {
+                        // TODO: Quite ugly. Regular expression would be much prettier. Fix whenever the above todo is taking place.
+                        string script = s.Substring(4, s.Length - 4);
+                        Result result = MonoKleGame.ScriptInterface.CallScript(script);
+                        if(result.sucess)
+                        {
+                            if (result.returnValue != null)
+                            {
+                                MonoKleGame.Console.WriteLine("Return value: " + result.returnValue.ToString());
+                            }
+                            else
+                            {
+                                MonoKleGame.Console.WriteLine("Return value: null");
+                            }
+                        }
                     }
                 }
             }

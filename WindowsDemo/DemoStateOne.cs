@@ -165,7 +165,6 @@ namespace WindowsDemo
                 }
             }
             
-
             camera.Update(seconds);
             timer.Update(seconds);
         }
@@ -197,6 +196,7 @@ namespace WindowsDemo
             sb = new SpriteBatch(MonoKleGame.GraphicsManager.GetGraphicsDevice());
             MonoKleGame.PrimitiveDrawer.Camera = camera;
             timer.Reset();
+            MonoKleGame.ScriptInterface.LoadScripts("testscripts.ms");
         }
     }
 }

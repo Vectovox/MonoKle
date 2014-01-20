@@ -52,7 +52,7 @@
 
         private bool FileIsValid(string path)
         {
-            return path.EndsWith(ScriptConstants.SCRIPT_EXTENSION, StringComparison.CurrentCultureIgnoreCase);
+            return path.EndsWith(ScriptBase.SCRIPT_EXTENSION, StringComparison.CurrentCultureIgnoreCase);
         }
 
         private IEnumerable<string> ParseFile(Stream stream)
@@ -69,11 +69,11 @@
                 string line = reader.ReadLine().Trim();
                 if (line.Length > 0 || nBegin != nEnd)
                 {
-                    if (Regex.IsMatch(line, ScriptConstants.REGEX_START_MATCH))
+                    if (Regex.IsMatch(line, ScriptBase.REGEX_START_MATCH))
                     {
                         nBegin++;
                     }
-                    else if (Regex.IsMatch(line, ScriptConstants.REGEX_END_MATCH))
+                    else if (Regex.IsMatch(line, ScriptBase.REGEX_END_MATCH))
                     {
                         nEnd++;
                     }

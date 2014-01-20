@@ -93,7 +93,7 @@
     <Compile Include="Script\Operation.cs" />
     <Compile Include="Script\Script.cs" />
     <Compile Include="Script\ScriptCompiler.cs" />
-    <Compile Include="Script\ScriptConstants.cs" />
+    <Compile Include="Script\ScriptBase.cs" />
     <Compile Include="Script\ScriptInterface.cs" />
     <Compile Include="Script\ScriptReader.cs" />
     <Compile Include="Script\TokenStream.cs" />

@@ -46,6 +46,62 @@
         }
 
         /// <summary>
+        /// Returns a byte array containing the representation of the string input. The string input may maximally have a length of ushort.MaxValue.
+        /// </summary>
+        /// <param name="value">String input value.</param>
+        /// <returns>Byte array.</returns>
+        public static byte[] ToBytes(string value)
+        {
+            if (value.Length > ushort.MaxValue)
+            {
+                throw new System.ArgumentException("Max allowed length of string is ushort.MaxValue.");
+            }
+            byte[] ret = new byte[sizeof(ushort) + value.Length * sizeof(char)];
+            ByteConverter.ToBytes(value, ret, 0);
+            return ret;
+        }
+
+        /// <summary>
+        /// Stores the byte array representation of the string input into an existing array. The string input may maximally have a length of ushort.MaxValue.
+        /// </summary>
+        /// <param name="value">String input.</param>
+        /// <param name="destination">Destination array.</param>
+        /// <param name="startIndex">Start index to store string at.</param>
+        public static void ToBytes(string value, byte[] destination, int startIndex)
+        {
+            if(value.Length > ushort.MaxValue)
+            {
+                throw new System.ArgumentException("Max allowed length of string is ushort.MaxValue.");
+            }
+            ByteConverter.ToBytes((ushort)value.Length, destination, startIndex);
+            System.Buffer.BlockCopy(value.ToCharArray(), 0, destination, startIndex + sizeof(ushort), value.Length * sizeof(char));
+        }
+
+        /// <summary>
+        /// Returns the string value from the provided byte representation.
+        /// </summary>
+        /// <param name="bytes">Byte representation.</param>
+        /// <returns>String.</returns>
+        public static string ToString(byte[] bytes)
+        {
+            return ByteConverter.ToString(bytes, 0);
+        }
+
+        /// <summary>
+        /// Returns the string value from the provided byte representation, starting at the specified index.
+        /// </summary>
+        /// <param name="bytes">Byte representation.</param>
+        /// <param name="startIndex">Index to start at.</param>
+        /// <returns>String.</returns>
+        public static string ToString(byte[] bytes, int startIndex)
+        {
+            ushort length = ByteConverter.ToUInt16(bytes, startIndex);
+            char[] chars = new char[length];
+            System.Buffer.BlockCopy(bytes, startIndex + sizeof(ushort), chars, 0, chars.Length * sizeof(char));
+            return new string(chars);
+        }
+
+        /// <summary>
         /// Returns a byte array containing the representation of the bool input.
         /// </summary>
         /// <param name="value">Bool input value.</param>

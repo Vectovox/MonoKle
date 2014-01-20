@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 namespace MonoKle.Script
 {
-    internal class ScriptConstants
+    internal class ScriptBase
     {
         public const string REGEX_START_MATCH = "(^|\\s+)" + SCRIPT_START + "(\\s+|$)";
         public const string REGEX_END_MATCH = "(^|\\s+)" + SCRIPT_END + "(\\s+|$)";
@@ -35,6 +35,9 @@ namespace MonoKle.Script
 
         // TODO: Write the remaining constants
 
+
+        public const string SCRIPT_STRING_TOKEN = "\"";
+        
         public const string SCRIPT_OPERATOR_GROUPLEFT = "(";
         public const string SCRIPT_OPERATOR_GROUPRIGHT = ")";
         public const string SCRIPT_OPERATOR_ADD = "+";
@@ -78,7 +81,7 @@ namespace MonoKle.Script
         public const byte OP_MODULO = 0x07;
         public const byte OP_POWER = 0x08;
 
-        // Keep extra space to reserve place for more (non logic) binary operators
+        // Keep extra space to reserve place for more (non logic) operators
 
         public const byte OP_EQUAL = 0x10;
         public const byte OP_NOTEQUAL = 0x11;
@@ -87,30 +90,29 @@ namespace MonoKle.Script
         public const byte OP_SMALLER = 0x14;
         public const byte OP_SMALLEREQUAL = 0x15;
 
-        public const byte OP_TYPE_BOOL = 0xE1;
-        public const byte OP_TYPE_INT = 0xE2;
-        public const byte OP_TYPE_FLOAT = 0xE3;
-        public const byte OP_TYPE_STRING = 0xE4;
-        public const byte OP_TYPE_OBJECT = 0xE5;
+        public const byte OP_PRINT = 0x20;
 
+        // Get variable operations
         public const byte OP_GETVAR_BOOL = 0xF6;
         public const byte OP_GETVAR_INT = 0xF7;
         public const byte OP_GETVAR_FLOAT = 0xF8;
         public const byte OP_GETVAR_STRING = 0xF9;
         public const byte OP_GETVAR_OBJECT = 0xFA;
 
+        // Constant value operations
         public const byte OP_CONST_BOOL = 0xFF;
         public const byte OP_CONST_INT = 0xFE;
         public const byte OP_CONST_FLOAT = 0xFD;
         public const byte OP_CONST_STRING = 0xFC;
         public const byte OP_CONST_OBJECT = 0xFB;
 
-        // These are accessed via reflection to create a dictionary.
-        // ALL OPERATIONS MUST START WITH 'OP'
-        //public static readonly Operation OP_RETURN_VOID = new Operation("return", 1, 0);
-        //public static readonly Operation OP_RETURN_VALUE = new Operation("return", 2, 1);
-        //public static readonly Operation OP_SET_VALUE = new Operation("set", 3, 3);
-        //public static readonly Operation OP_SET_VALUE = new Operation("set", 4, 1);
+        // Types        
+        public const byte TYPE_BOOL = 0x01;
+        public const byte TYPE_INT = 0x02;
+        public const byte TYPE_FLOAT = 0x03;
+        public const byte TYPE_STRING = 0x04;
+        public const byte TYPE_OBJECT = 0x05;
+
 
         private static Dictionary<string, byte> opCodeByToken = null;
 
@@ -218,23 +220,23 @@ namespace MonoKle.Script
         {
             if (type == typeof(bool))
             {
-                return ScriptConstants.OP_TYPE_BOOL;
+                return ScriptBase.TYPE_BOOL;
             }
             else if (type == typeof(int))
             {
-                return ScriptConstants.OP_TYPE_INT;
+                return ScriptBase.TYPE_INT;
             }
             else if (type == typeof(float))
             {
-                return ScriptConstants.OP_TYPE_FLOAT;
+                return ScriptBase.TYPE_FLOAT;
             }
             else if (type == typeof(string))
             {
-                return ScriptConstants.OP_TYPE_STRING;
+                return ScriptBase.TYPE_STRING;
             }
             else
             {
-                return ScriptConstants.OP_TYPE_OBJECT;
+                return ScriptBase.TYPE_OBJECT;
             }
         }
 
@@ -242,15 +244,15 @@ namespace MonoKle.Script
         {
             switch(type)
             {
-                case OP_TYPE_BOOL:
+                case TYPE_BOOL:
                     return typeof(bool);
-                case OP_TYPE_INT:
+                case TYPE_INT:
                     return typeof(int);
-                case OP_TYPE_FLOAT:
+                case TYPE_FLOAT:
                     return typeof(float);
-                case OP_TYPE_STRING:
+                case TYPE_STRING:
                     return typeof(string);
-                case OP_TYPE_OBJECT:
+                case TYPE_OBJECT:
                     return typeof(object);
             }
             return null;

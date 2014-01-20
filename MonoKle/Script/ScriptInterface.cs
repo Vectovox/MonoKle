@@ -51,22 +51,29 @@
         {
             ScriptReader reader = new ScriptReader();
             IEnumerable<string> scripts = reader.GetScripts(path, recurse);
+            int nScriptSuccess = 0;
+            int nScriptFail = 0;
+
+            MonoKleGame.Logger.AddLog("Loading " + scripts.Count() + " scripts...", Logging.LogLevel.Info);
             foreach (string source in scripts)
             {
                 Script script = this.compiler.Compile(source);
                 if (script == null)
                 {
-                    MonoKleGame.Logger.AddLog("Script in path (" + path + ") did not compile!", Logging.LogLevel.Error);
+                    nScriptFail++;
                 }
                 else
                 {
                     if (this.scriptByName.ContainsKey(script.Name))
                     {
                         MonoKleGame.Logger.AddLog("Script (" + script.Name + ") has already been defined!", Logging.LogLevel.Error);
+                        nScriptFail++;
                     }
                     else
                     {
                         this.scriptByName.Add(script.Name, script);
+                        MonoKleGame.Logger.AddLog("Script loaded :" + script.Name, Logging.LogLevel.Trace);
+                        nScriptSuccess++;
                         if (script.Channel != null)
                         {
                             if (this.scriptsByChannel.ContainsKey(script.Channel) == false)
@@ -78,6 +85,8 @@
                     }
                 }
             }
+
+            MonoKleGame.Logger.AddLog("...done [" + nScriptSuccess + " successes |" + nScriptFail + " failures ]", Logging.LogLevel.Info);
         }
     }
 }

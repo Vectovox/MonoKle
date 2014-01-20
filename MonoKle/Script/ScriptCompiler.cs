@@ -22,8 +22,6 @@
         private string channel;
         private string name;
 
-        //private const string OPCODE_RESOURCE_NAME = "opcodes";
-        //private Dictionary<string, Operation> operationByName = new Dictionary<string, Operation>();
         private Dictionary<byte, Operation> operationByCode = new Dictionary<byte, Operation>();
 
         // LABELS are used at compile time. Compiler converts labels into memory addresses.
@@ -35,47 +33,6 @@
         private Type returnType;
         private bool sucess;
 
-        //private List<FieldInfo> GetOperationFields(Type type)
-        //{
-        //    FieldInfo[] fieldInfos = type.GetFields(BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy);
-        //    return fieldInfos.Where(f => f.Name.StartsWith("OP")).ToList();
-        //}
-        /// <summary>
-        /// Initializes the compiler.
-        /// </summary>
-        //public void Initialize()
-        //{
-        //List<FieldInfo> constants = this.GetOperationFields(typeof(ScriptConstants));
-        //foreach(FieldInfo c in constants)
-        //{
-        //    Operation o = (Operation)c.GetValue(null);
-        //    this.operationByCode.Add(o.byteCode, o);
-        //}
-        //byte[] file = (byte[])Resources.CompilerResources.ResourceManager.GetObject(OPCODE_RESOURCE_NAME);
-        //MemoryStream stream = new MemoryStream(file);
-        //StreamStructReader<Operation> dataReader = new StreamStructReader<Operation>(stream);
-        //if (dataReader.CanGetStruct())
-        //{
-        //    IEnumerable<Operation> codes = dataReader.GetNextStructs();
-        //    foreach (Operation code in codes)
-        //    {
-        //        if (operationByName.ContainsKey(code.stringToken) || operationByCode.ContainsKey(code.byteCode))
-        //        {
-        //            MonoKleGame.Logger.AddLog("Operation opcode conflicts with existing opcode: " + code.ToString(), Logging.LogLevel.Error);
-        //        }
-        //        else
-        //        {
-        //            operationByName.Add(code.stringToken, code);
-        //            operationByCode.Add(code.byteCode, code);
-        //        }
-        //    }
-        //}
-        //else
-        //{
-        //    MonoKleGame.Logger.AddLog("No opcodes loaded. Script compiler will not work.", Logging.LogLevel.Error);
-        //}
-        //dataReader.Close();
-        //}
         // TODO: This code is kind of hard to read. Consider refactoring.
         // TODO: Seriously. Refactor this, so many clauses down below.
 
@@ -102,7 +59,7 @@
                 // Read lines, but skip empty and commented ones.
                 this.lineCounter++;
                 string line = this.reader.ReadLine().Trim();
-                if (line.Length > 0 && line.StartsWith(ScriptConstants.SCRIPT_COMMENT) == false)
+                if (line.Length > 0 && line.StartsWith(ScriptBase.SCRIPT_COMMENT) == false)
                 {
                     string argument = null;
                     string operation = line;
@@ -116,7 +73,7 @@
                     }
 
                     // Check for specials first
-                    if (Regex.IsMatch(operation, ScriptConstants.SCRIPT_END))
+                    if (Regex.IsMatch(operation, ScriptBase.SCRIPT_END))
                     {
                         if (this.reader.Peek() != -1)
                         {
@@ -145,11 +102,11 @@
             for (int i = 0; i < tokens.Length; i++)
             {
                 // Grouping
-                if (tokens[i].Equals(ScriptConstants.SCRIPT_OPERATOR_GROUPLEFT))
+                if (tokens[i].Equals(ScriptBase.SCRIPT_OPERATOR_GROUPLEFT))
                 {
                     nLeft++;
                 }
-                else if (tokens[i].Equals(ScriptConstants.SCRIPT_OPERATOR_GROUPRIGHT))
+                else if (tokens[i].Equals(ScriptBase.SCRIPT_OPERATOR_GROUPRIGHT))
                 {
                     nRight++;
                 }
@@ -159,21 +116,21 @@
                     return false;
                 }
                 // Operator not next to other operators
-                if(ScriptConstants.IsOperator(tokens[i]) && ScriptConstants.IsGrouping(tokens[i]) == false)
+                if(ScriptBase.IsOperator(tokens[i]) && ScriptBase.IsGrouping(tokens[i]) == false)
                 {
                     if((i == 0 || i >= tokens.Length - 1)
-                        || (ScriptConstants.IsOperator(tokens[i - 1]) && ScriptConstants.IsGrouping(tokens[i - 1]) == false)
-                        || (ScriptConstants.IsOperator(tokens[i + 1]) && ScriptConstants.IsGrouping(tokens[i + 1]) == false))
+                        || (ScriptBase.IsOperator(tokens[i - 1]) && ScriptBase.IsGrouping(tokens[i - 1]) == false)
+                        || (ScriptBase.IsOperator(tokens[i + 1]) && ScriptBase.IsGrouping(tokens[i + 1]) == false))
                     {
                         this.ReportError("Invalid expression. Binary operator missing an operand?");                    
                         return false;
                     }
                 }
                 // Operands next to operators
-                if(ScriptConstants.IsOperand(tokens[i]))
+                if(ScriptBase.IsOperand(tokens[i]))
                 {
-                    if((i > 0 && ScriptConstants.IsOperator(tokens[i - 1]) == false)
-                        || (i < tokens.Length - 1 && ScriptConstants.IsOperator(tokens[i + 1]) == false))
+                    if((i > 0 && ScriptBase.IsOperator(tokens[i - 1]) == false)
+                        || (i < tokens.Length - 1 && ScriptBase.IsOperator(tokens[i + 1]) == false))
                     {
                         this.ReportError("Invalid expression. Operand missing an operator?");
                         return false;
@@ -219,13 +176,13 @@
             }
 
             // From here on expression is correct!
-            if (operation.Equals(ScriptConstants.OP_RETURN_VOIDVALUE_TOKEN))
+            if (operation.Equals(ScriptBase.OP_RETURN_VOIDVALUE_TOKEN))
             {
                 if(argument == null)
                 {
                     if (returnType == typeof(void))
                     {
-                        this.byteCode.AddLast(ScriptConstants.OP_RETURN_VOID);
+                        this.byteCode.AddLast(ScriptBase.OP_RETURN_VOID);
                     }
                     else
                     {
@@ -234,10 +191,10 @@
                 }
                 else
                 {
-                    this.byteCode.AddLast(ScriptConstants.OP_RETURN_VALUE);
-                    if (ScriptConstants.IsReturnTypeCompatible(argumentType, this.returnType))
+                    this.byteCode.AddLast(ScriptBase.OP_RETURN_VALUE);
+                    if (ScriptBase.IsReturnTypeCompatible(argumentType, this.returnType))
                     {
-                        this.byteCode.AddLast(ScriptConstants.TypeToByte(argumentType));
+                        this.byteCode.AddLast(ScriptBase.TypeToByte(argumentType));
                         foreach(byte b in argumentByteCode)
                         {
                             this.byteCode.AddLast(b);
@@ -249,6 +206,10 @@
                     }
                 }
             }
+            else
+            {
+                this.ReportError("Unrecognized operation.");
+            }
         }
 
         private byte[] CompileExpression(string[] tokens)
@@ -256,22 +217,27 @@
             LinkedList<byte> bytes = new LinkedList<byte>();
             foreach (string s in tokens)
             {
-                if(ScriptConstants.IsOperand(s))
+                if(ScriptBase.IsOperand(s))
                 {
                     byte[] valueBytes = null;
-                    if(ScriptConstants.TokenIsInt(s))
+                    if(ScriptBase.TokenIsInt(s))
                     {
-                        bytes.AddLast(ScriptConstants.OP_CONST_INT);
+                        bytes.AddLast(ScriptBase.OP_CONST_INT);
                         valueBytes = Utilities.ByteConverter.ToBytes(Int32.Parse(s));
-                    } else if(ScriptConstants.TokenIsFloat(s))
+                    } else if(ScriptBase.TokenIsFloat(s))
                     {
-                        bytes.AddLast(ScriptConstants.OP_CONST_FLOAT);
+                        bytes.AddLast(ScriptBase.OP_CONST_FLOAT);
                         valueBytes = Utilities.ByteConverter.ToBytes(Single.Parse(s));
                     }
-                    else if (ScriptConstants.TokenIsBool(s))
+                    else if (ScriptBase.TokenIsBool(s))
                     {
-                        bytes.AddLast(ScriptConstants.OP_CONST_BOOL);
+                        bytes.AddLast(ScriptBase.OP_CONST_BOOL);
                         valueBytes = Utilities.ByteConverter.ToBytes(Boolean.Parse(s));
+                    }
+                    else if (ScriptBase.TokenIsString(s))
+                    {
+                        bytes.AddLast(ScriptBase.OP_CONST_STRING);
+                        valueBytes = Utilities.ByteConverter.ToBytes(s);
                     }
                     else
                     {
@@ -288,9 +254,9 @@
                 }
                 else
                 {
-                    if (ScriptConstants.TokenHasOPCode(s))
+                    if (ScriptBase.TokenHasOPCode(s))
                     {
-                        byte code = ScriptConstants.TokenToOPCode(s);
+                        byte code = ScriptBase.TokenToOPCode(s);
                         bytes.AddLast(code);
                     }
                     else
@@ -304,18 +270,9 @@
 
         private Type GetDominantType(string[] tokens, ref int index)
         {
-            // SOME KIND OF TREE? YES. TREES ARE AWESOME
-            //
-            //        =  
-            //    >      false
-            //  1   5.0
-            // 
-            // DAMN IM GOOD :3
-            // = > 5 6 false
-
             Type type = null;
             string token = tokens[index];
-            if (ScriptConstants.IsLogicOperator(token))
+            if (ScriptBase.IsLogicOperator(token))
             {
                 index++;
                 Type leftType = GetDominantType(tokens, ref index);
@@ -324,13 +281,13 @@
                 if(leftType != null && rightType != null)
                 {
                     // See if comparable
-                    if(ScriptConstants.IsMathTypeCompatible(leftType, rightType))
+                    if(ScriptBase.IsMathTypeCompatible(leftType, rightType))
                     {
                         type = typeof(bool);
                     }
                 }
             }
-            else if (ScriptConstants.IsOperator(token))
+            else if (ScriptBase.IsOperator(token))
             {
                 index++;
                 Type leftType = GetDominantType(tokens, ref index);
@@ -339,7 +296,7 @@
                 if (leftType != null && rightType != null)
                 {
                     // See if comparable
-                    if (ScriptConstants.IsMathTypeCompatible(leftType, rightType))
+                    if (ScriptBase.IsMathTypeCompatible(leftType, rightType))
                     {
                         if(leftType == typeof(float) || rightType == typeof(float))
                         {
@@ -350,12 +307,16 @@
                             type = leftType;    // Just chosen arbitrarily
                         }
                     }
+                    else if(leftType == typeof(string) || rightType == typeof(string))
+                    {
+                        type = typeof(string);
+                    }
                 }
             }
             else
             {
                 index++;
-                Type t = ScriptConstants.GetTokenType(token);
+                Type t = ScriptBase.GetTokenType(token);
                 if(t == null)
                 {
                     if (variableByName.ContainsKey(token))
@@ -367,89 +328,7 @@
                 type = t;
             }
 
-
             return type;
-
-
-
-
-            //Type type = null;
-            //foreach(string t in tokens)
-            //{
-            //    // 5 + 5 > 10
-            //    // TODO: Evaluate on all sides of logical operators individually
-            //    if (ScriptConstants.IsLogicOperator(t))
-            //    {
-            //        type = typeof(bool);
-            //    }
-            //    else if (ScriptConstants.IsOperand(t))
-            //    {
-            //        if (ScriptConstants.TokenIsInt(t))
-            //        {
-            //            if (type == null)
-            //            {
-            //                type = typeof(int);
-            //            }
-            //            else if (type.Equals(typeof(bool)) || type.Equals(typeof(string)) || type.Equals(typeof(object)))
-            //            {
-            //                return null;
-            //            }
-            //        }
-            //        else if (ScriptConstants.TokenIsFloat(t))
-            //        {
-            //            if (type == null || type == typeof(int))
-            //            {
-            //                type = typeof(float);
-            //            }
-            //            else if (type.Equals(typeof(bool)) || type.Equals(typeof(string)) || type.Equals(typeof(object)))
-            //            {
-            //                return null;
-            //            }
-            //        }
-            //        else if (ScriptConstants.TokenIsBool(t))
-            //        {
-            //            if (type != null && type != typeof(bool))
-            //            {
-            //                return null;
-            //            }
-            //            else
-            //            {
-            //                type = typeof(bool);
-            //            }
-            //        }
-            //        else if (Regex.IsMatch(t, "^\"[a-zA-Z0-9]+\"$"))
-            //        {
-            //            if (type.Equals(typeof(object)))
-            //            {
-            //                return null;
-            //            }
-            //            else
-            //            {
-            //                type = typeof(string);
-            //            }
-            //        }
-            //        else
-            //        {
-            //            if (variableByName.ContainsKey(t))
-            //            {
-            //                Variable v = variableByName[t];
-            //                if (type == null)
-            //                {
-            //                    type = v.type;
-            //                }
-            //                else
-            //                {
-            //                    return null;
-            //                }
-            //            }
-            //            else
-            //            {
-            //                return null;
-            //            }
-            //        }
-            //    }
-            //}
-            //return type;
         }
 
         private string[] InfixToPrefix(string[] tokens)
@@ -461,18 +340,18 @@
             {
                 if (tokens[i].Length > 0 && tokens[i] != " ")
                 {
-                    if (ScriptConstants.IsOperand(tokens[i]))
+                    if (ScriptBase.IsOperand(tokens[i]))
                     {
                         prefix.Push(tokens[i]);
                     }
                     else
                     {
-                        if (tokens[i] == ScriptConstants.SCRIPT_OPERATOR_GROUPLEFT)
+                        if (tokens[i] == ScriptBase.SCRIPT_OPERATOR_GROUPLEFT)
                         {
                             while (operatorStack.Count > 0)// && ScriptConstants.OperatorHiearchy(operatorStack.Peek()) >= ScriptConstants.OperatorHiearchy(tokens[i]))
                             {
                                 string pop = operatorStack.Pop();
-                                if (pop == ScriptConstants.SCRIPT_OPERATOR_GROUPRIGHT)
+                                if (pop == ScriptBase.SCRIPT_OPERATOR_GROUPRIGHT)
                                 {
                                     break;
                                 }
@@ -484,9 +363,9 @@
                         }
                         else
                         {
-                            int hiearchyStack = operatorStack.Count > 0 ? ScriptConstants.OperatorHiearchy(operatorStack.Peek()) : 0;
-                            int hiearchyToken = operatorStack.Count > 0 ? ScriptConstants.OperatorHiearchy(tokens[i]) : 0;
-                            while (operatorStack.Count > 0 && hiearchyStack < hiearchyToken && operatorStack.Peek() != ScriptConstants.SCRIPT_OPERATOR_GROUPRIGHT)
+                            int hiearchyStack = operatorStack.Count > 0 ? ScriptBase.OperatorHiearchy(operatorStack.Peek()) : 0;
+                            int hiearchyToken = operatorStack.Count > 0 ? ScriptBase.OperatorHiearchy(tokens[i]) : 0;
+                            while (operatorStack.Count > 0 && hiearchyStack < hiearchyToken && operatorStack.Peek() != ScriptBase.SCRIPT_OPERATOR_GROUPRIGHT)
                             {
                                 string pop = operatorStack.Pop();
                                 prefix.Push(pop);
@@ -518,6 +397,10 @@
                     if (parts.Length >= 4)
                     {
                         this.channel = parts[3];
+                    }
+                    if (this.returnType == null)
+                    {
+                        this.ReportError("Invalid return type specified in header.");
                     }
                 }
                 else
@@ -559,23 +442,17 @@
             this.byteCode = new LinkedList<byte>();
         }
 
-        private byte[] StringToBytes(string str)
-        {
-            byte[] bytes = new byte[str.Length * sizeof(char)];
-            System.Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
-            return bytes;
-        }
-
         private string[] TokenizeArgument(string argument)
         {
-            string splitter = "(" + ScriptConstants.SCRIPT_OPERATOR_GROUPLEFT_REGEX + "|" + ScriptConstants.SCRIPT_OPERATOR_GROUPRIGHT_REGEX
-                + "|" + ScriptConstants.SCRIPT_OPERATOR_ADD_REGEX + "|" + ScriptConstants.SCRIPT_OPERATOR_SUBTRACT_REGEX
-                + "|" + ScriptConstants.SCRIPT_OPERATOR_MULTIPLY_REGEX + "|" + ScriptConstants.SCRIPT_OPERATOR_DIVIDE_REGEX
-                + "|" + ScriptConstants.SCRIPT_OPERATOR_POWER_REGEX + "|" + ScriptConstants.SCRIPT_OPERATOR_MODULO_REGEX
-                + "|" + ScriptConstants.SCRIPT_OPERATOR_LOGIC_SMALLER_REGEX + "|" + ScriptConstants.SCRIPT_OPERATOR_LOGIC_SMALLEREQUAL_REGEX
-                + "|" + ScriptConstants.SCRIPT_OPERATOR_LOGIC_LARGER_REGEX + "|" + ScriptConstants.SCRIPT_OPERATOR_LOGIC_LARGEREQUAL_REGEX
-                + "|" + ScriptConstants.SCRIPT_OPERATOR_LOGIC_EQUAL_REGEX + "|" + ScriptConstants.SCRIPT_OPERATOR_LOGIC_NOTEQUAL_REGEX + "|\\s)";
-
+            string splitter = "(" + ScriptBase.SCRIPT_STRING_TOKEN + "[^" + ScriptBase.SCRIPT_STRING_TOKEN + "]*" + ScriptBase.SCRIPT_STRING_TOKEN
+                + "|" + ScriptBase.SCRIPT_OPERATOR_GROUPLEFT_REGEX + "|" + ScriptBase.SCRIPT_OPERATOR_GROUPRIGHT_REGEX
+                + "|" + ScriptBase.SCRIPT_OPERATOR_ADD_REGEX + "|" + ScriptBase.SCRIPT_OPERATOR_SUBTRACT_REGEX
+                + "|" + ScriptBase.SCRIPT_OPERATOR_MULTIPLY_REGEX + "|" + ScriptBase.SCRIPT_OPERATOR_DIVIDE_REGEX
+                + "|" + ScriptBase.SCRIPT_OPERATOR_POWER_REGEX + "|" + ScriptBase.SCRIPT_OPERATOR_MODULO_REGEX
+                + "|" + ScriptBase.SCRIPT_OPERATOR_LOGIC_SMALLER_REGEX + "|" + ScriptBase.SCRIPT_OPERATOR_LOGIC_SMALLEREQUAL_REGEX
+                + "|" + ScriptBase.SCRIPT_OPERATOR_LOGIC_LARGER_REGEX + "|" + ScriptBase.SCRIPT_OPERATOR_LOGIC_LARGEREQUAL_REGEX
+                + "|" + ScriptBase.SCRIPT_OPERATOR_LOGIC_EQUAL_REGEX + "|" + ScriptBase.SCRIPT_OPERATOR_LOGIC_NOTEQUAL_REGEX + "|\\s)";
+            // Space is needed to remove spaces.
             string[] tokens = Regex.Split(argument, splitter).Where(t => t.Length > 0 && t != " ").ToArray();
             return tokens;
         }
@@ -597,6 +474,10 @@
             else if (type.Equals("void"))
             {
                 return "System.Void";
+            }
+            else if (type.Equals("string"))
+            {
+                return "System.String";
             }
             return "";
         }

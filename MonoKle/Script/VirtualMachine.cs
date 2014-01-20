@@ -1,5 +1,6 @@
 ﻿namespace MonoKle.Script
 {
+    using MonoKle.Utilities;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -7,12 +8,9 @@
 
     internal class VirtualMachine
     {
-
-
         private int pc;
         private byte[] code;
         private bool error;
-        private bool done;
         private string scriptName;
         private Type returnType;
 
@@ -27,13 +25,14 @@
 
                 switch(opCode)
                 {
-                    case ScriptConstants.OP_RETURN_VOID:
+                    case ScriptBase.OP_RETURN_VOID:
                         return this.CreateResult(null);
-                    case ScriptConstants.OP_RETURN_VALUE:
+                    case ScriptBase.OP_RETURN_VALUE:
                         {
                             byte typeByte = code[pc++];
-                            Type type = ScriptConstants.ByteToType(typeByte);
-                            if(type == script.ReturnType)
+                            Type type = ScriptBase.ByteToType(typeByte);
+
+                            if(ScriptBase.IsReturnTypeCompatible(type, this.returnType))
                             {
                                 byte firstOperation = code[pc++];
                                 return this.CreateResult(this.CalculateExpression(firstOperation));
@@ -61,7 +60,7 @@
         {
             switch(initialOperation)
             {
-                case ScriptConstants.OP_SMALLER:
+                case ScriptBase.OP_SMALLER:
                     {
                         byte lhOP = this.code[pc++];
                         object lhRet = CalculateExpression(lhOP);
@@ -78,7 +77,7 @@
                             return SmallerObject(lhRet, rhRet);
                         }
                     } break;
-                case ScriptConstants.OP_SMALLEREQUAL:
+                case ScriptBase.OP_SMALLEREQUAL:
                     {
                         byte lhOP = this.code[pc++];
                         object lhRet = CalculateExpression(lhOP);
@@ -95,7 +94,7 @@
                             return SmallerEqualObject(lhRet, rhRet);
                         }
                     } break;
-                case ScriptConstants.OP_LARGER:
+                case ScriptBase.OP_LARGER:
                     {
                         byte lhOP = this.code[pc++];
                         object lhRet = CalculateExpression(lhOP);
@@ -112,7 +111,7 @@
                             return GreaterObject(lhRet, rhRet);
                         }
                     } break;
-                case ScriptConstants.OP_LARGEREQUAL:
+                case ScriptBase.OP_LARGEREQUAL:
                     {
                         byte lhOP = this.code[pc++];
                         object lhRet = CalculateExpression(lhOP);
@@ -129,7 +128,7 @@
                             return GreaterEqualObject(lhRet, rhRet);
                         }
                     } break;
-                case ScriptConstants.OP_EQUAL:
+                case ScriptBase.OP_EQUAL:
                     {
                         byte lhOP = this.code[pc++];
                         object lhRet = CalculateExpression(lhOP);
@@ -146,7 +145,7 @@
                             return lhRet.Equals(rhRet);
                         }
                     }break;
-                case ScriptConstants.OP_ADD:
+                case ScriptBase.OP_ADD:
                     {
                         byte lhOP = this.code[pc++];
                         object lhRet = CalculateExpression(lhOP);
@@ -163,7 +162,7 @@
                             return AddObject(lhRet, rhRet);
                         }
                     } break;
-                case ScriptConstants.OP_SUBTRACT:
+                case ScriptBase.OP_SUBTRACT:
                     {
                         byte lhOP = this.code[pc++];
                         object lhRet = CalculateExpression(lhOP);
@@ -180,7 +179,7 @@
                             return SubtractObject(lhRet, rhRet);
                         }
                     } break;
-                case ScriptConstants.OP_DIVIDE:
+                case ScriptBase.OP_DIVIDE:
                     {
                         byte lhOP = this.code[pc++];
                         object lhRet = CalculateExpression(lhOP);
@@ -197,7 +196,7 @@
                             return DivideObject(lhRet, rhRet);
                         }
                     } break;
-                case ScriptConstants.OP_MULTIPLY:
+                case ScriptBase.OP_MULTIPLY:
                     {
                         byte lhOP = this.code[pc++];
                         object lhRet = CalculateExpression(lhOP);
@@ -214,7 +213,7 @@
                             return MultiplyObject(lhRet, rhRet);
                         }
                     } break;
-                case ScriptConstants.OP_POWER:
+                case ScriptBase.OP_POWER:
                     {
                         byte lhOP = this.code[pc++];
                         object lhRet = CalculateExpression(lhOP);
@@ -231,20 +230,22 @@
                             return PowerObject(lhRet, rhRet);
                         }
                     } break;
-                case ScriptConstants.OP_CONST_BOOL:
-                    return Utilities.ByteConverter.ToBoolean(this.code, pc++);
-                case ScriptConstants.OP_CONST_INT:
-                    pc += 4;
-                    return Utilities.ByteConverter.ToInt32(this.code, pc - 4);
-                case ScriptConstants.OP_CONST_FLOAT:
-                    pc += 4;
-                    return Utilities.ByteConverter.ToFloat32(this.code, pc - 4);
-                case ScriptConstants.OP_CONST_STRING:
-                    this.ReportError("Not implemented!");
-                    break;
+                case ScriptBase.OP_CONST_BOOL:
+                    pc += sizeof(bool);
+                    return ByteConverter.ToBoolean(this.code, pc - sizeof(bool));
+                case ScriptBase.OP_CONST_INT:
+                    pc += sizeof(int);
+                    return ByteConverter.ToInt32(this.code, pc - sizeof(int));
+                case ScriptBase.OP_CONST_FLOAT:
+                    pc += sizeof(float);
+                    return ByteConverter.ToFloat32(this.code, pc - sizeof(float));
+                case ScriptBase.OP_CONST_STRING:
+                    string s = ByteConverter.ToString(this.code, pc);
+                    pc += s.Length * sizeof(char) + sizeof(ushort);
+                    return s.Remove(0, 1).Remove(s.Length - 2, 1);
                 default:
                     {
-                        this.ReportError("Encountered unrecognized operation in expression.");
+                        this.ReportError("Encountered unrecognized expression operation.");
                     }break;
             }
 
@@ -501,7 +502,7 @@
 
         private void ReportError(string message)
         {
-            MonoKleGame.Logger.AddLog("Script runtime error in " + this.scriptName + ": " + message, Logging.LogLevel.Error);
+            MonoKleGame.Logger.AddLog("[" + this.scriptName + "] Script runtime error: " + message, Logging.LogLevel.Error);
             this.error = true;
         }
 

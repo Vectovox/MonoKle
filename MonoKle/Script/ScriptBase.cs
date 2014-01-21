@@ -5,6 +5,8 @@ namespace MonoKle.Script
 {
     internal class ScriptBase
     {
+        // TODO: Refactor all of  this baby!
+
         public const string REGEX_START_MATCH = "(^|\\s+)" + SCRIPT_START + "(\\s+|$)";
         public const string REGEX_END_MATCH = "(^|\\s+)" + SCRIPT_END + "(\\s+|$)";
         public const string REGEX_ALLOWED_NAME_CHARACTERS = "(\\s|[a-zA-Z0-9_])+";
@@ -68,6 +70,8 @@ namespace MonoKle.Script
         public const string SCRIPT_OPERATOR_LOGIC_SMALLER_REGEX = "<";
         public const string SCRIPT_OPERATOR_LOGIC_SMALLEREQUAL_REGEX = "<=";
 
+        public const int SCRIPT_MAX_VARIABLES = byte.MaxValue;
+
         public const byte OP_NONE = 0x00;
 
         public const string OP_RETURN_VOIDVALUE_TOKEN = "return";
@@ -91,15 +95,31 @@ namespace MonoKle.Script
         public const byte OP_SMALLEREQUAL = 0x15;
 
         public const byte OP_PRINT = 0x20;
+        public const string OP_PRINT_TOKEN = "print";
 
-        // Get variable operations
-        public const byte OP_GETVAR_BOOL = 0xF6;
-        public const byte OP_GETVAR_INT = 0xF7;
-        public const byte OP_GETVAR_FLOAT = 0xF8;
-        public const byte OP_GETVAR_STRING = 0xF9;
-        public const byte OP_GETVAR_OBJECT = 0xFA;
+        // Initiate/Get/Set variable operations
+        public const byte OP_INIVAR = 0xE0;
+        public const byte OP_SETVAR = 0xE1;
+        public const byte OP_GETVAR = 0xE2;
+        //public const byte OP_GETVAR_BOOL = 0xE0;
+        //public const byte OP_GETVAR_INT = 0xE1;
+        //public const byte OP_GETVAR_FLOAT = 0xE2;
+        //public const byte OP_GETVAR_STRING = 0xE3;
+        //public const byte OP_GETVAR_OBJECT = 0xE4;
 
-        // Constant value operations
+        //public const byte OP_SETVAR_BOOL = 0xE5;
+        //public const byte OP_SETVAR_INT = 0xE6;
+        //public const byte OP_SETVAR_FLOAT = 0xE7;
+        //public const byte OP_SETVAR_STRING = 0xE8;
+        //public const byte OP_SETVAR_OBJECT = 0xE9;
+
+        //public const byte OP_INIVAR_BOOL = 0xEA;
+        //public const byte OP_INIVAR_INT = 0xEB;
+        //public const byte OP_INIVAR_FLOAT = 0xEC;
+        //public const byte OP_INIVAR_STRING = 0xED;
+        //public const byte OP_INIVAR_OBJECT = 0xEE;
+
+        // Constant operations
         public const byte OP_CONST_BOOL = 0xFF;
         public const byte OP_CONST_INT = 0xFE;
         public const byte OP_CONST_FLOAT = 0xFD;
@@ -123,6 +143,11 @@ namespace MonoKle.Script
                 InitializeOpCodeByToken();
             }
             return opCodeByToken.ContainsKey(token);
+        }
+
+        public static bool IsSupportedVariableType(string variable)
+        {
+            return Regex.IsMatch(variable, "^(int|float|string|bool)$"); // TODO: Break out into constants
         }
 
         public static bool TokenIsBool(string token)
@@ -157,7 +182,6 @@ namespace MonoKle.Script
                 return typeof(string);
             return null;
         }
-
 
         public static bool IsMathTypeCompatible(Type left, Type right)
         {

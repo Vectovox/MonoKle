@@ -102,6 +102,20 @@
         }
 
         /// <summary>
+        /// Returns the string value from the provided byte representation, starting at the specified index.
+        /// </summary>
+        /// <param name="bytes">Byte representation.</param>
+        /// <param name="startIndex">Index to start at.</param>
+        /// <param name="bytesRead">Bytes read.</param>
+        /// <returns>String.</returns>
+        public static string ToString(byte[] bytes, int startIndex, out int bytesRead)
+        {
+            ushort length = ByteConverter.ToUInt16(bytes, startIndex);
+            bytesRead = sizeof(ushort) + length * sizeof(char);
+            return ByteConverter.ToString(bytes, startIndex);
+        }
+
+        /// <summary>
         /// Returns a byte array containing the representation of the bool input.
         /// </summary>
         /// <param name="value">Bool input value.</param>

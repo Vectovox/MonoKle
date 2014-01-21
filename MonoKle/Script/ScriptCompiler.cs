@@ -80,11 +80,94 @@
                             this.ReportError("Unexpected end of script reached.");
                         }
                     }
+                    else if(ScriptBase.IsSupportedVariableType(operation))  // TODO: Break this and below out and put in compile line.
+                    {
+                        this.CompileNewVariable(operation, argument);
+                    }
+                    else if(operation.Equals("set")) // TODO: Make nicer
+                    {
+                        if (Regex.IsMatch(argument, "^[a-zA-Z0-9]+\\s*:.+$")) // TODO: This is only valid for ints. Floats need a decimal also.
+                        {
+                            string[] s = argument.Split(':');
+                            string name = s[0].Trim();
+                            if (this.variableByName.ContainsKey(name))
+                            {
+                                Type expressionType = null;
+                                byte[] expressionCode;
+                                if (this.ExpressionToByteCode(s[1], out expressionType, out expressionCode))
+                                {
+                                    Variable var = this.variableByName[name];
+                                    this.byteCode.AddLast(ScriptBase.OP_SETVAR);
+                                    this.byteCode.AddLast(var.number);
+                                    foreach (byte b in expressionCode)
+                                    {
+                                        this.byteCode.AddLast(b);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                this.ReportError("Variable (" + s[0] + ") has not been declared yet.");
+                            }
+                        }
+                        else
+                        {
+                            this.ReportError("Variable not declared properly.");
+                        }
+                    }
                     else
                     {
                         this.CompileLine(operation, argument);
                     }
                 }
+            }
+        }
+
+        private void CompileNewVariable(string type, string argument)
+        {
+            if (this.variableByName.Count < ScriptBase.SCRIPT_MAX_VARIABLES)
+            {
+                Type variableType = Type.GetType(this.TypeAlias(type));
+
+                if (variableType == typeof(int) || true) // TODO: Below code can be before/after, so not to repeat all these things
+                {
+                    if (Regex.IsMatch(argument, "^[a-zA-Z0-9]+\\s*:.+$")) // TODO: This is only valid for ints. Floats need a decimal also.
+                    {
+                        string[] s = argument.Split(':');
+                        string name = s[0].Trim();
+                        if (this.variableByName.ContainsKey(name) == false)
+                        {
+                            Type expressionType = null;
+                            byte[] expressionCode;
+                            if (this.ExpressionToByteCode(s[1], out expressionType, out expressionCode))
+                            {
+                                byte number = (byte)this.variableByName.Count;
+                                this.variableByName.Add(name, new Variable(expressionType, number));
+                                this.byteCode.AddLast(ScriptBase.OP_INIVAR);
+                                this.byteCode.AddLast(number);
+                                foreach (byte b in expressionCode)
+                                {
+                                    this.byteCode.AddLast(b);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            this.ReportError("Variable name (" + s[0] + ") conflicts with existing variable.");
+                        }
+                    }
+                    else
+                    {
+                        this.ReportError("Variable not declared properly.");
+                    }
+                }
+                else
+                {
+                    this.ReportError("Type declaration not implemented yet!");
+                }
+            } else
+            {
+                this.ReportError("Maximum amount of variables (" + ScriptBase.SCRIPT_MAX_VARIABLES + ") reached.");
             }
         }
 
@@ -146,36 +229,47 @@
             return true;
         }
 
-        private void CompileLine(string operation, string argument)
+        private bool ExpressionToByteCode(string expression, out Type type, out byte[] byteCode)
         {
-            string[] infixArgument = null;
-            string[] prefixArgument = null;
+            string[] infixTokens = this.TokenizeExpression(expression);
+            type = null;
+            byteCode = null;
+            
+            if (this.CheckExpressionValidity(infixTokens) == false)
+            {
+                this.ReportError("Invalid expression, type mismatch.");
+                return false;
+            }
+
+            string[] prefixTokens = this.InfixToPrefix(infixTokens);
+
+            int index = 0;
+            type = this.GetDominantType(prefixTokens, ref index);
+
+            if (type == null)
+            {
+                this.ReportError("Invalid expression, type mismatch.");
+                return false;
+            }
+
+            byteCode = this.CompileExpression(prefixTokens);
+            return true;
+        }
+
+        private void CompileLine(string operation, string argument)
+        {   
             Type argumentType = null;
-            byte[] argumentByteCode = null;
+            byte[] expressionCode = null;
 
             if(argument != null)
             {
-                infixArgument = this.TokenizeArgument(argument);
-                
-                if (this.CheckExpressionValidity(infixArgument) == false)
+                if(this.ExpressionToByteCode(argument, out argumentType, out expressionCode) == false)
                 {
                     return;
                 }
-                
-                prefixArgument = this.InfixToPrefix(infixArgument);
-                int index = 0;
-                argumentType = this.GetDominantType(prefixArgument, ref index);
-                
-                if(argumentType == null)
-                {
-                    this.ReportError("Invalid expression, type mismatch.");
-                    return;
-                }
-
-                argumentByteCode = this.CompileExpression(prefixArgument);
             }
 
-            // From here on expression is correct!
+            // From here on expression is evaluated to be correct
             if (operation.Equals(ScriptBase.OP_RETURN_VOIDVALUE_TOKEN))
             {
                 if(argument == null)
@@ -195,7 +289,7 @@
                     if (ScriptBase.IsReturnTypeCompatible(argumentType, this.returnType))
                     {
                         this.byteCode.AddLast(ScriptBase.TypeToByte(argumentType));
-                        foreach(byte b in argumentByteCode)
+                        foreach(byte b in expressionCode)
                         {
                             this.byteCode.AddLast(b);
                         }
@@ -203,6 +297,21 @@
                     else
                     {
                         this.ReportError("Script does not return " + argumentType.Name + ". It expects: " + this.returnType.Name);
+                    }
+                }
+            }
+            else if (operation.Equals(ScriptBase.OP_PRINT_TOKEN))
+            {
+                if(argument == null)
+                {
+                    this.ReportError("Missing argument.");
+                }
+                else
+                {
+                    this.byteCode.AddLast(ScriptBase.OP_PRINT);
+                    foreach (byte b in expressionCode)
+                    {
+                        this.byteCode.AddLast(b);
                     }
                 }
             }
@@ -239,9 +348,10 @@
                         bytes.AddLast(ScriptBase.OP_CONST_STRING);
                         valueBytes = Utilities.ByteConverter.ToBytes(s);
                     }
-                    else
+                    else if (this.variableByName.ContainsKey(s))
                     {
-                        this.ReportError("Expression invalid. Unrecognized type of operand.");
+                        bytes.AddLast(ScriptBase.OP_GETVAR);
+                        valueBytes = new byte[] { this.variableByName[s].number };
                     }
 
                     if (valueBytes != null)
@@ -250,6 +360,10 @@
                         {
                             bytes.AddLast(valueBytes[i]);
                         }
+                    }
+                    else
+                    {
+                        this.ReportError("Expression invalid. Unrecognized type of operand.");
                     }
                 }
                 else
@@ -309,6 +423,7 @@
                     }
                     else if(leftType == typeof(string) || rightType == typeof(string))
                     {
+                        // Gives support for adding other values to strings.
                         type = typeof(string);
                     }
                 }
@@ -323,6 +438,10 @@
                     {
                         Variable v = variableByName[token];
                         t = v.type;
+                    }
+                    else
+                    {
+                        this.ReportError("Variable (" + token + ") could not be found.");
                     }
                 }
                 type = t;
@@ -442,7 +561,7 @@
             this.byteCode = new LinkedList<byte>();
         }
 
-        private string[] TokenizeArgument(string argument)
+        private string[] TokenizeExpression(string argument)
         {
             string splitter = "(" + ScriptBase.SCRIPT_STRING_TOKEN + "[^" + ScriptBase.SCRIPT_STRING_TOKEN + "]*" + ScriptBase.SCRIPT_STRING_TOKEN
                 + "|" + ScriptBase.SCRIPT_OPERATOR_GROUPLEFT_REGEX + "|" + ScriptBase.SCRIPT_OPERATOR_GROUPRIGHT_REGEX

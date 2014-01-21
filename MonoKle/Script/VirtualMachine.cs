@@ -13,6 +13,7 @@
         private bool error;
         private string scriptName;
         private Type returnType;
+        private object[] variables;
 
         public Result RunScript(Script script)
         {
@@ -41,7 +42,19 @@
                             {
                                 this.ReportError("Encountered mismatched return type.");
                             }
-                        }break;
+                        } break;
+                    case ScriptBase.OP_PRINT:
+                        {
+                            byte firstOperation = code[pc++];
+                            MonoKleGame.Console.WriteLine(this.CalculateExpression(firstOperation).ToString());
+                        } break;
+                    case ScriptBase.OP_INIVAR:
+                    case ScriptBase.OP_SETVAR:
+                        {
+                            byte number = code[pc++];
+                            byte firstOperation = code[pc++];
+                            this.variables[number] = this.CalculateExpression(firstOperation);
+                        } break;
                     default:
                         this.ReportError("Encountered unrecognized operation.");
                         break;
@@ -240,9 +253,14 @@
                     pc += sizeof(float);
                     return ByteConverter.ToFloat32(this.code, pc - sizeof(float));
                 case ScriptBase.OP_CONST_STRING:
-                    string s = ByteConverter.ToString(this.code, pc);
-                    pc += s.Length * sizeof(char) + sizeof(ushort);
-                    return s.Remove(0, 1).Remove(s.Length - 2, 1);
+                    {
+                        int bytesRead = 0;
+                        string s = ByteConverter.ToString(this.code, pc, out bytesRead);
+                        pc += bytesRead;
+                        return s.Remove(0, 1).Remove(s.Length - 2, 1);  // Removes the string indication characters
+                    }
+                case ScriptBase.OP_GETVAR:
+                    return this.variables[this.code[pc++]];
                 default:
                     {
                         this.ReportError("Encountered unrecognized expression operation.");
@@ -513,6 +531,7 @@
             this.error = false;
             this.scriptName = script.Name;
             this.returnType = script.ReturnType;
+            this.variables = new object[script.NVariables];
         }
     }
 

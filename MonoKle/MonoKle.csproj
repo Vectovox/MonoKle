@@ -96,7 +96,6 @@
     <Compile Include="Script\ScriptBase.cs" />
     <Compile Include="Script\ScriptInterface.cs" />
     <Compile Include="Script\ScriptReader.cs" />
-    <Compile Include="Script\TokenStream.cs" />
     <Compile Include="Script\Variable.cs" />
     <Compile Include="State\GameState.cs" />
     <Compile Include="State\StateSwitchData.cs" />

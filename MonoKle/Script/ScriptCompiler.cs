@@ -86,7 +86,7 @@
                     }
                     else if(operation.Equals("set")) // TODO: Make nicer
                     {
-                        if (Regex.IsMatch(argument, "^[a-zA-Z0-9]+\\s*:.+$")) // TODO: This is only valid for ints. Floats need a decimal also.
+                        if (Regex.IsMatch(argument, "^[a-zA-Z0-9]+\\s*:.+$"))
                         {
                             string[] s = argument.Split(':');
                             string name = s[0].Trim();
@@ -336,7 +336,7 @@
                     } else if(ScriptBase.TokenIsFloat(s))
                     {
                         bytes.AddLast(ScriptBase.OP_CONST_FLOAT);
-                        valueBytes = Utilities.ByteConverter.ToBytes(Single.Parse(s));
+                        valueBytes = Utilities.ByteConverter.ToBytes(Single.Parse(s, System.Globalization.CultureInfo.InvariantCulture));
                     }
                     else if (ScriptBase.TokenIsBool(s))
                     {

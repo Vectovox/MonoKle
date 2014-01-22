@@ -1,10 +1,10 @@
 ﻿script void test > testChannel
 
-float height : 1.8
-int weight : 80
+int x: 27
+float y: 0.5
 
-float bmi : weight / height^2
+string s: "Banan: " + x * y
 
-print "Your bmi is: " + bmis
+print "Stringen" + s
 
 endscript

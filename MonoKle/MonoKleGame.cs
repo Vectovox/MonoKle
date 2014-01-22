@@ -14,6 +14,7 @@
     using MonoKle.Messaging;
     using MonoKle.State;
 using MonoKle.Script;
+    using System.Text.RegularExpressions;
 
     /// <summary>
     /// Main game class for MonoKle. Takes care of initiating utilities and making them draw and update themselves.
@@ -227,9 +228,26 @@ using MonoKle.Script;
                         this.Exit();
                     } else if(s.StartsWith("run "))
                     {
-                        // TODO: Quite ugly. Regular expression would be much prettier. Fix whenever the above todo is taking place.
                         string script = s.Substring(4, s.Length - 4);
-                        Result result = MonoKleGame.ScriptInterface.CallScript(script);
+                        string[] argumentStrings = Regex.Split(script,
+                            ScriptBase.SCRIPT_STRING_TOKEN + "[^" + ScriptBase.SCRIPT_STRING_TOKEN + "]*" + ScriptBase.SCRIPT_STRING_TOKEN + "|\\s");
+
+                        object[] arguments = new object[argumentStrings.Length - 1];
+                        for (int i = 1; i < argumentStrings.Length; i++)
+                        {
+                            if (ScriptBase.TokenIsBool(argumentStrings[i]))
+                                arguments[i-1] = bool.Parse(argumentStrings[i]);
+                            else if (ScriptBase.TokenIsInt(argumentStrings[i]))
+                                arguments[i-1] = int.Parse(argumentStrings[i]);
+                            else if (ScriptBase.TokenIsFloat(argumentStrings[i]))
+                                arguments[i-1] = float.Parse(argumentStrings[i], System.Globalization.CultureInfo.InvariantCulture);
+                            else if (ScriptBase.TokenIsString(argumentStrings[i]))
+                                arguments[i-1] = argumentStrings[i];
+                            else
+                                MonoKleGame.Console.WriteLine("Warning: Unrecognized type as argument. Using null.");
+                        }
+
+                        Result result = MonoKleGame.ScriptInterface.CallScript(argumentStrings[0], arguments);
                         if(result.sucess)
                         {
                             if (result.returnValue != null)

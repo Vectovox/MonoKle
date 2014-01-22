@@ -28,12 +28,12 @@
             return ret;
         }
 
-        public Result CallScript(string name)
+        public Result CallScript(string name, params object[] arguments)
         {
             if (scriptByName.ContainsKey(name))
             {
                 MonoKleGame.Logger.AddLog("Running script: " + name, Logging.LogLevel.Debug);
-                return vm.RunScript(scriptByName[name]);
+                return vm.RunScript(scriptByName[name], arguments);
             }
             else
             {

@@ -6,40 +6,12 @@ namespace MonoKle.Script
     internal class ScriptBase
     {
         // TODO: Refactor all of  this baby!
-
-        public const string REGEX_START_MATCH = "(^|\\s+)" + SCRIPT_START + "(\\s+|$)";
-        public const string REGEX_END_MATCH = "(^|\\s+)" + SCRIPT_END + "(\\s+|$)";
-        public const string REGEX_ALLOWED_NAME_CHARACTERS = "(\\s|[a-zA-Z0-9_])+";
-
         public const string SCRIPT_START = "script";
         public const string SCRIPT_END = "endscript";
         public const string SCRIPT_EXTENSION = ".ms";
         public const string SCRIPT_COMMENT = ";";
-
-
-        /*
-         *             if (Regex.IsMatch(token, "(!)"))
-                return 2;
-            if (Regex.IsMatch(token, "(\\*|/|%)"))
-                return 3;
-            if (Regex.IsMatch(token, "(\\+|-)"))
-                return 4;
-            if (Regex.IsMatch(token, "(<|<=|>|>=)"))
-                return 6;
-            if (Regex.IsMatch(token, "(=|!=)"))
-                return 7;
-            if (Regex.IsMatch(token, "(=|!=)"))
-                return 8;
-            if (Regex.IsMatch(token, "&&"))
-                return 11;
-            if (Regex.IsMatch(token, "||"))
-         */
-
-        // TODO: Write the remaining constants
-
-
         public const string SCRIPT_STRING_TOKEN = "\"";
-        
+
         public const string SCRIPT_OPERATOR_GROUPLEFT = "(";
         public const string SCRIPT_OPERATOR_GROUPRIGHT = ")";
         public const string SCRIPT_OPERATOR_ADD = "+";
@@ -69,6 +41,33 @@ namespace MonoKle.Script
         public const string SCRIPT_OPERATOR_LOGIC_LARGEREQUAL_REGEX = ">=";
         public const string SCRIPT_OPERATOR_LOGIC_SMALLER_REGEX = "<";
         public const string SCRIPT_OPERATOR_LOGIC_SMALLEREQUAL_REGEX = "<=";
+
+        public const string SCRIPT_TYPE_ALLOWEDTYPES_REGEX = "(bool|int|float|string)";
+        
+
+        public const string REGEX_START_MATCH = "(^|\\s+)" + SCRIPT_START + "(\\s+|$)";
+        public const string REGEX_END_MATCH = "(^|\\s+)" + SCRIPT_END + "(\\s+|$)";
+        
+        public const string SCRIPT_NAMES_ALLOWEDNAMES_REGEX = "[A-Za-z0-9_]+";
+        
+        public const string SCRIPT_HEADER_TYPE_ALLOWEDTYPES_REGEX = "(void|bool|int|float|string)";
+        public const string SCRIPT_HEADER_ARGUMENT_REGEX = SCRIPT_TYPE_ALLOWEDTYPES_REGEX + "\\s+" + SCRIPT_NAMES_ALLOWEDNAMES_REGEX;
+        public const string SCRIPT_HEADER_ARGUMENTS_REGEX = "\\(\\s*(|" + SCRIPT_HEADER_ARGUMENT_REGEX + "|"
+            + SCRIPT_HEADER_ARGUMENT_REGEX + "(\\s*" + SCRIPT_ARGUMENT_SEPARATOR + "\\s*" + SCRIPT_HEADER_ARGUMENT_REGEX + ")*)*\\s*\\)";
+        
+        public const string SCRIPT_HEADER_SPECIFICATION_REGEX = "^\\s*" + SCRIPT_START + "\\s+" + SCRIPT_HEADER_TYPE_ALLOWEDTYPES_REGEX
+            + "\\s+" + SCRIPT_NAMES_ALLOWEDNAMES_REGEX + "\\s*" + SCRIPT_HEADER_ARGUMENTS_REGEX + "\\s*($|" + SCRIPT_CHANNEL_PREFIX + "\\s*" +
+            SCRIPT_NAMES_ALLOWEDNAMES_REGEX + "\\s*$)";
+
+        public const string SCRIPT_HEADER_TYPE_MATCH_REGEX = "(?<=^\\s*" + SCRIPT_START + "\\s+)" + SCRIPT_HEADER_TYPE_ALLOWEDTYPES_REGEX;
+        public const string SCRIPT_HEADER_NAME_MATCH_REGEX = "(?<=^\\s*" + SCRIPT_START + "\\s+" + SCRIPT_HEADER_TYPE_ALLOWEDTYPES_REGEX
+            + "\\s+)" + SCRIPT_NAMES_ALLOWEDNAMES_REGEX;
+        public const string SCRIPT_HEADER_ARGUMENTS_MATCH_REGEX = "(?<=\\(\\s*).*(?=\\s*\\))";
+        public const string SCRIPT_HEADER_CHANNEL_MATCH_REGEX = "(?<=" + SCRIPT_CHANNEL_PREFIX + "\\s*)" + SCRIPT_NAMES_ALLOWEDNAMES_REGEX;
+
+        public const string SCRIPT_ARGUMENT_SEPARATOR = ",";
+        public const string SCRIPT_CHANNEL_PREFIX = ">";
+
 
         public const int SCRIPT_MAX_VARIABLES = byte.MaxValue;
 
@@ -101,23 +100,6 @@ namespace MonoKle.Script
         public const byte OP_INIVAR = 0xE0;
         public const byte OP_SETVAR = 0xE1;
         public const byte OP_GETVAR = 0xE2;
-        //public const byte OP_GETVAR_BOOL = 0xE0;
-        //public const byte OP_GETVAR_INT = 0xE1;
-        //public const byte OP_GETVAR_FLOAT = 0xE2;
-        //public const byte OP_GETVAR_STRING = 0xE3;
-        //public const byte OP_GETVAR_OBJECT = 0xE4;
-
-        //public const byte OP_SETVAR_BOOL = 0xE5;
-        //public const byte OP_SETVAR_INT = 0xE6;
-        //public const byte OP_SETVAR_FLOAT = 0xE7;
-        //public const byte OP_SETVAR_STRING = 0xE8;
-        //public const byte OP_SETVAR_OBJECT = 0xE9;
-
-        //public const byte OP_INIVAR_BOOL = 0xEA;
-        //public const byte OP_INIVAR_INT = 0xEB;
-        //public const byte OP_INIVAR_FLOAT = 0xEC;
-        //public const byte OP_INIVAR_STRING = 0xED;
-        //public const byte OP_INIVAR_OBJECT = 0xEE;
 
         // Constant operations
         public const byte OP_CONST_BOOL = 0xFF;

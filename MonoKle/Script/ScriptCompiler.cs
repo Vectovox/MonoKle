@@ -12,18 +12,12 @@
 
     internal class ScriptCompiler
     {
-        private const int HEADER_MAX_PARTS = 4;
-        private const int HEADER_MIN_PARTS = 3;
-        private const string REGEX_CHANNEL = "(?<=.*:\\s*)([A-Za-z0-9_]+)";
-        private const string REGEX_HEADER_CHECK = "(^\\s*)(script\\s+)([A-Za-z0-9_]+\\s+)([A-Za-z0-9_]+\\s*)($|(>\\s*)([A-Za-z0-9_]+))(\\s*$)";
-        private const string REGEX_NAME = "(?<=(script\\s+))([A-Za-z0-9_]+)(?=($|\\s))";
-
         private LinkedList<byte> byteCode;
         private string channel;
         private string name;
 
         private Dictionary<byte, Operation> operationByCode = new Dictionary<byte, Operation>();
-
+        private LinkedList<Type> arguments = new LinkedList<Type>();
         // LABELS are used at compile time. Compiler converts labels into memory addresses.
         // Flow:
         // 1. Pass through script and convert labels into memory addresses
@@ -49,7 +43,7 @@
             this.ProcessLines();
             this.reader.Close();
 
-            return this.sucess ? new Script(this.name, this.returnType, this.channel, this.byteCode.ToArray(), (byte)variableByName.Count) : null;
+            return this.sucess ? new Script(this.name, this.returnType, this.channel, this.byteCode.ToArray(), (byte)variableByName.Count, arguments.ToArray()) : null;
         }
 
         private void ProcessLines()
@@ -88,13 +82,14 @@
                     {
                         if (Regex.IsMatch(argument, "^[a-zA-Z0-9]+\\s*:.+$"))
                         {
-                            string[] s = argument.Split(':');
-                            string name = s[0].Trim();
+                            int firstDivider = argument.IndexOf(':');
+                            string name = argument.Substring(0, firstDivider).Trim();
+                            string expression = argument.Substring(firstDivider + 1, argument.Length - firstDivider - 1).Trim();
                             if (this.variableByName.ContainsKey(name))
                             {
                                 Type expressionType = null;
                                 byte[] expressionCode;
-                                if (this.ExpressionToByteCode(s[1], out expressionType, out expressionCode))
+                                if (this.ExpressionToByteCode(expression, out expressionType, out expressionCode))
                                 {
                                     Variable var = this.variableByName[name];
                                     this.byteCode.AddLast(ScriptBase.OP_SETVAR);
@@ -107,7 +102,7 @@
                             }
                             else
                             {
-                                this.ReportError("Variable (" + s[0] + ") has not been declared yet.");
+                                this.ReportError("Variable (" + name + ") has not been declared yet.");
                             }
                         }
                         else
@@ -131,15 +126,16 @@
 
                 if (variableType == typeof(int) || true) // TODO: Below code can be before/after, so not to repeat all these things
                 {
-                    if (Regex.IsMatch(argument, "^[a-zA-Z0-9]+\\s*:.+$")) // TODO: This is only valid for ints. Floats need a decimal also.
+                    if (Regex.IsMatch(argument, "^[a-zA-Z0-9]+\\s*:.+$"))
                     {
-                        string[] s = argument.Split(':');
-                        string name = s[0].Trim();
+                        int firstDivider = argument.IndexOf(':');
+                        string name = argument.Substring(0, firstDivider).Trim();
+                        string expression = argument.Substring(firstDivider + 1, argument.Length - firstDivider - 1).Trim();
                         if (this.variableByName.ContainsKey(name) == false)
                         {
                             Type expressionType = null;
                             byte[] expressionCode;
-                            if (this.ExpressionToByteCode(s[1], out expressionType, out expressionCode))
+                            if (this.ExpressionToByteCode(expression, out expressionType, out expressionCode))
                             {
                                 byte number = (byte)this.variableByName.Count;
                                 this.variableByName.Add(name, new Variable(expressionType, number));
@@ -153,7 +149,7 @@
                         }
                         else
                         {
-                            this.ReportError("Variable name (" + s[0] + ") conflicts with existing variable.");
+                            this.ReportError("Variable name (" + name + ") conflicts with existing variable.");
                         }
                     }
                     else
@@ -503,21 +499,50 @@
             return prefix.ToArray();
         }
 
+        private void AddVariable(string name, Type type)
+        {
+            if (this.variableByName.Count < ScriptBase.SCRIPT_MAX_VARIABLES)
+            {
+                if (this.variableByName.ContainsKey(name) == false)
+                {
+                    this.variableByName.Add(name, new Variable(type, (byte)variableByName.Count));
+                }
+                else
+                {
+                    this.ReportError("Invalid return type specified in header.");
+                }
+            }
+            else
+            {
+                this.ReportError("Maximum amount of variables reached.");
+            }
+        }
+
         private void ProcessHeader()
         {
             if(this.reader.Peek() != -1)
             {
                 string header = this.reader.ReadLine();
-                if(Regex.IsMatch(header, ScriptCompiler.REGEX_HEADER_CHECK))
+                if (Regex.IsMatch(header, ScriptBase.SCRIPT_HEADER_SPECIFICATION_REGEX))
                 {
-                    string[] parts = header.Split(new char[] { ' ', '>' }, StringSplitOptions.RemoveEmptyEntries);
-                    this.returnType = Type.GetType(this.TypeAlias(parts[1]));
-                    this.name = parts[2];
-                    if (parts.Length >= 4)
+                    this.returnType = Type.GetType(this.TypeAlias(Regex.Match(header, ScriptBase.SCRIPT_HEADER_TYPE_MATCH_REGEX).Value));
+                    if (this.returnType != null)
                     {
-                        this.channel = parts[3];
+                        this.name = Regex.Match(header, ScriptBase.SCRIPT_HEADER_NAME_MATCH_REGEX).Value;
+                        string arguments = Regex.Match(header, ScriptBase.SCRIPT_HEADER_ARGUMENTS_MATCH_REGEX).Value;
+                        this.channel = Regex.Match(header, ScriptBase.SCRIPT_HEADER_CHANNEL_MATCH_REGEX).Value;
+
+                        foreach(string s in Regex.Split(arguments, ScriptBase.SCRIPT_ARGUMENT_SEPARATOR))
+                        {
+                            string[] sArray = s.Split(new char[]{' '}, StringSplitOptions.RemoveEmptyEntries);
+                            string type = sArray[0].Trim();
+                            string name = sArray[1].Trim();
+                            Type varType = Type.GetType(this.TypeAlias(type));
+                            this.AddVariable(name, varType);
+                            this.arguments.AddLast(varType);
+                        }
                     }
-                    if (this.returnType == null)
+                    else
                     {
                         this.ReportError("Invalid return type specified in header.");
                     }

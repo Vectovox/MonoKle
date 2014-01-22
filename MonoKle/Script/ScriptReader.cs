@@ -69,26 +69,29 @@
                 string line = reader.ReadLine().Trim();
                 if (line.Length > 0 || nBegin != nEnd)
                 {
-                    if (Regex.IsMatch(line, ScriptBase.REGEX_START_MATCH))
+                    if (line.StartsWith(ScriptBase.SCRIPT_COMMENT) == false)
                     {
-                        nBegin++;
-                    }
-                    else if (Regex.IsMatch(line, ScriptBase.REGEX_END_MATCH))
-                    {
-                        nEnd++;
-                    }
+                        if (Regex.IsMatch(line, ScriptBase.REGEX_START_MATCH))
+                        {
+                            nBegin++;
+                        }
+                        else if (Regex.IsMatch(line, ScriptBase.REGEX_END_MATCH))
+                        {
+                            nEnd++;
+                        }
 
-                    if (nBegin > 0 && nBegin == nEnd)
-                    {
-                        currentText.Append(line);
-                        scripts.AddLast(currentText.ToString());
-                        currentText.Clear();
-                        nBegin = 0;
-                        nEnd = 0;
-                    }
-                    else
-                    {
-                        currentText.AppendLine(line);
+                        if (nBegin > 0 && nBegin == nEnd)
+                        {
+                            currentText.Append(line);
+                            scripts.AddLast(currentText.ToString());
+                            currentText.Clear();
+                            nBegin = 0;
+                            nEnd = 0;
+                        }
+                        else
+                        {
+                            currentText.AppendLine(line);
+                        }
                     }
                 }
             }

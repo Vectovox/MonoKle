@@ -1,15 +1,16 @@
-﻿;script void test
-;
-;int x: 27
-;float y: 0.5
-;string s : "Banan: " + x * y
-;print(s)
-;
-;endscript
+﻿script void test()
+
+string s : test2(5, 6) + 2 + 7 * (5 - 2)
+
+endscript
 
 
 
-script void test ( int x, int y )
+
+
+script void test2 ( int x, int y )
+
 print x
 print y
+
 endscript

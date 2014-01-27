@@ -1,4 +1,4 @@
-﻿namespace MonoKle.Script
+﻿namespace MonoKle.Scripting
 {
     using System;
     using System.Collections.Generic;
@@ -9,41 +9,42 @@
     using System.Text.RegularExpressions;
 
     using MonoKle.IO;
+    using MonoKle.Scripting.Script;
 
-    internal class ScriptCompiler
+    internal class Compiler
     {
         private LinkedList<byte> byteCode;
-        private string channel;
-        private string name;
-
-        private Dictionary<byte, Operation> operationByCode = new Dictionary<byte, Operation>();
         private LinkedList<Type> arguments = new LinkedList<Type>();
+        private StringReader reader;
+        private bool sucess;
+        private Header header;
+
         // LABELS are used at compile time. Compiler converts labels into memory addresses.
         // Flow:
         // 1. Pass through script and convert labels into memory addresses
         // 2. Second pass: when encountering an operation utilizing a label, the operation fetches the address it represents and uses that as bytecode
         // When jumping to label,
-        private StringReader reader;
-        private Type returnType;
-        private bool sucess;
 
         // TODO: This code is kind of hard to read. Consider refactoring.
         // TODO: Seriously. Refactor this, so many clauses down below.
 
-        // TODO: Check to see that there is an endscript.
         private Dictionary<string, Variable> variableByName;
         private int lineCounter;
 
-        public Script Compile(string source)
+        public ByteScript Compile(Source source, Dictionary<string, Header> existingHeaders)
         {
-            this.Reset();
-            this.reader = new StringReader(source);
+            this.Reset(source);
+            this.reader = new StringReader(source.Text);
 
-            this.ProcessHeader();
+            foreach(Argument argument in source.Header.arguments)
+            {
+                this.AddVariable(argument.name, argument.type);
+            }
+
             this.ProcessLines();
             this.reader.Close();
 
-            return this.sucess ? new Script(this.name, this.returnType, this.channel, this.byteCode.ToArray(), (byte)variableByName.Count, arguments.ToArray()) : null;
+            return this.sucess ? new ByteScript(source.Header, this.byteCode.ToArray(), (byte)variableByName.Count) : null;
         }
 
         private void ProcessLines()
@@ -122,7 +123,7 @@
         {
             if (this.variableByName.Count < ScriptBase.SCRIPT_MAX_VARIABLES)
             {
-                Type variableType = Type.GetType(this.TypeAlias(type));
+                Type variableType = Type.GetType(ScriptBase.TypeAlias(type));
 
                 if (variableType == typeof(int) || true) // TODO: Below code can be before/after, so not to repeat all these things
                 {
@@ -270,19 +271,19 @@
             {
                 if(argument == null)
                 {
-                    if (returnType == typeof(void))
+                    if (this.header.returnType == typeof(void))
                     {
                         this.byteCode.AddLast(ScriptBase.OP_RETURN_VOID);
                     }
                     else
                     {
-                        this.ReportError("No return value specified. Expected: " + this.returnType.Name);
+                        this.ReportError("No return value specified. Expected: " + this.header.returnType);
                     }
                 }
                 else
                 {
                     this.byteCode.AddLast(ScriptBase.OP_RETURN_VALUE);
-                    if (ScriptBase.IsReturnTypeCompatible(argumentType, this.returnType))
+                    if (ScriptBase.IsReturnTypeCompatible(argumentType, this.header.returnType))
                     {
                         this.byteCode.AddLast(ScriptBase.TypeToByte(argumentType));
                         foreach(byte b in expressionCode)
@@ -292,7 +293,7 @@
                     }
                     else
                     {
-                        this.ReportError("Script does not return " + argumentType.Name + ". It expects: " + this.returnType.Name);
+                        this.ReportError("Script does not return " + argumentType.Name + ". It expects: " + this.header.returnType.Name);
                     }
                 }
             }
@@ -518,69 +519,24 @@
             }
         }
 
-        private void ProcessHeader()
-        {
-            if(this.reader.Peek() != -1)
-            {
-                string header = this.reader.ReadLine();
-                if (Regex.IsMatch(header, ScriptBase.SCRIPT_HEADER_SPECIFICATION_REGEX))
-                {
-                    this.returnType = Type.GetType(this.TypeAlias(Regex.Match(header, ScriptBase.SCRIPT_HEADER_TYPE_MATCH_REGEX).Value));
-                    if (this.returnType != null)
-                    {
-                        this.name = Regex.Match(header, ScriptBase.SCRIPT_HEADER_NAME_MATCH_REGEX).Value;
-                        string arguments = Regex.Match(header, ScriptBase.SCRIPT_HEADER_ARGUMENTS_MATCH_REGEX).Value;
-                        this.channel = Regex.Match(header, ScriptBase.SCRIPT_HEADER_CHANNEL_MATCH_REGEX).Value;
-
-                        foreach(string s in Regex.Split(arguments, ScriptBase.SCRIPT_ARGUMENT_SEPARATOR))
-                        {
-                            string[] sArray = s.Split(new char[]{' '}, StringSplitOptions.RemoveEmptyEntries);
-                            string type = sArray[0].Trim();
-                            string name = sArray[1].Trim();
-                            Type varType = Type.GetType(this.TypeAlias(type));
-                            this.AddVariable(name, varType);
-                            this.arguments.AddLast(varType);
-                        }
-                    }
-                    else
-                    {
-                        this.ReportError("Invalid return type specified in header.");
-                    }
-                }
-                else
-                {
-                    this.ReportError("Header not correctly specified.");
-                }
-            }
-            else
-            {
-                this.ReportError("No header present.");
-            }
-        }
-
         private void ReportError(string message)
         {
             this.sucess = false;
             StringBuilder sb = new StringBuilder();
             sb.Append("Compilation error on line ");
             sb.Append(this.lineCounter);
-            if(this.name != null)
-            {
-                sb.Append(" in ");
-                sb.Append(this.name);
-            }
+            sb.Append(" in ");
+            sb.Append(this.header.name);
             sb.Append(": ");
             sb.Append(message);
             MonoKleGame.Logger.AddLog(sb.ToString(), Logging.LogLevel.Error);
         }
 
-        private void Reset()
+        private void Reset(Source source)
         {
             this.reader = null;
             this.sucess = true;
-            this.name = null;
-            this.returnType = null;
-            this.channel = null;
+            this.header = source.Header;
             this.lineCounter = 0;
             this.variableByName = new Dictionary<string, Variable>(byte.MaxValue);
             this.byteCode = new LinkedList<byte>();
@@ -589,6 +545,7 @@
         private string[] TokenizeExpression(string argument)
         {
             string splitter = "(" + ScriptBase.SCRIPT_STRING_TOKEN + "[^" + ScriptBase.SCRIPT_STRING_TOKEN + "]*" + ScriptBase.SCRIPT_STRING_TOKEN
+                + "|" + ScriptBase.SCRIPT_NAMES_ALLOWEDNAMES_REGEX + "\\(.*?\\)"
                 + "|" + ScriptBase.SCRIPT_OPERATOR_GROUPLEFT_REGEX + "|" + ScriptBase.SCRIPT_OPERATOR_GROUPRIGHT_REGEX
                 + "|" + ScriptBase.SCRIPT_OPERATOR_ADD_REGEX + "|" + ScriptBase.SCRIPT_OPERATOR_SUBTRACT_REGEX
                 + "|" + ScriptBase.SCRIPT_OPERATOR_MULTIPLY_REGEX + "|" + ScriptBase.SCRIPT_OPERATOR_DIVIDE_REGEX
@@ -596,34 +553,9 @@
                 + "|" + ScriptBase.SCRIPT_OPERATOR_LOGIC_SMALLER_REGEX + "|" + ScriptBase.SCRIPT_OPERATOR_LOGIC_SMALLEREQUAL_REGEX
                 + "|" + ScriptBase.SCRIPT_OPERATOR_LOGIC_LARGER_REGEX + "|" + ScriptBase.SCRIPT_OPERATOR_LOGIC_LARGEREQUAL_REGEX
                 + "|" + ScriptBase.SCRIPT_OPERATOR_LOGIC_EQUAL_REGEX + "|" + ScriptBase.SCRIPT_OPERATOR_LOGIC_NOTEQUAL_REGEX + "|\\s)";
-            // Space is needed to remove spaces.
+            
             string[] tokens = Regex.Split(argument, splitter).Where(t => t.Length > 0 && t != " ").ToArray();
             return tokens;
-        }
-
-        private string TypeAlias(string type)
-        {
-            if (type.Equals("bool"))
-            {
-                return "System.Boolean";
-            }
-            else if (type.Equals("int"))
-            {
-                return "System.Int32";
-            }
-            else if (type.Equals("float"))
-            {
-                return "System.Single";
-            }
-            else if (type.Equals("void"))
-            {
-                return "System.Void";
-            }
-            else if (type.Equals("string"))
-            {
-                return "System.String";
-            }
-            return "";
         }
     }
 }

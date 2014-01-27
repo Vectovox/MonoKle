@@ -88,15 +88,18 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>TextureResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Script\Result.cs" />
-    <Compile Include="Script\VirtualMachine.cs" />
-    <Compile Include="Script\Operation.cs" />
-    <Compile Include="Script\Script.cs" />
-    <Compile Include="Script\ScriptCompiler.cs" />
-    <Compile Include="Script\ScriptBase.cs" />
-    <Compile Include="Script\ScriptInterface.cs" />
-    <Compile Include="Script\ScriptReader.cs" />
-    <Compile Include="Script\Variable.cs" />
+    <Compile Include="Scripting\Result.cs" />
+    <Compile Include="Scripting\CompilerEngine.cs" />
+    <Compile Include="Scripting\Script\Argument.cs" />
+    <Compile Include="Scripting\Script\Header.cs" />
+    <Compile Include="Scripting\Script\Source.cs" />
+    <Compile Include="Scripting\VirtualMachine.cs" />
+    <Compile Include="Scripting\Script\ByteScript.cs" />
+    <Compile Include="Scripting\Compiler.cs" />
+    <Compile Include="Scripting\ScriptBase.cs" />
+    <Compile Include="Scripting\ScriptInterface.cs" />
+    <Compile Include="Scripting\ScriptFileReader.cs" />
+    <Compile Include="Scripting\Variable.cs" />
     <Compile Include="State\GameState.cs" />
     <Compile Include="State\StateSwitchData.cs" />
     <Compile Include="State\StateManager.cs" />

@@ -13,7 +13,7 @@
     using MonoKle.Logging;
     using MonoKle.Messaging;
     using MonoKle.State;
-using MonoKle.Script;
+using MonoKle.Scripting;
     using System.Text.RegularExpressions;
 
     /// <summary>

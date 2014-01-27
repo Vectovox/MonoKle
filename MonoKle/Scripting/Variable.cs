@@ -1,4 +1,4 @@
-﻿namespace MonoKle.Script
+﻿namespace MonoKle.Scripting
 {
     using System;
     internal struct Variable

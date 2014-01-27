@@ -1,5 +1,6 @@
-﻿namespace MonoKle.Script
+﻿namespace MonoKle.Scripting
 {
+    using MonoKle.Scripting.Script;
     using MonoKle.Utilities;
     using System;
     using System.Collections.Generic;
@@ -15,7 +16,7 @@
         private Type returnType;
         private object[] variables;
 
-        public Result RunScript(Script script, object[] arguments)
+        public Result RunScript(ByteScript script, object[] arguments)
         {
             this.Reset(script, arguments);
 
@@ -524,28 +525,28 @@
             this.error = true;
         }
 
-        private void Reset(Script script, object[] arguments)
+        private void Reset(ByteScript script, object[] arguments)
         {
             this.code = script.ByteCode;
             this.pc = 0;
             this.error = false;
-            this.scriptName = script.Name;
-            this.returnType = script.ReturnType;
-            this.variables = new object[script.VariableAmount];
+            this.scriptName = script.Header.name;
+            this.returnType = script.Header.returnType;
+            this.variables = new object[script.UsedVariables];
 
-            if (arguments.Length == script.Arguments.Length)
+            if (arguments.Length == script.Header.arguments.Length)
             {
                 for (int i = 0; i < arguments.Length; i++)
                 {
                     if (arguments[i] != null)
                     {
-                        if (script.Arguments[i] == arguments[i].GetType())
+                        if (script.Header.arguments[i].type == arguments[i].GetType())
                         {
                             variables[i] = arguments[i];
                         }
                         else
                         {
-                            this.ReportError("Input argument " + i + " not of correct type. Was " + arguments[i].GetType() + ", expected " + script.Arguments[i]);
+                            this.ReportError("Input argument " + i + " not of correct type. Was " + arguments[i].GetType() + ", expected " + script.Header.arguments[i].type);
                         }
                     }
                     else
@@ -556,7 +557,7 @@
             }
             else
             {
-                this.ReportError("Amount of arguments was not correct. Was " + arguments.Length + ", expected " + script.Arguments.Length);
+                this.ReportError("Amount of arguments was not correct. Was " + arguments.Length + ", expected " + script.Header.arguments.Length);
             }
         }
     }

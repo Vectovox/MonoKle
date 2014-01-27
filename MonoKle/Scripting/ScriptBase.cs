@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-namespace MonoKle.Script
+namespace MonoKle.Scripting
 {
     internal class ScriptBase
     {
@@ -53,7 +53,7 @@ namespace MonoKle.Script
         public const string SCRIPT_HEADER_TYPE_ALLOWEDTYPES_REGEX = "(void|bool|int|float|string)";
         public const string SCRIPT_HEADER_ARGUMENT_REGEX = SCRIPT_TYPE_ALLOWEDTYPES_REGEX + "\\s+" + SCRIPT_NAMES_ALLOWEDNAMES_REGEX;
         public const string SCRIPT_HEADER_ARGUMENTS_REGEX = "\\(\\s*(|" + SCRIPT_HEADER_ARGUMENT_REGEX + "|"
-            + SCRIPT_HEADER_ARGUMENT_REGEX + "(\\s*" + SCRIPT_ARGUMENT_SEPARATOR + "\\s*" + SCRIPT_HEADER_ARGUMENT_REGEX + ")*)*\\s*\\)";
+            + SCRIPT_HEADER_ARGUMENT_REGEX + "(\\s*" + SCRIPT_ARGUMENT_SEPARATOR + "\\s*" + SCRIPT_HEADER_ARGUMENT_REGEX + ")*)\\s*\\)";
         
         public const string SCRIPT_HEADER_SPECIFICATION_REGEX = "^\\s*" + SCRIPT_START + "\\s+" + SCRIPT_HEADER_TYPE_ALLOWEDTYPES_REGEX
             + "\\s+" + SCRIPT_NAMES_ALLOWEDNAMES_REGEX + "\\s*" + SCRIPT_HEADER_ARGUMENTS_REGEX + "\\s*($|" + SCRIPT_CHANNEL_PREFIX + "\\s*" +
@@ -67,6 +67,14 @@ namespace MonoKle.Script
 
         public const string SCRIPT_ARGUMENT_SEPARATOR = ",";
         public const string SCRIPT_CHANNEL_PREFIX = ">";
+
+
+
+
+        public const string SCRIPT_FUNCTION_ARGUMENTS_REGEX = "\\(\\s*(|" + SCRIPT_NAMES_ALLOWEDNAMES_REGEX + "|"
+            + SCRIPT_NAMES_ALLOWEDNAMES_REGEX + "(\\s*" + SCRIPT_ARGUMENT_SEPARATOR + "\\s*" + SCRIPT_NAMES_ALLOWEDNAMES_REGEX + ")*)\\s*\\)";
+
+        //public const string SCRIPT_FUNCTION_ARGUMENTS_REGEX = "\\(\\s*(| " + SCRIPT_NAMES_ALLOWEDNAMES_REGEX + "|" + SCRIPT_NAMES_ALLOWEDNAMES_REGEX + ",")           \\s*\\)";
 
 
         public const int SCRIPT_MAX_VARIABLES = byte.MaxValue;
@@ -290,6 +298,31 @@ namespace MonoKle.Script
                 return "\\" + token;
             }
             return token;
+        }
+
+        public static string TypeAlias(string type)
+        {
+            if (type.Equals("bool"))
+            {
+                return "System.Boolean";
+            }
+            else if (type.Equals("int"))
+            {
+                return "System.Int32";
+            }
+            else if (type.Equals("float"))
+            {
+                return "System.Single";
+            }
+            else if (type.Equals("void"))
+            {
+                return "System.Void";
+            }
+            else if (type.Equals("string"))
+            {
+                return "System.String";
+            }
+            return "";
         }
 
         public static bool IsOperand(string token)

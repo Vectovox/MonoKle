@@ -5,12 +5,23 @@ namespace MonoKle.Scripting
 {
     internal class ScriptBase
     {
+        public const byte COMPILER_TOKEN_FUNCTION = 0x00;
+        public const byte COMPILER_TOKEN_OPERAND = 0x01;
+        public const byte COMPILER_TOKEN_OPERATOR = 0x02;
+        public const byte COMPILER_TOKEN_GROUPING_LEFT = 0x03;
+        public const byte COMPILER_TOKEN_GROUPING_RIGHT = 0x04;
+        public const byte COMPILER_TOKEN_LOGICOPERATOR = 0x05;
+
         // TODO: Refactor all of  this baby!
         public const string SCRIPT_START = "script";
         public const string SCRIPT_END = "endscript";
         public const string SCRIPT_EXTENSION = ".ms";
         public const string SCRIPT_COMMENT = ";";
         public const string SCRIPT_STRING_TOKEN = "\"";
+
+        public const string SCRIPT_OPERATION_SET_VARIABLE = "set";
+        public const string SCRIPT_OPERATION_RETURN = "return";
+        public const string SCRIPT_OPERATION_PRINT = "print";
 
         public const string SCRIPT_OPERATOR_GROUPLEFT = "(";
         public const string SCRIPT_OPERATOR_GROUPRIGHT = ")";
@@ -68,9 +79,6 @@ namespace MonoKle.Scripting
         public const string SCRIPT_ARGUMENT_SEPARATOR = ",";
         public const string SCRIPT_CHANNEL_PREFIX = ">";
 
-
-
-
         public const string SCRIPT_FUNCTION_ARGUMENTS_REGEX = "\\(\\s*(|" + SCRIPT_NAMES_ALLOWEDNAMES_REGEX + "|"
             + SCRIPT_NAMES_ALLOWEDNAMES_REGEX + "(\\s*" + SCRIPT_ARGUMENT_SEPARATOR + "\\s*" + SCRIPT_NAMES_ALLOWEDNAMES_REGEX + ")*)\\s*\\)";
 
@@ -78,10 +86,10 @@ namespace MonoKle.Scripting
 
 
         public const int SCRIPT_MAX_VARIABLES = byte.MaxValue;
+        public const int SCRIPT_MAX_ARGUMENTS = byte.MaxValue;
 
         public const byte OP_NONE = 0x00;
 
-        public const string OP_RETURN_VOIDVALUE_TOKEN = "return";
         public const byte OP_RETURN_VOID = 0x01;
         public const byte OP_RETURN_VALUE = 0x02;
 
@@ -102,7 +110,9 @@ namespace MonoKle.Scripting
         public const byte OP_SMALLEREQUAL = 0x15;
 
         public const byte OP_PRINT = 0x20;
-        public const string OP_PRINT_TOKEN = "print";
+
+        // Function
+        public const byte OP_CALLFUNCTION = 0xD0;
 
         // Initiate/Get/Set variable operations
         public const byte OP_INIVAR = 0xE0;
@@ -291,14 +301,14 @@ namespace MonoKle.Scripting
             opCodeByToken.Add(SCRIPT_OPERATOR_LOGIC_NOTEQUAL, OP_NOTEQUAL);
         }
 
-        public static string RegexifyToken(string token)
-        {
-            if (Regex.IsMatch(token, "(\\.|\\^|\\$|\\*|\\+|\\?|\\(|\\)|\\[|\\{|\\\\|\\|)"))
-            {
-                return "\\" + token;
-            }
-            return token;
-        }
+        //public static string RegexifyToken(string token)
+        //{
+        //    if (Regex.IsMatch(token, "(\\.|\\^|\\$|\\*|\\+|\\?|\\(|\\)|\\[|\\{|\\\\|\\|)"))
+        //    {
+        //        return "\\" + token;
+        //    }
+        //    return token;
+        //}
 
         public static string TypeAlias(string type)
         {
@@ -325,63 +335,68 @@ namespace MonoKle.Scripting
             return "";
         }
 
-        public static bool IsOperand(string token)
+        //public static bool IsOperand(string token)
+        //{
+        //    return IsOperator(token) == false;
+        //}
+
+        //public static bool IsOperator(string token)
+        //{
+        //    return Regex.IsMatch(token, "^("
+        //        + SCRIPT_OPERATOR_ADD_REGEX + "|" + SCRIPT_OPERATOR_DIVIDE_REGEX + "|" + SCRIPT_OPERATOR_MODULO_REGEX + "|" + SCRIPT_OPERATOR_MULTIPLY_REGEX
+        //        + "|" + SCRIPT_OPERATOR_SUBTRACT_REGEX + "|" + SCRIPT_OPERATOR_GROUPLEFT_REGEX + "|" + SCRIPT_OPERATOR_GROUPRIGHT_REGEX
+        //        + "|" + SCRIPT_OPERATOR_POWER_REGEX + "|" + SCRIPT_OPERATOR_LOGIC_EQUAL + "|" + SCRIPT_OPERATOR_LOGIC_NOTEQUAL
+        //        + "|" + SCRIPT_OPERATOR_LOGIC_LARGER_REGEX + "|" + SCRIPT_OPERATOR_LOGIC_LARGEREQUAL_REGEX
+        //        + "|" + SCRIPT_OPERATOR_LOGIC_SMALLER_REGEX + "|" + SCRIPT_OPERATOR_LOGIC_SMALLEREQUAL_REGEX + ")$");
+        //}
+
+        //public static bool IsLogicOperator(string token)
+        //{
+        //    return Regex.IsMatch(token, "^(" + SCRIPT_OPERATOR_LOGIC_EQUAL + "|" + SCRIPT_OPERATOR_LOGIC_NOTEQUAL
+        //        + "|" + SCRIPT_OPERATOR_LOGIC_LARGER_REGEX + "|" + SCRIPT_OPERATOR_LOGIC_LARGEREQUAL_REGEX
+        //        + "|" + SCRIPT_OPERATOR_LOGIC_SMALLER_REGEX + "|" + SCRIPT_OPERATOR_LOGIC_SMALLEREQUAL_REGEX + ")$");
+        //}
+
+        //public static bool IsGrouping(string token)
+        //{
+        //    return Regex.IsMatch(token, "^("
+        //        + SCRIPT_OPERATOR_GROUPLEFT_REGEX + "|" + SCRIPT_OPERATOR_GROUPRIGHT_REGEX
+        //        + ")$");
+        //}
+
+        public static bool IsFunction(string token)
         {
-            return IsOperator(token) == false;
+            return Regex.IsMatch(token, SCRIPT_NAMES_ALLOWEDNAMES_REGEX + "\\(.*?\\)");
         }
 
-        public static bool IsOperator(string token)
-        {
-            return Regex.IsMatch(token, "^("
-                + SCRIPT_OPERATOR_ADD_REGEX + "|" + SCRIPT_OPERATOR_DIVIDE_REGEX + "|" + SCRIPT_OPERATOR_MODULO_REGEX + "|" + SCRIPT_OPERATOR_MULTIPLY_REGEX
-                + "|" + SCRIPT_OPERATOR_SUBTRACT_REGEX + "|" + SCRIPT_OPERATOR_GROUPLEFT_REGEX + "|" + SCRIPT_OPERATOR_GROUPRIGHT_REGEX
-                + "|" + SCRIPT_OPERATOR_POWER_REGEX + "|" + SCRIPT_OPERATOR_LOGIC_EQUAL + "|" + SCRIPT_OPERATOR_LOGIC_NOTEQUAL
-                + "|" + SCRIPT_OPERATOR_LOGIC_LARGER_REGEX + "|" + SCRIPT_OPERATOR_LOGIC_LARGEREQUAL_REGEX
-                + "|" + SCRIPT_OPERATOR_LOGIC_SMALLER_REGEX + "|" + SCRIPT_OPERATOR_LOGIC_SMALLEREQUAL_REGEX + ")$");
-        }
+        //public static int OperatorHiearchy(string token)
+        //{
+        //    // TODO: Insert the correct constants
+        //    // Same numbers used as in wikipedia: http://en.wikipedia.org/wiki/Order_of_operations#Programming_languages
+        //    // All indexes are however increased by one (1), to allow room for the power operator
+        //    if (Regex.IsMatch(token, "(" + SCRIPT_OPERATOR_GROUPLEFT_REGEX + "|" + SCRIPT_OPERATOR_GROUPRIGHT_REGEX + ")"))
+        //        return 1;
+        //    if (Regex.IsMatch(token, "(!)"))
+        //        return 2;
+        //    if (Regex.IsMatch(token, SCRIPT_OPERATOR_POWER_REGEX))
+        //        return 3;
+        //    if (Regex.IsMatch(token, "(" + SCRIPT_OPERATOR_MULTIPLY_REGEX + "|" + SCRIPT_OPERATOR_DIVIDE_REGEX + "|" + SCRIPT_OPERATOR_MODULO_REGEX + ")"))
+        //        return 4;
+        //    if (Regex.IsMatch(token, "(" + SCRIPT_OPERATOR_ADD_REGEX + "|" + SCRIPT_OPERATOR_SUBTRACT_REGEX +")"))
+        //        return 5;
+        //    if (Regex.IsMatch(token, "(" + SCRIPT_OPERATOR_LOGIC_SMALLER_REGEX + "|" + SCRIPT_OPERATOR_LOGIC_SMALLEREQUAL_REGEX
+        //                        + "|" + SCRIPT_OPERATOR_LOGIC_LARGER_REGEX + "|" + SCRIPT_OPERATOR_LOGIC_LARGEREQUAL_REGEX + ")"))
+        //        return 7;
+        //    if (Regex.IsMatch(token, SCRIPT_OPERATOR_LOGIC_EQUAL_REGEX + "|" + SCRIPT_OPERATOR_LOGIC_NOTEQUAL_REGEX))
+        //        return 8;
+        //    if (Regex.IsMatch(token, "(.......)"))
+        //        return 9;
+        //    if (Regex.IsMatch(token, "&&"))
+        //        return 12;
+        //    if (Regex.IsMatch(token, "||"))
+        //        return 13;
 
-        public static bool IsLogicOperator(string token)
-        {
-            return Regex.IsMatch(token, "^(" + SCRIPT_OPERATOR_LOGIC_EQUAL + "|" + SCRIPT_OPERATOR_LOGIC_NOTEQUAL
-                + "|" + SCRIPT_OPERATOR_LOGIC_LARGER_REGEX + "|" + SCRIPT_OPERATOR_LOGIC_LARGEREQUAL_REGEX
-                + "|" + SCRIPT_OPERATOR_LOGIC_SMALLER_REGEX + "|" + SCRIPT_OPERATOR_LOGIC_SMALLEREQUAL_REGEX + ")$");
-        }
-
-        public static bool IsGrouping(string token)
-        {
-            return Regex.IsMatch(token, "^("
-                + SCRIPT_OPERATOR_GROUPLEFT_REGEX + "|" + SCRIPT_OPERATOR_GROUPRIGHT_REGEX
-                + ")$");
-        }
-
-        public static int OperatorHiearchy(string token)
-        {
-            // TODO: Insert the correct constants
-            // Same numbers used as in wikipedia: http://en.wikipedia.org/wiki/Order_of_operations#Programming_languages
-            // All indexes are however increased by one (1), to allow room for the power operator
-            if (Regex.IsMatch(token, "(" + SCRIPT_OPERATOR_GROUPLEFT_REGEX + "|" + SCRIPT_OPERATOR_GROUPRIGHT_REGEX + ")"))
-                return 1;
-            if (Regex.IsMatch(token, "(!)"))
-                return 2;
-            if (Regex.IsMatch(token, SCRIPT_OPERATOR_POWER_REGEX))
-                return 3;
-            if (Regex.IsMatch(token, "(" + SCRIPT_OPERATOR_MULTIPLY_REGEX + "|" + SCRIPT_OPERATOR_DIVIDE_REGEX + "|" + SCRIPT_OPERATOR_MODULO_REGEX + ")"))
-                return 4;
-            if (Regex.IsMatch(token, "(" + SCRIPT_OPERATOR_ADD_REGEX + "|" + SCRIPT_OPERATOR_SUBTRACT_REGEX +")"))
-                return 5;
-            if (Regex.IsMatch(token, "(" + SCRIPT_OPERATOR_LOGIC_SMALLER_REGEX + "|" + SCRIPT_OPERATOR_LOGIC_SMALLEREQUAL_REGEX
-                                + "|" + SCRIPT_OPERATOR_LOGIC_LARGER_REGEX + "|" + SCRIPT_OPERATOR_LOGIC_LARGEREQUAL_REGEX + ")"))
-                return 7;
-            if (Regex.IsMatch(token, SCRIPT_OPERATOR_LOGIC_EQUAL_REGEX + "|" + SCRIPT_OPERATOR_LOGIC_NOTEQUAL_REGEX))
-                return 8;
-            if (Regex.IsMatch(token, "(.......)"))
-                return 9;
-            if (Regex.IsMatch(token, "&&"))
-                return 12;
-            if (Regex.IsMatch(token, "||"))
-                return 13;
-
-            return 14;
-        }
+        //    return 14;
+        //}
     }
 }

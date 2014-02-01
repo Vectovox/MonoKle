@@ -16,25 +16,25 @@
 
         internal ScriptInterface(){}
 
-        public object[] CallChannel(string channel, object[] args)
-        {
-            LinkedList<ByteScript> scripts = scriptsByChannel[channel];
-            object[] ret = new object[scripts.Count];
+        //public object[] CallChannel(string channel, object[] args)
+        //{
+        //    LinkedList<ByteScript> scripts = scriptsByChannel[channel];
+        //    object[] ret = new object[scripts.Count];
 
-            for (int i = 0; i < ret.Length; i++)
-            {
+        //    for (int i = 0; i < ret.Length; i++)
+        //    {
 
-            }
+        //    }
 
-            return ret;
-        }
+        //    return ret;
+        //}
 
         public Result CallScript(string name, params object[] arguments)
         {
             if (scriptByName.ContainsKey(name))
             {
                 MonoKleGame.Logger.AddLog("Running script: " + name, Logging.LogLevel.Debug);
-                return vm.RunScript(scriptByName[name], arguments);
+                return vm.RunScript(scriptByName[name], arguments, scriptByName);
             }
             else
             {

@@ -15,10 +15,11 @@
         private string scriptName;
         private Type returnType;
         private object[] variables;
+        private Dictionary<string, ByteScript> scriptByName;
 
-        public Result RunScript(ByteScript script, object[] arguments)
+        public Result RunScript(ByteScript script, object[] arguments, Dictionary<string, ByteScript> scriptByName)
         {
-            this.Reset(script, arguments);
+            this.Reset(script, arguments, scriptByName);
 
             while(this.error == false && this.pc < code.Length)
             {
@@ -262,6 +263,23 @@
                     }
                 case ScriptBase.OP_GETVAR:
                     return this.variables[this.code[pc++]];
+                case ScriptBase.OP_CALLFUNCTION:
+                    {
+                        int bytesRead = 0;
+                        string name = ByteConverter.ToString(this.code, pc, out bytesRead);
+                        pc += bytesRead;
+                        byte nArgs = this.code[pc++];
+
+                        object[] args = new object[nArgs];
+                        for( int i = 0; i < args.Length; i++)
+                        {
+                            args[i] = this.CalculateExpression(this.code[pc++]);
+                        }
+
+                        VirtualMachine vm = new VirtualMachine();
+                        Result result = vm.RunScript(scriptByName[name], args, this.scriptByName);
+                        return result.returnValue;
+                    }
                 default:
                     {
                         this.ReportError("Encountered unrecognized expression operation.");
@@ -525,7 +543,7 @@
             this.error = true;
         }
 
-        private void Reset(ByteScript script, object[] arguments)
+        private void Reset(ByteScript script, object[] arguments, Dictionary<string, ByteScript> scriptByName)
         {
             this.code = script.ByteCode;
             this.pc = 0;
@@ -533,6 +551,7 @@
             this.scriptName = script.Header.name;
             this.returnType = script.Header.returnType;
             this.variables = new object[script.UsedVariables];
+            this.scriptByName = scriptByName;
 
             if (arguments.Length == script.Header.arguments.Length)
             {

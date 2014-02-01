@@ -93,6 +93,7 @@
     <Compile Include="Scripting\Script\Argument.cs" />
     <Compile Include="Scripting\Script\Header.cs" />
     <Compile Include="Scripting\Script\Source.cs" />
+    <Compile Include="Scripting\Token.cs" />
     <Compile Include="Scripting\VirtualMachine.cs" />
     <Compile Include="Scripting\Script\ByteScript.cs" />
     <Compile Include="Scripting\Compiler.cs" />

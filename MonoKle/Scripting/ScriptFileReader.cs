@@ -133,19 +133,26 @@
                     string channel = channelMatch.Success ? channelMatch.Value : null;
                     LinkedList<Argument> arguments = new LinkedList<Argument>();
 
-                    if (argumentString.Length > 0)
+                    if (argumentString.Length <= ScriptBase.SCRIPT_MAX_ARGUMENTS)
                     {
-                        foreach (string s in Regex.Split(argumentString, ScriptBase.SCRIPT_ARGUMENT_SEPARATOR))
+                        if (argumentString.Length > 0)
                         {
-                            string[] sArray = s.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                            string argName = sArray[1].Trim();
-                            Type argType = Type.GetType(ScriptBase.TypeAlias(sArray[0].Trim()));
-                            arguments.AddLast(new Argument(argName, argType));
+                            foreach (string s in Regex.Split(argumentString, ScriptBase.SCRIPT_ARGUMENT_SEPARATOR))
+                            {
+                                string[] sArray = s.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                                string argName = sArray[1].Trim();
+                                Type argType = Type.GetType(ScriptBase.TypeAlias(sArray[0].Trim()));
+                                arguments.AddLast(new Argument(argName, argType));
+                            }
                         }
-                    }
 
-                    header = new Header(name, returnType, channel, arguments.ToArray());
-                    return true;
+                        header = new Header(name, returnType, channel, arguments.ToArray());
+                        return true;   
+                    }
+                    else
+                    {
+                        this.ReportError("Too many arguments in header.");
+                    }
                 }
                 else
                 {

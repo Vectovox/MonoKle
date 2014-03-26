@@ -52,7 +52,7 @@
             {
                 // Set up walker and listeners
                 ParseTreeWalker walker = new ParseTreeWalker();
-                SemanticsListener semanticsListener = new SemanticsListener(source.Header.arguments);
+                SemanticsListener semanticsListener = new SemanticsListener(source.Header);
                 semanticsListener.SemanticsError += semanticsListener_SemanticsError;
 
                 // Check semantics

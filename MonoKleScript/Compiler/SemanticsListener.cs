@@ -1,33 +1,52 @@
 ﻿namespace MonoKleScript.Compiler
 {
-    using MonoKleScript.Grammar;
-    using MonoKleScript.Script;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
 
+    using Antlr4.Runtime.Tree;
+
+    using MonoKleScript.Grammar;
+    using MonoKleScript.Script;
+
+    /// <summary>
+    /// Listener that checks script semantics.
+    /// </summary>
     public class SemanticsListener : MonoKleScriptBaseListener
     {
+        private Dictionary<IParseTree, Type> typeByToken = new Dictionary<IParseTree, Type>();
+        private Dictionary<string, Type> typeByVariable = new Dictionary<string, Type>();
+        private Type returnType;
+
+        public SemanticsListener(ScriptHeader header)
+        {
+            foreach (ScriptVariable v in header.arguments)
+            {
+                typeByVariable.Add(v.name, v.type);
+            }
+
+            returnType = header.returnType;
+        }
+
         /// <summary>
         /// Event that fires when a semantic error is encountered.
         /// </summary>
         public event SemanticErrorEventHandler SemanticsError;
 
-        private void OnSemanticsError(string message)
+        public override void ExitAssignment(MonoKleScriptParser.AssignmentContext context)
         {
-            var l = SemanticsError;
-            l(this, new SemanticErrorEventArgs(message));
+            string variable = context.IDENTIFIER().ToString();
+
+            if (this.CheckVariableExists(variable))
+            {
+                this.CheckCorrectType(this.typeByToken[context.expression()], this.typeByVariable[variable]);
+            }
         }
 
-        private Dictionary<string, Type> typeByVariable = new Dictionary<string, Type>();
-
-        public SemanticsListener(ICollection<ScriptVariable> inputArguments)
+        public override void ExitExpValue(MonoKleScriptParser.ExpValueContext context)
         {
-            foreach (ScriptVariable v in inputArguments)
-            {
-                typeByVariable.Add(v.name, v.type);
-            }
+            this.typeByToken.Add(context, this.typeByToken[context.value()]);
         }
 
         public override void ExitInitialization(MonoKleScriptParser.InitializationContext context)
@@ -35,25 +54,154 @@
             Type type = CompilerHelper.StringTypeToType(context.TYPE().ToString());
             string name = context.IDENTIFIER().ToString();
 
-            if (typeByVariable.ContainsKey(name) == false)
+            if (this.typeByVariable.ContainsKey(name) == false)
             {
-                typeByVariable.Add(name, type);
+                this.typeByVariable.Add(name, type);
 
                 // TODO: Push variable to stack or something like that as well.
             }
             else
             {
-                this.OnSemanticsError("Variable with name " + name + " already exists!");
+                this.OnSemanticsError("Variable with name [" + name + "] already declared in scope");
             }
 
-            // TODO: Check correct type.
+            this.CheckCorrectType(this.typeByToken[context.expression()], type);
         }
 
-        public override void EnterValue(MonoKleScriptParser.ValueContext context)
+        public override void ExitExpPlus(MonoKleScriptParser.ExpPlusContext context)
         {
-            var v = context.GetTokens(-1);
+            Type type = this.GetArithmeticType(this.typeByToken[context.expression(0)], this.typeByToken[context.expression(1)]);
+            if(type == typeof(void))
+            {
+                this.OnSemanticsError("Type provided to addition operator not valid");
+            }
+            this.typeByToken.Add(context, type);
+        }
 
-            // TODO: Check known functions
+        private Type GetArithmeticType(Type lhs, Type rhs)
+        {
+            if (CompilerHelper.IsTypeArithmetic(lhs) && CompilerHelper.IsTypeArithmetic(rhs))
+            {
+                if (lhs == typeof(float) || rhs == typeof(float))
+                {
+                    return typeof(float);
+                }
+                else
+                {
+                    return typeof(int);
+                }
+            }
+            else
+            {
+                if (lhs == typeof(string) || rhs == typeof(string))
+                {
+                    return typeof(string);
+                }
+            }
+            return typeof(void);
+        }
+
+        public override void ExitExpDivide(MonoKleScriptParser.ExpDivideContext context)
+        {
+            Type type = this.GetArithmeticType(this.typeByToken[context.expression(0)], this.typeByToken[context.expression(1)]);
+            if (type == typeof(void) || type == typeof(string))
+            {
+                this.OnSemanticsError("Type provided to division operator not valid");
+            }
+            this.typeByToken.Add(context, type);
+        }
+
+        public override void ExitExpMinus(MonoKleScriptParser.ExpMinusContext context)
+        {
+            Type type = this.GetArithmeticType(this.typeByToken[context.expression(0)], this.typeByToken[context.expression(1)]);
+            if (type == typeof(void) || type == typeof(string))
+            {
+                this.OnSemanticsError("Type provided to subtraction operator not valid");
+            }
+            this.typeByToken.Add(context, type);
+        }
+
+        public override void ExitExpMultiply(MonoKleScriptParser.ExpMultiplyContext context)
+        {
+            Type type = this.GetArithmeticType(this.typeByToken[context.expression(0)], this.typeByToken[context.expression(1)]);
+            if (type == typeof(void) || type == typeof(string))
+            {
+                this.OnSemanticsError("Type provided to multiplication operator not valid");
+            }
+            this.typeByToken.Add(context, type);
+        }
+
+        public override void ExitBlock(MonoKleScriptParser.BlockContext context)
+        {
+            // TODO: Pop stack
+        }
+
+        public override void ExitValueFunction(MonoKleScriptParser.ValueFunctionContext context)
+        {
+            // TODO: IMPLEMENT
+        }
+
+        public override void ExitKeyReturn(MonoKleScriptParser.KeyReturnContext context)
+        {
+            this.CheckCorrectType(this.typeByToken[context.expression()], this.returnType);
+        }
+
+        public override void ExitValueBool(MonoKleScriptParser.ValueBoolContext context)
+        {
+            this.typeByToken.Add(context, typeof(bool));
+        }
+
+        public override void ExitValueFloat(MonoKleScriptParser.ValueFloatContext context)
+        {
+            this.typeByToken.Add(context, typeof(float));
+        }
+
+        public override void ExitValueInt(MonoKleScriptParser.ValueIntContext context)
+        {
+            this.typeByToken.Add(context, typeof(int));
+        }
+
+        public override void ExitValueString(MonoKleScriptParser.ValueStringContext context)
+        {
+            this.typeByToken.Add(context, typeof(string));
+        }
+
+        public override void ExitValueVariable(MonoKleScriptParser.ValueVariableContext context)
+        {
+            string variable = context.IDENTIFIER().ToString();
+
+            if (this.CheckVariableExists(variable))
+            {
+                this.typeByToken.Add(context, this.typeByVariable[variable]);
+            }
+        }
+
+        private bool CheckCorrectType(Type type, Type target)
+        {
+            if (CompilerHelper.IsTypeCompatibleToTarget(type, target) == false)
+            {
+                this.OnSemanticsError("Type [" + type + "] incompatible with [" + target + "]");
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool CheckVariableExists(string variable)
+        {
+            if (this.typeByVariable.ContainsKey(variable) == false)
+            {
+                this.OnSemanticsError("Variable [" + variable + "] not declared in scope");
+                return false;
+            }
+
+            return true;
+        }
+
+        private void OnSemanticsError(string message)
+        {
+            var l = SemanticsError;
+            l(this, new SemanticErrorEventArgs(message));
         }
     }
 }

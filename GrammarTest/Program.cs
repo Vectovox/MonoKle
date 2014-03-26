@@ -13,7 +13,7 @@ namespace GrammarTest
     {
         static void Main(string[] args)
         {
-            string source = @"int x : 5 int y : 5";
+            string source = @"int x : 5 + true";
             
             ScriptCompiler c = new ScriptCompiler();
             c.CompilationError += c_CompilationError;

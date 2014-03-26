@@ -29,5 +29,24 @@
 
             throw new ArgumentException("Invalid stringType entered.");
         }
+
+        public static bool IsTypeCompatibleToTarget(Type type, Type target)
+        {
+            if (target == typeof(float) && type == typeof(int))
+            {
+                return true;
+            }
+            else if(target == typeof(string))
+            {
+                return true;
+            }
+
+            return type == target;
+        }
+
+        public static bool IsTypeArithmetic(Type type)
+        {
+            return type == typeof(int) || type == typeof(float);
+        }
     }
 }

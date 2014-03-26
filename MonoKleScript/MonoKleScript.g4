@@ -33,22 +33,22 @@ keyReturn : RETURN
           ;
 
 // Expression
-expression : LGROUPING expression RGROUPING # grouping
-           | NOT expression # not
-           | expression DIVIDE expression # divide
-           | expression MULTIPLY expression # multiply
-           | expression PLUS expression # plus
-           | expression MINUS expression # minus
-           | value # val
+expression : LGROUPING expression RGROUPING # ExpGrouping
+           | NOT expression # ExpNot
+           | expression DIVIDE expression # ExpDivide
+           | expression MULTIPLY expression # ExpMultiply
+           | expression PLUS expression # ExpPlus
+           | expression MINUS expression # ExpMinus
+           | value # ExpValue
            ;
 
 // Value
-value : INT
-      | FLOAT
-      | STRING
-      | BOOL
-      | IDENTIFIER
-      | function
+value : INT # ValueInt
+      | FLOAT # ValueFloat
+      | STRING # ValueString
+      | BOOL # ValueBool
+      | IDENTIFIER # ValueVariable
+      | function # ValueFunction
       ;
 
 // Function

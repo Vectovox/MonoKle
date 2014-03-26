@@ -121,6 +121,8 @@
                 {
                     FileStream stream = File.OpenRead(path);
                     Texture2D tex = Texture2D.FromStream(graphicsDevice, stream);
+                    stream.Close();
+
                     if (tex != null)
                     {
                         textureStorage.Add(id, tex);

@@ -9,24 +9,38 @@
 
     using MonoKleScript.Grammar;
     using MonoKleScript.Script;
+    using MonoKleScript.Compiler.Error;
 
     /// <summary>
     /// Listener that checks script semantics.
     /// </summary>
-    public class SemanticsListener : MonoKleScriptBaseListener
+    internal class SemanticsListener : MonoKleScriptBaseListener
     {
+        // TODO: Check that a return always is made.
+        // TODO: Add logic operators and exp operator.
         private Dictionary<IParseTree, Type> typeByToken = new Dictionary<IParseTree, Type>();
         private Dictionary<string, Type> typeByVariable = new Dictionary<string, Type>();
+        private Dictionary<string, ScriptHeader> functionByName = new Dictionary<string, ScriptHeader>();
         private Type returnType;
 
-        public SemanticsListener(ScriptHeader header)
+        public SemanticsListener(ScriptHeader header, ICollection<ScriptHeader> knownScripts)
         {
+            // Add variables and functions
             foreach (ScriptVariable v in header.arguments)
             {
-                typeByVariable.Add(v.name, v.type);
+                this.typeByVariable.Add(v.name, v.type);
             }
-
-            returnType = header.returnType;
+            foreach(ScriptHeader h in knownScripts)
+            {
+                this.functionByName.Add(h.name, h);
+            }
+            // Add support for recursive calls
+            if (this.functionByName.ContainsKey(header.name) == false)
+            {
+                this.functionByName.Add(header.name, header);
+            }
+            // Set return type
+            this.returnType = header.returnType;
         }
 
         /// <summary>
@@ -49,6 +63,8 @@
             this.typeByToken.Add(context, this.typeByToken[context.value()]);
         }
 
+        private Stack<ICollection<string>> variableNameStack = new Stack<ICollection<string>>();
+
         public override void ExitInitialization(MonoKleScriptParser.InitializationContext context)
         {
             Type type = CompilerHelper.StringTypeToType(context.TYPE().ToString());
@@ -57,8 +73,7 @@
             if (this.typeByVariable.ContainsKey(name) == false)
             {
                 this.typeByVariable.Add(name, type);
-
-                // TODO: Push variable to stack or something like that as well.
+                this.variableNameStack.Peek().Add(name);
             }
             else
             {
@@ -131,14 +146,63 @@
             this.typeByToken.Add(context, type);
         }
 
+        public override void EnterBlock(MonoKleScriptParser.BlockContext context)
+        {
+            this.variableNameStack.Push(new LinkedList<string>());
+        }
+
         public override void ExitBlock(MonoKleScriptParser.BlockContext context)
         {
-            // TODO: Pop stack
+            foreach(string s in this.variableNameStack.Pop())
+            {
+                this.typeByVariable.Remove(s);
+            }
+        }
+
+        public override void ExitFunction(MonoKleScriptParser.FunctionContext context)
+        {
+            string functionName = context.IDENTIFIER().ToString();
+
+            if(this.functionByName.ContainsKey(functionName))
+            {
+                ScriptHeader function = this.functionByName[functionName];
+                this.typeByToken.Add(context, function.returnType);
+                
+                // Record function parameters
+                Stack<Type> parameters = new Stack<Type>();
+                MonoKleScriptParser.ParametersContext pc = context.parameters();
+                while (pc != null)
+                {
+                    parameters.Push(this.typeByToken[pc.expression()]);
+                    pc = pc.parameters();
+                }
+
+                // Validate function parameters
+                if(parameters.Count == function.arguments.Length)
+                {
+                    for(int i = function.arguments.Length - 1; i > 0; i--)
+                    {
+                        if(function.arguments[i].type != parameters.Pop())
+                        {
+                            this.OnSemanticsError("Argument [" + i + "] in function [" + functionName + "] is of wrong type");
+                        }
+                    }
+                }
+                else
+                {
+                    this.OnSemanticsError("Function [" + functionName + "] does not take [" + parameters.Count + "] arguments");
+                }
+            }
+            else
+            {
+                this.OnSemanticsError("Function [" + functionName + "] not found");
+                this.typeByToken.Add(context, typeof(void));
+            }
         }
 
         public override void ExitValueFunction(MonoKleScriptParser.ValueFunctionContext context)
         {
-            // TODO: IMPLEMENT
+            this.typeByToken.Add(context, this.typeByToken[context.function()]);
         }
 
         public override void ExitKeyReturn(MonoKleScriptParser.KeyReturnContext context)
@@ -173,6 +237,10 @@
             if (this.CheckVariableExists(variable))
             {
                 this.typeByToken.Add(context, this.typeByVariable[variable]);
+            }
+            else
+            {
+                this.typeByToken.Add(context, typeof(void));
             }
         }
 

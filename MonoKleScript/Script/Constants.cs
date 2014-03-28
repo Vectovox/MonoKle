@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-namespace MonoKle.Scripting
+namespace MonoKleScript.Script
 {
-    internal class ScriptBase
+    public class Constants
     {
         public const byte COMPILER_TOKEN_FUNCTION = 0x00;
         public const byte COMPILER_TOKEN_OPERAND = 0x01;
@@ -244,23 +244,23 @@ namespace MonoKle.Scripting
         {
             if (type == typeof(bool))
             {
-                return ScriptBase.TYPE_BOOL;
+                return Constants.TYPE_BOOL;
             }
             else if (type == typeof(int))
             {
-                return ScriptBase.TYPE_INT;
+                return Constants.TYPE_INT;
             }
             else if (type == typeof(float))
             {
-                return ScriptBase.TYPE_FLOAT;
+                return Constants.TYPE_FLOAT;
             }
             else if (type == typeof(string))
             {
-                return ScriptBase.TYPE_STRING;
+                return Constants.TYPE_STRING;
             }
             else
             {
-                return ScriptBase.TYPE_OBJECT;
+                return Constants.TYPE_OBJECT;
             }
         }
 

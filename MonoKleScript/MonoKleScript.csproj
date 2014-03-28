@@ -44,16 +44,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Compiler\CompilationErrorEventArgs.cs" />
-    <Compile Include="Compiler\CompilationErrorEventHandler.cs" />
+    <Compile Include="Compiler\CompilationEnvironment.cs" />
+    <Compile Include="Compiler\Error\CompilationErrorEventArgs.cs" />
+    <Compile Include="Compiler\Error\CompilationErrorEventHandler.cs" />
     <Compile Include="Compiler\CompilerHelper.cs" />
+    <Compile Include="Compiler\ICompilationEnvironment.cs" />
+    <Compile Include="Compiler\IScriptCompiler.cs" />
     <Compile Include="Compiler\ScriptCompiler.cs" />
-    <Compile Include="Compiler\SemanticErrorEventArgs.cs" />
-    <Compile Include="Compiler\SemanticErrorEventHandler.cs" />
+    <Compile Include="Compiler\Error\SemanticErrorEventArgs.cs" />
+    <Compile Include="Compiler\Error\SemanticErrorEventHandler.cs" />
     <Compile Include="Compiler\SemanticsListener.cs" />
     <Compile Include="Debug\LanguageDebugger.cs" />
+    <Compile Include="IO\Error\ScriptReadingErrorEventArgs.cs" />
+    <Compile Include="IO\Error\ScriptReadingErrorEventHandler.cs" />
+    <Compile Include="IO\IScriptFileReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Constants.cs" />
+    <Compile Include="Script\Constants.cs" />
+    <Compile Include="IO\ScriptFileReader.cs" />
     <Compile Include="Script\ByteScript.cs" />
     <Compile Include="Script\ScriptVariable.cs" />
     <Compile Include="Script\ScriptHeader.cs" />

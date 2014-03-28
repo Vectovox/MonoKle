@@ -9,14 +9,17 @@
 
     using MonoKleScript.Grammar;
     using MonoKleScript.Script;
+    using MonoKleScript.Compiler.Error;
 
     /// <summary>
     /// Compiler of MonoKleScript scripts.
     /// </summary>
-    public class ScriptCompiler
+    public class ScriptCompiler : IScriptCompiler
     {
         private bool semanticsError;
         private bool syntaxError;
+
+        private string currentScriptName = "";
 
         /// <summary>
         /// Compilation error, fired for both syntax and semantics errors.
@@ -35,6 +38,8 @@
             this.syntaxError = false;
             this.semanticsError = false;
 
+            this.currentScriptName = source.Header.name;
+
             // Set up lexer and parser
             AntlrInputStream stream = new AntlrInputStream(source.Text);
             MonoKleScriptLexer lexer = new MonoKleScriptLexer(stream);
@@ -52,7 +57,7 @@
             {
                 // Set up walker and listeners
                 ParseTreeWalker walker = new ParseTreeWalker();
-                SemanticsListener semanticsListener = new SemanticsListener(source.Header);
+                SemanticsListener semanticsListener = new SemanticsListener(source.Header, knownScripts);
                 semanticsListener.SemanticsError += semanticsListener_SemanticsError;
 
                 // Check semantics
@@ -85,10 +90,19 @@
             return this.syntaxError;
         }
 
+        /// <summary>
+        /// Returns the compilation error flag set by last compilation.
+        /// </summary>
+        /// <returns>True if there was a compilation error, else false.</returns>
+        public bool GetCompilationErrorFlag()
+        {
+            return this.syntaxError || this.semanticsError;
+        }
+
         private void OnCompilationError(string message)
         {
             var l = CompilationError;
-            l(this, new CompilationErrorEventArgs(message));
+            l(this, new CompilationErrorEventArgs("Compilation error <" + this.currentScriptName + ">: " + message));
         }
 
         private void semanticsListener_SemanticsError(object sender, SemanticErrorEventArgs e)

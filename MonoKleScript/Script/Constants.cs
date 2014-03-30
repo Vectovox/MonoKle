@@ -12,7 +12,6 @@ namespace MonoKleScript.Script
         public const byte COMPILER_TOKEN_GROUPING_RIGHT = 0x04;
         public const byte COMPILER_TOKEN_LOGICOPERATOR = 0x05;
 
-        // TODO: Refactor all of  this baby!
         public const string SCRIPT_START = "script";
         public const string SCRIPT_END = "endscript";
         public const string SCRIPT_EXTENSION = ".ms";
@@ -82,9 +81,7 @@ namespace MonoKleScript.Script
         public const string SCRIPT_FUNCTION_ARGUMENTS_REGEX = "\\(\\s*(|" + SCRIPT_NAMES_ALLOWEDNAMES_REGEX + "|"
             + SCRIPT_NAMES_ALLOWEDNAMES_REGEX + "(\\s*" + SCRIPT_ARGUMENT_SEPARATOR + "\\s*" + SCRIPT_NAMES_ALLOWEDNAMES_REGEX + ")*)\\s*\\)";
 
-        //public const string SCRIPT_FUNCTION_ARGUMENTS_REGEX = "\\(\\s*(| " + SCRIPT_NAMES_ALLOWEDNAMES_REGEX + "|" + SCRIPT_NAMES_ALLOWEDNAMES_REGEX + ",")           \\s*\\)";
-
-
+        
         public const int SCRIPT_MAX_VARIABLES = byte.MaxValue;
         public const int SCRIPT_MAX_ARGUMENTS = byte.MaxValue;
 
@@ -93,6 +90,7 @@ namespace MonoKleScript.Script
         public const byte OP_RETURN_VOID = 0x01;
         public const byte OP_RETURN_VALUE = 0x02;
 
+        // Arithmetic operators
         public const byte OP_ADD = 0x03;
         public const byte OP_SUBTRACT = 0x04;
         public const byte OP_MULTIPLY = 0x05;
@@ -100,14 +98,14 @@ namespace MonoKleScript.Script
         public const byte OP_MODULO = 0x07;
         public const byte OP_POWER = 0x08;
 
-        // Keep extra space to reserve place for more (non logic) operators
-
+        // Logical operators
         public const byte OP_EQUAL = 0x10;
         public const byte OP_NOTEQUAL = 0x11;
         public const byte OP_LARGER = 0x12;
         public const byte OP_LARGEREQUAL = 0x13;
         public const byte OP_SMALLER = 0x14;
         public const byte OP_SMALLEREQUAL = 0x15;
+        public const byte OP_NOT = 0x16;
 
         public const byte OP_PRINT = 0x20;
 
@@ -118,6 +116,7 @@ namespace MonoKleScript.Script
         public const byte OP_INIVAR = 0xE0;
         public const byte OP_SETVAR = 0xE1;
         public const byte OP_GETVAR = 0xE2;
+        public const byte OP_REMVAR = 0xE3;
 
         // Constant operations
         public const byte OP_CONST_BOOL = 0xFF;
@@ -148,39 +147,6 @@ namespace MonoKleScript.Script
         public static bool IsSupportedVariableType(string variable)
         {
             return Regex.IsMatch(variable, "^(int|float|string|bool)$"); // TODO: Break out into constants
-        }
-
-        public static bool TokenIsBool(string token)
-        {
-            return Regex.IsMatch(token, "^(true|false)$");
-        }
-
-        public static bool TokenIsInt(string token)
-        {
-            return Regex.IsMatch(token, "^[-]?\\d+$");
-        }
-
-        public static bool TokenIsFloat(string token)
-        {
-            return Regex.IsMatch(token, "^-?\\d+\\.\\d+$");
-        }
-
-        public static bool TokenIsString(string token)
-        {
-            return Regex.IsMatch(token, "^\".+\"$");
-        }
-
-        public static Type GetTokenType(string token)
-        {
-            if (TokenIsBool(token))
-                return typeof(bool);
-            if (TokenIsInt(token))
-                return typeof(int);
-            if (TokenIsFloat(token))
-                return typeof(float);
-            if (TokenIsString(token))
-                return typeof(string);
-            return null;
         }
 
         public static bool IsMathTypeCompatible(Type left, Type right)

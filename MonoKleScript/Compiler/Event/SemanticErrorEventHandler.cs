@@ -1,4 +1,4 @@
-﻿namespace MonoKleScript.Compiler.Error
+﻿namespace MonoKleScript.Compiler.Event
 {
     /// <summary>
     /// Event handler for semantics error events.

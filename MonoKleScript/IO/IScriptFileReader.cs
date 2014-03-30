@@ -1,6 +1,6 @@
 ﻿namespace MonoKleScript.IO
 {
-    using MonoKleScript.IO.Error;
+    using MonoKleScript.IO.Event;
 using MonoKleScript.Script;
 using System.Collections.Generic;
 

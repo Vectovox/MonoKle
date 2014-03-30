@@ -8,10 +8,12 @@ options {
 // Structure and flow
 script : block;
 
-block : statement
-      | statement statement
+block : blockstatements
       | /* EPSILON */
       ;
+
+blockstatements : statement
+                | statement blockstatements;
 
 statement : assignment
           | initialization
@@ -35,10 +37,21 @@ keyReturn : RETURN
 // Expression
 expression : LGROUPING expression RGROUPING # ExpGrouping
            | NOT expression # ExpNot
+           | MINUS expression # ExpNegate
+           | expression POWER expression # ExpPower
            | expression DIVIDE expression # ExpDivide
            | expression MULTIPLY expression # ExpMultiply
+           | expression MODULO expression # ExpModulo
            | expression PLUS expression # ExpPlus
            | expression MINUS expression # ExpMinus
+           | expression SMALLER expression #ExpSmaller
+           | expression SMALLEREQUALS expression #ExpSmallerEquals
+           | expression GREATER expression #ExpGreater
+           | expression GREATEREQUALS expression #ExpGreaterEquals
+           | expression EQUALS expression #ExpEquals
+           | expression NOTEQUALS expression #ExpNotEquals
+           | expression AND expression # ExpAnd
+           | expression OR expression # ExpOr
            | value # ExpValue
            ;
 
@@ -77,13 +90,26 @@ PLUS : '+';
 MINUS : '-';
 MULTIPLY : '*';
 DIVIDE : '/';
+MODULO : '%';
+POWER : '^';
 
-NOT : '!';
+NOT : 'not';
+AND : 'and';
+OR : 'or';
+EQUALS : 'is';
+NOTEQUALS : 'is not';
+GREATER : 'is greater than';
+GREATEREQUALS : 'is greater than or is';
+SMALLER : 'is smaller than';
+SMALLEREQUALS : 'is smaller than or is';
 
 LGROUPING : '(';
 RGROUPING : ')';
 
 WHITESPACE :  (' '|'\t'|'\r'|'\n')+ -> skip;
+
+BLOCKCOMMENT :   '/*' .*? '*/' -> skip;
+COMMENT : '//' .*? '\n' -> skip;
 
 BOOL : ('true' | 'false');
 INT : DIGIT+;

@@ -9,7 +9,7 @@
 
     using MonoKleScript.Grammar;
     using MonoKleScript.Script;
-    using MonoKleScript.Compiler.Error;
+    using MonoKleScript.Compiler.Event;
 
     /// <summary>
     /// Compiler of MonoKleScript scripts.
@@ -49,7 +49,7 @@
             // Remove console output and add our own listener for syntax errors.
             parser.RemoveErrorListeners();
             parser.AddErrorListener(new SyntaxErrorListener(this));
-
+            
             // Parse and set start context for walkers
             MonoKleScriptParser.ScriptContext context = parser.script();
 
@@ -58,6 +58,7 @@
                 // Set up walker and listeners
                 ParseTreeWalker walker = new ParseTreeWalker();
                 SemanticsListener semanticsListener = new SemanticsListener(source.Header, knownScripts);
+                CompilerListener compilerListener = new CompilerListener(source.Header, knownScripts);
                 semanticsListener.SemanticsError += semanticsListener_SemanticsError;
 
                 // Check semantics
@@ -65,7 +66,8 @@
 
                 if (this.semanticsError == false)
                 {
-                    // TODO: Either compile with a compilation listener or fetch compiled data from semantics listener.
+                    walker.Walk(compilerListener, context);
+                    return new ByteScript(source.Header, compilerListener.GetByteCode());
                 }
             }
 

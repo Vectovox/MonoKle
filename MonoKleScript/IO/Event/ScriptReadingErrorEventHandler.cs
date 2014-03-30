@@ -1,4 +1,4 @@
-﻿namespace MonoKleScript.IO.Error
+﻿namespace MonoKleScript.IO.Event
 {
     /// <summary>
     /// Event handler for script reading error events.

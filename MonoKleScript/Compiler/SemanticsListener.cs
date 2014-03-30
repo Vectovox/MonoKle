@@ -9,20 +9,24 @@
 
     using MonoKleScript.Grammar;
     using MonoKleScript.Script;
-    using MonoKleScript.Compiler.Error;
+    using MonoKleScript.Compiler.Event;
 
     /// <summary>
     /// Listener that checks script semantics.
     /// </summary>
     internal class SemanticsListener : MonoKleScriptBaseListener
     {
-        // TODO: Check that a return always is made.
+        // TODO: TODOS ARE IN ORDER OF PRIORITY, FROM MOST TO LEAST
         // TODO: Add logic operators and exp operator.
+        // TODO: Add if/else
+        // TODO: Add if/elseif/else
+        // TODO: Add while
+        // TODO: Check that a return always is made.
+        
         private Dictionary<IParseTree, Type> typeByToken = new Dictionary<IParseTree, Type>();
         private Dictionary<string, Type> typeByVariable = new Dictionary<string, Type>();
         private Dictionary<string, ScriptHeader> functionByName = new Dictionary<string, ScriptHeader>();
         private Type returnType;
-
         public SemanticsListener(ScriptHeader header, ICollection<ScriptHeader> knownScripts)
         {
             // Add variables and functions
@@ -33,11 +37,6 @@
             foreach(ScriptHeader h in knownScripts)
             {
                 this.functionByName.Add(h.name, h);
-            }
-            // Add support for recursive calls
-            if (this.functionByName.ContainsKey(header.name) == false)
-            {
-                this.functionByName.Add(header.name, header);
             }
             // Set return type
             this.returnType = header.returnType;
@@ -58,6 +57,11 @@
             }
         }
 
+        public override void ExitExpGrouping(MonoKleScriptParser.ExpGroupingContext context)
+        {
+            this.typeByToken.Add(context, this.typeByToken[context.expression()]);
+        }
+
         public override void ExitExpValue(MonoKleScriptParser.ExpValueContext context)
         {
             this.typeByToken.Add(context, this.typeByToken[context.value()]);
@@ -67,24 +71,35 @@
 
         public override void ExitInitialization(MonoKleScriptParser.InitializationContext context)
         {
-            Type type = CompilerHelper.StringTypeToType(context.TYPE().ToString());
             string name = context.IDENTIFIER().ToString();
 
-            if (this.typeByVariable.ContainsKey(name) == false)
+            if (this.typeByVariable.Count < Constants.SCRIPT_MAX_VARIABLES)
             {
-                this.typeByVariable.Add(name, type);
-                this.variableNameStack.Peek().Add(name);
+                Type type = CompilerHelper.StringTypeToType(context.TYPE().ToString());
+                
+                if (this.typeByVariable.ContainsKey(name) == false)
+                {
+                    this.typeByVariable.Add(name, type);
+                    this.variableNameStack.Peek().Add(name);
+                }
+                else
+                {
+                    this.OnSemanticsError("Variable [" + name + "] already declared in scope");
+                }
+
+                this.CheckCorrectType(this.typeByToken[context.expression()], type);
             }
             else
             {
-                this.OnSemanticsError("Variable with name [" + name + "] already declared in scope");
+                this.OnSemanticsError("Variable [" + name + "] not initialized. Max number of variables [" + Constants.SCRIPT_MAX_VARIABLES + "] reached.");
             }
-
-            this.CheckCorrectType(this.typeByToken[context.expression()], type);
         }
 
         public override void ExitExpPlus(MonoKleScriptParser.ExpPlusContext context)
         {
+            var a = context.expression(0);
+            var b = context.expression(1);
+
             Type type = this.GetArithmeticType(this.typeByToken[context.expression(0)], this.typeByToken[context.expression(1)]);
             if(type == typeof(void))
             {
@@ -124,6 +139,24 @@
                 this.OnSemanticsError("Type provided to division operator not valid");
             }
             this.typeByToken.Add(context, type);
+        }
+
+        public override void ExitExpGreater(MonoKleScriptParser.ExpGreaterContext context)
+        {
+            Type lhs = this.typeByToken[context.expression(0)];
+            Type rhs = this.typeByToken[context.expression(1)];
+
+            this.CheckTypeHasGreatness(lhs);
+            this.CheckTypeHasGreatness(rhs);
+            
+            this.typeByToken.Add(context, typeof(bool));
+        }
+
+        public override void ExitExpNot(MonoKleScriptParser.ExpNotContext context)
+        {
+            Type type = this.typeByToken[context.expression()];
+            this.CheckCorrectType(type, typeof(bool));
+            this.typeByToken.Add(context, typeof(bool));
         }
 
         public override void ExitExpMinus(MonoKleScriptParser.ExpMinusContext context)
@@ -207,7 +240,24 @@
 
         public override void ExitKeyReturn(MonoKleScriptParser.KeyReturnContext context)
         {
-            this.CheckCorrectType(this.typeByToken[context.expression()], this.returnType);
+            if (this.returnType == typeof(void))
+            {
+                if(context.expression() != null)
+                {
+                    this.OnSemanticsError("Return value provided for a void function");
+                }
+            }
+            else
+            {
+                if (context.expression() == null)
+                {
+                    this.OnSemanticsError("No return value provided for a non-void function");
+                }
+                else
+                {
+                    this.CheckCorrectType(this.typeByToken[context.expression()], this.returnType);
+                }
+            }
         }
 
         public override void ExitValueBool(MonoKleScriptParser.ValueBoolContext context)
@@ -255,6 +305,26 @@
             return true;
         }
 
+        private bool CheckTypeHasGreatness(Type type)
+        {
+            if (type != typeof(int) && type != typeof(float))
+            {
+                this.OnSemanticsError("Type [" + type + "] can not be compared for greatness");
+                return false;
+            }
+            return true;
+        }
+
+        private bool IsTypesComparable(Type a, Type b)
+        {
+            if(a == typeof(int) || a == typeof(float))
+            {
+                return b == typeof(int) || b == typeof(float);
+            }
+
+            return a == b;
+        }
+
         private bool CheckVariableExists(string variable)
         {
             if (this.typeByVariable.ContainsKey(variable) == false)
@@ -269,7 +339,10 @@
         private void OnSemanticsError(string message)
         {
             var l = SemanticsError;
-            l(this, new SemanticErrorEventArgs(message));
+            if (l != null)
+            {
+                l(this, new SemanticErrorEventArgs(message));
+            }
         }
     }
 }

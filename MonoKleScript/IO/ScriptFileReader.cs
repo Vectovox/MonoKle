@@ -1,6 +1,6 @@
 ﻿namespace MonoKleScript.IO
 {
-    using MonoKleScript.IO.Error;
+    using MonoKleScript.IO.Event;
     using MonoKleScript.Script;
     using System;
     using System.Collections.Generic;
@@ -143,7 +143,10 @@
         private void OnError(string message)
         {
             var l = this.ScriptReadingError;
-            l(this, new ScriptReadingErrorEventArgs(message));
+            if (l != null)
+            {
+                l(this, new ScriptReadingErrorEventArgs(message));
+            }
         }
 
         private bool TryMakeHeader(string line, out ScriptHeader header)

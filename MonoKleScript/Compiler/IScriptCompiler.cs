@@ -1,6 +1,6 @@
 ﻿namespace MonoKleScript.Compiler
 {
-    using MonoKleScript.Compiler.Error;
+    using MonoKleScript.Compiler.Event;
     using MonoKleScript.Script;
     using System.Collections.Generic;
     

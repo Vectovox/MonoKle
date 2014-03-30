@@ -1,4 +1,4 @@
-﻿namespace MonoKleScript.Compiler.Error
+﻿namespace MonoKleScript.Compiler.Event
 {
     using System;
 

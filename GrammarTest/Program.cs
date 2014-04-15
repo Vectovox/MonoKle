@@ -20,13 +20,13 @@ namespace GrammarTest
             ScriptFileReader reader = new ScriptFileReader();
             ICollection<ScriptSource> sources = reader.GetScriptSources("./", false);
 
-            foreach (ScriptSource s in sources)
-            {
-                LanguageDebugger.PrintParserTree(s.Text);
-            }
+            //foreach (ScriptSource s in sources)
+            //{
+            //    LanguageDebugger.PrintParserTree(s.Text);
+            //}
 
-            Console.Read();
-            return;
+            //Console.Read();
+            //return;
 
             ScriptCompiler c = new ScriptCompiler();
             c.CompilationError += c_CompilationError;

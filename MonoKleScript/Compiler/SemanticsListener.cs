@@ -10,6 +10,8 @@
     using MonoKleScript.Grammar;
     using MonoKleScript.Script;
     using MonoKleScript.Compiler.Event;
+    using Antlr4.Runtime.Misc;
+
 
     /// <summary>
     /// Listener that checks script semantics.
@@ -17,7 +19,6 @@
     internal class SemanticsListener : MonoKleScriptBaseListener
     {
         // TODO: TODOS ARE IN ORDER OF PRIORITY, FROM MOST TO LEAST
-        // TODO: Add logic operators and exp operator.
         // TODO: Add if/else
         // TODO: Add if/elseif/else
         // TODO: Add while
@@ -47,6 +48,46 @@
         /// </summary>
         public event SemanticErrorEventHandler SemanticsError;
 
+        public override void ExitExpNegate([NotNull]MonoKleScriptParser.ExpNegateContext context)
+        {
+            Type type = this.typeByToken[context.expression()];
+            if(type != typeof(int) && type != typeof(float))
+            {
+                this.OnSemanticsError("Impossible to negate the provided type");
+            }
+            this.typeByToken.Add(context, type);
+        }
+
+        public override void ExitExpModulo([NotNull]MonoKleScriptParser.ExpModuloContext context)
+        {
+            Type lhs = this.typeByToken[context.expression(0)];
+            Type rhs = this.typeByToken[context.expression(1)];
+
+            Type type = GetArithmeticType(lhs, rhs);
+
+            if (type == typeof(void) || type == typeof(string) )
+            {
+                this.OnSemanticsError("Types provided to modulo operator are not valid");
+            }
+
+            this.typeByToken.Add(context, type);
+        }
+
+        public override void ExitExpPower([NotNull]MonoKleScriptParser.ExpPowerContext context)
+        {
+            Type lhs = this.typeByToken[context.expression(0)];
+            Type rhs = this.typeByToken[context.expression(1)];
+
+            Type type = GetArithmeticType(lhs, rhs);
+
+            if (type == typeof(void) || type == typeof(string))
+            {
+                this.OnSemanticsError("Types provided to power operator are not valid");
+            }
+
+            this.typeByToken.Add(context, type);
+        }
+
         public override void ExitAssignment(MonoKleScriptParser.AssignmentContext context)
         {
             string variable = context.IDENTIFIER().ToString();
@@ -55,6 +96,8 @@
             {
                 this.CheckCorrectType(this.typeByToken[context.expression()], this.typeByVariable[variable]);
             }
+
+            this.typeByToken.Add(context, typeof(void));
         }
 
         public override void ExitExpGrouping(MonoKleScriptParser.ExpGroupingContext context)
@@ -65,6 +108,20 @@
         public override void ExitExpValue(MonoKleScriptParser.ExpValueContext context)
         {
             this.typeByToken.Add(context, this.typeByToken[context.value()]);
+        }
+
+        public override void ExitExpOr([NotNull]MonoKleScriptParser.ExpOrContext context)
+        {
+            this.CheckCorrectType(this.typeByToken[context.expression(0)], typeof(bool));
+            this.CheckCorrectType(this.typeByToken[context.expression(1)], typeof(bool));
+            this.typeByToken.Add(context, typeof(bool));
+        }
+
+        public override void ExitExpAnd([NotNull]MonoKleScriptParser.ExpAndContext context)
+        {
+            this.CheckCorrectType(this.typeByToken[context.expression(0)], typeof(bool));
+            this.CheckCorrectType(this.typeByToken[context.expression(1)], typeof(bool));
+            this.typeByToken.Add(context, typeof(bool));
         }
 
         private Stack<ICollection<string>> variableNameStack = new Stack<ICollection<string>>();
@@ -84,14 +141,14 @@
                 }
                 else
                 {
-                    this.OnSemanticsError("Variable [" + name + "] already declared in scope");
+                    this.OnSemanticsError("Variable [" + name + "] is already declared in scope");
                 }
 
                 this.CheckCorrectType(this.typeByToken[context.expression()], type);
             }
             else
             {
-                this.OnSemanticsError("Variable [" + name + "] not initialized. Max number of variables [" + Constants.SCRIPT_MAX_VARIABLES + "] reached.");
+                this.OnSemanticsError("Variable [" + name + "] is not initialized. Max number of variables [" + Constants.SCRIPT_MAX_VARIABLES + "] reached.");
             }
         }
 
@@ -103,7 +160,7 @@
             Type type = this.GetArithmeticType(this.typeByToken[context.expression(0)], this.typeByToken[context.expression(1)]);
             if(type == typeof(void))
             {
-                this.OnSemanticsError("Type provided to addition operator not valid");
+                this.OnSemanticsError("Type provided to addition operator is not valid");
             }
             this.typeByToken.Add(context, type);
         }
@@ -136,9 +193,35 @@
             Type type = this.GetArithmeticType(this.typeByToken[context.expression(0)], this.typeByToken[context.expression(1)]);
             if (type == typeof(void) || type == typeof(string))
             {
-                this.OnSemanticsError("Type provided to division operator not valid");
+                this.OnSemanticsError("Type provided to division operator is not valid");
             }
             this.typeByToken.Add(context, type);
+        }
+
+        public override void ExitExpEquals([NotNull]MonoKleScriptParser.ExpEqualsContext context)
+        {
+            Type lhs = this.typeByToken[context.expression(0)];
+            Type rhs = this.typeByToken[context.expression(1)];
+
+            if(this.IsTypesComparable(lhs, rhs) == false)
+            {
+                this.OnSemanticsError("Types can not be compared for equality");
+            }
+
+            this.typeByToken.Add(context, typeof(bool));
+        }
+
+        public override void ExitExpNotEquals([NotNull]MonoKleScriptParser.ExpNotEqualsContext context)
+        {
+            Type lhs = this.typeByToken[context.expression(0)];
+            Type rhs = this.typeByToken[context.expression(1)];
+
+            if (this.IsTypesComparable(lhs, rhs) == false)
+            {
+                this.OnSemanticsError("Types can not be compared for equality");
+            }
+
+            this.typeByToken.Add(context, typeof(bool));
         }
 
         public override void ExitExpGreater(MonoKleScriptParser.ExpGreaterContext context)
@@ -149,6 +232,39 @@
             this.CheckTypeHasGreatness(lhs);
             this.CheckTypeHasGreatness(rhs);
             
+            this.typeByToken.Add(context, typeof(bool));
+        }
+
+        public override void ExitExpGreaterEquals([NotNull]MonoKleScriptParser.ExpGreaterEqualsContext context)
+        {
+            Type lhs = this.typeByToken[context.expression(0)];
+            Type rhs = this.typeByToken[context.expression(1)];
+
+            this.CheckTypeHasGreatness(lhs);
+            this.CheckTypeHasGreatness(rhs);
+
+            this.typeByToken.Add(context, typeof(bool));
+        }
+
+        public override void ExitExpSmaller([NotNull]MonoKleScriptParser.ExpSmallerContext context)
+        {
+            Type lhs = this.typeByToken[context.expression(0)];
+            Type rhs = this.typeByToken[context.expression(1)];
+
+            this.CheckTypeHasGreatness(lhs);
+            this.CheckTypeHasGreatness(rhs);
+
+            this.typeByToken.Add(context, typeof(bool));
+        }
+
+        public override void ExitExpSmallerEquals([NotNull]MonoKleScriptParser.ExpSmallerEqualsContext context)
+        {
+            Type lhs = this.typeByToken[context.expression(0)];
+            Type rhs = this.typeByToken[context.expression(1)];
+
+            this.CheckTypeHasGreatness(lhs);
+            this.CheckTypeHasGreatness(rhs);
+
             this.typeByToken.Add(context, typeof(bool));
         }
 
@@ -164,7 +280,7 @@
             Type type = this.GetArithmeticType(this.typeByToken[context.expression(0)], this.typeByToken[context.expression(1)]);
             if (type == typeof(void) || type == typeof(string))
             {
-                this.OnSemanticsError("Type provided to subtraction operator not valid");
+                this.OnSemanticsError("Type provided to subtraction operator is not valid");
             }
             this.typeByToken.Add(context, type);
         }
@@ -174,7 +290,7 @@
             Type type = this.GetArithmeticType(this.typeByToken[context.expression(0)], this.typeByToken[context.expression(1)]);
             if (type == typeof(void) || type == typeof(string))
             {
-                this.OnSemanticsError("Type provided to multiplication operator not valid");
+                this.OnSemanticsError("Type provided to multiplication operator is not valid");
             }
             this.typeByToken.Add(context, type);
         }
@@ -228,7 +344,7 @@
             }
             else
             {
-                this.OnSemanticsError("Function [" + functionName + "] not found");
+                this.OnSemanticsError("Function [" + functionName + "] was not found");
                 this.typeByToken.Add(context, typeof(void));
             }
         }
@@ -329,7 +445,7 @@
         {
             if (this.typeByVariable.ContainsKey(variable) == false)
             {
-                this.OnSemanticsError("Variable [" + variable + "] not declared in scope");
+                this.OnSemanticsError("Variable [" + variable + "] is not declared in scope");
                 return false;
             }
 

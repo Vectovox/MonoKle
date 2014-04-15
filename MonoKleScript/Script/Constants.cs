@@ -97,6 +97,7 @@ namespace MonoKleScript.Script
         public const byte OP_DIVIDE = 0x06;
         public const byte OP_MODULO = 0x07;
         public const byte OP_POWER = 0x08;
+        public const byte OP_NEGATE = 0x09;
 
         // Logical operators
         public const byte OP_EQUAL = 0x10;
@@ -106,6 +107,8 @@ namespace MonoKleScript.Script
         public const byte OP_SMALLER = 0x14;
         public const byte OP_SMALLEREQUAL = 0x15;
         public const byte OP_NOT = 0x16;
+        public const byte OP_AND = 0x17;
+        public const byte OP_OR = 0x18;
 
         public const byte OP_PRINT = 0x20;
 

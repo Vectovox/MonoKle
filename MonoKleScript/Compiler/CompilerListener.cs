@@ -7,6 +7,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using Antlr4.Runtime.Misc;
 
     internal class CompilerListener : MonoKleScriptBaseListener
     {
@@ -35,6 +36,61 @@
             return byteCode.ToArray();
         }
 
+        public override void EnterExpNegate([NotNull]MonoKleScriptParser.ExpNegateContext context)
+        {
+            this.byteCode.Enqueue(Constants.OP_NEGATE);
+        }
+
+        public override void EnterExpModulo([NotNull]MonoKleScriptParser.ExpModuloContext context)
+        {
+            this.byteCode.Enqueue(Constants.OP_MODULO);
+        }
+
+        public override void EnterExpPower([NotNull]MonoKleScriptParser.ExpPowerContext context)
+        {
+            this.byteCode.Enqueue(Constants.OP_POWER);
+        }
+
+        public override void EnterExpNotEquals([NotNull]MonoKleScriptParser.ExpNotEqualsContext context)
+        {
+            this.byteCode.Enqueue(Constants.OP_NOTEQUAL);
+        }
+
+        public override void EnterExpEquals([NotNull]MonoKleScriptParser.ExpEqualsContext context)
+        {
+            this.byteCode.Enqueue(Constants.OP_EQUAL);
+        }
+
+        public override void EnterExpSmallerEquals([NotNull]MonoKleScriptParser.ExpSmallerEqualsContext context)
+        {
+            this.byteCode.Enqueue(Constants.OP_SMALLEREQUAL);
+        }
+
+        public override void EnterExpSmaller([NotNull]MonoKleScriptParser.ExpSmallerContext context)
+        {
+            this.byteCode.Enqueue(Constants.OP_SMALLER);
+        }
+
+        public override void EnterExpGreaterEquals([NotNull]MonoKleScriptParser.ExpGreaterEqualsContext context)
+        {
+            this.byteCode.Enqueue(Constants.OP_LARGEREQUAL);
+        }
+
+        public override void EnterExpGreater(MonoKleScriptParser.ExpGreaterContext context)
+        {
+            this.byteCode.Enqueue(Constants.OP_LARGER);
+        }
+
+        public override void EnterExpAnd([NotNull]MonoKleScriptParser.ExpAndContext context)
+        {
+            this.byteCode.Enqueue(Constants.OP_AND);
+        }
+
+        public override void EnterExpOr([NotNull]MonoKleScriptParser.ExpOrContext context)
+        {
+            this.byteCode.Enqueue(Constants.OP_OR);
+        }
+
         public override void EnterExpDivide(MonoKleScriptParser.ExpDivideContext context)
         {
             this.byteCode.Enqueue(Constants.OP_DIVIDE);
@@ -48,11 +104,6 @@
         public override void EnterExpMultiply(MonoKleScriptParser.ExpMultiplyContext context)
         {
             this.byteCode.Enqueue(Constants.OP_MULTIPLY);
-        }
-
-        public override void EnterExpGreater(MonoKleScriptParser.ExpGreaterContext context)
-        {
-            this.byteCode.Enqueue(Constants.OP_LARGER);
         }
 
         public override void EnterExpNot(MonoKleScriptParser.ExpNotContext context)

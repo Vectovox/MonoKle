@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+    // TODO: Remove error reporting and trust compiler! :)
+
     internal class ScriptExecuter
     {
         private int pc;
@@ -104,6 +106,26 @@ using System.Text;
         {
             switch(initialOperation)
             {
+                case Constants.OP_OR:
+                    {
+                        byte lhOP = this.code[pc++];
+                        object lhRet = CalculateExpression(lhOP);
+
+                        byte rhOP = this.code[pc++];
+                        object rhRet = CalculateExpression(rhOP);
+
+                        return ((bool)lhRet) || ((bool)rhRet);
+                    }
+                case Constants.OP_AND:
+                    {
+                        byte lhOP = this.code[pc++];
+                        object lhRet = CalculateExpression(lhOP);
+
+                        byte rhOP = this.code[pc++];
+                        object rhRet = CalculateExpression(rhOP);
+
+                        return ((bool)lhRet) && ((bool)rhRet);
+                    }
                 case Constants.OP_NOT:
                     {
                         byte lhOP = this.code[pc++];
@@ -195,6 +217,17 @@ using System.Text;
                             return lhRet.Equals(rhRet);
                         }
                     }break;
+                case Constants.OP_NOTEQUAL:
+                    {
+                        byte lhOP = this.code[pc++];
+                        object lhRet = CalculateExpression(lhOP);
+
+                        byte rhOP = this.code[pc++];
+                        object rhRet = CalculateExpression(rhOP);
+
+                        return lhRet.Equals(rhRet) == false;
+                    }
+                    break;
                 case Constants.OP_ADD:
                     {
                         byte lhOP = this.code[pc++];
@@ -263,6 +296,12 @@ using System.Text;
                             return MultiplyObject(lhRet, rhRet);
                         }
                     } break;
+                case Constants.OP_NEGATE:
+                    {
+                        byte lhOP = this.code[pc++];
+                        object lhRet = CalculateExpression(lhOP);
+                        return this.SubtractObject(0, lhRet);
+                    }
                 case Constants.OP_POWER:
                     {
                         byte lhOP = this.code[pc++];
@@ -280,6 +319,16 @@ using System.Text;
                             return PowerObject(lhRet, rhRet);
                         }
                     } break;
+                case Constants.OP_MODULO:
+                    {
+                        byte lhOP = this.code[pc++];
+                        object lhRet = CalculateExpression(lhOP);
+
+                        byte rhOP = this.code[pc++];
+                        object rhRet = CalculateExpression(rhOP);
+
+                        return this.ModuloObject(lhRet, rhRet);
+                    }
                 case Constants.OP_CONST_BOOL:
                     pc += sizeof(bool);
                     return ByteConverter.ToBoolean(this.code, pc - sizeof(bool));
@@ -481,6 +530,33 @@ using System.Text;
                 else if (b.GetType() == typeof(float))
                 {
                     return (float)Math.Pow((float)a, (float)b);
+                }
+            }
+            return null;
+        }
+
+        private object ModuloObject(object a, object b)
+        {
+            if (a.GetType() == typeof(int))
+            {
+                if (b.GetType() == typeof(int))
+                {
+                    return (int)a % (int)b;
+                }
+                else if (b.GetType() == typeof(float))
+                {
+                    return (int)a % (float)b;
+                }
+            }
+            else if (a.GetType() == typeof(float))
+            {
+                if (b.GetType() == typeof(int))
+                {
+                    return (float)a % (int)b;
+                }
+                else if (b.GetType() == typeof(float))
+                {
+                    return (float)a % (float)b;
                 }
             }
             return null;

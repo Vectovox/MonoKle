@@ -96,12 +96,12 @@ POWER : '^';
 NOT : 'not';
 AND : 'and';
 OR : 'or';
-EQUALS : 'is';
-NOTEQUALS : 'is not';
-GREATER : 'is greater than';
-GREATEREQUALS : 'is greater than or is';
-SMALLER : 'is smaller than';
-SMALLEREQUALS : 'is smaller than or is';
+EQUALS : '=';
+NOTEQUALS : '!=';
+GREATER : '>';
+GREATEREQUALS : '>=';
+SMALLER : '<';
+SMALLEREQUALS : '<=';
 
 LGROUPING : '(';
 RGROUPING : ')';

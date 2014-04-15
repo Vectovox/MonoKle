@@ -2,11 +2,33 @@
 
 script void TestLogic()
 
-print "Success: " + not false
-print "Success: " + (5 is greater than 1 + 3)
+print "Success: " + (not false)
+print "Success: " + (5 > 4)
+print "Success: " + (5 >= 3)
+print "Success: " + (5 >= 5)
+print "Success: " + (5 <= 5)
+print "Success: " + (3 <= 5)
+print "Success: " + (2 < 5)
+print "Success: " + (5 = 5)
+print "Success: " + (5 != 3)
+print "Success: " + (true or false)
+print "Success: " + (not (true and false))
 
 endscript
 
+
+
+script void TestArithmetic()
+
+print "Success: " + ((5 + 5) = 10)
+print "Success: " + ((5 - 5) = 0)
+print "Success: " + ((5 * 5) = 25)
+print "Success: " + ((5 / 5) = 1)
+print "Success: " + ((2 ^ 8) = 256)
+print "Success: " + ((12 % 10) = 2)
+print "Success: " + (-5 = 0 - 5)
+
+endscript
 
 
 script int TestFunctions()

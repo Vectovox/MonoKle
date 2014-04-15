@@ -1,12 +1,12 @@
 ﻿namespace MonoKleScript.VM
 {
     using MonoKle.Utilities;
-using MonoKleScript.Script;
-using MonoKleScript.VM.Event;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+    using MonoKleScript.Script;
+    using MonoKleScript.VM.Event;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
 
     // TODO: Remove error reporting and trust compiler! :)
 
@@ -80,6 +80,25 @@ using System.Text;
                     case Constants.OP_REMVAR:
                         {
                             this.variableByID.Remove(code[pc++]);
+                        } break;
+                    case Constants.OP_CALLFUNCTION:
+                        {
+                            this.CallFunction();
+                        } break;
+                    case Constants.OP_IF:
+                        {
+                            int jmpIfFail = ByteConverter.ToInt32(code, pc);
+                            pc += sizeof(int);
+                            byte firstOperation = code[pc++];
+                            bool expression = (bool)this.CalculateExpression(firstOperation);
+                            if(expression == false)
+                            {
+                                this.pc = jmpIfFail;
+                            }
+                        } break;
+                    case Constants.OP_JUMP:
+                        {
+                            this.pc = ByteConverter.ToInt32(code, pc);
                         } break;
                     default:
                         this.ReportError("Encountered unrecognized operation.");
@@ -227,7 +246,6 @@ using System.Text;
 
                         return lhRet.Equals(rhRet) == false;
                     }
-                    break;
                 case Constants.OP_ADD:
                     {
                         byte lhOP = this.code[pc++];
@@ -348,22 +366,7 @@ using System.Text;
                 case Constants.OP_GETVAR:
                     return this.variableByID[this.code[pc++]];
                 case Constants.OP_CALLFUNCTION:
-                    {
-                        int bytesRead = 0;
-                        string name = ByteConverter.ToString(this.code, pc, out bytesRead);
-                        pc += bytesRead;
-                        byte nArgs = this.code[pc++];
-
-                        object[] args = new object[nArgs];
-                        for( int i = 0; i < args.Length; i++)
-                        {
-                            args[i] = this.CalculateExpression(this.code[pc++]);
-                        }
-
-                        ScriptExecuter e = new ScriptExecuter();
-                        Result result = e.RunScript(scriptByName[name], args, this.scriptByName);
-                        return result.returnValue;
-                    }
+                    return this.CallFunction().returnValue;
                 default:
                     {
                         this.ReportError("Encountered unrecognized expression operation.");
@@ -371,6 +374,33 @@ using System.Text;
             }
 
             return null;
+        }
+
+        private Result CallFunction()
+        {
+            int br = 0;
+            string name = ByteConverter.ToString(this.code, pc, out br);
+            pc += br;
+            byte nArgs = this.code[pc++];
+
+            object[] args = new object[nArgs];
+            for (int i = 0; i < args.Length; i++)
+            {
+                args[i] = this.CalculateExpression(this.code[pc++]);
+            }
+
+            ScriptExecuter e = new ScriptExecuter();
+            e.Print += delegate (object o, PrintEventArgs pe){ this.OnPrint(pe.Message); };
+            e.RuntimeError += delegate (object o, RuntimeErrorEventArgs re) { this.OnRuntimeError(re.Message); };
+            Result result = e.RunScript(scriptByName[name], args, this.scriptByName);
+            e.RemoveEventSubscribers();
+            return result;
+        }
+
+        internal void RemoveEventSubscribers()
+        {
+            this.RuntimeError = null;
+            this.Print = null;
         }
 
         private object GreaterObject(object a, object b)

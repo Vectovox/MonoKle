@@ -19,9 +19,6 @@
     internal class SemanticsListener : MonoKleScriptBaseListener
     {
         // TODO: TODOS ARE IN ORDER OF PRIORITY, FROM MOST TO LEAST
-        // TODO: Add if/else
-        // TODO: Add if/elseif/else
-        // TODO: Add while
         // TODO: Check that a return always is made.
         
         private Dictionary<IParseTree, Type> typeByToken = new Dictionary<IParseTree, Type>();
@@ -47,6 +44,18 @@
         /// Event that fires when a semantic error is encountered.
         /// </summary>
         public event SemanticErrorEventHandler SemanticsError;
+
+        public override void ExitWhile([NotNull]MonoKleScriptParser.WhileContext context)
+        {
+            Type type = this.typeByToken[context.expression()];
+            this.CheckCorrectType(type, typeof(bool));
+        }
+
+        public override void ExitIf([NotNull]MonoKleScriptParser.IfContext context)
+        {
+            Type type = this.typeByToken[context.expression()];
+            this.CheckCorrectType(type, typeof(bool));
+        }
 
         public override void ExitExpNegate([NotNull]MonoKleScriptParser.ExpNegateContext context)
         {
@@ -96,8 +105,6 @@
             {
                 this.CheckCorrectType(this.typeByToken[context.expression()], this.typeByVariable[variable]);
             }
-
-            this.typeByToken.Add(context, typeof(void));
         }
 
         public override void ExitExpGrouping(MonoKleScriptParser.ExpGroupingContext context)

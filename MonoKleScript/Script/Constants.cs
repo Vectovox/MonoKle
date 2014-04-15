@@ -84,6 +84,7 @@ namespace MonoKleScript.Script
         
         public const int SCRIPT_MAX_VARIABLES = byte.MaxValue;
         public const int SCRIPT_MAX_ARGUMENTS = byte.MaxValue;
+        public const int SCRIPT_MAX_BYTESIZE = int.MaxValue;
 
         public const byte OP_NONE = 0x00;
 
@@ -110,7 +111,12 @@ namespace MonoKleScript.Script
         public const byte OP_AND = 0x17;
         public const byte OP_OR = 0x18;
 
+        // Built in functions
         public const byte OP_PRINT = 0x20;
+
+        // Flow Control
+        public const byte OP_IF = 0x30;
+        public const byte OP_JUMP = 0x31;
 
         // Function
         public const byte OP_CALLFUNCTION = 0xD0;
@@ -134,7 +140,6 @@ namespace MonoKleScript.Script
         public const byte TYPE_FLOAT = 0x03;
         public const byte TYPE_STRING = 0x04;
         public const byte TYPE_OBJECT = 0x05;
-
 
         private static Dictionary<string, byte> opCodeByToken = null;
 

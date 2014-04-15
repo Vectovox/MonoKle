@@ -17,11 +17,23 @@ blockstatements : statement
 
 statement : assignment
           | initialization
-        //| IF expression THEN block ENDIF # if
+          | conditional
+		  | while
           | function
           | keyReturn
           | keyPrint
           ;
+
+while : WHILE expression DO block ENDWHILE;
+
+conditional : IF if elseif else ENDIF;
+if : expression THEN block;
+elseif : ELSEIF if elseif
+       | /* EPSILON */
+       ;
+else : ELSE block
+     | /* EPSILON */
+	 ;
 
 // Variables
 assignment : IDENTIFIER ASSIGNMENT expression;
@@ -81,7 +93,12 @@ ASSIGNMENT : ':';
 
 IF : 'if';
 THEN : 'then';
+ELSE : 'else';
+ELSEIF : 'else if';
 ENDIF : 'endif';
+WHILE : 'while';
+DO : 'do';
+ENDWHILE : 'endwhile';
 
 RETURN : 'return';
 PRINT : 'print';

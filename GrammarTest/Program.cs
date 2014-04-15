@@ -20,7 +20,7 @@ namespace GrammarTest
             ScriptFileReader reader = new ScriptFileReader();
             ICollection<ScriptSource> sources = reader.GetScriptSources("./", false);
 
-            //foreach (ScriptSource s in sources)
+            //foreach( ScriptSource s in sources )
             //{
             //    LanguageDebugger.PrintParserTree(s.Text);
             //}
@@ -34,6 +34,16 @@ namespace GrammarTest
 
             environment.LoadSources(sources);
             var byteScripts = environment.Compile();
+
+            foreach(ByteScript s in byteScripts)
+            {
+                Console.Write(s.Header.name + ": ");
+                foreach(byte b in s.ByteCode)
+                {
+                    Console.Write("{0:X}, ", b);
+                }
+                Console.WriteLine("");
+            }
 
             VirtualMachine vm = new VirtualMachine();
             vm.RuntimeError += vm_RuntimeError;

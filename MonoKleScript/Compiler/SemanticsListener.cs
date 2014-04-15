@@ -19,8 +19,16 @@
     internal class SemanticsListener : MonoKleScriptBaseListener
     {
         // TODO: TODOS ARE IN ORDER OF PRIORITY, FROM MOST TO LEAST
+        // TODO: Add object field/property read
+        // TODO: Add object field/property set
+        // TODO: Add object function read acces
+        // TODO: Add object function call acces
+        // TODO: Make sure to check type at runtime when reading and setting
+        // TODO: Add object field/property/method chaining
+        // TODO: Add ability to create own structs and objects
         // TODO: Check that a return always is made.
-        
+        // TODO: Make sure that if function X depends on Y and Y fails, then X fails. (Otherwise we may get exceptions for non-existing keys in the script executer)
+
         private Dictionary<IParseTree, Type> typeByToken = new Dictionary<IParseTree, Type>();
         private Dictionary<string, Type> typeByVariable = new Dictionary<string, Type>();
         private Dictionary<string, ScriptHeader> functionByName = new Dictionary<string, ScriptHeader>();
@@ -44,6 +52,42 @@
         /// Event that fires when a semantic error is encountered.
         /// </summary>
         public event SemanticErrorEventHandler SemanticsError;
+
+        public override void ExitInitialization_readobject([NotNull]MonoKleScriptParser.Initialization_readobjectContext context)
+        {
+            string name = context.IDENTIFIER(0).ToString();
+            string objectName = context.IDENTIFIER(1).ToString();
+
+            if( this.typeByVariable.Count < Constants.SCRIPT_MAX_VARIABLES )
+            {
+                if( this.typeByVariable.ContainsKey(name) == false )
+                {
+                    if( this.typeByVariable[objectName] == typeof(object) )
+                    {
+                        Type type = CompilerHelper.StringTypeToType(context.TYPE().ToString());
+                        this.typeByVariable.Add(name, type);
+                        this.variableNameStack.Peek().Add(name);
+                    }
+                    else
+                    {
+                        this.OnSemanticsError("Read variable [" + objectName + "] is not an object");
+                    }
+                }
+                else
+                {
+                    this.OnSemanticsError("Variable [" + name + "] is already declared in scope");
+                }
+            }
+            else
+            {
+                this.OnSemanticsError("Variable [" + name + "] is not initialized. Max number of variables [" + Constants.SCRIPT_MAX_VARIABLES + "] reached.");
+            }
+        }
+
+        public override void ExitAssignment_readobject([NotNull]MonoKleScriptParser.Assignment_readobjectContext context)
+        {
+            this.CheckVariableExists(context.IDENTIFIER(1).ToString());
+        }
 
         public override void ExitWhile([NotNull]MonoKleScriptParser.WhileContext context)
         {
@@ -139,19 +183,19 @@
 
             if (this.typeByVariable.Count < Constants.SCRIPT_MAX_VARIABLES)
             {
-                Type type = CompilerHelper.StringTypeToType(context.TYPE().ToString());
-                
                 if (this.typeByVariable.ContainsKey(name) == false)
                 {
-                    this.typeByVariable.Add(name, type);
-                    this.variableNameStack.Peek().Add(name);
+                    Type type = CompilerHelper.StringTypeToType(context.TYPE().ToString());
+                    if( this.CheckCorrectType(this.typeByToken[context.expression()], type))
+                    {
+                        this.typeByVariable.Add(name, type);
+                        this.variableNameStack.Peek().Add(name);
+                    }
                 }
                 else
                 {
                     this.OnSemanticsError("Variable [" + name + "] is already declared in scope");
                 }
-
-                this.CheckCorrectType(this.typeByToken[context.expression()], type);
             }
             else
             {

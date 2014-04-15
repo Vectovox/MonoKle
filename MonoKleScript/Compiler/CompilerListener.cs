@@ -36,9 +36,43 @@
             return byteCode.ToArray();
         }
 
+        public override void EnterInitialization_readobject([NotNull]MonoKleScriptParser.Initialization_readobjectContext context)
+        {
+            // Init variable
+            string name = context.IDENTIFIER(0).ToString();
+            this.byteCode.Add(Constants.OP_INIVAR_READOBJECT);
+            this.byteCode.Add(this.nextVariableID);
+            this.variableIDByName.Add(name, this.nextVariableID);
+            this.variableNameStack.Peek().Add(name);
+            this.nextVariableID++;
+
+            // Add object id
+            this.byteCode.Add(this.variableIDByName[context.IDENTIFIER(1).ToString()]);
+        }
+
+        public override void EnterAssignment_readobject([NotNull]MonoKleScriptParser.Assignment_readobjectContext context)
+        {
+            this.byteCode.Add(Constants.OP_SETVAR_READOBJECT);
+            this.byteCode.Add(this.variableIDByName[context.IDENTIFIER(0).ToString()]);
+
+            // Add object id
+            this.byteCode.Add(this.variableIDByName[context.IDENTIFIER(1).ToString()]);
+        }
+
+        public override void EnterOV([NotNull]MonoKleScriptParser.OVContext context)
+        {
+            this.byteCode.Add(Constants.OP_READOBJECT_FIELDPROPERTY);
+            string fieldProperty = context.IDENTIFIER().ToString();
+            foreach( byte b in ByteConverter.ToBytes(fieldProperty))
+            {
+                this.byteCode.Add(b);
+            }
+        }
+
 
         private Stack<int> whileAddress = new Stack<int>();
 
+        #region While
         public override void EnterWhile([NotNull]MonoKleScriptParser.WhileContext context)
         {
             this.whileAddress.Push(this.byteCode.Count);
@@ -69,9 +103,12 @@
             this.byteCode[jmpAddressLocation + 2] = jmpBytes[2];
             this.byteCode[jmpAddressLocation + 3] = jmpBytes[3];
         }
+        #endregion
 
         private Stack<int> ifJmpOnFailStack = new Stack<int>();
         private Stack<ICollection<int>> ifJmpOnCompleteCollectionStack = new Stack<ICollection<int>>();
+
+        #region Conditions
 
         public override void EnterIf([NotNull]MonoKleScriptParser.IfContext context)
         {
@@ -129,6 +166,10 @@
             }
         }
 
+        #endregion
+
+        #region Arithmetics
+
         public override void EnterExpNegate([NotNull]MonoKleScriptParser.ExpNegateContext context)
         {
             this.byteCode.Add(Constants.OP_NEGATE);
@@ -144,6 +185,29 @@
             this.byteCode.Add(Constants.OP_POWER);
         }
 
+        public override void EnterExpDivide(MonoKleScriptParser.ExpDivideContext context)
+        {
+            this.byteCode.Add(Constants.OP_DIVIDE);
+        }
+
+        public override void EnterExpMinus(MonoKleScriptParser.ExpMinusContext context)
+        {
+            this.byteCode.Add(Constants.OP_SUBTRACT);
+        }
+
+        public override void EnterExpMultiply(MonoKleScriptParser.ExpMultiplyContext context)
+        {
+            this.byteCode.Add(Constants.OP_MULTIPLY);
+        }
+
+        public override void EnterExpPlus(MonoKleScriptParser.ExpPlusContext context)
+        {
+            this.byteCode.Add(Constants.OP_ADD);
+        }
+
+        #endregion
+
+        #region Logical
         public override void EnterExpNotEquals([NotNull]MonoKleScriptParser.ExpNotEqualsContext context)
         {
             this.byteCode.Add(Constants.OP_NOTEQUAL);
@@ -184,25 +248,12 @@
             this.byteCode.Add(Constants.OP_OR);
         }
 
-        public override void EnterExpDivide(MonoKleScriptParser.ExpDivideContext context)
-        {
-            this.byteCode.Add(Constants.OP_DIVIDE);
-        }
-
-        public override void EnterExpMinus(MonoKleScriptParser.ExpMinusContext context)
-        {
-            this.byteCode.Add(Constants.OP_SUBTRACT);
-        }
-
-        public override void EnterExpMultiply(MonoKleScriptParser.ExpMultiplyContext context)
-        {
-            this.byteCode.Add(Constants.OP_MULTIPLY);
-        }
-
         public override void EnterExpNot(MonoKleScriptParser.ExpNotContext context)
         {
             this.byteCode.Add(Constants.OP_NOT);
         }
+
+#endregion
 
         public override void EnterInitialization(MonoKleScriptParser.InitializationContext context)
         {
@@ -248,11 +299,7 @@
             }
         }
 
-        public override void EnterExpPlus(MonoKleScriptParser.ExpPlusContext context)
-        {
-            this.byteCode.Add(Constants.OP_ADD);
-        }
-
+        #region Values
         public override void EnterValueInt(MonoKleScriptParser.ValueIntContext context)
         {
             this.byteCode.Add(Constants.OP_CONST_INT);
@@ -293,6 +340,13 @@
             }
         }
 
+        public override void EnterValueVariable(MonoKleScriptParser.ValueVariableContext context)
+        {
+            this.byteCode.Add(Constants.OP_GETVAR);
+            this.byteCode.Add(this.variableIDByName[context.IDENTIFIER().ToString()]);
+        }
+        #endregion
+
         public override void EnterFunction(MonoKleScriptParser.FunctionContext context)
         {
             string function = context.IDENTIFIER().ToString();
@@ -308,12 +362,6 @@
         public override void EnterKeyPrint(MonoKleScriptParser.KeyPrintContext context)
         {
             this.byteCode.Add(Constants.OP_PRINT);
-        }
-
-        public override void EnterValueVariable(MonoKleScriptParser.ValueVariableContext context)
-        {
-            this.byteCode.Add(Constants.OP_GETVAR);
-            this.byteCode.Add(this.variableIDByName[context.IDENTIFIER().ToString()]);
         }
     }
 }

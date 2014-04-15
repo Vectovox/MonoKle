@@ -13,11 +13,47 @@ using MonoKleScript.Debug;
 
 namespace GrammarTest
 {
+    public struct TestStruct
+    {
+        public int x;
+        public int y;
+    }
+
+    public class TestClass
+    {
+
+        public TestStruct field;
+        public int Property
+        { get; set; }
+
+        public int plainIntField = 8;
+
+        private int toSet = 0;
+
+        public void Setter(int value)
+        {
+            this.toSet = value;
+        }
+
+        public int Getter()
+        {
+            return this.toSet;
+        }
+
+        public TestClass()
+        {
+            this.Property = 3;
+            this.field.x = 1;
+            this.field.y = 2;
+        }
+    }
+
     class Program
     {
         static void Main(string[] args)
         {
             ScriptFileReader reader = new ScriptFileReader();
+            reader.ScriptReadingError +=Reader_ScriptReadingError;
             ICollection<ScriptSource> sources = reader.GetScriptSources("./", false);
 
             //foreach( ScriptSource s in sources )
@@ -35,20 +71,12 @@ namespace GrammarTest
             environment.LoadSources(sources);
             var byteScripts = environment.Compile();
 
-            foreach(ByteScript s in byteScripts)
-            {
-                Console.Write(s.Header.name + ": ");
-                foreach(byte b in s.ByteCode)
-                {
-                    Console.Write("{0:X}, ", b);
-                }
-                Console.WriteLine("");
-            }
-
             VirtualMachine vm = new VirtualMachine();
             vm.RuntimeError += vm_RuntimeError;
             vm.Print += vm_Print;
             vm.LoadScripts(byteScripts);
+
+            vm.ExecuteScript("RunTests", new object[] { new TestClass() });
 
             while(true)
             {
@@ -64,6 +92,11 @@ namespace GrammarTest
                 Result res = vm.ExecuteScript(splitInput[0], arguments);
                 Console.WriteLine("Result> " + res.ToString());
             }
+        }
+
+        private static void Reader_ScriptReadingError(object sender, MonoKleScript.IO.Event.ScriptReadingErrorEventArgs e)
+        {
+            Console.WriteLine(e.Message);
         }
 
         static void vm_Print(object sender, MonoKleScript.VM.Event.PrintEventArgs e)

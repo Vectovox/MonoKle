@@ -6,6 +6,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection;
     using System.Text;
 
     // TODO: Remove error reporting and trust compiler! :)
@@ -71,6 +72,16 @@
                             byte firstOperation = code[pc++];
                             this.variableByID.Add(id, this.CalculateExpression(firstOperation));
                         } break;
+                    case Constants.OP_INIVAR_READOBJECT:
+                        {
+                            byte newVariableId = code[pc++];
+                            this.variableByID.Add(newVariableId, this.ReadObject());
+                        } break;
+                    case Constants.OP_SETVAR_READOBJECT:
+                        {
+                            byte variableToSetId = code[pc++];
+                            this.variableByID[variableToSetId] = this.ReadObject();
+                        } break;
                     case Constants.OP_SETVAR:
                         {
                             byte id = code[pc++];
@@ -107,6 +118,43 @@
             }
 
             return this.CreateResult(null);
+        }
+
+        private object ReadObject()
+        {
+            object readVariable = this.variableByID[code[pc++]];
+            byte readType = code[pc++];
+            int bytesRead = 0;
+            object value = null;
+            switch( readType )
+            {
+                case Constants.OP_READOBJECT_FIELDPROPERTY:
+                    {
+                        string fieldName = ByteConverter.ToString(code, pc, out bytesRead);
+                        FieldInfo field = readVariable.GetType().GetField(fieldName);
+                        PropertyInfo property = readVariable.GetType().GetProperty(fieldName);
+                        if( field != null )
+                        {
+                            value = field.GetValue(readVariable);
+                        }
+                        else if( property != null )
+                        {
+                            value = property.GetValue(readVariable, null);
+                        }
+                        else
+                        {
+                            this.ReportError("No such field/property [" + fieldName + "] for object");
+                        }
+                        break;
+                    }
+                default:
+                    {
+                        this.ReportError("Illegal READOBJECT type");
+                        break;
+                    }
+            }
+            this.pc += bytesRead;
+            return value;
         }
 
         private Result CreateResult(object value)
@@ -700,7 +748,7 @@
                 {
                     if (arguments[i] != null)
                     {
-                        if (script.Header.arguments[i].type == arguments[i].GetType())
+                        if (script.Header.arguments[i].type == arguments[i].GetType() || script.Header.arguments[i].type == typeof(object))
                         {
                             this.variableByID.Add(i, arguments[i]);
                         }

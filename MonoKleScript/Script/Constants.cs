@@ -52,7 +52,7 @@ namespace MonoKleScript.Script
         public const string SCRIPT_OPERATOR_LOGIC_SMALLER_REGEX = "<";
         public const string SCRIPT_OPERATOR_LOGIC_SMALLEREQUAL_REGEX = "<=";
 
-        public const string SCRIPT_TYPE_ALLOWEDTYPES_REGEX = "(bool|int|float|string)";
+        public const string SCRIPT_TYPE_ALLOWEDTYPES_REGEX = "(bool|int|float|string|object)";
         
 
         public const string REGEX_START_MATCH = "(^|\\s+)" + SCRIPT_START + "(\\s+|$)";
@@ -60,7 +60,7 @@ namespace MonoKleScript.Script
         
         public const string SCRIPT_NAMES_ALLOWEDNAMES_REGEX = "[A-Za-z0-9_]+";
         
-        public const string SCRIPT_HEADER_TYPE_ALLOWEDTYPES_REGEX = "(void|bool|int|float|string)";
+        public const string SCRIPT_HEADER_TYPE_ALLOWEDTYPES_REGEX = "(void|bool|int|float|string|object)";
         public const string SCRIPT_HEADER_ARGUMENT_REGEX = SCRIPT_TYPE_ALLOWEDTYPES_REGEX + "\\s+" + SCRIPT_NAMES_ALLOWEDNAMES_REGEX;
         public const string SCRIPT_HEADER_ARGUMENTS_REGEX = "\\(\\s*(|" + SCRIPT_HEADER_ARGUMENT_REGEX + "|"
             + SCRIPT_HEADER_ARGUMENT_REGEX + "(\\s*" + SCRIPT_ARGUMENT_SEPARATOR + "\\s*" + SCRIPT_HEADER_ARGUMENT_REGEX + ")*)\\s*\\)";
@@ -117,6 +117,11 @@ namespace MonoKleScript.Script
         // Flow Control
         public const byte OP_IF = 0x30;
         public const byte OP_JUMP = 0x31;
+
+        // Object reading
+        public const byte OP_INIVAR_READOBJECT = 0x40;
+        public const byte OP_SETVAR_READOBJECT = 0x41;
+        public const byte OP_READOBJECT_FIELDPROPERTY = 0x42;
 
         // Function
         public const byte OP_CALLFUNCTION = 0xD0;
@@ -305,6 +310,10 @@ namespace MonoKleScript.Script
             else if (type.Equals("string"))
             {
                 return "System.String";
+            }
+            else if( type.Equals("object") )
+            {
+                return "System.Object";
             }
             return "";
         }

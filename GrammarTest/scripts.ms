@@ -1,5 +1,5 @@
 ﻿/* TESTS */
-script void RunTests()
+script void RunTests(object testObj)
 
 	print "<< Testing functions >>"
 	TestFunctions()
@@ -15,6 +15,8 @@ script void RunTests()
 	TestVariables()
 	print "<< Testing loops >>"
 	TestLoops()
+	print "<< Testing objects >>"
+	TestObjects(testObj)
 
 endscript
 
@@ -171,6 +173,26 @@ script int TestFunctions()
 
 endscript
 
+
+script void TestObjects(object testObj)
+
+	int x <- testObj.plainIntField
+	if x = 8 then
+		print "Success: true"
+	else 
+		print "Success: false"
+	endif
+
+	int y : 10
+	y <- testObj.Property
+	if y = 10 then
+		print "Success: false"
+	else 
+		print "Success: true"
+	endif
+
+
+endscript
 
 
 

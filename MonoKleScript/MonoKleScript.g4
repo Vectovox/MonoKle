@@ -1,7 +1,7 @@
 grammar MonoKleScript;
 
 options {
-    language=CSharp_v4_0;
+    language=CSharp_v5_0;
 }
 
 /* ### RULES ### */
@@ -15,7 +15,9 @@ block : blockstatements
 blockstatements : statement
                 | statement blockstatements;
 
-statement : assignment
+statement : initialization_readobject
+          | assignment_readobject
+          | assignment
           | initialization
           | conditional
 		  | while
@@ -36,8 +38,16 @@ else : ELSE block
 	 ;
 
 // Variables
-assignment : IDENTIFIER ASSIGNMENT expression;
+initialization_readobject : TYPE IDENTIFIER OBJECTREAD IDENTIFIER OBJECTACCESS objectvalue;
+assignment_readobject : IDENTIFIER OBJECTREAD IDENTIFIER OBJECTACCESS objectvalue;
 initialization : TYPE IDENTIFIER ASSIGNMENT expression;
+assignment : IDENTIFIER ASSIGNMENT expression;
+
+// Object
+objectvalue : IDENTIFIER # OV
+            | IDENTIFIER LGROUPING RGROUPING # OVMethod
+		    | IDENTIFIER LGROUPING parameters RGROUPING # OVMethodParams
+			;
 
 // Keyword commands
 keyPrint : PRINT expression;
@@ -88,7 +98,7 @@ parameters : expression
 
 
 /* ### TOKENS ### */
-TYPE : 'int' | 'float' | 'string';
+TYPE : 'int' | 'float' | 'string' | 'object';
 ASSIGNMENT : ':';
 
 IF : 'if';
@@ -102,6 +112,9 @@ ENDWHILE : 'endwhile';
 
 RETURN : 'return';
 PRINT : 'print';
+
+OBJECTACCESS : '.';
+OBJECTREAD : '<-';
 
 PLUS : '+';
 MINUS : '-';

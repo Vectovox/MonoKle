@@ -1,10 +1,10 @@
-﻿namespace MonoKleScript.Compiler
+﻿namespace MonoKle.Script.Compiler
 {
     using Antlr4.Runtime.Misc;
     using MonoKle.Utilities;
-    using MonoKleScript.Grammar;
-    using MonoKleScript.Common.Script;
-    using MonoKleScript.Common.Internal;
+    using MonoKle.Script.Grammar;
+    using MonoKle.Script.Common.Script;
+    using MonoKle.Script.Common.Internal;
     using MonoKle.Utilities.Conversion;
     using System;
     using System.Collections.Generic;

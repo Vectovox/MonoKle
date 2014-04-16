@@ -88,19 +88,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>TextureResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Scripting\Result.cs" />
-    <Compile Include="Scripting\CompilerEngine.cs" />
-    <Compile Include="Scripting\Script\Argument.cs" />
-    <Compile Include="Scripting\Script\Header.cs" />
-    <Compile Include="Scripting\Script\Source.cs" />
-    <Compile Include="Scripting\Token.cs" />
-    <Compile Include="Scripting\VirtualMachine.cs" />
-    <Compile Include="Scripting\Script\ByteScript.cs" />
-    <Compile Include="Scripting\Compiler.cs" />
-    <Compile Include="Scripting\ScriptBase.cs" />
-    <Compile Include="Scripting\ScriptInterface.cs" />
-    <Compile Include="Scripting\ScriptFileReader.cs" />
-    <Compile Include="Scripting\Variable.cs" />
+    <Compile Include="Script\ScriptInterface.cs" />
     <Compile Include="State\GameState.cs" />
     <Compile Include="State\StateSwitchData.cs" />
     <Compile Include="State\StateManager.cs" />
@@ -144,7 +132,12 @@
       <LastGenOutput>TextureResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\MonoKleScript\MonoKleScript.csproj">
+      <Project>{0f3b0e02-30a0-4a37-a424-23300847e2ca}</Project>
+      <Name>MonoKleScript</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

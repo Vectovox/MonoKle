@@ -1,9 +1,9 @@
-﻿namespace MonoKleScript.VM
+﻿namespace MonoKle.Script.VM
 {
     using MonoKle.Utilities.Conversion;
-    using MonoKleScript.Common.Internal;
-    using MonoKleScript.Common.Script;
-    using MonoKleScript.VM.Event;
+    using MonoKle.Script.Common.Internal;
+    using MonoKle.Script.Common.Script;
+    using MonoKle.Script.VM.Event;
     using System;
     using System.Collections.Generic;
     using System.Reflection;
@@ -39,7 +39,7 @@
             }
         }
 
-        public Result RunScript(ByteScript script, object[] arguments, Dictionary<string, ByteScript> scriptByName)
+        public ExecutionResult RunScript(ByteScript script, object[] arguments, Dictionary<string, ByteScript> scriptByName)
         {
             this.Reset(script, arguments, scriptByName);
 
@@ -274,15 +274,15 @@
             return null;
         }
 
-        private Result CreateResult(object value)
+        private ExecutionResult CreateResult(object value)
         {
             if(this.error)
             {
-                return Result.Fail;
+                return ExecutionResult.CreateFail(this.scriptName);
             }
             else
             {
-                return new Result(true, this.returnType, value);
+                return new ExecutionResult(true, this.returnType, value, this.scriptName);
             }
         }
 
@@ -461,7 +461,7 @@
                 case ByteCodeValues.OP_GETVAR:
                     return this.variableByID[this.code[pc++]];
                 case ByteCodeValues.OP_CALLFUNCTION:
-                    return this.CallFunction().returnValue;
+                    return this.CallFunction().ReturnValue;
                 default:
                     {
                         this.ReportError("Encountered unrecognized expression operation.");
@@ -472,7 +472,7 @@
             return null;
         }
 
-        private Result CallFunction()
+        private ExecutionResult CallFunction()
         {
             int br = 0;
             string name = ByteConverter.ToString(this.code, pc, out br);
@@ -482,7 +482,7 @@
             ScriptExecuter e = new ScriptExecuter();
             e.Print += delegate (object o, PrintEventArgs pe) { this.OnPrint(pe.Message); };
             e.RuntimeError += delegate (object o, RuntimeErrorEventArgs re) { this.OnRuntimeError(re.Message); };
-            Result result = e.RunScript(scriptByName[name], args, this.scriptByName);
+            ExecutionResult result = e.RunScript(scriptByName[name], args, this.scriptByName);
             e.RemoveEventSubscribers();
             return result;
         }

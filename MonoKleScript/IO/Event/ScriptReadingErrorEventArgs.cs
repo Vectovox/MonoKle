@@ -1,4 +1,4 @@
-﻿namespace MonoKleScript.IO.Event
+﻿namespace MonoKle.Script.IO.Event
 {
     using System;
 

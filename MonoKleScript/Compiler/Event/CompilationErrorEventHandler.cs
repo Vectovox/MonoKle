@@ -1,4 +1,4 @@
-﻿namespace MonoKleScript.Compiler.Event
+﻿namespace MonoKle.Script.Compiler.Event
 {
     /// <summary>
     /// Event handler for compilation error events.

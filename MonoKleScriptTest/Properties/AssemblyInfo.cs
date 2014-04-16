@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("GrammarTest")]
+[assembly: AssemblyTitle("MonoKleScriptTest")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("GrammarTest")]
+[assembly: AssemblyProduct("MonoKleScriptTest")]
 [assembly: AssemblyCopyright("Copyright ©  2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("f8c34b92-1cdc-4b87-9727-35ec9618c653")]
+[assembly: Guid("6f4df7f2-2ee9-4ae2-b4d0-0b43e0e4bb4e")]
 
 // Version information for an assembly consists of the following four values:
 //

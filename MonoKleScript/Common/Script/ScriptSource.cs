@@ -1,4 +1,4 @@
-﻿namespace MonoKleScript.Common.Script
+﻿namespace MonoKle.Script.Common.Script
 {
     /// <summary>
     /// Container class representing the soure of a script.

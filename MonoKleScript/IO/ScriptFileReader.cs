@@ -1,8 +1,8 @@
-﻿namespace MonoKleScript.IO
+﻿namespace MonoKle.Script.IO
 {
-    using MonoKleScript.Common.Internal;
-    using MonoKleScript.Common.Script;
-    using MonoKleScript.IO.Event;
+    using MonoKle.Script.Common.Internal;
+    using MonoKle.Script.Common.Script;
+    using MonoKle.Script.IO.Event;
     using System;
     using System.Collections.Generic;
     using System.IO;

@@ -8,7 +8,7 @@
     <ProjectGuid>{0F3B0E02-30A0-4A37-A424-23300847E2CA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MonoKleScript</RootNamespace>
+    <RootNamespace>MonoKle.MScript</RootNamespace>
     <AssemblyName>MonoKleScript</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -70,19 +70,20 @@
     <Compile Include="Common\Script\ScriptVariable.cs" />
     <Compile Include="Common\Script\ScriptHeader.cs" />
     <Compile Include="Common\Script\ScriptSource.cs" />
+    <Compile Include="VM\ChannelResult.cs" />
     <Compile Include="VM\Event\PrintEventArgs.cs" />
     <Compile Include="VM\Event\RuntimeErrorEventArgs.cs" />
     <Compile Include="VM\Event\PrintEventHandler.cs" />
     <Compile Include="VM\Event\RuntimeErrorEventHandler.cs" />
     <Compile Include="VM\IVirtualMachine.cs" />
-    <Compile Include="VM\Result.cs" />
+    <Compile Include="VM\ExecutionResult.cs" />
     <Compile Include="VM\ScriptExecuter.cs" />
     <Compile Include="VM\VirtualMachine.cs" />
   </ItemGroup>
   <ItemGroup>
     <Antlr4 Include="MonoKleScript.g4">
       <Generator>MSBuild:Compile</Generator>
-      <CustomToolNamespace>MonoKleScript.Grammar</CustomToolNamespace>
+      <CustomToolNamespace>MonoKle.Script.Grammar</CustomToolNamespace>
     </Antlr4>
   </ItemGroup>
   <ItemGroup>

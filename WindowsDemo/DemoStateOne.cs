@@ -196,8 +196,20 @@ namespace WindowsDemo
             sb = new SpriteBatch(MonoKleGame.GraphicsManager.GetGraphicsDevice());
             MonoKleGame.PrimitiveDrawer.Camera = camera;
             timer.Reset();
-            MonoKleGame.ScriptInterface.LoadSource("testscripts.ms");
-            MonoKleGame.ScriptInterface.CompileSource();
+            MonoKleGame.ScriptInterface.AddScriptSources("TestScripts.ms", false);
+            MonoKleGame.ScriptInterface.CompileSources();
+            MonoKleGame.ScriptInterface.Print +=ScriptInterface_Print;
+            MonoKleGame.ScriptInterface.CompilationError +=ScriptInterface_CompilationError;
+        }
+
+        private void ScriptInterface_CompilationError(object sender, MonoKle.Script.Compiler.Event.CompilationErrorEventArgs e)
+        {
+            MonoKleGame.Console.WriteLine(e.Message);
+        }
+
+        private void ScriptInterface_Print(object sender, MonoKle.Script.VM.Event.PrintEventArgs e)
+        {
+            MonoKleGame.Console.WriteLine(e.Message);
         }
     }
 }

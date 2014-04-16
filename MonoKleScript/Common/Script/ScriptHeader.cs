@@ -1,4 +1,4 @@
-﻿namespace MonoKleScript.Common.Script
+﻿namespace MonoKle.Script.Common.Script
 {
     using System;
 

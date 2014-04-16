@@ -1,8 +1,8 @@
-﻿namespace MonoKleScript.Debug
+﻿namespace MonoKle.Script.Debug
 {
     using Antlr4.Runtime;
     using Antlr4.Runtime.Tree;
-    using MonoKleScript.Grammar;
+    using MonoKle.Script.Grammar;
     using System;
     using System.Text;
 

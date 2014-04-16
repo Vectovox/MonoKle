@@ -1,4 +1,4 @@
-﻿namespace MonoKleScript.VM.Event
+﻿namespace MonoKle.Script.VM.Event
 {
     /// <summary>
     /// Event handler for runtime error events.

@@ -1,6 +1,6 @@
-﻿namespace MonoKleScript.Compiler
+﻿namespace MonoKle.Script.Compiler
 {
-    using MonoKleScript.Common.Script;
+    using MonoKle.Script.Common.Script;
     using System.Collections.Generic;
 
     /// <summary>
@@ -24,6 +24,7 @@
         /// Loads the given script sources for compilation.
         /// </summary>
         /// <param name="sources">The scripts to load.</param>
-        void LoadSources(IEnumerable<ScriptSource> sources);
+        /// <returns>The amount of loaded sources.</returns>
+        int LoadSources(IEnumerable<ScriptSource> sources);
     }
 }

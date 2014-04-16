@@ -1,8 +1,10 @@
-﻿namespace MonoKleScript.VM
+﻿namespace MonoKle.Script.VM
 {
-    using MonoKleScript.Common.Script;
-    using MonoKleScript.VM.Event;
+    using MonoKle.Script.Common.Script;
+    using MonoKle.Script.VM.Event;
     using System.Collections.Generic;
+    using System;
+
 
     /// <summary>
     /// Virtual machine that executes compiled scripts.
@@ -11,6 +13,7 @@
     {
         private ScriptExecuter executer = new ScriptExecuter();
         private Dictionary<string, ByteScript> scriptByName = new Dictionary<string, ByteScript>();
+        private Dictionary<string, ICollection<string>> scriptsByChannel = new Dictionary<string, ICollection<string>>();
 
         /// <summary>
         /// Creates a new instance of <see cref="VirtualMachine"/>.
@@ -32,11 +35,40 @@
         public event RuntimeErrorEventHandler RuntimeError;
 
         /// <summary>
+        /// Executes all scripts on a given channel.
+        /// </summary>
+        /// <param name="channel">The channel to execute scripts from.</param>
+        /// <returns>Result of the channel execution.</returns>
+        public ChannelResult ExecuteChannel(string channel)
+        {
+            return this.ExecuteChannel(channel, new object[0]);
+        }
+
+        /// <summary>
+        /// Executes all scripts on a given channel with the provided parameters.
+        /// </summary>
+        /// <param name="channel">The channel to execute scripts from.</param>
+        /// <param name="parameters">Parameters to proide each script.</param>
+        /// <returns>Result of the channel execution.</returns>
+        public ChannelResult ExecuteChannel(string channel, object[] parameters)
+        {
+            ICollection<ExecutionResult> resultCollection = new LinkedList<ExecutionResult>();
+            if(this.scriptsByChannel.ContainsKey(channel))
+            {
+                foreach(string s in this.scriptsByChannel[channel])
+                {
+                    resultCollection.Add(this.ExecuteScript(s, parameters));
+                }
+            }
+            return new ChannelResult(channel, resultCollection);
+        }
+
+        /// <summary>
         /// Executes the script with the provided name.
         /// </summary>
         /// <param name="script">Name of the script to execute.</param>
         /// <returns>Result of the execution.</returns>
-        public Result ExecuteScript(string script)
+        public ExecutionResult ExecuteScript(string script)
         {
             return this.ExecuteScript(script, new object[0]);
         }
@@ -47,7 +79,7 @@
         /// <param name="script">Name of the script to execute.</param>
         /// <param name="parameters">Parameters to give the script.</param>
         /// <returns>Result of the execution.</returns>
-        public Result ExecuteScript(string script, object[] arguments)
+        public ExecutionResult ExecuteScript(string script, object[] arguments)
         {
             if (this.scriptByName.ContainsKey(script))
             {
@@ -57,7 +89,7 @@
             {
                 this.OnRuntimeError(new RuntimeErrorEventArgs("Script " + script + " not loaded"));
             }
-            return Result.Fail;
+            return ExecutionResult.CreateFail(script);
         }
 
         /// <summary>
@@ -72,8 +104,19 @@
             {
                 if (this.scriptByName.ContainsKey(s.Header.name) == false)
                 {
-                    nLoaded++;
+                    // Add script to dictionary
                     this.scriptByName.Add(s.Header.name, s);
+                    // Add script to channel
+                    if(s.Header.channel != null && s.Header.channel.Length > 0)
+                    {
+                        if(this.scriptsByChannel.ContainsKey(s.Header.channel) == false)
+                        {
+                            this.scriptsByChannel.Add(s.Header.channel, new LinkedList<string>());
+                        }
+                        this.scriptsByChannel[s.Header.channel].Add(s.Header.name);
+                    }
+                    // Increase loaded counter
+                    nLoaded++;
                 }
                 else
                 {

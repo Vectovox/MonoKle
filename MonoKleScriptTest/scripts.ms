@@ -21,7 +21,7 @@ script void RunTests(object testObj)
 endscript
 
 
-script void TestLogic()
+script void TestLogic() > test
 
 	print "Success: " + (not false)
 	print "Success: " + (5 > 4)
@@ -39,7 +39,7 @@ endscript
 
 
 
-script void TestArithmetic()
+script void TestArithmetic() > test
 	
 	Assert(((5 + 5) = 10))
 	print "Success: " + ((5 - 5) = 0)
@@ -52,7 +52,7 @@ script void TestArithmetic()
 endscript
 
 
-script void TestComment()
+script void TestComment() > test
 
 	// print "Success: false"
 	/*
@@ -68,7 +68,7 @@ endscript
 
 
 
-script void TestConditional()
+script void TestConditional() > test
 
 	if true then
 	  print "Success: true"
@@ -137,7 +137,7 @@ script void TestConditional()
 endscript
 
 
-script void TestVariables()
+script void TestVariables() > test
 
 	int x : 5
 	x : x + 1
@@ -149,7 +149,7 @@ script void TestVariables()
 endscript
 
 
-script void TestLoops()
+script void TestLoops() > test
 
   int x : 0
   while x < 5 do
@@ -161,7 +161,7 @@ script void TestLoops()
 endscript
 
 
-script int TestFunctions()
+script int TestFunctions() > test
 
 	int x : AddInt(AddInt(AddInt(GetOne(), GetOne()), GetOne()), 5)
 	Assert(x = 8)
@@ -170,7 +170,7 @@ script int TestFunctions()
 endscript
 
 
-script void TestObjects(object testObj)
+script void TestObjects(object testObj) > test
 
 	int x <- testObj.plainIntField
 	Assert(x = 8)

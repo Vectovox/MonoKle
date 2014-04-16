@@ -1,20 +1,35 @@
-﻿namespace MonoKleScript.VM
+﻿namespace MonoKle.Script.VM
 {
-    using MonoKleScript.Common.Script;
-    using MonoKleScript.VM.Event;
+    using MonoKle.Script.Common.Script;
+    using MonoKle.Script.VM.Event;
     using System.Collections.Generic;
 
     /// <summary>
-    /// Virtual machine interface.
+    /// Virtual Machine interface.
     /// </summary>
     public interface IVirtualMachine
     {
+        /// <summary>
+        /// Executes all scripts on a given channel.
+        /// </summary>
+        /// <param name="channel">The channel to execute scripts from.</param>
+        /// <returns>Result of the channel execution.</returns>
+        ChannelResult ExecuteChannel(string channel);
+
+        /// <summary>
+        /// Executes all scripts on a given channel with the provided parameters.
+        /// </summary>
+        /// <param name="channel">The channel to execute scripts from.</param>
+        /// <param name="parameters">Parameters to proide each script.</param>
+        /// <returns>Result of the channel execution.</returns>
+        ChannelResult ExecuteChannel(string channel, object[] parameters);
+
         /// <summary>
         /// Executes the script with the provided name.
         /// </summary>
         /// <param name="script">Name of the script to execute.</param>
         /// <returns>Result of the execution.</returns>
-        Result ExecuteScript(string script);
+        ExecutionResult ExecuteScript(string script);
 
         /// <summary>
         /// Executes the script with the provided name.
@@ -22,7 +37,7 @@
         /// <param name="script">Name of the script to execute.</param>
         /// <param name="parameters">Parameters to give the script.</param>
         /// <returns>Result of the execution.</returns>
-        Result ExecuteScript(string script, object[] parameters);
+        ExecutionResult ExecuteScript(string script, object[] parameters);
 
         /// <summary>
         /// Loads the provided scripts and returns the amount loaded.

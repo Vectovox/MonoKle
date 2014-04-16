@@ -1,10 +1,10 @@
-﻿namespace MonoKleScript.Compiler
+﻿namespace MonoKle.Script.Compiler
 {
     using Antlr4.Runtime;
     using Antlr4.Runtime.Tree;
-    using MonoKleScript.Common.Script;
-    using MonoKleScript.Compiler.Event;
-    using MonoKleScript.Grammar;
+    using MonoKle.Script.Common.Script;
+    using MonoKle.Script.Compiler.Event;
+    using MonoKle.Script.Grammar;
     using System.Collections.Generic;
     using System.Text;
 
@@ -101,7 +101,10 @@
         private void OnCompilationError(string message)
         {
             var l = CompilationError;
-            l(this, new CompilationErrorEventArgs("Compilation error <" + this.currentScriptName + ">: " + message));
+            if(l != null)
+            {
+                l(this, new CompilationErrorEventArgs("Compilation error <" + this.currentScriptName + ">: " + message));
+            }
         }
 
         private void semanticsListener_SemanticsError(object sender, SemanticErrorEventArgs e)

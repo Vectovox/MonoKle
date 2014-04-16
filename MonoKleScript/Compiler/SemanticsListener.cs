@@ -1,4 +1,4 @@
-﻿namespace MonoKleScript.Compiler
+﻿namespace MonoKle.Script.Compiler
 {
     using System;
     using System.Collections.Generic;
@@ -7,10 +7,10 @@
 
     using Antlr4.Runtime.Tree;
 
-    using MonoKleScript.Grammar;
-    using MonoKleScript.Common.Script;
-    using MonoKleScript.Common.Internal;
-    using MonoKleScript.Compiler.Event;
+    using MonoKle.Script.Grammar;
+    using MonoKle.Script.Common.Script;
+    using MonoKle.Script.Common.Internal;
+    using MonoKle.Script.Compiler.Event;
     using Antlr4.Runtime.Misc;
 
 
@@ -20,7 +20,6 @@
     internal class SemanticsListener : MonoKleScriptBaseListener
     {
         // TODO: TODOS ARE IN ORDER OF PRIORITY, FROM MOST TO LEAST
-        // TODO: Make sure to check type at runtime when reading and setting
         // TODO: Add object field/property/method chaining
         // TODO: Add ability to instance own structs and objects
         // TODO: Check that a return always is made.

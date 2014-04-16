@@ -1,4 +1,4 @@
-﻿namespace MonoKleScript.Common.Internal
+﻿namespace MonoKle.Script.Common.Internal
 {
     internal static class ScriptNamingConstants
     {

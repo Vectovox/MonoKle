@@ -1,4 +1,4 @@
-﻿namespace MonoKle.Utilities
+﻿namespace MonoKle.Utilities.Conversion
 {
     /// <summary>
     /// Converts base data types to byte arrays, and byte arrays to base data types. Uses an arbitrary standard for converting to a byte array

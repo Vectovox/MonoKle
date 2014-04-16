@@ -4,8 +4,6 @@
     using Antlr4.Runtime.Tree;
     using MonoKleScript.Grammar;
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Text;
 
     /// <summary>
@@ -126,34 +124,5 @@
                 Console.WriteLine(sb);
             }
         }
-
-        //private class SubRulePrinterListener : MonoKleScriptBaseListener
-        //{
-        //    private string[] ruleNames;
-
-        //    public SubRulePrinterListener(string[] ruleNames)
-        //    {
-        //        this.ruleNames = ruleNames;
-        //    }
-
-        //    public override void EnterEveryRule(ParserRuleContext context)
-        //    {
-        //        StringBuilder sb = new StringBuilder();
-        //        sb.Append(context.Depth());
-        //        sb.Append(") [");
-        //        sb.Append(ruleNames[context.GetRuleIndex()]);
-        //        sb.Append("] -> ");
-
-        //        foreach (var v in context.children)
-        //        {
-        //            if (v.ChildCount == 0)
-        //            {
-        //                sb.Append(v.ToString());
-        //            }
-        //        }
-
-        //        Console.WriteLine(sb);
-        //    }
-        //}
     }
 }

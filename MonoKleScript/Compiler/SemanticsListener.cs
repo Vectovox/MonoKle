@@ -8,7 +8,8 @@
     using Antlr4.Runtime.Tree;
 
     using MonoKleScript.Grammar;
-    using MonoKleScript.Script;
+    using MonoKleScript.Common.Script;
+    using MonoKleScript.Common.Internal;
     using MonoKleScript.Compiler.Event;
     using Antlr4.Runtime.Misc;
 
@@ -19,13 +20,9 @@
     internal class SemanticsListener : MonoKleScriptBaseListener
     {
         // TODO: TODOS ARE IN ORDER OF PRIORITY, FROM MOST TO LEAST
-        // TODO: Add object field/property read
-        // TODO: Add object field/property set
-        // TODO: Add object function read acces
-        // TODO: Add object function call acces
         // TODO: Make sure to check type at runtime when reading and setting
         // TODO: Add object field/property/method chaining
-        // TODO: Add ability to create own structs and objects
+        // TODO: Add ability to instance own structs and objects
         // TODO: Check that a return always is made.
         // TODO: Make sure that if function X depends on Y and Y fails, then X fails. (Otherwise we may get exceptions for non-existing keys in the script executer)
 
@@ -53,25 +50,29 @@
         /// </summary>
         public event SemanticErrorEventHandler SemanticsError;
 
+        public override void ExitAssignment_writeobject([NotNull]MonoKleScriptParser.Assignment_writeobjectContext context)
+        {
+            string objectName = context.IDENTIFIER(0).ToString();
+            if(this.CheckVariableExists(objectName))
+            {
+                if(this.typeByVariable[objectName] != typeof(object))
+                {
+                    this.OnSemanticsError("Read variable [" + objectName + "] is not an object");
+                }
+            }
+        }
+
         public override void ExitInitialization_readobject([NotNull]MonoKleScriptParser.Initialization_readobjectContext context)
         {
-            string name = context.IDENTIFIER(0).ToString();
-            string objectName = context.IDENTIFIER(1).ToString();
+            string name = context.IDENTIFIER().ToString();
 
-            if( this.typeByVariable.Count < Constants.SCRIPT_MAX_VARIABLES )
+            if( this.typeByVariable.Count < ScriptSettingsConstants.SCRIPT_MAX_VARIABLES )
             {
                 if( this.typeByVariable.ContainsKey(name) == false )
                 {
-                    if( this.typeByVariable[objectName] == typeof(object) )
-                    {
-                        Type type = CompilerHelper.StringTypeToType(context.TYPE().ToString());
-                        this.typeByVariable.Add(name, type);
-                        this.variableNameStack.Peek().Add(name);
-                    }
-                    else
-                    {
-                        this.OnSemanticsError("Read variable [" + objectName + "] is not an object");
-                    }
+                    Type type = CommonHelpers.StringTypeToType(context.TYPE().ToString());
+                    this.typeByVariable.Add(name, type);
+                    this.variableNameStack.Peek().Add(name);
                 }
                 else
                 {
@@ -80,13 +81,37 @@
             }
             else
             {
-                this.OnSemanticsError("Variable [" + name + "] is not initialized. Max number of variables [" + Constants.SCRIPT_MAX_VARIABLES + "] reached.");
+                this.OnSemanticsError("Variable [" + name + "] is not initialized. Max number of variables [" + ScriptSettingsConstants.SCRIPT_MAX_VARIABLES + "] reached.");
+            }
+        }
+
+        public override void ExitOV([NotNull]MonoKleScriptParser.OVContext context)
+        {
+            string objectName = context.IDENTIFIER(0).ToString();
+            if(this.CheckVariableExists(objectName))
+            {
+                if(this.typeByVariable[objectName] != typeof(object))
+                {
+                    this.OnSemanticsError("Read variable [" + objectName + "] is not an object");
+                }
+            }
+        }
+
+        public override void ExitObjectfunction([NotNull]MonoKleScriptParser.ObjectfunctionContext context)
+        {
+            string objectName = context.IDENTIFIER(0).ToString();
+            if(this.CheckVariableExists(objectName))
+            {
+                if(this.typeByVariable[objectName] != typeof(object))
+                {
+                    this.OnSemanticsError("Read variable [" + objectName + "] is not an object");
+                }
             }
         }
 
         public override void ExitAssignment_readobject([NotNull]MonoKleScriptParser.Assignment_readobjectContext context)
         {
-            this.CheckVariableExists(context.IDENTIFIER(1).ToString());
+            this.CheckVariableExists(context.IDENTIFIER().ToString());
         }
 
         public override void ExitWhile([NotNull]MonoKleScriptParser.WhileContext context)
@@ -181,11 +206,11 @@
         {
             string name = context.IDENTIFIER().ToString();
 
-            if (this.typeByVariable.Count < Constants.SCRIPT_MAX_VARIABLES)
+            if (this.typeByVariable.Count < ScriptSettingsConstants.SCRIPT_MAX_VARIABLES)
             {
                 if (this.typeByVariable.ContainsKey(name) == false)
                 {
-                    Type type = CompilerHelper.StringTypeToType(context.TYPE().ToString());
+                    Type type = CommonHelpers.StringTypeToType(context.TYPE().ToString());
                     if( this.CheckCorrectType(this.typeByToken[context.expression()], type))
                     {
                         this.typeByVariable.Add(name, type);
@@ -199,7 +224,7 @@
             }
             else
             {
-                this.OnSemanticsError("Variable [" + name + "] is not initialized. Max number of variables [" + Constants.SCRIPT_MAX_VARIABLES + "] reached.");
+                this.OnSemanticsError("Variable [" + name + "] is not initialized. Max number of variables [" + ScriptSettingsConstants.SCRIPT_MAX_VARIABLES + "] reached.");
             }
         }
 
@@ -218,7 +243,7 @@
 
         private Type GetArithmeticType(Type lhs, Type rhs)
         {
-            if (CompilerHelper.IsTypeArithmetic(lhs) && CompilerHelper.IsTypeArithmetic(rhs))
+            if (CommonHelpers.IsTypeArithmetic(lhs) && CommonHelpers.IsTypeArithmetic(rhs))
             {
                 if (lhs == typeof(float) || rhs == typeof(float))
                 {
@@ -463,7 +488,7 @@
 
         private bool CheckCorrectType(Type type, Type target)
         {
-            if (CompilerHelper.IsTypeCompatibleToTarget(type, target) == false)
+            if (CommonHelpers.IsTypeCompatibleToTarget(type, target) == false)
             {
                 this.OnSemanticsError("Type [" + type + "] incompatible with [" + target + "]");
                 return false;

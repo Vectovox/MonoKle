@@ -17,11 +17,13 @@ blockstatements : statement
 
 statement : initialization_readobject
           | assignment_readobject
+		  | assignment_writeobject
           | assignment
           | initialization
           | conditional
 		  | while
           | function
+		  | objectfunction
           | keyReturn
           | keyPrint
           ;
@@ -38,16 +40,20 @@ else : ELSE block
 	 ;
 
 // Variables
-initialization_readobject : TYPE IDENTIFIER OBJECTREAD IDENTIFIER OBJECTACCESS objectvalue;
-assignment_readobject : IDENTIFIER OBJECTREAD IDENTIFIER OBJECTACCESS objectvalue;
+initialization_readobject : TYPE IDENTIFIER OBJECTREAD objectvalue;
+assignment_readobject : IDENTIFIER OBJECTREAD objectvalue;
+assignment_writeobject : IDENTIFIER OBJECTACCESS IDENTIFIER OBJECTREAD expression;
 initialization : TYPE IDENTIFIER ASSIGNMENT expression;
 assignment : IDENTIFIER ASSIGNMENT expression;
 
 // Object
-objectvalue : IDENTIFIER # OV
-            | IDENTIFIER LGROUPING RGROUPING # OVMethod
-		    | IDENTIFIER LGROUPING parameters RGROUPING # OVMethodParams
+objectvalue : IDENTIFIER OBJECTACCESS IDENTIFIER # OV
+            | objectfunction #OF
 			;
+
+objectfunction: IDENTIFIER OBJECTACCESS IDENTIFIER LGROUPING RGROUPING
+		      | IDENTIFIER OBJECTACCESS IDENTIFIER LGROUPING parameters RGROUPING
+			  ;
 
 // Keyword commands
 keyPrint : PRINT expression;

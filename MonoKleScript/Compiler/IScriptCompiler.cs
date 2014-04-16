@@ -1,7 +1,7 @@
 ﻿namespace MonoKleScript.Compiler
 {
     using MonoKleScript.Compiler.Event;
-    using MonoKleScript.Script;
+    using MonoKleScript.Common.Script;
     using System.Collections.Generic;
     
     /// <summary>

@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using MonoKleScript.Compiler;
-using MonoKleScript.Script;
-using MonoKleScript.IO;
-using MonoKleScript.Compiler.Event;
-using MonoKleScript.VM;
-using MonoKleScript.Debug;
-
-namespace GrammarTest
+﻿namespace GrammarTest
 {
+    using MonoKleScript.Common.Script;
+    using MonoKleScript.Compiler;
+    using MonoKleScript.Compiler.Event;
+    using MonoKleScript.IO;
+    using MonoKleScript.VM;
+    using System;
+    using System.Collections.Generic;
+
     public struct TestStruct
     {
         public int x;
@@ -38,6 +33,11 @@ namespace GrammarTest
         public int Getter()
         {
             return this.toSet;
+        }
+
+        public int Add(int a, int b)
+        {
+            return a + b;
         }
 
         public TestClass()

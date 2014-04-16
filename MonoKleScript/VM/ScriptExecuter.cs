@@ -1,15 +1,12 @@
 ﻿namespace MonoKleScript.VM
 {
-    using MonoKle.Utilities;
-    using MonoKleScript.Script;
+    using MonoKle.Utilities.Conversion;
+    using MonoKleScript.Common.Internal;
+    using MonoKleScript.Common.Script;
     using MonoKleScript.VM.Event;
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Reflection;
-    using System.Text;
-
-    // TODO: Remove error reporting and trust compiler! :)
 
     internal class ScriptExecuter
     {
@@ -22,7 +19,6 @@
         private Dictionary<string, ByteScript> scriptByName;
 
         public event RuntimeErrorEventHandler RuntimeError;
-
         public event PrintEventHandler Print;
 
         private void OnPrint(string message)
@@ -37,7 +33,7 @@
         private void OnRuntimeError(string message)
         {
             var l = RuntimeError;
-            if (l != null)
+            if(l != null)
             {
                 l(this, new RuntimeErrorEventArgs(message));
             }
@@ -54,49 +50,123 @@
 
                 switch(opCode)
                 {
-                    case Constants.OP_RETURN_VOID:
+                    case ByteCodeValues.OP_RETURN_VOID:
                         return this.CreateResult(null);
-                    case Constants.OP_RETURN_VALUE:
+                    case ByteCodeValues.OP_RETURN_VALUE:
                         {
                             byte firstOperation = code[pc++];
                             return this.CreateResult(this.CalculateExpression(firstOperation));
                         }
-                    case Constants.OP_PRINT:
+                    case ByteCodeValues.OP_PRINT:
                         {
                             byte firstOperation = code[pc++];
                             this.OnPrint(this.CalculateExpression(firstOperation).ToString());
-                        } break;
-                    case Constants.OP_INIVAR:
+                        }
+                        break;
+                    case ByteCodeValues.OP_INIVAR:
                         {
                             byte id = code[pc++];
                             byte firstOperation = code[pc++];
                             this.variableByID.Add(id, this.CalculateExpression(firstOperation));
-                        } break;
-                    case Constants.OP_INIVAR_READOBJECT:
+                        }
+                        break;
+                    case ByteCodeValues.OP_INIVAR_READOBJECT:
                         {
                             byte newVariableId = code[pc++];
-                            this.variableByID.Add(newVariableId, this.ReadObject());
-                        } break;
-                    case Constants.OP_SETVAR_READOBJECT:
+                            byte type = code[pc++];
+                            Type t = CommonHelpers.ConstantTypeToType(type);
+                            object readObject = this.ReadObject();
+                            if(readObject != null)
+                            {
+                                if(t.IsAssignableFrom(readObject.GetType()))
+                                {
+                                    this.variableByID.Add(newVariableId, readObject);
+                                }
+                                else
+                                {
+                                    this.ReportError("Variable can not be assigned the provided type");
+                                }
+                            }
+                            break;
+                        }
+                    case ByteCodeValues.OP_SETVAR_READOBJECT:
                         {
                             byte variableToSetId = code[pc++];
-                            this.variableByID[variableToSetId] = this.ReadObject();
-                        } break;
-                    case Constants.OP_SETVAR:
+                            object readObject = this.ReadObject();
+                            if(this.variableByID[variableToSetId].GetType().IsAssignableFrom(readObject.GetType()))
+                            {
+                                this.variableByID[variableToSetId] = readObject;
+                            }
+                            else
+                            {
+                                this.ReportError("Variable can not be assigned the provided type");
+                            }
+                        }
+                        break;
+                    case ByteCodeValues.OP_SETVAR:
                         {
                             byte id = code[pc++];
                             byte firstOperation = code[pc++];
                             this.variableByID[id] = this.CalculateExpression(firstOperation);
-                        } break;
-                    case Constants.OP_REMVAR:
+                        }
+                        break;
+                    case ByteCodeValues.OP_REMVAR:
                         {
                             this.variableByID.Remove(code[pc++]);
-                        } break;
-                    case Constants.OP_CALLFUNCTION:
+                        }
+                        break;
+                    case ByteCodeValues.OP_CALLFUNCTION:
                         {
                             this.CallFunction();
-                        } break;
-                    case Constants.OP_IF:
+                            break;
+                        }
+                    case ByteCodeValues.OP_WRITEOBJECT_FIELDPROPERTY:
+                        {
+                            object readVariable = this.variableByID[code[pc++]];
+                            int bytesRead = 0;
+                            string fieldName = ByteConverter.ToString(code, pc, out bytesRead);
+                            this.pc += bytesRead;
+                            object value = this.CalculateExpression(this.code[pc++]);
+                            FieldInfo field = readVariable.GetType().GetField(fieldName);
+                            PropertyInfo property = readVariable.GetType().GetProperty(fieldName);
+                            if(field != null)
+                            {
+                                if(field.FieldType.IsAssignableFrom(value.GetType()))
+                                {
+                                    field.SetValue(readVariable, value);
+                                }
+                                else
+                                {
+                                    this.ReportError("Field [" + fieldName + "] can not be assigned the provided type");
+                                }
+                            }
+                            else if(property != null)
+                            {
+                                if(property.PropertyType.IsAssignableFrom(value.GetType()))
+                                {
+                                    property.SetValue(readVariable, value, null);
+                                }
+                                else
+                                {
+                                    this.ReportError("Property [" + fieldName + "] can not be assigned the provided type");
+                                }
+                            }
+                            else
+                            {
+                                this.ReportError("No such field/property [" + fieldName + "] for object");
+                            }
+                            break;
+                        }
+                    case ByteCodeValues.OP_READOBJECT_FUNCTION:
+                        {
+                            object readVariable = this.variableByID[code[pc++]];
+                            int bytesRead = 0;
+                            string methodName = ByteConverter.ToString(code, pc, out bytesRead);
+                            this.pc += bytesRead;
+                            this.CallObjectMethod(readVariable, methodName, ReadArguments());
+                            break;
+                        }
+                    case ByteCodeValues.OP_IF:
                         {
                             int jmpIfFail = ByteConverter.ToInt32(code, pc);
                             pc += sizeof(int);
@@ -106,11 +176,13 @@
                             {
                                 this.pc = jmpIfFail;
                             }
-                        } break;
-                    case Constants.OP_JUMP:
+                        }
+                        break;
+                    case ByteCodeValues.OP_JUMP:
                         {
                             this.pc = ByteConverter.ToInt32(code, pc);
-                        } break;
+                        }
+                        break;
                     default:
                         this.ReportError("Encountered unrecognized operation.");
                         break;
@@ -122,39 +194,84 @@
 
         private object ReadObject()
         {
-            object readVariable = this.variableByID[code[pc++]];
             byte readType = code[pc++];
-            int bytesRead = 0;
-            object value = null;
-            switch( readType )
+            switch(readType)
             {
-                case Constants.OP_READOBJECT_FIELDPROPERTY:
+                case ByteCodeValues.OP_READOBJECT_FIELDPROPERTY:
                     {
+                        object readVariable = this.variableByID[code[pc++]];
+                        int bytesRead = 0;
                         string fieldName = ByteConverter.ToString(code, pc, out bytesRead);
+                        this.pc += bytesRead;
                         FieldInfo field = readVariable.GetType().GetField(fieldName);
                         PropertyInfo property = readVariable.GetType().GetProperty(fieldName);
-                        if( field != null )
+                        if(field != null)
                         {
-                            value = field.GetValue(readVariable);
+                            return field.GetValue(readVariable);
                         }
-                        else if( property != null )
+                        else if(property != null)
                         {
-                            value = property.GetValue(readVariable, null);
+                            return property.GetValue(readVariable, null);
                         }
-                        else
-                        {
-                            this.ReportError("No such field/property [" + fieldName + "] for object");
-                        }
-                        break;
+                        this.ReportError("No such field/property [" + fieldName + "] for object");
+                        return null;
+                    }
+                case ByteCodeValues.OP_READOBJECT_FUNCTION:
+                    {
+                        object readVariable = this.variableByID[code[pc++]];
+                        int bytesRead = 0;
+                        string methodName = ByteConverter.ToString(code, pc, out bytesRead);
+                        this.pc += bytesRead;
+                        return this.CallObjectMethod(readVariable, methodName, ReadArguments());
                     }
                 default:
                     {
                         this.ReportError("Illegal READOBJECT type");
-                        break;
+                        return null;
                     }
             }
-            this.pc += bytesRead;
-            return value;
+        }
+
+        private object[] ReadArguments()
+        {
+            object[] args = new object[this.code[pc++]];
+            for(int i = 0; i < args.Length; i++)
+            {
+                args[i] = this.CalculateExpression(this.code[pc++]);
+            }
+            return args;
+        }
+
+        private object CallObjectMethod(object callee, string methodName, object[] arguments)
+        {
+            MethodInfo method = callee.GetType().GetMethod(methodName);
+            if(method != null)
+            {
+                ParameterInfo[] parameters = method.GetParameters();
+                if(arguments.Length == parameters.Length)
+                {
+                    for(int i = 0; i < arguments.Length; i++)
+                    {
+                        if(parameters[i].ParameterType.IsAssignableFrom(arguments[i].GetType()) == false)
+                        {
+                            this.ReportError("Invalid parameters types provided to object method [" + methodName + "]");
+                        }
+                    }
+                    if(this.error == false)
+                    {
+                        return method.Invoke(callee, arguments);
+                    }
+                }
+                else
+                {
+                    this.ReportError("Invalid amount of parameters for object method [" + methodName + "]");
+                }
+            }
+            else
+            {
+                this.ReportError("No such method [" + methodName + "] for object");
+            }
+            return null;
         }
 
         private Result CreateResult(object value)
@@ -173,7 +290,7 @@
         {
             switch(initialOperation)
             {
-                case Constants.OP_OR:
+                case ByteCodeValues.OP_OR:
                     {
                         byte lhOP = this.code[pc++];
                         object lhRet = CalculateExpression(lhOP);
@@ -183,7 +300,7 @@
 
                         return ((bool)lhRet) || ((bool)rhRet);
                     }
-                case Constants.OP_AND:
+                case ByteCodeValues.OP_AND:
                     {
                         byte lhOP = this.code[pc++];
                         object lhRet = CalculateExpression(lhOP);
@@ -193,13 +310,13 @@
 
                         return ((bool)lhRet) && ((bool)rhRet);
                     }
-                case Constants.OP_NOT:
+                case ByteCodeValues.OP_NOT:
                     {
                         byte lhOP = this.code[pc++];
                         object lhRet = CalculateExpression(lhOP);
                         return !(bool)lhRet;
                     }
-                case Constants.OP_SMALLER:
+                case ByteCodeValues.OP_SMALLER:
                     {
                         byte lhOP = this.code[pc++];
                         object lhRet = CalculateExpression(lhOP);
@@ -207,16 +324,9 @@
                         byte rhOP = this.code[pc++];
                         object rhRet = CalculateExpression(rhOP);
 
-                        if (rhRet == null || lhRet == null)
-                        {
-                            this.ReportError("Logical less-than operation failed.");
-                        }
-                        else
-                        {
-                            return SmallerObject(lhRet, rhRet);
-                        }
-                    } break;
-                case Constants.OP_SMALLEREQUAL:
+                        return SmallerObject(lhRet, rhRet);
+                    }
+                case ByteCodeValues.OP_SMALLEREQUAL:
                     {
                         byte lhOP = this.code[pc++];
                         object lhRet = CalculateExpression(lhOP);
@@ -224,16 +334,9 @@
                         byte rhOP = this.code[pc++];
                         object rhRet = CalculateExpression(rhOP);
 
-                        if (rhRet == null || lhRet == null)
-                        {
-                            this.ReportError("Logical less-than-or-equal operation failed.");
-                        }
-                        else
-                        {
-                            return SmallerEqualObject(lhRet, rhRet);
-                        }
-                    } break;
-                case Constants.OP_LARGER:
+                        return SmallerEqualObject(lhRet, rhRet);
+                    }
+                case ByteCodeValues.OP_LARGER:
                     {
                         byte lhOP = this.code[pc++];
                         object lhRet = CalculateExpression(lhOP);
@@ -241,16 +344,9 @@
                         byte rhOP = this.code[pc++];
                         object rhRet = CalculateExpression(rhOP);
 
-                        if (rhRet == null || lhRet == null)
-                        {
-                            this.ReportError("Logical greater-than operation failed.");
-                        }
-                        else
-                        {
-                            return GreaterObject(lhRet, rhRet);
-                        }
-                    } break;
-                case Constants.OP_LARGEREQUAL:
+                        return GreaterObject(lhRet, rhRet);
+                    }
+                case ByteCodeValues.OP_LARGEREQUAL:
                     {
                         byte lhOP = this.code[pc++];
                         object lhRet = CalculateExpression(lhOP);
@@ -258,16 +354,9 @@
                         byte rhOP = this.code[pc++];
                         object rhRet = CalculateExpression(rhOP);
 
-                        if (rhRet == null || lhRet == null)
-                        {
-                            this.ReportError("Logical greater-than-or-equal operation failed.");
-                        }
-                        else
-                        {
-                            return GreaterEqualObject(lhRet, rhRet);
-                        }
-                    } break;
-                case Constants.OP_EQUAL:
+                        return GreaterEqualObject(lhRet, rhRet);
+                    }
+                case ByteCodeValues.OP_EQUAL:
                     {
                         byte lhOP = this.code[pc++];
                         object lhRet = CalculateExpression(lhOP);
@@ -275,16 +364,9 @@
                         byte rhOP = this.code[pc++];
                         object rhRet = CalculateExpression(rhOP);
 
-                        if (rhRet == null || lhRet == null)
-                        {
-                            this.ReportError("Logical equality operation failed.");
-                        }
-                        else
-                        {
-                            return lhRet.Equals(rhRet);
-                        }
-                    }break;
-                case Constants.OP_NOTEQUAL:
+                        return lhRet.Equals(rhRet);
+                    }
+                case ByteCodeValues.OP_NOTEQUAL:
                     {
                         byte lhOP = this.code[pc++];
                         object lhRet = CalculateExpression(lhOP);
@@ -294,7 +376,7 @@
 
                         return lhRet.Equals(rhRet) == false;
                     }
-                case Constants.OP_ADD:
+                case ByteCodeValues.OP_ADD:
                     {
                         byte lhOP = this.code[pc++];
                         object lhRet = CalculateExpression(lhOP);
@@ -302,16 +384,9 @@
                         byte rhOP = this.code[pc++];
                         object rhRet = CalculateExpression(rhOP);
 
-                        if (rhRet == null || lhRet == null)
-                        {
-                            this.ReportError("Addition operation failed.");
-                        }
-                        else
-                        {
-                            return AddObject(lhRet, rhRet);
-                        }
-                    } break;
-                case Constants.OP_SUBTRACT:
+                        return AddObject(lhRet, rhRet);
+                    }
+                case ByteCodeValues.OP_SUBTRACT:
                     {
                         byte lhOP = this.code[pc++];
                         object lhRet = CalculateExpression(lhOP);
@@ -319,16 +394,9 @@
                         byte rhOP = this.code[pc++];
                         object rhRet = CalculateExpression(rhOP);
 
-                        if (rhRet == null || lhRet == null)
-                        {
-                            this.ReportError("Subtract operation failed.");
-                        }
-                        else
-                        {
-                            return SubtractObject(lhRet, rhRet);
-                        }
-                    } break;
-                case Constants.OP_DIVIDE:
+                        return SubtractObject(lhRet, rhRet);
+                    }
+                case ByteCodeValues.OP_DIVIDE:
                     {
                         byte lhOP = this.code[pc++];
                         object lhRet = CalculateExpression(lhOP);
@@ -336,16 +404,9 @@
                         byte rhOP = this.code[pc++];
                         object rhRet = CalculateExpression(rhOP);
 
-                        if (rhRet == null || lhRet == null)
-                        {
-                            this.ReportError("Division operation failed.");
-                        }
-                        else
-                        {
-                            return DivideObject(lhRet, rhRet);
-                        }
-                    } break;
-                case Constants.OP_MULTIPLY:
+                        return DivideObject(lhRet, rhRet);
+                    }
+                case ByteCodeValues.OP_MULTIPLY:
                     {
                         byte lhOP = this.code[pc++];
                         object lhRet = CalculateExpression(lhOP);
@@ -353,22 +414,15 @@
                         byte rhOP = this.code[pc++];
                         object rhRet = CalculateExpression(rhOP);
 
-                        if (rhRet == null || lhRet == null)
-                        {
-                            this.ReportError("Multiply operation failed.");
-                        }
-                        else
-                        {
-                            return MultiplyObject(lhRet, rhRet);
-                        }
-                    } break;
-                case Constants.OP_NEGATE:
+                        return MultiplyObject(lhRet, rhRet);
+                    }
+                case ByteCodeValues.OP_NEGATE:
                     {
                         byte lhOP = this.code[pc++];
                         object lhRet = CalculateExpression(lhOP);
                         return this.SubtractObject(0, lhRet);
                     }
-                case Constants.OP_POWER:
+                case ByteCodeValues.OP_POWER:
                     {
                         byte lhOP = this.code[pc++];
                         object lhRet = CalculateExpression(lhOP);
@@ -376,16 +430,9 @@
                         byte rhOP = this.code[pc++];
                         object rhRet = CalculateExpression(rhOP);
 
-                        if (rhRet == null || lhRet == null)
-                        {
-                            this.ReportError("Power operation failed.");
-                        }
-                        else
-                        {
-                            return PowerObject(lhRet, rhRet);
-                        }
-                    } break;
-                case Constants.OP_MODULO:
+                        return PowerObject(lhRet, rhRet);
+                    }
+                case ByteCodeValues.OP_MODULO:
                     {
                         byte lhOP = this.code[pc++];
                         object lhRet = CalculateExpression(lhOP);
@@ -395,30 +442,31 @@
 
                         return this.ModuloObject(lhRet, rhRet);
                     }
-                case Constants.OP_CONST_BOOL:
+                case ByteCodeValues.OP_CONST_BOOL:
                     pc += sizeof(bool);
                     return ByteConverter.ToBoolean(this.code, pc - sizeof(bool));
-                case Constants.OP_CONST_INT:
+                case ByteCodeValues.OP_CONST_INT:
                     pc += sizeof(int);
                     return ByteConverter.ToInt32(this.code, pc - sizeof(int));
-                case Constants.OP_CONST_FLOAT:
+                case ByteCodeValues.OP_CONST_FLOAT:
                     pc += sizeof(float);
                     return ByteConverter.ToFloat32(this.code, pc - sizeof(float));
-                case Constants.OP_CONST_STRING:
+                case ByteCodeValues.OP_CONST_STRING:
                     {
                         int bytesRead = 0;
                         string s = ByteConverter.ToString(this.code, pc, out bytesRead);
                         pc += bytesRead;
                         return s.Remove(0, 1).Remove(s.Length - 2, 1);  // Removes the string indication characters
                     }
-                case Constants.OP_GETVAR:
+                case ByteCodeValues.OP_GETVAR:
                     return this.variableByID[this.code[pc++]];
-                case Constants.OP_CALLFUNCTION:
+                case ByteCodeValues.OP_CALLFUNCTION:
                     return this.CallFunction().returnValue;
                 default:
                     {
                         this.ReportError("Encountered unrecognized expression operation.");
-                    }break;
+                    }
+                    break;
             }
 
             return null;
@@ -429,16 +477,10 @@
             int br = 0;
             string name = ByteConverter.ToString(this.code, pc, out br);
             pc += br;
-            byte nArgs = this.code[pc++];
-
-            object[] args = new object[nArgs];
-            for (int i = 0; i < args.Length; i++)
-            {
-                args[i] = this.CalculateExpression(this.code[pc++]);
-            }
+            object[] args = this.ReadArguments();
 
             ScriptExecuter e = new ScriptExecuter();
-            e.Print += delegate (object o, PrintEventArgs pe){ this.OnPrint(pe.Message); };
+            e.Print += delegate (object o, PrintEventArgs pe) { this.OnPrint(pe.Message); };
             e.RuntimeError += delegate (object o, RuntimeErrorEventArgs re) { this.OnRuntimeError(re.Message); };
             Result result = e.RunScript(scriptByName[name], args, this.scriptByName);
             e.RemoveEventSubscribers();
@@ -466,11 +508,11 @@
             }
             else if(a.GetType() == typeof(float))
             {
-                if (b.GetType() == typeof(int))
+                if(b.GetType() == typeof(int))
                 {
                     return (float)a > (int)b;
                 }
-                else if (b.GetType() == typeof(float))
+                else if(b.GetType() == typeof(float))
                 {
                     return (float)a > (float)b;
                 }
@@ -480,24 +522,24 @@
 
         private object GreaterEqualObject(object a, object b)
         {
-            if (a.GetType() == typeof(int))
+            if(a.GetType() == typeof(int))
             {
-                if (b.GetType() == typeof(int))
+                if(b.GetType() == typeof(int))
                 {
                     return (int)a >= (int)b;
                 }
-                else if (b.GetType() == typeof(float))
+                else if(b.GetType() == typeof(float))
                 {
                     return (int)a >= (float)b;
                 }
             }
-            else if (a.GetType() == typeof(float))
+            else if(a.GetType() == typeof(float))
             {
-                if (b.GetType() == typeof(int))
+                if(b.GetType() == typeof(int))
                 {
                     return (float)a >= (int)b;
                 }
-                else if (b.GetType() == typeof(float))
+                else if(b.GetType() == typeof(float))
                 {
                     return (float)a >= (float)b;
                 }
@@ -507,24 +549,24 @@
 
         private object SmallerObject(object a, object b)
         {
-            if (a.GetType() == typeof(int))
+            if(a.GetType() == typeof(int))
             {
-                if (b.GetType() == typeof(int))
+                if(b.GetType() == typeof(int))
                 {
                     return (int)a < (int)b;
                 }
-                else if (b.GetType() == typeof(float))
+                else if(b.GetType() == typeof(float))
                 {
                     return (int)a < (float)b;
                 }
             }
-            else if (a.GetType() == typeof(float))
+            else if(a.GetType() == typeof(float))
             {
-                if (b.GetType() == typeof(int))
+                if(b.GetType() == typeof(int))
                 {
                     return (float)a < (int)b;
                 }
-                else if (b.GetType() == typeof(float))
+                else if(b.GetType() == typeof(float))
                 {
                     return (float)a < (float)b;
                 }
@@ -534,24 +576,24 @@
 
         private object SmallerEqualObject(object a, object b)
         {
-            if (a.GetType() == typeof(int))
+            if(a.GetType() == typeof(int))
             {
-                if (b.GetType() == typeof(int))
+                if(b.GetType() == typeof(int))
                 {
                     return (int)a <= (int)b;
                 }
-                else if (b.GetType() == typeof(float))
+                else if(b.GetType() == typeof(float))
                 {
                     return (int)a <= (float)b;
                 }
             }
-            else if (a.GetType() == typeof(float))
+            else if(a.GetType() == typeof(float))
             {
-                if (b.GetType() == typeof(int))
+                if(b.GetType() == typeof(int))
                 {
                     return (float)a <= (int)b;
                 }
-                else if (b.GetType() == typeof(float))
+                else if(b.GetType() == typeof(float))
                 {
                     return (float)a <= (float)b;
                 }
@@ -561,24 +603,24 @@
 
         private object SubtractObject(object a, object b)
         {
-            if (a.GetType() == typeof(int))
+            if(a.GetType() == typeof(int))
             {
-                if (b.GetType() == typeof(int))
+                if(b.GetType() == typeof(int))
                 {
                     return (int)a - (int)b;
                 }
-                else if (b.GetType() == typeof(float))
+                else if(b.GetType() == typeof(float))
                 {
                     return (int)a - (float)b;
                 }
             }
-            else if (a.GetType() == typeof(float))
+            else if(a.GetType() == typeof(float))
             {
-                if (b.GetType() == typeof(int))
+                if(b.GetType() == typeof(int))
                 {
                     return (float)a - (int)b;
                 }
-                else if (b.GetType() == typeof(float))
+                else if(b.GetType() == typeof(float))
                 {
                     return (float)a - (float)b;
                 }
@@ -588,24 +630,24 @@
 
         private object PowerObject(object a, object b)
         {
-            if (a.GetType() == typeof(int))
+            if(a.GetType() == typeof(int))
             {
-                if (b.GetType() == typeof(int))
+                if(b.GetType() == typeof(int))
                 {
                     return (int)Math.Pow((int)a, (int)b);
                 }
-                else if (b.GetType() == typeof(float))
+                else if(b.GetType() == typeof(float))
                 {
                     return (float)Math.Pow((int)a, (float)b);
                 }
             }
-            else if (a.GetType() == typeof(float))
+            else if(a.GetType() == typeof(float))
             {
-                if (b.GetType() == typeof(int))
+                if(b.GetType() == typeof(int))
                 {
                     return (float)Math.Pow((float)a, (int)b);
                 }
-                else if (b.GetType() == typeof(float))
+                else if(b.GetType() == typeof(float))
                 {
                     return (float)Math.Pow((float)a, (float)b);
                 }
@@ -615,24 +657,24 @@
 
         private object ModuloObject(object a, object b)
         {
-            if (a.GetType() == typeof(int))
+            if(a.GetType() == typeof(int))
             {
-                if (b.GetType() == typeof(int))
+                if(b.GetType() == typeof(int))
                 {
                     return (int)a % (int)b;
                 }
-                else if (b.GetType() == typeof(float))
+                else if(b.GetType() == typeof(float))
                 {
                     return (int)a % (float)b;
                 }
             }
-            else if (a.GetType() == typeof(float))
+            else if(a.GetType() == typeof(float))
             {
-                if (b.GetType() == typeof(int))
+                if(b.GetType() == typeof(int))
                 {
                     return (float)a % (int)b;
                 }
-                else if (b.GetType() == typeof(float))
+                else if(b.GetType() == typeof(float))
                 {
                     return (float)a % (float)b;
                 }
@@ -642,24 +684,24 @@
 
         private object MultiplyObject(object a, object b)
         {
-            if (a.GetType() == typeof(int))
+            if(a.GetType() == typeof(int))
             {
-                if (b.GetType() == typeof(int))
+                if(b.GetType() == typeof(int))
                 {
                     return (int)a * (int)b;
                 }
-                else if (b.GetType() == typeof(float))
+                else if(b.GetType() == typeof(float))
                 {
                     return (int)a * (float)b;
                 }
             }
-            else if (a.GetType() == typeof(float))
+            else if(a.GetType() == typeof(float))
             {
-                if (b.GetType() == typeof(int))
+                if(b.GetType() == typeof(int))
                 {
                     return (float)a * (int)b;
                 }
-                else if (b.GetType() == typeof(float))
+                else if(b.GetType() == typeof(float))
                 {
                     return (float)a * (float)b;
                 }
@@ -669,24 +711,24 @@
 
         private object DivideObject(object a, object b)
         {
-            if (a.GetType() == typeof(int))
+            if(a.GetType() == typeof(int))
             {
-                if (b.GetType() == typeof(int))
+                if(b.GetType() == typeof(int))
                 {
                     return (int)a / (int)b;
                 }
-                else if (b.GetType() == typeof(float))
+                else if(b.GetType() == typeof(float))
                 {
                     return (int)a / (float)b;
                 }
             }
-            else if (a.GetType() == typeof(float))
+            else if(a.GetType() == typeof(float))
             {
-                if (b.GetType() == typeof(int))
+                if(b.GetType() == typeof(int))
                 {
                     return (float)a / (int)b;
                 }
-                else if (b.GetType() == typeof(float))
+                else if(b.GetType() == typeof(float))
                 {
                     return (float)a / (float)b;
                 }
@@ -696,29 +738,29 @@
 
         private object AddObject(object a, object b)
         {
-            if (a.GetType() == typeof(int))
+            if(a.GetType() == typeof(int))
             {
-                if (b.GetType() == typeof(int))
+                if(b.GetType() == typeof(int))
                 {
                     return (int)a + (int)b;
                 }
-                else if (b.GetType() == typeof(float))
+                else if(b.GetType() == typeof(float))
                 {
                     return (int)a + (float)b;
                 }
             }
-            else if (a.GetType() == typeof(float))
+            else if(a.GetType() == typeof(float))
             {
-                if (b.GetType() == typeof(int))
+                if(b.GetType() == typeof(int))
                 {
                     return (float)a + (int)b;
                 }
-                else if (b.GetType() == typeof(float))
+                else if(b.GetType() == typeof(float))
                 {
                     return (float)a + (float)b;
                 }
             }
-            else if (a.GetType() == typeof(string) || b.GetType() == typeof(string))
+            else if(a.GetType() == typeof(string) || b.GetType() == typeof(string))
             {
                 return a.ToString() + b.ToString();
             }
@@ -742,13 +784,13 @@
             this.variableByID.Clear();
             this.scriptByName = scriptByName;
 
-            if (arguments.Length == script.Header.arguments.Length)
+            if(arguments.Length == script.Header.arguments.Length)
             {
-                for (byte i = 0; i < arguments.Length; i++)
+                for(byte i = 0; i < arguments.Length; i++)
                 {
-                    if (arguments[i] != null)
+                    if(arguments[i] != null)
                     {
-                        if (script.Header.arguments[i].type == arguments[i].GetType() || script.Header.arguments[i].type == typeof(object))
+                        if(script.Header.arguments[i].type == arguments[i].GetType() || script.Header.arguments[i].type == typeof(object))
                         {
                             this.variableByID.Add(i, arguments[i]);
                         }

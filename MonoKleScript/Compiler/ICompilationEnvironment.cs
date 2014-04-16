@@ -1,11 +1,8 @@
-﻿using MonoKleScript.Script;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace MonoKleScript.Compiler
+﻿namespace MonoKleScript.Compiler
 {
+    using MonoKleScript.Common.Script;
+    using System.Collections.Generic;
+
     /// <summary>
     /// Interface for a compilation environment, compiling multiple source files at once.
     /// </summary>

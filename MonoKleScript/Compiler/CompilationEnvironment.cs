@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    using MonoKleScript.Script;
+    using MonoKleScript.Common.Script;
 
     /// <summary>
     /// Compilation environment used to compile multiple scripts, which may reference each other, to bytecode in a single go.

@@ -1,8 +1,8 @@
 ﻿namespace MonoKleScript.IO
 {
+    using MonoKleScript.Common.Script;
     using MonoKleScript.IO.Event;
-using MonoKleScript.Script;
-using System.Collections.Generic;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Interface for input reader of scripts.

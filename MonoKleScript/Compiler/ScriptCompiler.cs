@@ -1,15 +1,12 @@
 ﻿namespace MonoKleScript.Compiler
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-
     using Antlr4.Runtime;
     using Antlr4.Runtime.Tree;
-
-    using MonoKleScript.Grammar;
-    using MonoKleScript.Script;
+    using MonoKleScript.Common.Script;
     using MonoKleScript.Compiler.Event;
+    using MonoKleScript.Grammar;
+    using System.Collections.Generic;
+    using System.Text;
 
     /// <summary>
     /// Compiler of MonoKleScript scripts.

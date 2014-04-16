@@ -13,7 +13,7 @@
     using MonoKle.Logging;
     using MonoKle.Messaging;
     using MonoKle.State;
-using MonoKle.Scripting;
+    using MonoKle.Script;
     using System.Text.RegularExpressions;
 
     /// <summary>
@@ -229,36 +229,27 @@ using MonoKle.Scripting;
                     } else if(s.StartsWith("run "))
                     {
                         string script = s.Substring(4, s.Length - 4);
-                        string[] argumentStrings = Regex.Split(script,
-                            ScriptBase.SCRIPT_STRING_TOKEN + "[^" + ScriptBase.SCRIPT_STRING_TOKEN + "]*" + ScriptBase.SCRIPT_STRING_TOKEN + "|\\s");
+                        string[] argumentStrings = Regex.Split(script, " ");
 
                         object[] arguments = new object[argumentStrings.Length - 1];
                         for (int i = 1; i < argumentStrings.Length; i++)
                         {
-                            if (ScriptBase.TokenIsBool(argumentStrings[i]))
-                                arguments[i-1] = bool.Parse(argumentStrings[i]);
-                            else if (ScriptBase.TokenIsInt(argumentStrings[i]))
-                                arguments[i-1] = int.Parse(argumentStrings[i]);
-                            else if (ScriptBase.TokenIsFloat(argumentStrings[i]))
-                                arguments[i-1] = float.Parse(argumentStrings[i], System.Globalization.CultureInfo.InvariantCulture);
-                            else if (ScriptBase.TokenIsString(argumentStrings[i]))
-                                arguments[i-1] = argumentStrings[i];
+                            if(Regex.IsMatch(argumentStrings[i], "true|false"))
+                            {
+                                arguments[i] = bool.Parse(argumentStrings[i]);
+                            }
+                            else if(Regex.IsMatch(argumentStrings[i], "((\\d*)|(\\d+)\\.(\\d)+)"))
+                            {
+                                arguments[i] = float.Parse(argumentStrings[i], System.Globalization.CultureInfo.InvariantCulture);
+                            }
                             else
-                                MonoKleGame.Console.WriteLine("Warning: Unrecognized type as argument. Using null.");
+                            {
+                                arguments[i-1] = argumentStrings[i];
+                            }
                         }
 
-                        Result result = MonoKleGame.ScriptInterface.CallScript(argumentStrings[0], arguments);
-                        if(result.sucess)
-                        {
-                            if (result.returnValue != null)
-                            {
-                                MonoKleGame.Console.WriteLine("Return value: " + result.returnValue.ToString());
-                            }
-                            else
-                            {
-                                MonoKleGame.Console.WriteLine("Return value: null");
-                            }
-                        }
+                        Script.VM.ExecutionResult result = MonoKleGame.ScriptInterface.ExecuteScript(argumentStrings[0], arguments);
+                        MonoKleGame.Console.WriteLine("Return value: " + result.ToString());
                     }
                 }
             }

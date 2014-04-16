@@ -1,0 +1,143 @@
+﻿namespace MonoKle.Script.Compiler
+{
+    using Antlr4.Runtime;
+    using Antlr4.Runtime.Tree;
+    using MonoKle.Script.Common.Script;
+    using MonoKle.Script.Compiler.Event;
+    using MonoKle.Script.Grammar;
+    using System.Collections.Generic;
+    using System.Text;
+
+    /// <summary>
+    /// Compiler of MonoKleScript scripts.
+    /// </summary>
+    public class ScriptCompiler : IScriptCompiler
+    {
+        private bool semanticsError;
+        private bool syntaxError;
+
+        private string currentScriptName = "";
+
+        /// <summary>
+        /// Compilation error, fired for both syntax and semantics errors.
+        /// </summary>
+        public event CompilationErrorEventHandler CompilationError;
+
+        /// <summary>
+        /// Compiles the provided script source into a bytecode script. Sets syntax and semantics error flags.
+        /// </summary>
+        /// <param name="source">Source of script.</param>
+        /// <param name="knownScripts">Headers for other scripts to know about.</param>
+        /// <returns>Compiled script if compilation was successful, otherwise null.</returns>
+        public ByteScript Compile(ScriptSource source, ICollection<ScriptHeader> knownScripts)
+        {
+            // Reset error flags
+            this.syntaxError = false;
+            this.semanticsError = false;
+
+            this.currentScriptName = source.Header.name;
+
+            // Set up lexer and parser
+            AntlrInputStream stream = new AntlrInputStream(source.Text);
+            MonoKleScriptLexer lexer = new MonoKleScriptLexer(stream);
+            CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+            MonoKleScriptParser parser = new MonoKleScriptParser(tokenStream);
+
+            // Remove console output and add our own listener for syntax errors.
+            parser.RemoveErrorListeners();
+            parser.AddErrorListener(new SyntaxErrorListener(this));
+            
+            // Parse and set start context for walkers
+            MonoKleScriptParser.ScriptContext context = parser.script();
+
+            if (this.syntaxError == false)
+            {
+                // Set up walker and listeners
+                ParseTreeWalker walker = new ParseTreeWalker();
+                SemanticsListener semanticsListener = new SemanticsListener(source.Header, knownScripts);
+                CompilerListener compilerListener = new CompilerListener(source.Header, knownScripts);
+                semanticsListener.SemanticsError += semanticsListener_SemanticsError;
+
+                // Check semantics
+                walker.Walk(semanticsListener, context);
+
+                if (this.semanticsError == false)
+                {
+                    walker.Walk(compilerListener, context);
+                    return new ByteScript(source.Header, compilerListener.GetByteCode());
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Returns the semantics error flag set by last compilation.
+        /// </summary>
+        /// <returns>True if there was a semantics error, else false.</returns>
+        public bool GetSemanticsErrorFlag()
+        {
+            return this.semanticsError;
+        }
+
+        /// <summary>
+        /// Returns the syntax error flag set by last compilation.
+        /// </summary>
+        /// <returns>True if there was a syntax error, else false.</returns>
+        public bool GetSyntaxErrorFlag()
+        {
+            return this.syntaxError;
+        }
+
+        /// <summary>
+        /// Returns the compilation error flag set by last compilation.
+        /// </summary>
+        /// <returns>True if there was a compilation error, else false.</returns>
+        public bool GetCompilationErrorFlag()
+        {
+            return this.syntaxError || this.semanticsError;
+        }
+
+        private void OnCompilationError(string message)
+        {
+            var l = CompilationError;
+            if(l != null)
+            {
+                l(this, new CompilationErrorEventArgs("Compilation error <" + this.currentScriptName + ">: " + message));
+            }
+        }
+
+        private void semanticsListener_SemanticsError(object sender, SemanticErrorEventArgs e)
+        {
+            this.semanticsError = true;
+            this.OnCompilationError(e.Message);
+        }
+
+        /// <summary>
+        /// Inner-class listening for syntax errors. Used instead of the compiler as listener in order to make the compiler class free from ANTLR from
+        /// an external point of view.
+        /// </summary>
+        private class SyntaxErrorListener : IAntlrErrorListener<IToken>
+        {
+            private ScriptCompiler compiler;
+
+            public SyntaxErrorListener(ScriptCompiler compiler)
+            {
+                this.compiler = compiler;
+            }
+
+            public void SyntaxError(IRecognizer recognizer, IToken offendingSymbol, int line, int charPositionInLine, string msg, RecognitionException e)
+            {
+                StringBuilder message = new StringBuilder();
+                message.Append("Syntax error on line [");
+                message.Append(line);
+                message.Append(",");
+                message.Append(charPositionInLine);
+                message.Append("]: ");
+                message.Append(msg);
+                this.compiler.syntaxError = true;
+                this.compiler.OnCompilationError(message.ToString());
+            }
+        }
+    }
+}

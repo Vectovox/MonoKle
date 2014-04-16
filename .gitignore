@@ -118,3 +118,7 @@ App_Data/*.ldf
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+
+#Mysteriou .ide folder
+*.sln.ide/
+

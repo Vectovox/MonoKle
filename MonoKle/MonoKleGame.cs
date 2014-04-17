@@ -15,6 +15,8 @@
     using MonoKle.State;
     using MonoKle.Script;
     using System.Text.RegularExpressions;
+    using System.Text;
+
 
     /// <summary>
     /// Main game class for MonoKle. Takes care of initiating utilities and making them draw and update themselves.
@@ -36,8 +38,34 @@
             MonoKleGame.MessagePasser.Subscribe(GameConsole.CHANNEL_ID, MonoKleGame_ConsoleCommand);
             MonoKleGame.Logger = Logger.GetGlobalInstance();
             MonoKleGame.ScriptInterface = new ScriptInterface();
+            MonoKleGame.ScriptInterface.CompilationError += HandleScriptCompilationError;
+            MonoKleGame.ScriptInterface.Print += HandleScriptPrint;
+            MonoKleGame.ScriptInterface.RuntimeError += HandleScriptRuntimeError;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         }
+
+        private void HandleScriptRuntimeError(object sender, Script.VM.Event.RuntimeErrorEventArgs e)
+        {
+            MonoKleGame.Logger.AddLog(e.Message, LogLevel.Error);
+        }
+
+        private void HandleScriptPrint(object sender, Script.VM.Event.PrintEventArgs e)
+        {
+            MonoKleGame.Console.WriteLine(e.Message);
+        }
+
+        private void HandleScriptCompilationError(object sender, Script.Event.CompilationErrorEventArgs e)
+        {
+            StringBuilder sb = new StringBuilder("Script compilation error in ");
+            sb.Append(e.Script);
+            sb.AppendLine(":");
+            foreach(string s in e.Messages)
+            {
+                sb.AppendLine(s);
+            }
+            MonoKleGame.Logger.AddLog(sb.ToString(), LogLevel.Error);
+        }
+
 
         /// <summary>
         /// Gets the script interface. Used for scripting.

@@ -10,8 +10,8 @@
     public class CompilationEnvironment : ICompilationEnvironment
     {
         private IScriptCompiler compiler;
-        private ICollection<ScriptHeader> loadedHeaders = new LinkedList<ScriptHeader>();
-        private ICollection<ScriptSource> loadedSources = new LinkedList<ScriptSource>();
+        private HashSet<ScriptHeader> loadedHeaders = new HashSet<ScriptHeader>();
+        private HashSet<ScriptSource> loadedSources = new HashSet<ScriptSource>();
 
         /// <summary>
         /// Creates new instance of <see cref="CompilationEnvironment"/>.
@@ -26,20 +26,42 @@
         /// Compiles the loaded sources and returns the compiled scripts.
         /// </summary>
         /// <returns>Collection of bytescripts.</returns>
-        public ICollection<ByteScript> Compile()
+        public ICollection<ICompilationResult> Compile()
         {
-            ICollection<ByteScript> compiledScripts = new LinkedList<ByteScript>();
-            foreach (ScriptSource s in loadedSources)
+            HashSet<ScriptSource> failedScripts = new HashSet<ScriptSource>();
+
+            for(bool failed = true; failed; )
             {
-                ByteScript script = this.compiler.Compile(s, this.loadedHeaders);
-                if (script != null)
+                failed = false;
+                foreach(ScriptSource s in loadedSources)
                 {
-                    compiledScripts.Add(script);
+                    if(this.compiler.IsCompilable(s, this.loadedHeaders) == false)
+                    {
+                        failedScripts.Add(s);
+                        failed = true;
+                    }
+                }
+
+                foreach(ScriptSource s in failedScripts)
+                {
+                    this.loadedSources.Remove(s);
+                    this.loadedHeaders.Remove(s.Header);
                 }
             }
+
+            ICollection<ICompilationResult> results = new LinkedList<ICompilationResult>();
+            foreach(ScriptSource s in failedScripts)
+            {
+                results.Add(this.compiler.Compile(s, this.loadedHeaders));
+            }
+            foreach(ScriptSource s in this.loadedSources)
+            {
+                results.Add(this.compiler.Compile(s, this.loadedHeaders));
+            }
+
             this.loadedHeaders.Clear();
             this.loadedSources.Clear();
-            return compiledScripts;
+            return results;
         }
 
         /// <summary>

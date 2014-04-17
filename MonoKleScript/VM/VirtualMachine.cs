@@ -93,6 +93,32 @@
         }
 
         /// <summary>
+        /// Loads the provided script and returns if successful.
+        /// </summary>
+        /// <param name="script">Script.</param>
+        /// <returns>True if script was loaded, otherwise false.</returns>
+        public bool LoadScript(ByteScript script)
+        {
+            if(this.scriptByName.ContainsKey(script.Header.Name) == false)
+            {
+                // Add script to dictionary
+                this.scriptByName.Add(script.Header.Name, script);
+                // Add script to channel
+                if(script.Header.Channel != null && script.Header.Channel.Length > 0)
+                {
+                    if(this.scriptsByChannel.ContainsKey(script.Header.Channel) == false)
+                    {
+                        this.scriptsByChannel.Add(script.Header.Channel, new LinkedList<string>());
+                    }
+                    this.scriptsByChannel[script.Header.Channel].Add(script.Header.Name);
+                }
+                return true;
+            }
+            this.OnRuntimeError(new RuntimeErrorEventArgs("Script with name [" + script.Header.Name + "] already exists"));
+            return false;
+        }
+
+        /// <summary>
         /// Loads the provided scripts and returns the amount loaded.
         /// </summary>
         /// <param name="scripts">Collection of scripts.</param>
@@ -102,25 +128,9 @@
             int nLoaded = 0;
             foreach (ByteScript s in scripts)
             {
-                if (this.scriptByName.ContainsKey(s.Header.name) == false)
+                if(this.LoadScript(s))
                 {
-                    // Add script to dictionary
-                    this.scriptByName.Add(s.Header.name, s);
-                    // Add script to channel
-                    if(s.Header.channel != null && s.Header.channel.Length > 0)
-                    {
-                        if(this.scriptsByChannel.ContainsKey(s.Header.channel) == false)
-                        {
-                            this.scriptsByChannel.Add(s.Header.channel, new LinkedList<string>());
-                        }
-                        this.scriptsByChannel[s.Header.channel].Add(s.Header.name);
-                    }
-                    // Increase loaded counter
                     nLoaded++;
-                }
-                else
-                {
-                    this.OnRuntimeError(new RuntimeErrorEventArgs("Script with name [" + s.Header.name + "] already exists"));
                 }
             }
             return nLoaded;

@@ -223,3 +223,17 @@ endscript
 script string Concat(string a, string b)
 return a + b
 endscript
+
+
+/* MISC */
+script void ShouldNotCompileEither2()
+	ShouldNotCompileEither()
+endscript
+
+script void ShouldNotCompile()
+	banana = "xx
+endscript
+
+script void ShouldNotCompileEither()
+	ShouldNotCompile()
+endscript

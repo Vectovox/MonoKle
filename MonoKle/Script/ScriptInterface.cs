@@ -2,10 +2,11 @@
 {
     using MonoKle.Logging;
     using MonoKle.Script.Compiler;
-    using MonoKle.Script.Compiler.Event;
+    using MonoKle.Script.Event;
     using MonoKle.Script.IO;
     using MonoKle.Script.VM;
     using MonoKle.Script.VM.Event;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Interface for loading and executing scripts.
@@ -22,8 +23,6 @@
             this.compiler = new CompilationEnvironment(c);
             this.vm = new VirtualMachine();
             this.reader = new ScriptFileReader();
-
-            c.CompilationError += OnCompilationError;
             this.vm.Print += OnPrint;
             this.vm.RuntimeError += OnRuntimeError;
         }
@@ -129,7 +128,19 @@
         /// <returns>Amount of compiled sources.</returns>
         public int CompileSources()
         {
-            return this.vm.LoadScripts(this.compiler.Compile());
+            int counter = 0;
+            foreach(ICompilationResult r in this.compiler.Compile())
+            {
+                if(r.Success)
+                {
+                    this.vm.LoadScript(r.Script);
+                }
+                else
+                {
+                    this.OnCompilationError(this, new CompilationErrorEventArgs(r.ErrorMessages, r.ScriptName));
+                }
+            }
+            return counter;
         }
     }
 }

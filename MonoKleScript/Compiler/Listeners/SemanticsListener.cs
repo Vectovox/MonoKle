@@ -1,4 +1,4 @@
-﻿namespace MonoKle.Script.Compiler
+﻿namespace MonoKle.Script.Compiler.Listeners
 {
     using System;
     using System.Collections.Generic;
@@ -10,7 +10,6 @@
     using MonoKle.Script.Grammar;
     using MonoKle.Script.Common.Script;
     using MonoKle.Script.Common.Internal;
-    using MonoKle.Script.Compiler.Event;
     using Antlr4.Runtime.Misc;
 
 
@@ -23,31 +22,30 @@
         // TODO: Add object field/property/method chaining
         // TODO: Add ability to instance own structs and objects
         // TODO: Check that a return always is made.
-        // TODO: Make sure that if function X depends on Y and Y fails, then X fails. (Otherwise we may get exceptions for non-existing keys in the script executer)
 
+        private LinkedList<string> errorList = new LinkedList<string>();
         private Dictionary<IParseTree, Type> typeByToken = new Dictionary<IParseTree, Type>();
         private Dictionary<string, Type> typeByVariable = new Dictionary<string, Type>();
         private Dictionary<string, ScriptHeader> functionByName = new Dictionary<string, ScriptHeader>();
         private Type returnType;
+
+        public bool WasSuccessful() { return this.errorList.Count == 0; }
+        public ICollection<string> GetErrorMessages() { return this.errorList; }
+
         public SemanticsListener(ScriptHeader header, ICollection<ScriptHeader> knownScripts)
         {
             // Add variables and functions
-            foreach (ScriptVariable v in header.arguments)
+            foreach (ScriptVariable v in header.Arguments)
             {
                 this.typeByVariable.Add(v.name, v.type);
             }
             foreach(ScriptHeader h in knownScripts)
             {
-                this.functionByName.Add(h.name, h);
+                this.functionByName.Add(h.Name, h);
             }
             // Set return type
-            this.returnType = header.returnType;
+            this.returnType = header.ReturnType;
         }
-
-        /// <summary>
-        /// Event that fires when a semantic error is encountered.
-        /// </summary>
-        public event SemanticErrorEventHandler SemanticsError;
 
         public override void ExitAssignment_writeobject([NotNull]MonoKleScriptParser.Assignment_writeobjectContext context)
         {
@@ -56,7 +54,7 @@
             {
                 if(this.typeByVariable[objectName] != typeof(object))
                 {
-                    this.OnSemanticsError("Read variable [" + objectName + "] is not an object");
+                    this.AddError("Read variable [" + objectName + "] is not an object");
                 }
             }
         }
@@ -75,12 +73,12 @@
                 }
                 else
                 {
-                    this.OnSemanticsError("Variable [" + name + "] is already declared in scope");
+                    this.AddError("Variable [" + name + "] is already declared in scope");
                 }
             }
             else
             {
-                this.OnSemanticsError("Variable [" + name + "] is not initialized. Max number of variables [" + ScriptSettingsConstants.SCRIPT_MAX_VARIABLES + "] reached.");
+                this.AddError("Variable [" + name + "] is not initialized. Max number of variables [" + ScriptSettingsConstants.SCRIPT_MAX_VARIABLES + "] reached.");
             }
         }
 
@@ -91,7 +89,7 @@
             {
                 if(this.typeByVariable[objectName] != typeof(object))
                 {
-                    this.OnSemanticsError("Read variable [" + objectName + "] is not an object");
+                    this.AddError("Read variable [" + objectName + "] is not an object");
                 }
             }
         }
@@ -103,7 +101,7 @@
             {
                 if(this.typeByVariable[objectName] != typeof(object))
                 {
-                    this.OnSemanticsError("Read variable [" + objectName + "] is not an object");
+                    this.AddError("Read variable [" + objectName + "] is not an object");
                 }
             }
         }
@@ -130,7 +128,7 @@
             Type type = this.typeByToken[context.expression()];
             if(type != typeof(int) && type != typeof(float))
             {
-                this.OnSemanticsError("Impossible to negate the provided type");
+                this.AddError("Impossible to negate the provided type");
             }
             this.typeByToken.Add(context, type);
         }
@@ -144,7 +142,7 @@
 
             if (type == typeof(void) || type == typeof(string) )
             {
-                this.OnSemanticsError("Types provided to modulo operator are not valid");
+                this.AddError("Types provided to modulo operator are not valid");
             }
 
             this.typeByToken.Add(context, type);
@@ -159,7 +157,7 @@
 
             if (type == typeof(void) || type == typeof(string))
             {
-                this.OnSemanticsError("Types provided to power operator are not valid");
+                this.AddError("Types provided to power operator are not valid");
             }
 
             this.typeByToken.Add(context, type);
@@ -218,12 +216,12 @@
                 }
                 else
                 {
-                    this.OnSemanticsError("Variable [" + name + "] is already declared in scope");
+                    this.AddError("Variable [" + name + "] is already declared in scope");
                 }
             }
             else
             {
-                this.OnSemanticsError("Variable [" + name + "] is not initialized. Max number of variables [" + ScriptSettingsConstants.SCRIPT_MAX_VARIABLES + "] reached.");
+                this.AddError("Variable [" + name + "] is not initialized. Max number of variables [" + ScriptSettingsConstants.SCRIPT_MAX_VARIABLES + "] reached.");
             }
         }
 
@@ -235,7 +233,7 @@
             Type type = this.GetArithmeticType(this.typeByToken[context.expression(0)], this.typeByToken[context.expression(1)]);
             if(type == typeof(void))
             {
-                this.OnSemanticsError("Type provided to addition operator is not valid");
+                this.AddError("Type provided to addition operator is not valid");
             }
             this.typeByToken.Add(context, type);
         }
@@ -268,7 +266,7 @@
             Type type = this.GetArithmeticType(this.typeByToken[context.expression(0)], this.typeByToken[context.expression(1)]);
             if (type == typeof(void) || type == typeof(string))
             {
-                this.OnSemanticsError("Type provided to division operator is not valid");
+                this.AddError("Type provided to division operator is not valid");
             }
             this.typeByToken.Add(context, type);
         }
@@ -280,7 +278,7 @@
 
             if(this.IsTypesComparable(lhs, rhs) == false)
             {
-                this.OnSemanticsError("Types can not be compared for equality");
+                this.AddError("Types can not be compared for equality");
             }
 
             this.typeByToken.Add(context, typeof(bool));
@@ -293,7 +291,7 @@
 
             if (this.IsTypesComparable(lhs, rhs) == false)
             {
-                this.OnSemanticsError("Types can not be compared for equality");
+                this.AddError("Types can not be compared for equality");
             }
 
             this.typeByToken.Add(context, typeof(bool));
@@ -355,7 +353,7 @@
             Type type = this.GetArithmeticType(this.typeByToken[context.expression(0)], this.typeByToken[context.expression(1)]);
             if (type == typeof(void) || type == typeof(string))
             {
-                this.OnSemanticsError("Type provided to subtraction operator is not valid");
+                this.AddError("Type provided to subtraction operator is not valid");
             }
             this.typeByToken.Add(context, type);
         }
@@ -365,7 +363,7 @@
             Type type = this.GetArithmeticType(this.typeByToken[context.expression(0)], this.typeByToken[context.expression(1)]);
             if (type == typeof(void) || type == typeof(string))
             {
-                this.OnSemanticsError("Type provided to multiplication operator is not valid");
+                this.AddError("Type provided to multiplication operator is not valid");
             }
             this.typeByToken.Add(context, type);
         }
@@ -390,7 +388,7 @@
             if(this.functionByName.ContainsKey(functionName))
             {
                 ScriptHeader function = this.functionByName[functionName];
-                this.typeByToken.Add(context, function.returnType);
+                this.typeByToken.Add(context, function.ReturnType);
                 
                 // Record function parameters
                 Stack<Type> parameters = new Stack<Type>();
@@ -402,24 +400,24 @@
                 }
 
                 // Validate function parameters
-                if(parameters.Count == function.arguments.Length)
+                if(parameters.Count == function.Arguments.Length)
                 {
-                    for(int i = function.arguments.Length - 1; i > 0; i--)
+                    for(int i = function.Arguments.Length - 1; i > 0; i--)
                     {
-                        if(function.arguments[i].type != parameters.Pop())
+                        if(function.Arguments[i].type != parameters.Pop())
                         {
-                            this.OnSemanticsError("Argument [" + i + "] in function [" + functionName + "] is of wrong type");
+                            this.AddError("Argument [" + i + "] in function [" + functionName + "] is of wrong type");
                         }
                     }
                 }
                 else
                 {
-                    this.OnSemanticsError("Function [" + functionName + "] does not take [" + parameters.Count + "] arguments");
+                    this.AddError("Function [" + functionName + "] does not take [" + parameters.Count + "] arguments");
                 }
             }
             else
             {
-                this.OnSemanticsError("Function [" + functionName + "] was not found");
+                this.AddError("Function [" + functionName + "] was not found");
                 this.typeByToken.Add(context, typeof(void));
             }
         }
@@ -435,14 +433,14 @@
             {
                 if(context.expression() != null)
                 {
-                    this.OnSemanticsError("Return value provided for a void function");
+                    this.AddError("Return value can not be provided in void scripts");
                 }
             }
             else
             {
                 if (context.expression() == null)
                 {
-                    this.OnSemanticsError("No return value provided for a non-void function");
+                    this.AddError("Return value must be provided for non-void scripts");
                 }
                 else
                 {
@@ -487,9 +485,9 @@
 
         private bool CheckCorrectType(Type type, Type target)
         {
-            if (CommonHelpers.IsTypeCompatibleToTarget(type, target) == false)
+            if (target.IsAssignableFrom(type) == false)
             {
-                this.OnSemanticsError("Type [" + type + "] incompatible with [" + target + "]");
+                this.AddError("Type [" + type + "] incompatible with [" + target + "]");
                 return false;
             }
 
@@ -500,7 +498,7 @@
         {
             if (type != typeof(int) && type != typeof(float))
             {
-                this.OnSemanticsError("Type [" + type + "] can not be compared for greatness");
+                this.AddError("Type [" + type + "] can not be compared for greatness");
                 return false;
             }
             return true;
@@ -520,20 +518,16 @@
         {
             if (this.typeByVariable.ContainsKey(variable) == false)
             {
-                this.OnSemanticsError("Variable [" + variable + "] is not declared in scope");
+                this.AddError("Variable [" + variable + "] is not declared in scope");
                 return false;
             }
 
             return true;
         }
 
-        private void OnSemanticsError(string message)
+        private void AddError(string message)
         {
-            var l = SemanticsError;
-            if (l != null)
-            {
-                l(this, new SemanticErrorEventArgs(message));
-            }
+            this.errorList.AddLast(message);
         }
     }
 }

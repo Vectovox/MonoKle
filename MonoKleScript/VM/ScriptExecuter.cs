@@ -779,24 +779,24 @@
             this.code = script.ByteCode;
             this.pc = 0;
             this.error = false;
-            this.scriptName = script.Header.name;
-            this.returnType = script.Header.returnType;
+            this.scriptName = script.Header.Name;
+            this.returnType = script.Header.ReturnType;
             this.variableByID.Clear();
             this.scriptByName = scriptByName;
 
-            if(arguments.Length == script.Header.arguments.Length)
+            if(arguments.Length == script.Header.Arguments.Length)
             {
                 for(byte i = 0; i < arguments.Length; i++)
                 {
                     if(arguments[i] != null)
                     {
-                        if(script.Header.arguments[i].type == arguments[i].GetType() || script.Header.arguments[i].type == typeof(object))
+                        if(script.Header.Arguments[i].type == arguments[i].GetType() || script.Header.Arguments[i].type == typeof(object))
                         {
                             this.variableByID.Add(i, arguments[i]);
                         }
                         else
                         {
-                            this.ReportError("Input argument " + i + " not of correct type. Was " + arguments[i].GetType() + ", expected " + script.Header.arguments[i].type);
+                            this.ReportError("Input argument " + i + " not of correct type. Was " + arguments[i].GetType() + ", expected " + script.Header.Arguments[i].type);
                         }
                     }
                     else
@@ -807,7 +807,7 @@
             }
             else
             {
-                this.ReportError("Amount of arguments was not correct. Was " + arguments.Length + ", expected " + script.Header.arguments.Length);
+                this.ReportError("Amount of arguments was not correct. Was " + arguments.Length + ", expected " + script.Header.Arguments.Length);
             }
         }
     }

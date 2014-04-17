@@ -1,43 +1,38 @@
 ﻿namespace MonoKle.Script.Compiler
 {
-    using MonoKle.Script.Compiler.Event;
     using MonoKle.Script.Common.Script;
     using System.Collections.Generic;
-    
+
     /// <summary>
     /// Interface defining a script compiler.
     /// </summary>
     public interface IScriptCompiler
     {
-        /// <summary>
-        /// Compilation error, fired for both syntax and semantics errors.
-        /// </summary>
-        event CompilationErrorEventHandler CompilationError;
+        // TODO: Make this interface asynchronous. Imagine checking and compiling 1000 scripts at the same time! :)
+        // TODO: When checking syntax and compilability, return a result, giving both a boolean and all error messages (no code though since it does not compile).
+        // The above todo will help when making prepasses of what to compile but still want error messages for those that do not compile.
 
         /// <summary>
         /// Compiles the provided script source into a bytecode script. Sets syntax and semantics error flags.
         /// </summary>
         /// <param name="source">Source of script.</param>
         /// <param name="knownScripts">Headers for other scripts to know about.</param>
-        /// <returns>Compiled script if compilation was successful, otherwise null.</returns>
-        ByteScript Compile(ScriptSource source, ICollection<ScriptHeader> knownScripts);
+        /// <returns>Result of compilation.</returns>
+        ICompilationResult Compile(ScriptSource source, ICollection<ScriptHeader> knownScripts);
 
         /// <summary>
-        /// Returns the semantics error flag set by last compilation.
+        /// Checks whether the syntax of a script is valid.
         /// </summary>
-        /// <returns>True if there was a semantics error, else false.</returns>
-        bool GetSemanticsErrorFlag();
+        /// <param name="source">Soure to check syntax on.</param>
+        /// <returns>True if valid, else false.</returns>
+        bool IsSyntaxValid(ScriptSource source);
 
         /// <summary>
-        /// Returns the syntax error flag set by last compilation.
+        /// Checks if the provided script source is compilable.
         /// </summary>
-        /// <returns>True if there was a syntax error, else false.</returns>
-        bool GetSyntaxErrorFlag();
-
-        /// <summary>
-        /// Returns the compilation error flag set by last compilation.
-        /// </summary>
-        /// <returns>True if there was a compilation error, else false.</returns>
-        bool GetCompilationErrorFlag();
+        /// <param name="source">Source to check if compilable.</param>
+        /// <param name="knownScripts">Headers for other scripts to know about.</param>
+        /// <returns>True if compilable, else false.</returns>
+        bool IsCompilable(ScriptSource source, ICollection<ScriptHeader> knownScripts);
     }
 }

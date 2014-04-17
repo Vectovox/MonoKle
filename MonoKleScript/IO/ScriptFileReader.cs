@@ -87,7 +87,7 @@
             ICollection<ScriptSource> sources = new LinkedList<ScriptSource>();
             StreamReader reader = new StreamReader(stream);
 
-            ScriptHeader currentHeader = new ScriptHeader();
+            ScriptHeader currentHeader = null;
             StringBuilder currentSource = new StringBuilder();
             bool begun = false;
 
@@ -152,6 +152,8 @@
 
         private bool TryMakeHeader(string line, out ScriptHeader header)
         {
+            header = null;
+
             // Check for if the provided line is a valid header
             if (Regex.IsMatch(line, ScriptNamingConstants.SCRIPT_HEADER_SPECIFICATION_REGEX))
             {
@@ -195,7 +197,6 @@
                 this.OnError("Header not correctly specified.");
             }
 
-            header = new ScriptHeader();
             return false;
         }
     }

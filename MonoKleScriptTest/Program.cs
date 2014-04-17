@@ -2,7 +2,6 @@
 {
     using MonoKle.Script.Common.Script;
     using MonoKle.Script.Compiler;
-    using MonoKle.Script.Compiler.Event;
     using MonoKle.Script.IO;
     using MonoKle.Script.VM;
     using System;
@@ -68,7 +67,6 @@
             // */
 
             ScriptCompiler c = new ScriptCompiler();
-            c.CompilationError += c_CompilationError;
             CompilationEnvironment environment = new CompilationEnvironment(c);
 
             environment.LoadSources(sources);
@@ -77,7 +75,23 @@
             VirtualMachine vm = new VirtualMachine();
             vm.RuntimeError += vm_RuntimeError;
             vm.Print += vm_Print;
-            vm.LoadScripts(byteScripts);
+            foreach(CompilationResult r in byteScripts)
+            {
+                if(r.Success)
+                {
+                    vm.LoadScript(r.Script);
+                }
+                else
+                {
+                    Console.WriteLine(">> Compilation error on script: " + r.ScriptName);
+                    foreach(string s in r.ErrorMessages)
+                    {
+                        Console.WriteLine(s);
+                    }
+                    Console.WriteLine(">>>>>>>>>>>>>>>>>>>>>>>>>>");
+                    Console.WriteLine();
+                }
+            }
 
             vm.ExecuteScript("RunTests", new object[] { new TestClass() });
 
@@ -108,11 +122,6 @@
         }
 
         static void vm_RuntimeError(object sender, MonoKle.Script.VM.Event.RuntimeErrorEventArgs e)
-        {
-            Console.WriteLine(e.Message);
-        }
-
-        static void c_CompilationError(object sender, CompilationErrorEventArgs e)
         {
             Console.WriteLine(e.Message);
         }

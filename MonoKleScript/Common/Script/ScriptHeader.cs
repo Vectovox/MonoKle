@@ -5,27 +5,27 @@
     /// <summary>
     /// Header for a script.
     /// </summary>
-    public struct ScriptHeader
+    public class ScriptHeader
     {
         /// <summary>
         /// Type of the return value.
         /// </summary>
-        public Type returnType;
+        public Type ReturnType { get; private set; }
 
         /// <summary>
         /// The channel of the script.
         /// </summary>
-        public string channel;
+        public string Channel { get; private set; }
 
         /// <summary>
         /// The name of the script.
         /// </summary>
-        public string name;
+        public string Name { get; private set; }
 
         /// <summary>
         /// The arguments that the script takes.
         /// </summary>
-        public ScriptVariable[] arguments;
+        public ScriptVariable[] Arguments { get; private set; }
 
         /// <summary>
         /// Creates a new instance of <see cref="ScriptHeader"/>.
@@ -36,10 +36,10 @@
         /// <param name="arguments">The arguments of the script.</param>
         public ScriptHeader(string name, Type returnType, string channel, ScriptVariable[] arguments)
         {
-            this.returnType = returnType;
-            this.channel = channel;
-            this.name = name;
-            this.arguments = arguments;
+            this.ReturnType = returnType;
+            this.Channel = channel;
+            this.Name = name;
+            this.Arguments = arguments;
         }
     }
 }

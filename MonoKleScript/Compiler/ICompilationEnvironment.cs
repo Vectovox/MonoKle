@@ -11,8 +11,8 @@
         /// <summary>
         /// Compiles the loaded sources and returns the compiled scripts.
         /// </summary>
-        /// <returns>Collection of bytescripts.</returns>
-        ICollection<ByteScript> Compile();
+        /// <returns>Collection of compilation results.</returns>
+        ICollection<ICompilationResult> Compile();
 
         /// <summary>
         /// Loads the given script source for compilation.

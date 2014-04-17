@@ -47,6 +47,13 @@
         int LoadScripts(ICollection<ByteScript> scripts);
 
         /// <summary>
+        /// Loads the provided script and returns if successful.
+        /// </summary>
+        /// <param name="script">Script.</param>
+        /// <returns>True if script was loaded, otherwise false.</returns>
+        bool LoadScript(ByteScript script);
+
+        /// <summary>
         /// Event fired when a script wants to print.
         /// </summary>
         event PrintEventHandler Print;

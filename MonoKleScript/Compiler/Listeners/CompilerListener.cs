@@ -1,4 +1,4 @@
-﻿namespace MonoKle.Script.Compiler
+﻿namespace MonoKle.Script.Compiler.Listeners
 {
     using Antlr4.Runtime.Misc;
     using MonoKle.Utilities;
@@ -20,14 +20,14 @@
         public CompilerListener(ScriptHeader header, ICollection<ScriptHeader> knownScripts)
         {
             // Add variables and functions
-            foreach( ScriptVariable v in header.arguments )
+            foreach( ScriptVariable v in header.Arguments )
             {
                 this.variableIDByName.Add(v.name, nextVariableID);
                 this.nextVariableID++;
             }
             foreach( ScriptHeader h in knownScripts )
             {
-                this.functionByName.Add(h.name, h);
+                this.functionByName.Add(h.Name, h);
             }
         }
 
@@ -392,7 +392,7 @@
             {
                 this.byteCode.Add(b);
             }
-            this.byteCode.Add((byte)this.functionByName[function].arguments.Length);
+            this.byteCode.Add((byte)this.functionByName[function].Arguments.Length);
         }
 
         public override void EnterKeyPrint(MonoKleScriptParser.KeyPrintContext context)

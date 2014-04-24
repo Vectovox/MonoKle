@@ -184,7 +184,7 @@ namespace WindowsDemo
             }
         }
 
-        public override void Activated(StateSwitchData data)
+        protected override void Activated(StateSwitchData data)
         {
             MonoKleGame.MessagePasser.Subscribe("testChannel", Test);
             MonoKleGame.MessagePasser.Subscribe("noChannel", Test);

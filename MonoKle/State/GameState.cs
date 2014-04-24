@@ -5,19 +5,45 @@
     /// </summary>
     public abstract class GameState
     {
+        private bool isActive;
+
         /// <summary>
         /// Called when the state is being activated.
         /// </summary>
         /// <param name="data">State data to receive.</param>
-        public virtual void Activated(StateSwitchData data)
+        public void Activate(StateSwitchData data)
+        {
+            if(this.isActive == false)
+            {
+                this.BeforeFirstActivation(data);
+                this.isActive = true;
+            }
+
+            this.Activated(data);
+        }
+
+        /// <summary>
+        /// Called when the state is being activated.
+        /// </summary>
+        /// <param name="data">State data to receive.</param>
+        protected virtual void Activated(StateSwitchData data)
         {
         }
 
         /// <summary>
-        /// Called when the state is being deactivated.
+        /// Call when the state is being activated.
+        /// </summary>
+        /// <param name="data">State data to receive.</param>
+        public void Deactivate(StateSwitchData data)
+        {
+            this.Deactivated(data);
+        }
+
+        /// <summary>
+        /// Call when the state is being deactivated.
         /// </summary>
         /// <param name="data">State data which will be sent.</param>
-        public virtual void Deactivated(StateSwitchData data)
+        protected virtual void Deactivated(StateSwitchData data)
         {
         }
 
@@ -28,9 +54,25 @@
         public abstract void Draw(double seconds);
 
         /// <summary>
+        /// Called before the state is activated for the first time.
+        /// </summary>
+        /// <param name="data">State data to receive.</param>
+        protected virtual void BeforeFirstActivation(StateSwitchData data)
+        {
+        }
+
+        /// <summary>
+        /// Call when the state is removed.
+        /// </summary>
+        public void Remove()
+        {
+            this.Removed();
+        }
+
+        /// <summary>
         /// Called when the state is removed.
         /// </summary>
-        public virtual void Removed()
+        protected virtual void Removed()
         {
         }
 

@@ -70,6 +70,9 @@
     <Compile Include="Common\Script\ScriptVariable.cs" />
     <Compile Include="Common\Script\ScriptHeader.cs" />
     <Compile Include="Common\Script\ScriptSource.cs" />
+    <Compile Include="Interface\Event\CompilationErrorEventArgs.cs" />
+    <Compile Include="Interface\Event\CompilationErrorEventHandler.cs" />
+    <Compile Include="Interface\ScriptInterface.cs" />
     <Compile Include="VM\ChannelResult.cs" />
     <Compile Include="VM\Event\PrintEventArgs.cs" />
     <Compile Include="VM\Event\RuntimeErrorEventArgs.cs" />

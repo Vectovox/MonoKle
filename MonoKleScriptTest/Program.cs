@@ -4,6 +4,7 @@
     using MonoKle.Script.Compiler;
     using MonoKle.Script.IO;
     using MonoKle.Script.VM;
+    using MonoKle.Script.Debug;
     using System;
     using System.Collections.Generic;
 
@@ -15,7 +16,6 @@
 
     public class TestClass
     {
-
         public TestStruct field;
         public int Property
         { get; set; }

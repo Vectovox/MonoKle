@@ -42,18 +42,26 @@ else : ELSE block
 // Variables
 initialization_readobject : TYPE IDENTIFIER OBJECTREAD objectvalue;
 assignment_readobject : IDENTIFIER OBJECTREAD objectvalue;
-assignment_writeobject : IDENTIFIER OBJECTACCESS IDENTIFIER OBJECTREAD expression;
+assignment_writeobject : IDENTIFIER OBJECTPERIOD IDENTIFIER OBJECTREAD expression;
 initialization : TYPE IDENTIFIER ASSIGNMENT expression;
 assignment : IDENTIFIER ASSIGNMENT expression;
 
 // Object
-objectvalue : IDENTIFIER OBJECTACCESS IDENTIFIER # OV
+objectvalue : IDENTIFIER OBJECTPERIOD IDENTIFIER # OV
             | objectfunction #OF
 			;
 
-objectfunction: IDENTIFIER OBJECTACCESS IDENTIFIER LGROUPING RGROUPING
-		      | IDENTIFIER OBJECTACCESS IDENTIFIER LGROUPING parameters RGROUPING
+objectfunction: IDENTIFIER OBJECTPERIOD IDENTIFIER LGROUPING RGROUPING
+		      | IDENTIFIER OBJECTPERIOD IDENTIFIER LGROUPING parameters RGROUPING
 			  ;
+
+newObject : NEW IDENTIFIER OBJECTPERIOD objectIdentifier LGROUPING RGROUPING // Identifier is assembly.
+          | NEW IDENTIFIER OBJECTPERIOD objectIdentifier LGROUPING parameters RGROUPING
+		  ;
+
+objectIdentifier : IDENTIFIER
+                 | IDENTIFIER OBJECTPERIOD objectIdentifier
+				 ;
 
 // Keyword commands
 keyPrint : PRINT expression;
@@ -80,6 +88,7 @@ expression : LGROUPING expression RGROUPING # ExpGrouping
            | expression NOTEQUALS expression #ExpNotEquals
            | expression AND expression # ExpAnd
            | expression OR expression # ExpOr
+		   | newObject # ExpNewObject
            | value # ExpValue
            ;
 
@@ -119,7 +128,9 @@ ENDWHILE : 'endwhile';
 RETURN : 'return';
 PRINT : 'print';
 
-OBJECTACCESS : '.';
+NEW : 'new';
+
+OBJECTPERIOD : '.';
 OBJECTREAD : '<-';
 
 PLUS : '+';

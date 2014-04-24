@@ -15,10 +15,13 @@ script void RunTests(object testObj)
 	TestVariables()
 	print "<< Testing loops >>"
 	TestLoops()
-	print "<< Testing objects >>"
+	print "<< Testing object R/W >>"
 	TestObjects(testObj)
+	print "<< Testing object constructors >>"
+	TestConstructors()
 
 endscript
+
 
 
 script void TestLogic() > test
@@ -200,6 +203,24 @@ script void TestObjects(object testObj) > test
 
 endscript
 
+
+script void TestConstructors() > test
+
+	object o : new MonoKleScriptTest.GrammarTest.TestClass()
+	int val <- o.Property
+	Assert(val = 3)
+	
+	object struct : new MonoKleScriptTest.GrammarTest.TestStruct()
+	struct.x <- 17
+	struct.y <- 24
+	o.field <- struct
+
+	object tester <- o.field
+	int x <- tester.x
+	int y <- tester.y
+	Assert(x = 17)
+
+endscript
 
 
 /* HELPER SCRIPTS */

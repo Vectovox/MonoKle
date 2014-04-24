@@ -1,23 +1,21 @@
-﻿namespace MonoKle.Script
+﻿namespace MonoKle.Script.Interface
 {
-    using MonoKle.Logging;
     using MonoKle.Script.Compiler;
-    using MonoKle.Script.Event;
+    using MonoKle.Script.Interface.Event;
     using MonoKle.Script.IO;
     using MonoKle.Script.VM;
     using MonoKle.Script.VM.Event;
-    using System.Collections.Generic;
 
     /// <summary>
     /// Interface for loading and executing scripts.
     /// </summary>
-    public sealed class ScriptInterface
+    public class ScriptInterface
     {
         private VirtualMachine vm;
         private ScriptFileReader reader;
         private CompilationEnvironment compiler;
 
-        internal ScriptInterface()
+        public ScriptInterface()
         {
             ScriptCompiler c = new ScriptCompiler();
             this.compiler = new CompilationEnvironment(c);

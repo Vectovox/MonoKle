@@ -16,6 +16,9 @@
         private Dictionary<string, byte> variableIDByName = new Dictionary<string, byte>();
         private Stack<ICollection<string>> variableNameStack = new Stack<ICollection<string>>();
         private Dictionary<string, ScriptHeader> functionByName = new Dictionary<string, ScriptHeader>();
+        private Stack<int> whileAddress = new Stack<int>();
+        private Stack<int> ifJmpOnFailStack = new Stack<int>();
+        private Stack<ICollection<int>> ifJmpOnCompleteCollectionStack = new Stack<ICollection<int>>();
 
         public CompilerListener(ScriptHeader header, ICollection<ScriptHeader> knownScripts)
         {
@@ -36,33 +39,22 @@
             return byteCode.ToArray();
         }
 
-        public override void EnterAssignment_writeobject([NotNull]MonoKleScriptParser.Assignment_writeobjectContext context)
+        public override void EnterNewObject([NotNull]MonoKleScriptParser.NewObjectContext context)
         {
-            this.byteCode.Add(ByteCodeValues.OP_WRITEOBJECT_FIELDPROPERTY);
-            // Add object id
-            this.byteCode.Add(this.variableIDByName[context.IDENTIFIER(0).ToString()]);
-            // Add field/property name
-            string fieldProperty = context.IDENTIFIER(1).ToString();
-            foreach(byte b in ByteConverter.ToBytes(fieldProperty))
+            this.byteCode.Add(ByteCodeValues.OP_NEWOBJECT);
+            // Add assembly name
+            string assembly = context.IDENTIFIER().ToString();
+            foreach(byte b in ByteConverter.ToBytes(assembly))
             {
                 this.byteCode.Add(b);
             }
-        }
-
-        public override void EnterObjectfunction([NotNull]MonoKleScriptParser.ObjectfunctionContext context)
-        {
-            this.byteCode.Add(ByteCodeValues.OP_READOBJECT_FUNCTION);
-            // Add object id
-            this.byteCode.Add(this.variableIDByName[context.IDENTIFIER(0).ToString()]);
-            // Add object function
-            string function = context.IDENTIFIER(1).ToString();
-            byte[] bytes = ByteConverter.ToBytes(function);
-            foreach( byte b in bytes )
+            // Add object name
+            string name = context.objectIdentifier().GetText();
+            foreach(byte b in ByteConverter.ToBytes(name))
             {
                 this.byteCode.Add(b);
             }
-
-            // Count function parameters and add to code
+            // Count function parameters and add amount to code
             byte parameters = 0;
             MonoKleScriptParser.ParametersContext pc = context.parameters();
             while(pc != null)
@@ -73,9 +65,10 @@
             this.byteCode.Add(parameters);
         }
 
-        public override void EnterOV([NotNull]MonoKleScriptParser.OVContext context)
+        #region Initialisation & Assignment
+        public override void EnterAssignment_writeobject([NotNull]MonoKleScriptParser.Assignment_writeobjectContext context)
         {
-            this.byteCode.Add(ByteCodeValues.OP_READOBJECT_FIELDPROPERTY);
+            this.byteCode.Add(ByteCodeValues.OP_WRITEOBJECT_FIELDPROPERTY);
             // Add object id
             this.byteCode.Add(this.variableIDByName[context.IDENTIFIER(0).ToString()]);
             // Add field/property name
@@ -106,7 +99,59 @@
             this.byteCode.Add(this.variableIDByName[context.IDENTIFIER().ToString()]);
         }
 
-        private Stack<int> whileAddress = new Stack<int>();
+        public override void EnterInitialization(MonoKleScriptParser.InitializationContext context)
+        {
+            string name = context.IDENTIFIER().ToString();
+            this.byteCode.Add(ByteCodeValues.OP_INIVAR);
+            this.byteCode.Add(this.nextVariableID);
+            this.variableIDByName.Add(name, this.nextVariableID);
+            this.variableNameStack.Peek().Add(name);
+            this.nextVariableID++;
+        }
+
+        public override void EnterAssignment(MonoKleScriptParser.AssignmentContext context)
+        {
+            this.byteCode.Add(ByteCodeValues.OP_SETVAR);
+            this.byteCode.Add(this.variableIDByName[context.IDENTIFIER().ToString()]);
+        }
+        #endregion
+
+        public override void EnterObjectfunction([NotNull]MonoKleScriptParser.ObjectfunctionContext context)
+        {
+            this.byteCode.Add(ByteCodeValues.OP_READOBJECT_FUNCTION);
+            // Add object id
+            this.byteCode.Add(this.variableIDByName[context.IDENTIFIER(0).ToString()]);
+            // Add object function
+            string function = context.IDENTIFIER(1).ToString();
+            byte[] bytes = ByteConverter.ToBytes(function);
+            foreach( byte b in bytes )
+            {
+                this.byteCode.Add(b);
+            }
+
+            // Count function parameters and add amount to code
+            byte parameters = 0;
+            MonoKleScriptParser.ParametersContext pc = context.parameters();
+            while(pc != null)
+            {
+                parameters++;
+                pc = pc.parameters();
+            }
+            this.byteCode.Add(parameters);
+        }
+
+        public override void EnterOV([NotNull]MonoKleScriptParser.OVContext context)
+        {
+            this.byteCode.Add(ByteCodeValues.OP_READOBJECT_FIELDPROPERTY);
+            // Add object id
+            this.byteCode.Add(this.variableIDByName[context.IDENTIFIER(0).ToString()]);
+            // Add field/property name
+            string fieldProperty = context.IDENTIFIER(1).ToString();
+            foreach(byte b in ByteConverter.ToBytes(fieldProperty))
+            {
+                this.byteCode.Add(b);
+            }
+        }
 
         #region While
         public override void EnterWhile([NotNull]MonoKleScriptParser.WhileContext context)
@@ -140,9 +185,6 @@
             this.byteCode[jmpAddressLocation + 3] = jmpBytes[3];
         }
         #endregion
-
-        private Stack<int> ifJmpOnFailStack = new Stack<int>();
-        private Stack<ICollection<int>> ifJmpOnCompleteCollectionStack = new Stack<ICollection<int>>();
 
         #region Conditions
 
@@ -290,22 +332,6 @@
         }
 
         #endregion
-
-        public override void EnterInitialization(MonoKleScriptParser.InitializationContext context)
-        {
-            string name = context.IDENTIFIER().ToString();
-            this.byteCode.Add(ByteCodeValues.OP_INIVAR);
-            this.byteCode.Add(this.nextVariableID);
-            this.variableIDByName.Add(name, this.nextVariableID);
-            this.variableNameStack.Peek().Add(name);
-            this.nextVariableID++;
-        }
-
-        public override void EnterAssignment(MonoKleScriptParser.AssignmentContext context)
-        {
-            this.byteCode.Add(ByteCodeValues.OP_SETVAR);
-            this.byteCode.Add(this.variableIDByName[context.IDENTIFIER().ToString()]);
-        }
 
         public override void EnterKeyReturn(MonoKleScriptParser.KeyReturnContext context)
         {

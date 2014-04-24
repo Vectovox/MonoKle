@@ -13,7 +13,7 @@
     using MonoKle.Logging;
     using MonoKle.Messaging;
     using MonoKle.State;
-    using MonoKle.Script;
+    using MonoKle.Script.Interface;
     using System.Text.RegularExpressions;
     using System.Text;
 
@@ -54,11 +54,11 @@
             MonoKleGame.Console.WriteLine(e.Message);
         }
 
-        private void HandleScriptCompilationError(object sender, Script.Event.CompilationErrorEventArgs e)
+        private void HandleScriptCompilationError(object sender, Script.Interface.Event.CompilationErrorEventArgs e)
         {
-            StringBuilder sb = new StringBuilder("Script compilation error in ");
+            StringBuilder sb = new StringBuilder("Script compilation error in [");
             sb.Append(e.Script);
-            sb.AppendLine(":");
+            sb.AppendLine("]:");
             foreach(string s in e.Messages)
             {
                 sb.AppendLine(s);
@@ -245,7 +245,7 @@
 
         private void MonoKleGame_ConsoleCommand(object sender, MessageEventArgs e)
         {
-            // TODO: In the future. Replace common commands with a nice parser which can redirect to functions, use reflection, and run scripts.
+            // TODO: Create specialized parser for console commands.
             if (sender == MonoKleGame.Console)
             {
                 string s = e.Data as string;

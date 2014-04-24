@@ -88,9 +88,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>TextureResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Script\Event\CompilationErrorEventArgs.cs" />
-    <Compile Include="Script\Event\CompilationErrorEventHandler.cs" />
-    <Compile Include="Script\ScriptInterface.cs" />
     <Compile Include="State\GameState.cs" />
     <Compile Include="State\StateSwitchData.cs" />
     <Compile Include="State\StateManager.cs" />

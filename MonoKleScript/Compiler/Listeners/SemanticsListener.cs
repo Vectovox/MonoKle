@@ -12,15 +12,14 @@
     using MonoKle.Script.Common.Internal;
     using Antlr4.Runtime.Misc;
 
-
     /// <summary>
     /// Listener that checks script semantics.
     /// </summary>
     internal class SemanticsListener : MonoKleScriptBaseListener
     {
-        // TODO: TODOS ARE IN ORDER OF PRIORITY, FROM MOST TO LEAST
+        // TODO: TODOS ARE IN ORDER OF PRIORITY, FROM HIGHEST TO LOWEST
+        // TODO: FIX: Objects can return null values which introduces null into system.
         // TODO: Add object field/property/method chaining
-        // TODO: Add ability to instance own structs and objects
         // TODO: Check that a return always is made.
 
         private LinkedList<string> errorList = new LinkedList<string>();
@@ -45,6 +44,11 @@
             }
             // Set return type
             this.returnType = header.ReturnType;
+        }
+
+        public override void ExitNewObject([NotNull]MonoKleScriptParser.NewObjectContext context)
+        {
+            this.typeByToken.Add(context, typeof(object));
         }
 
         public override void ExitAssignment_writeobject([NotNull]MonoKleScriptParser.Assignment_writeobjectContext context)
@@ -181,6 +185,11 @@
         public override void ExitExpValue(MonoKleScriptParser.ExpValueContext context)
         {
             this.typeByToken.Add(context, this.typeByToken[context.value()]);
+        }
+
+        public override void ExitExpNewObject([NotNull]MonoKleScriptParser.ExpNewObjectContext context)
+        {
+            this.typeByToken.Add(context, this.typeByToken[context.newObject()]);
         }
 
         public override void ExitExpOr([NotNull]MonoKleScriptParser.ExpOrContext context)

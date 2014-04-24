@@ -4,6 +4,7 @@
 
     internal static class ByteCodeValues
     {
+        // Returns
         internal const byte OP_RETURN_VOID = 0x01;
         internal const byte OP_RETURN_VALUE = 0x02;
 
@@ -40,6 +41,14 @@
         internal const byte OP_READOBJECT_FIELDPROPERTY = 0x42;
         internal const byte OP_READOBJECT_FUNCTION = 0x43;
         internal const byte OP_WRITEOBJECT_FIELDPROPERTY = 0x44;
+        internal const byte OP_NEWOBJECT = 0x45;
+
+        // Types        
+        internal const byte TYPE_BOOL = 0x50;
+        internal const byte TYPE_INT = 0x51;
+        internal const byte TYPE_FLOAT = 0x52;
+        internal const byte TYPE_STRING = 0x53;
+        internal const byte TYPE_OBJECT = 0x54;
 
         // Function
         internal const byte OP_CALLFUNCTION = 0xD0;
@@ -56,12 +65,5 @@
         internal const byte OP_CONST_FLOAT = 0xFD;
         internal const byte OP_CONST_STRING = 0xFC;
         internal const byte OP_CONST_OBJECT = 0xFB;
-
-        // Types        
-        internal const byte TYPE_BOOL = 0x01;
-        internal const byte TYPE_INT = 0x02;
-        internal const byte TYPE_FLOAT = 0x03;
-        internal const byte TYPE_STRING = 0x04;
-        internal const byte TYPE_OBJECT = 0x05;
     }
 }

@@ -5,6 +5,7 @@
     using MonoKle.Script.Common.Script;
     using MonoKle.Script.VM.Event;
     using System;
+    using System.Linq;
     using System.Collections.Generic;
     using System.Reflection;
 
@@ -274,6 +275,65 @@
             return null;
         }
 
+        private object CallObjectConstructor(string assembly, string fullName, object[] arguments)
+        {
+            Type type = Type.GetType(fullName + "," + assembly);
+
+            if(type != null)
+            {
+                if(type.IsClass)
+                {
+                    Type[] argumentTypes = new Type[arguments.Length];
+                    for(int i = 0; i < arguments.Length; i++)
+                    {
+                        argumentTypes[i] = arguments[i].GetType();
+                    }
+
+                    ConstructorInfo constructor = type.GetConstructor(argumentTypes);
+                    if(constructor != null)
+                    {
+                        return constructor.Invoke(arguments);
+                    }
+                    else
+                    {
+                        this.ReportError("No such constructor is defined for [" + fullName + "]");
+                    }
+                }
+                else if(type.IsValueType)
+                {
+                    object ret = null;
+
+                    try
+                    {
+                        ret = Activator.CreateInstance(type, arguments);
+                    }
+                    catch (MissingMemberException e)
+                    {
+
+                    }
+
+                    if(ret != null)
+                    {
+                        return ret;
+                    }
+                    else
+                    {
+                        this.ReportError("No such constructor is defined for [" + fullName + "]");
+                    }
+                }
+                else
+                {
+                    this.ReportError("Type [" + fullName + "] is not instantiable");
+                }
+            }
+            else
+            {
+                this.ReportError("No such type [" + fullName + "] exists in assembly [" + assembly + "]");
+            }
+
+            return null;
+        }
+
         private ExecutionResult CreateResult(object value)
         {
             if(this.error)
@@ -462,6 +522,16 @@
                     return this.variableByID[this.code[pc++]];
                 case ByteCodeValues.OP_CALLFUNCTION:
                     return this.CallFunction().ReturnValue;
+                case ByteCodeValues.OP_NEWOBJECT:
+                    {
+                        int bytesRead = 0;
+                        string assembly = ByteConverter.ToString(code, pc, out bytesRead);
+                        this.pc += bytesRead;
+                        string fullName = ByteConverter.ToString(code, pc, out bytesRead);
+                        this.pc += bytesRead;
+                        object[] args = this.ReadArguments();
+                        return this.CallObjectConstructor(assembly, fullName, args);
+                    }
                 default:
                     {
                         this.ReportError("Encountered unrecognized expression operation.");

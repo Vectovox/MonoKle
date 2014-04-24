@@ -1,8 +1,7 @@
-﻿namespace MonoKle.Script.Event
+﻿namespace MonoKle.Script.Interface.Event
 {
     using System;
     using System.Collections.Generic;
-
 
     /// <summary>
     /// Event arguments for compilation error.

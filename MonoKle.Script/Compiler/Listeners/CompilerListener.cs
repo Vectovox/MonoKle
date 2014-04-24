@@ -1,7 +1,6 @@
 ﻿namespace MonoKle.Script.Compiler.Listeners
 {
     using Antlr4.Runtime.Misc;
-    using MonoKle.Utilities;
     using MonoKle.Script.Grammar;
     using MonoKle.Script.Common.Script;
     using MonoKle.Script.Common.Internal;
@@ -43,13 +42,13 @@
         {
             this.byteCode.Add(ByteCodeValues.OP_NEWOBJECT);
             // Add assembly name
-            string assembly = context.IDENTIFIER().ToString();
+            string assembly = context.objectIdentifier(1).GetText();
             foreach(byte b in ByteConverter.ToBytes(assembly))
             {
                 this.byteCode.Add(b);
             }
             // Add object name
-            string name = context.objectIdentifier().GetText();
+            string name = context.objectIdentifier(0).GetText();
             foreach(byte b in ByteConverter.ToBytes(name))
             {
                 this.byteCode.Add(b);

@@ -206,11 +206,11 @@ endscript
 
 script void TestConstructors() > test
 
-	object o : new MonoKleScriptTest.GrammarTest.TestClass()
+	object o : new MonoKle.Script.Test.TestClass() @ MonoKle.Script.Test
 	int val <- o.Property
 	Assert(val = 3)
 	
-	object struct : new MonoKleScriptTest.GrammarTest.TestStruct()
+	object struct : new MonoKle.Script.Test.TestStruct() @ MonoKle.Script.Test
 	struct.x <- 17
 	struct.y <- 24
 	o.field <- struct

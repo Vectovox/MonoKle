@@ -69,9 +69,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MonoKleScript\MonoKleScript.csproj">
+    <ProjectReference Include="..\MonoKle.Script\MonoKle.Script.csproj">
       <Project>{0f3b0e02-30a0-4a37-a424-23300847e2ca}</Project>
-      <Name>MonoKleScript</Name>
+      <Name>MonoKle.Script</Name>
     </ProjectReference>
     <ProjectReference Include="..\MonoKle\MonoKle.csproj">
       <Project>{34afe7b2-73e7-4417-b677-3ccd65f2c3fd}</Project>

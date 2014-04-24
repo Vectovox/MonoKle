@@ -1,4 +1,4 @@
-﻿namespace GrammarTest
+﻿namespace MonoKle.Script.Test
 {
     using MonoKle.Script.Common.Script;
     using MonoKle.Script.Compiler;

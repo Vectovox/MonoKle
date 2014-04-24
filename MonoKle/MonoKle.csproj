@@ -132,9 +132,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MonoKleScript\MonoKleScript.csproj">
+    <ProjectReference Include="..\MonoKle.Script\MonoKle.Script.csproj">
       <Project>{0f3b0e02-30a0-4a37-a424-23300847e2ca}</Project>
-      <Name>MonoKleScript</Name>
+      <Name>MonoKle.Script</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

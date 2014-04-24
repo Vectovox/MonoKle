@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MonoKle.Script</RootNamespace>
-    <AssemblyName>MonoKleScript</AssemblyName>
+    <AssemblyName>MonoKle.Script</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -93,9 +93,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Utilities\Utilities.csproj">
+    <ProjectReference Include="..\MonoKle.Utilities\MonoKle.Utilities.csproj">
       <Project>{52b9dc36-041b-42e7-be30-edecf8ab845d}</Project>
-      <Name>Utilities</Name>
+      <Name>MonoKle.Utilities</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

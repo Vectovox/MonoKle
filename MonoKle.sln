@@ -10,11 +10,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoKle", "MonoKle\MonoKle.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsDemo", "WindowsDemo\WindowsDemo.csproj", "{6F0EED8A-A072-4A36-8241-6B3E62ADA82C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoKleScript", "MonoKleScript\MonoKleScript.csproj", "{0F3B0E02-30A0-4A37-A424-23300847E2CA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoKle.Script", "MonoKle.Script\MonoKle.Script.csproj", "{0F3B0E02-30A0-4A37-A424-23300847E2CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities", "Utilities\Utilities.csproj", "{52B9DC36-041B-42E7-BE30-EDECF8AB845D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoKle.Utilities", "MonoKle.Utilities\MonoKle.Utilities.csproj", "{52B9DC36-041B-42E7-BE30-EDECF8AB845D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoKleScriptTest", "MonoKleScriptTest\MonoKleScriptTest.csproj", "{8AEE0728-FD47-4325-9B39-2BF206B3D45E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoKle.Script.Test", "MonoKle.Script.Test\MonoKle.Script.Test.csproj", "{8AEE0728-FD47-4325-9B39-2BF206B3D45E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -55,8 +55,8 @@ objectfunction: IDENTIFIER OBJECTPERIOD IDENTIFIER LGROUPING RGROUPING
 		      | IDENTIFIER OBJECTPERIOD IDENTIFIER LGROUPING parameters RGROUPING
 			  ;
 
-newObject : NEW IDENTIFIER OBJECTPERIOD objectIdentifier LGROUPING RGROUPING // Identifier is assembly.
-          | NEW IDENTIFIER OBJECTPERIOD objectIdentifier LGROUPING parameters RGROUPING
+newObject : NEW objectIdentifier LGROUPING RGROUPING OBJECTASSEMBLY objectIdentifier 
+          | NEW objectIdentifier LGROUPING parameters RGROUPING OBJECTASSEMBLY objectIdentifier 
 		  ;
 
 objectIdentifier : IDENTIFIER
@@ -132,6 +132,7 @@ NEW : 'new';
 
 OBJECTPERIOD : '.';
 OBJECTREAD : '<-';
+OBJECTASSEMBLY : '@';
 
 PLUS : '+';
 MINUS : '-';

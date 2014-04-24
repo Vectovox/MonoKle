@@ -15,7 +15,6 @@
         internal StateManager()
         {
             this.stateByString = new Dictionary<string, GameState>();
-            this.currentState = null;
         }
 
         /// <summary>
@@ -51,7 +50,7 @@
         {
             if (this.stateByString.ContainsKey(identifier))
             {
-                this.stateByString[identifier].Removed();
+                this.stateByString[identifier].Remove();
                 this.stateByString.Remove(identifier);
             }
             else
@@ -83,11 +82,11 @@
             {
                 if (this.currentState != null)
                 {
-                    this.currentState.Deactivated(this.switchData);
+                    this.currentState.Deactivate(this.switchData);
                 }
 
                 this.currentState = this.stateByString[this.switchData.NextState];
-                this.currentState.Activated(this.switchData);
+                this.currentState.Activate(this.switchData);
                 this.switchData = null;
             }
 

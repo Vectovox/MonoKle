@@ -25,7 +25,7 @@ namespace WindowsDemo
             }
         }
 
-        public override void Activated(StateSwitchData data)
+        protected override void Activated(StateSwitchData data)
         {
             Console.WriteLine("State two activated! Message: " + (string)data.Data);
         }

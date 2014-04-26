@@ -57,6 +57,7 @@
             get { return new Vector2Int32(0, 0); }
         }
 
+#pragma warning disable 1591
         public static bool operator !=(Vector2Int32 a, Vector2Int32 b)
         {
             return a.X != b.X || a.Y != b.Y;
@@ -87,15 +88,11 @@
             return new Vector2Int32(a.X / b, a.Y / b);
         }
 
-        public static Vector2Int32 operator /(int b, Vector2Int32 a)
-        {
-            return new Vector2Int32(a.X / b, a.Y / b);
-        }
-
         public static bool operator ==(Vector2Int32 a, Vector2Int32 b)
         {
             return a.X == b.X && a.Y == b.Y;
         }
+#pragma warning restore 1591
 
         /// <summary>
         /// Returns whether the <see cref="Vector2Int32"/> is equal to the provided object.
@@ -104,7 +101,7 @@
         /// <returns>True if they are equal, else false.</returns>
         public override bool Equals(object obj)
         {
-            if (obj is Vector2Int32)
+            if(obj is Vector2Int32)
             {
                 return this == (Vector2Int32)obj;
             }
@@ -112,33 +109,55 @@
         }
 
         /// <summary>
-        /// Returns the hash code representation.
+        /// Returns wether the vector, as a coordinate, is within the area created by (0, 0) and the given coordinate.
         /// </summary>
-        /// <returns>Hash code representation.</returns>
-        public override int GetHashCode()
+        /// <param name="coordinate">The coordinate.</param>
+        /// <returns>True if within the area, else false.</returns>
+        public bool IsWithin(Vector2Int32 coordinate)
         {
-            return this.X.GetHashCode() + this.Y.GetHashCode() * 7;
+            return this.IsWithin(Vector2Int32.Zero, coordinate);
         }
 
         /// <summary>
-        /// Returns wether the vector, as a coordinate, is within the area created by (0, 0) and the given bottom right corner.
+        /// Returns wether the vector, as a coordinate, is within the area created by (0, 0) and the given coordinate.
         /// </summary>
-        /// <param name="bottomRight">The bottom right corner.</param>
+        /// <param name="coordinate">The coordinate.</param>
         /// <returns>True if within the area, else false.</returns>
-        public bool IsWithin(Vector2Int32 bottomRight)
+        public bool IsWithin(Vector2 coordinate)
         {
-            return this.IsWithin(Vector2Int32.Zero, bottomRight);
+            return this.IsWithin(Vector2.Zero, coordinate);
         }
 
         /// <summary>
-        /// Returns wether the vector, as a coordinate, is within the area created by the given top left and bottom right corner.
+        /// Returns wether the vector, as a coordinate, is within the area created by the given coordinates.
         /// </summary>
-        /// <param name="bottomRight">The bottom right corner.</param>
-        /// <param name="topLeft">The top left corner.</param>
+        /// <param name="coordinateA">The first coordinate.</param>
+        /// <param name="coordinateB">The second coordinate.</param>
         /// <returns>True if within the area, else false.</returns>
-        public bool IsWithin(Vector2Int32 topLeft, Vector2Int32 bottomRight)
+        public bool IsWithin(Vector2Int32 coordinateA, Vector2Int32 coordinateB)
         {
-            return this.X >= topLeft.X && this.X <= bottomRight.X && this.Y >= topLeft.Y && this.Y <= bottomRight.Y;
+            int left = Math.Min(coordinateA.X, coordinateB.X);
+            int right = Math.Max(coordinateA.X, coordinateB.X);
+            int top = Math.Min(coordinateA.Y, coordinateB.Y);
+            int bottom = Math.Max(coordinateA.Y, coordinateB.Y);
+
+            return this.X >= left && this.X <= right && this.Y >= top && this.Y <= bottom;
+        }
+
+        /// <summary>
+        /// Returns wether the vector, as a coordinate, is within the area created by the given coordinates.
+        /// </summary>
+        /// <param name="coordinateA">The first coordinate.</param>
+        /// <param name="coordinateB">The second coordinate.</param>
+        /// <returns>True if within the area, else false.</returns>
+        public bool IsWithin(Vector2 coordinateA, Vector2 coordinateB)
+        {
+            float left = Math.Min(coordinateA.X, coordinateB.X);
+            float right = Math.Max(coordinateA.X, coordinateB.X);
+            float top = Math.Min(coordinateA.Y, coordinateB.Y);
+            float bottom = Math.Max(coordinateA.Y, coordinateB.Y);
+
+            return this.X >= left && this.X <= right && this.Y >= top && this.Y <= bottom;
         }
 
         /// <summary>
@@ -149,6 +168,16 @@
         public bool IsWithin(Rectangle area)
         {
             return this.IsWithin(new Vector2Int32(area.Left, area.Top), new Vector2Int32(area.Right, area.Bottom));
+        }
+
+        /// <summary>
+        /// Returns wether the vector, as a coordinate, is within the given area.
+        /// </summary>
+        /// <param name="area">The area to check for.</param>
+        /// <returns>True if within the area, else false.</returns>
+        public bool IsWithin(RectangleSingle area)
+        {
+            return this.IsWithin(area.GetTopLeft(), area.GetBottomRight());
         }
 
         /// <summary>

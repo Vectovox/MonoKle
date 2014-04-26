@@ -77,6 +77,7 @@
             get { return new Vector3Int32(0, 0, 0); }
         }
 
+#pragma warning disable 1591
         public static bool operator !=(Vector3Int32 a, Vector3Int32 b)
         {
             return a.X != b.X || a.Y != b.Y || a.Z != b.Z;
@@ -116,6 +117,7 @@
         {
             return a.X == b.X && a.Y == b.Y && a.Z == b.Z;
         }
+#pragma warning restore 1591
 
         /// <summary>
         /// Returns whether the <see cref="Vector3Int32"/> is equal to the provided object.

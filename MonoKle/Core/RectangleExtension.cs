@@ -7,7 +7,7 @@
      * This would be nice to have since that would follow the original Rectangle format of
      * Top/Bottom/Left/Right-properties.
      */
-    internal static class RectangleExtension
+    public static class RectangleExtension
     {
         /// <summary>
         /// Gets the bottom left coordinate.

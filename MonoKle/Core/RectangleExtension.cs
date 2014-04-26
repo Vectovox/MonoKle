@@ -7,9 +7,8 @@
         /*
          * NOTE: Hopefully Microsoft will add property extensions sooner rather than later to C#.
          * This would be nice to have since that would follow the original Rectangle format of
-         * Top/Bottom/Left/Right.
+         * Top/Bottom/Left/Right-properties.
          */
-
         /// <summary>
         /// Gets the bottom right coordinate.
         /// </summary>

@@ -81,6 +81,95 @@
         }
 
         /// <summary>
+        /// Checks if the rectangle contains the provided rectangle.
+        /// </summary>
+        /// <param name="rectangle">The rectangle to check if it is contained.</param>
+        /// <returns>True if the specified rectangle is contained, otherwise false.</returns>
+        public bool Contains(Rectangle rectangle)
+        {
+            return this.Contains(rectangle.GetTopLeft()) && this.Contains(rectangle.GetBottomRight());
+        }
+
+        /// <summary>
+        /// Checks if the rectangle contains the provided rectangle.
+        /// </summary>
+        /// <param name="rectangle">The rectangle to check if it is contained.</param>
+        /// <returns>True if the specified rectangle is contained, otherwise false.</returns>
+        public bool Contains(RectangleSingle rectangle)
+        {
+            return this.Contains(rectangle.GetTopLeft()) && this.Contains(rectangle.GetBottomRight());
+        }
+
+        /// <summary>
+        /// Checks if the rectangle contains the provided coordinate.
+        /// </summary>
+        /// <param name="coordinate">The coordinate to check if it is contained.</param>
+        /// <returns>True if the specified coordinate is contained, otherwise false.</returns>
+        public bool Contains(Vector2 coordinate)
+        {
+            return coordinate.X >= this.GetLeft() && coordinate.X <= this.GetRight()
+                && coordinate.Y >= this.GetTop() && coordinate.Y <= this.GetBottom();
+        }
+
+        /// <summary>
+        /// Checks if the rectangle contains the provided coordinate.
+        /// </summary>
+        /// <param name="coordinate">The coordinate to check if it is contained.</param>
+        /// <returns>True if the specified coordinate is contained, otherwise false.</returns>
+        public bool Contains(Vector2Int32 coordinate)
+        {
+            return coordinate.X >= this.GetLeft() && coordinate.X <= this.GetRight()
+                && coordinate.Y >= this.GetTop() && coordinate.Y <= this.GetBottom();
+        }
+
+        /// <summary>
+        /// Crops the rectangle to fit into the given bounds.
+        /// </summary>
+        /// <param name="bounds">The bounds to fit into.</param>
+        public void Crop(RectangleSingle bounds)
+        {
+            if(this.X < bounds.X)
+            {
+                this.X = bounds.X;
+            }
+            else if(this.X > bounds.GetRight())
+            {
+                this.X = bounds.GetRight();
+            }
+
+            float drl = this.GetRight() - bounds.GetLeft();
+            float drr = this.GetRight() - bounds.GetRight();
+            if(drl < 0)
+            {
+                this.Width += drl;
+            }
+            else if(drr > 0)
+            {
+                this.Width -= drr;
+            }
+
+            if(this.Y < bounds.Y)
+            {
+                this.Y = bounds.Y;
+            }
+            else if(this.Y > bounds.GetBottom())
+            {
+                this.Y = bounds.GetBottom();
+            }
+
+            float dbt = this.GetBottom() - bounds.GetTop();
+            float dbb = this.GetBottom() - bounds.GetBottom();
+            if(dbt < 0)
+            {
+                this.Height += dbt;
+            }
+            else if(dbb > 0)
+            {
+                this.Height -= dbb;
+            }
+        }
+
+        /// <summary>
         /// Returns the bottom of the rectangle.
         /// </summary>
         /// <returns></returns>

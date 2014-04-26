@@ -50,6 +50,7 @@
     <Compile Include="Console\GameConsole.cs" />
     <Compile Include="Core\Camera2D.cs" />
     <Compile Include="Core\RectangleExtension.cs" />
+    <Compile Include="Core\RectangleSingle.cs" />
     <Compile Include="Core\Timer.cs" />
     <Compile Include="Core\Vector2Int32.cs" />
     <Compile Include="Core\Vector3Int32.cs" />

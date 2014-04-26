@@ -68,6 +68,19 @@
         }
 
         /// <summary>
+        /// Creates a new instance of <see cref="RectangleSingle"/> by the provided top left- and bottom right coordinates.
+        /// </summary>
+        /// <param name="topLeft">Top left corner coordinate.</param>
+        /// <param name="bottomRight">Bottom right corner coordinate.</param>
+        public RectangleSingle(Vector2 topLeft, Vector2 bottomRight)
+        {
+            this.X = topLeft.X;
+            this.Y = topLeft.Y;
+            this.Width = bottomRight.X - topLeft.X;
+            this.Height = bottomRight.Y - topLeft.Y;
+        }
+
+        /// <summary>
         /// Returns the bottom of the rectangle.
         /// </summary>
         /// <returns></returns>

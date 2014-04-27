@@ -88,15 +88,15 @@ namespace MonoKle.Core.Test
             TimeSpan duration = new TimeSpan(123456);
             TimeSpan sub = new TimeSpan(1234);
             Timer t = new Timer(duration);
-            t.Update(duration);
+            Assert.IsTrue(t.Update(duration));
             Assert.IsTrue(t.IsDone);
             Assert.AreEqual(0, t.TimeLeft);
             t.Reset();
-            t.Update(duration.TotalSeconds);
+            Assert.IsTrue(t.Update(duration.TotalSeconds));
             Assert.IsTrue(t.IsDone);
             Assert.AreEqual(0, t.TimeLeft);
             t.Reset();
-            t.Update(sub);
+            Assert.IsFalse(t.Update(sub));
             Assert.IsFalse(t.IsDone);
             Assert.AreEqual(duration.TotalSeconds - sub.TotalSeconds, t.TimeLeft);
         }

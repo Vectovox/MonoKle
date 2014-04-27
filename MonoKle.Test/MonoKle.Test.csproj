@@ -54,6 +54,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Core\TimerTest.cs" />
+    <Compile Include="Core\RectangleExtensionTest.cs" />
     <Compile Include="Core\Vector3Int32Test.cs" />
     <Compile Include="Core\Vector2Int32Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

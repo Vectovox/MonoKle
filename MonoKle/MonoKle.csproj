@@ -73,17 +73,11 @@
     <Compile Include="Messaging\MessagePasser.cs" />
     <Compile Include="MonoKleGame.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resources\CompilerResources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>CompilerResources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Resources\FontResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>FontResources.resx</DependentUpon>
     </Compile>
-    <None Include="Resources\opcodes" />
     <Compile Include="Resources\TextureResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -118,10 +112,6 @@
     <Content Include="Resources\WhiteTexture.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\CompilerResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>CompilerResources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Include="Resources\FontResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>FontResources.Designer.cs</LastGenOutput>

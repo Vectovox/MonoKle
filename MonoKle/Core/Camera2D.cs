@@ -114,11 +114,11 @@
         public void SetRotation(float rotation, float speed)
         {
             this.desiredRotation = MathHelper.WrapAngle(rotation);
-            if (this.desiredRotation != this.rotation)
+            if(this.desiredRotation != this.rotation)
             {
                 float a = desiredRotation - this.rotation;
-                if (a > Math.PI) a -= 2 * (float)Math.PI;
-                if (a < -Math.PI) a += 2 * (float)Math.PI;
+                if(a > Math.PI) a -= 2 * (float)Math.PI;
+                if(a < -Math.PI) a += 2 * (float)Math.PI;
 
                 this.desiredRotationSpeed = a < 0 ? -speed : speed;
             }
@@ -169,13 +169,59 @@
         /// <summary>
         /// Updates camera composition with the given amount of delta time.
         /// </summary>
+        /// <param name="span">Delta time.</param>
+        public void Update(TimeSpan span)
+        {
+            this.Update(span.TotalSeconds);
+        }
+
+        /// <summary>
+        /// Updates camera composition with the given amount of delta time.
+        /// </summary>
         /// <param name="seconds">Delta time in seconds.</param>
         public void Update(double seconds)
         {
-            if (this.desiredScaleSpeed != 0)
+            this.UpdateScale(ref seconds);
+            this.UpdateRotation(ref seconds);
+
+            if(this.matrixNeedsUpdate)
+            {
+                Vector2 center = size.ToVector2() * 0.5f;
+                this.transformMatrix = Matrix.CreateTranslation(-new Vector3(position - center, 0f))
+                * Matrix.CreateTranslation(-new Vector3(center, 0f))
+                * Matrix.CreateRotationZ(-rotation)
+                * Matrix.CreateScale(scale)
+                * Matrix.CreateTranslation(new Vector3(center, 0f));
+
+                this.transformMatrixInv = Matrix.Invert(this.transformMatrix);
+            }
+        }
+
+        private void UpdateRotation(ref double seconds)
+        {
+            if(desiredRotationSpeed != 0)
+            {
+                float delta = (float)(this.desiredRotationSpeed * seconds);
+                this.rotation = MathHelper.WrapAngle(this.rotation + delta);
+                double distance = Math.Atan2(Math.Sin(this.desiredRotation - this.rotation), Math.Cos(this.desiredRotation - this.rotation));
+
+                // Check if we turned past the desired rotation
+                if(Math.Abs(distance) < Math.Abs(delta))
+                {
+                    this.desiredRotationSpeed = 0f;
+                    this.rotation = desiredRotation;
+                }
+
+                matrixNeedsUpdate = true;
+            }
+        }
+
+        private void UpdateScale(ref double seconds)
+        {
+            if(this.desiredScaleSpeed != 0)
             {
                 float delta = (float)(this.desiredScaleSpeed * seconds);
-                if (Math.Abs(this.scale - this.desiredScale) < Math.Abs(delta))
+                if(Math.Abs(this.scale - this.desiredScale) < Math.Abs(delta))
                 {
                     this.desiredScaleSpeed = 0;
                     this.scale = this.desiredScale;
@@ -186,33 +232,6 @@
                 }
 
                 this.matrixNeedsUpdate = true;
-            }
-            if (desiredRotationSpeed != 0)
-            {
-                float delta = (float)(this.desiredRotationSpeed * seconds);
-                this.rotation = MathHelper.WrapAngle(this.rotation + delta);
-                double distance = Math.Atan2(Math.Sin(this.desiredRotation - this.rotation), Math.Cos(this.desiredRotation - this.rotation));
-
-                // Check if we turned past the desired rotation
-                if (Math.Abs(distance) < Math.Abs(delta))
-                {
-                    this.desiredRotationSpeed = 0f;
-                    this.rotation = desiredRotation;
-                }
-
-                matrixNeedsUpdate = true;
-            }
-
-            if (this.matrixNeedsUpdate)
-            {
-                Vector2 center = size.ToVector2() * 0.5f;
-                this.transformMatrix = Matrix.CreateTranslation(-new Vector3(position - center, 0f))
-                * Matrix.CreateTranslation(-new Vector3(center, 0f))
-                * Matrix.CreateRotationZ(-rotation)
-                * Matrix.CreateScale(scale)
-                * Matrix.CreateTranslation(new Vector3(center, 0f));
-
-                this.transformMatrixInv = Matrix.Invert(this.transformMatrix);
             }
         }
     }

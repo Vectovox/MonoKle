@@ -164,29 +164,19 @@
             // Mouse position
             if (VirtualMouseEnabled)
             {
-                mousePosition.X += currentState.X;
-                mousePosition.Y += currentState.Y;
+                mousePosition += new Vector2Int32(currentState.X, currentState.Y);
                 Mouse.SetPosition(screenSize.X / 2, screenSize.Y / 2);
                 ClampMousePosition(screenSize);
             }
             else
             {
-                mousePosition.X = currentState.X;
-                mousePosition.Y = currentState.Y;
+                mousePosition = new Vector2Int32(currentState.X, currentState.Y);
             }
         }
 
         private void ClampMousePosition(Vector2Int32 screenSize)
         {
-            if (mousePosition.X < 0)
-                mousePosition.X = 0;
-            else if (mousePosition.X > screenSize.X)
-                mousePosition.X = screenSize.X;
-            
-            if (mousePosition.Y < 0)
-                mousePosition.Y = 0;
-            else if (mousePosition.Y > screenSize.Y)
-                mousePosition.Y = screenSize.Y;
+            this.mousePosition = this.mousePosition.Crop(screenSize);
         }
 
         private void UpdateButton(MouseButton button, bool pressed, double time)

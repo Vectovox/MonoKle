@@ -1,31 +1,20 @@
 ﻿namespace MonoKle.Core
 {
+    using System;
+    using System.Text;
+
     using Microsoft.Xna.Framework;
 
     /// <summary>
-    /// Struct for storing a float-based rectangle.
+    /// Struct for storing an immutable, normalized (non-negative width and height), float-based rectangle.
     /// </summary>
-    public struct RectangleSingle
+    public struct RectangleSingle : IEquatable<RectangleSingle>
     {
-        /// <summary>
-        /// Height of the rectangle.
-        /// </summary>
-        public float Height;
+        private const int HASH_CODE_INITIAL = 17;
+        private const int HASH_CODE_MULTIPLIER = 23;
 
-        /// <summary>
-        /// Width of the rectangle.
-        /// </summary>
-        public float Width;
-
-        /// <summary>
-        /// Top left X-coordinate.
-        /// </summary>
-        public float X;
-
-        /// <summary>
-        /// Top left Y-coordinate.
-        /// </summary>
-        public float Y;
+        private Vector2 bottomRight;
+        private Vector2 topLeft;
 
         /// <summary>
         /// Creates a new instance of <see cref="RectangleSingle"/> from an integer based rectangle.
@@ -33,51 +22,81 @@
         /// <param name="rectangle">Integer based rectangle.</param>
         public RectangleSingle(Rectangle rectangle)
         {
-            this.X = rectangle.X;
-            this.Y = rectangle.Y;
-            this.Width = rectangle.Width;
-            this.Height = rectangle.Height;
+            float xLeft = Math.Min(rectangle.X, rectangle.X + rectangle.Width);
+            float xRight = Math.Max(rectangle.X, rectangle.X + rectangle.Width);
+            float yTop = Math.Min(rectangle.Y, rectangle.Y + rectangle.Height);
+            float yBottom = Math.Max(rectangle.Y, rectangle.Y + rectangle.Height);
+            this.topLeft = new Vector2(xLeft, yTop);
+            this.bottomRight = new Vector2(xRight, yBottom);
         }
 
         /// <summary>
-        /// Creates a new instance of <see cref="RectangleSingle"/> with the given width and height.
+        /// Creates a new instance of <see cref="RectangleSingle"/> around (0, 0) with the given width and height.
         /// </summary>
         /// <param name="width">Width of the rectangle.</param>
         /// <param name="height">Height of the rectangle.</param>
         public RectangleSingle(float width, float height)
         {
-            this.X = 0;
-            this.Y = 0;
-            this.Width = width;
-            this.Height = height;
+            float xLeft = Math.Min(0, width);
+            float xRight = Math.Max(0, width);
+            float yTop = Math.Min(0, height);
+            float yBottom = Math.Max(0, height);
+            this.topLeft = new Vector2(xLeft, yTop);
+            this.bottomRight = new Vector2(xRight, yBottom);
         }
 
         /// <summary>
-        /// Creates a new instance of <see cref="RectangleSingle"/> on the provided coordinate and with the given width and height.
+        /// Creates a new instance of <see cref="RectangleSingle"/> by the provided coordinate and the given width and height.
         /// </summary>
-        /// <param name="x">X-coordinate of the top left corner.</param>
-        /// <param name="y">Y-coordinate of the top left corner.</param>
+        /// <param name="x">X-coordinate of a corner.</param>
+        /// <param name="y">Y-coordinate of a corner.</param>
         /// <param name="width">Width of the rectangle.</param>
         /// <param name="height">Height of the rectangle.</param>
         public RectangleSingle(float x, float y, float width, float height)
         {
-            this.X = x;
-            this.Y = y;
-            this.Width = width;
-            this.Height = height;
+            float xLeft = Math.Min(x, x + width);
+            float xRight = Math.Max(x, x + width);
+            float yTop = Math.Min(y, y + height);
+            float yBottom = Math.Max(y, y + height);
+            this.topLeft = new Vector2(xLeft, yTop);
+            this.bottomRight = new Vector2(xRight, yBottom);
         }
 
         /// <summary>
-        /// Creates a new instance of <see cref="RectangleSingle"/> by the provided top left- and bottom right coordinates.
+        /// Creates a new instance of <see cref="RectangleSingle"/> bound by the provided coordinates.
         /// </summary>
-        /// <param name="topLeft">Top left corner coordinate.</param>
-        /// <param name="bottomRight">Bottom right corner coordinate.</param>
-        public RectangleSingle(Vector2 topLeft, Vector2 bottomRight)
+        /// <param name="coordA">The first coordinate.</param>
+        /// <param name="coordB">The second coordinate.</param>
+        public RectangleSingle(Vector2 coordA, Vector2 coordB)
         {
-            this.X = topLeft.X;
-            this.Y = topLeft.Y;
-            this.Width = bottomRight.X - topLeft.X;
-            this.Height = bottomRight.Y - topLeft.Y;
+            float xLeft = Math.Min(coordA.X, coordB.X);
+            float xRight = Math.Max(coordA.X, coordB.X);
+            float yTop = Math.Min(coordA.Y, coordB.Y);
+            float yBottom = Math.Max(coordA.Y, coordB.Y);
+            this.topLeft = new Vector2(xLeft, yTop);
+            this.bottomRight = new Vector2(xRight, yBottom);
+        }
+
+        /// <summary>
+        /// Non-equality operator.
+        /// </summary>
+        /// <param name="a">Left rectangle.</param>
+        /// <param name="b">Right rectangle.</param>
+        /// <returns>True if rectangles are not equal, else false.</returns>
+        public static bool operator !=(RectangleSingle a, RectangleSingle b)
+        {
+            return a.topLeft != b.topLeft || a.bottomRight != b.bottomRight;
+        }
+
+        /// <summary>
+        /// Equality operator.
+        /// </summary>
+        /// <param name="a">Left rectangle.</param>
+        /// <param name="b">Right rectangle.</param>
+        /// <returns>True if rectangles are equal, else false.</returns>
+        public static bool operator ==(RectangleSingle a, RectangleSingle b)
+        {
+            return a.topLeft == b.topLeft && a.bottomRight == b.bottomRight;
         }
 
         /// <summary>
@@ -87,7 +106,8 @@
         /// <returns>True if the specified rectangle is contained, otherwise false.</returns>
         public bool Contains(Rectangle rectangle)
         {
-            return this.Contains(rectangle.GetTopLeft()) && this.Contains(rectangle.GetBottomRight());
+            return this.Contains(rectangle.GetTopLeft()) && this.Contains(rectangle.GetTopRight())
+                && this.Contains(rectangle.GetBottomLeft()) && this.Contains(rectangle.GetBottomRight());
         }
 
         /// <summary>
@@ -97,7 +117,8 @@
         /// <returns>True if the specified rectangle is contained, otherwise false.</returns>
         public bool Contains(RectangleSingle rectangle)
         {
-            return this.Contains(rectangle.GetTopLeft()) && this.Contains(rectangle.GetBottomRight());
+            return this.Contains(rectangle.GetTopLeft()) && this.Contains(rectangle.GetTopRight())
+                && this.Contains(rectangle.GetBottomLeft()) && this.Contains(rectangle.GetBottomRight());
         }
 
         /// <summary>
@@ -123,50 +144,77 @@
         }
 
         /// <summary>
-        /// Crops the rectangle to fit into the given bounds.
+        /// Returns the rectangle cropped to fit into the given bounds.
         /// </summary>
         /// <param name="bounds">The bounds to fit into.</param>
-        public void Crop(RectangleSingle bounds)
+        public RectangleSingle Crop(RectangleSingle bounds)
         {
-            if(this.X < bounds.X)
+            float x = this.topLeft.X;
+            float y = this.topLeft.Y;
+            float x2 = this.bottomRight.X;
+            float y2 = this.bottomRight.Y;
+
+            if(x < bounds.topLeft.X)
             {
-                this.X = bounds.X;
+                x = bounds.topLeft.X;
             }
-            else if(this.X > bounds.GetRight())
+            else if(x > bounds.bottomRight.X)
             {
-                this.X = bounds.GetRight();
+                x = bounds.bottomRight.X;
             }
 
-            float drl = this.GetRight() - bounds.GetLeft();
-            float drr = this.GetRight() - bounds.GetRight();
-            if(drl < 0)
+            if(x2 < bounds.topLeft.X)
             {
-                this.Width += drl;
+                x2 = bounds.topLeft.X;
             }
-            else if(drr > 0)
+            else if(x2 > bounds.bottomRight.X)
             {
-                this.Width -= drr;
+                x2 = bounds.bottomRight.X;
             }
 
-            if(this.Y < bounds.Y)
+            if(y < bounds.topLeft.Y)
             {
-                this.Y = bounds.Y;
+                y = bounds.topLeft.Y;
             }
-            else if(this.Y > bounds.GetBottom())
+            else if(y > bounds.bottomRight.Y)
             {
-                this.Y = bounds.GetBottom();
+                y = bounds.bottomRight.Y;
             }
 
-            float dbt = this.GetBottom() - bounds.GetTop();
-            float dbb = this.GetBottom() - bounds.GetBottom();
-            if(dbt < 0)
+            if(y2 < bounds.topLeft.Y)
             {
-                this.Height += dbt;
+                y2 = bounds.topLeft.Y;
             }
-            else if(dbb > 0)
+            else if(y2 > bounds.bottomRight.Y)
             {
-                this.Height -= dbb;
+                y2 = bounds.bottomRight.Y;
             }
+
+            return new RectangleSingle(x, y, x2 - x, y2 - y);
+        }
+
+        /// <summary>
+        /// Returns whether this is equal to the provided object.
+        /// </summary>
+        /// <param name="obj">The object to check for equality with.</param>
+        /// <returns>True if equal, else false.</returns>
+        public override bool Equals(object obj)
+        {
+            if(obj is RectangleSingle)
+            {
+                return this == ((RectangleSingle)obj);
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Returns whether this is equal to the provided <see cref="RectangleSingle"/>.
+        /// </summary>
+        /// <param name="other">The <see cref="RectangleSingle"/> to check for equality with.</param>
+        /// <returns>True if equal, else false.</returns>
+        public bool Equals(RectangleSingle other)
+        {
+            return this == other;
         }
 
         /// <summary>
@@ -175,7 +223,7 @@
         /// <returns></returns>
         public float GetBottom()
         {
-            return this.Y + this.Height;
+            return this.bottomRight.Y;
         }
 
         /// <summary>
@@ -184,7 +232,7 @@
         /// <returns>Bottom left corner.</returns>
         public Vector2 GetBottomLeft()
         {
-            return new Vector2(this.X, this.Y + this.Height);
+            return new Vector2(this.topLeft.X, this.bottomRight.Y);
         }
 
         /// <summary>
@@ -193,7 +241,22 @@
         /// <returns>Bottom right corner.</returns>
         public Vector2 GetBottomRight()
         {
-            return new Vector2(this.X + this.Width, this.Y + this.Height);
+            return bottomRight;
+        }
+
+        /// <summary>
+        /// Returns the hash representation.
+        /// </summary>
+        /// <returns>Hash representation.</returns>
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = RectangleSingle.HASH_CODE_INITIAL;
+                hash = hash * RectangleSingle.HASH_CODE_MULTIPLIER + this.topLeft.GetHashCode();
+                hash = hash * RectangleSingle.HASH_CODE_MULTIPLIER + this.bottomRight.GetHashCode();
+                return hash;
+            }
         }
 
         /// <summary>
@@ -202,7 +265,7 @@
         /// <returns></returns>
         public float GetLeft()
         {
-            return this.X;
+            return this.topLeft.X;
         }
 
         /// <summary>
@@ -211,7 +274,7 @@
         /// <returns></returns>
         public float GetRight()
         {
-            return this.X + this.Width;
+            return this.bottomRight.X;
         }
 
         /// <summary>
@@ -220,7 +283,7 @@
         /// <returns></returns>
         public float GetTop()
         {
-            return this.Y;
+            return this.topLeft.Y;
         }
 
         /// <summary>
@@ -229,7 +292,7 @@
         /// <returns>Top left corner.</returns>
         public Vector2 GetTopLeft()
         {
-            return new Vector2(this.X, this.Y);
+            return this.topLeft;
         }
 
         /// <summary>
@@ -238,16 +301,35 @@
         /// <returns>Top right corner.</returns>
         public Vector2 GetTopRight()
         {
-            return new Vector2(this.X + this.Width, this.Y);
+            return new Vector2(this.bottomRight.X, this.topLeft.Y);
         }
 
         /// <summary>
-        /// Returns an integer based rectangle, cutting off decimals.
+        /// Returns an integer based rectangle, rounded down by cutting of decimals.
         /// </summary>
         /// <returns>Integer based rectangle.</returns>
         public Rectangle ToRectangle()
         {
-            return new Rectangle((int)this.X, (int)this.Y, (int)this.Width, (int)this.Height);
+            return new Rectangle((int)this.topLeft.X,
+                (int)this.topLeft.Y,
+                (int)(this.bottomRight.X - this.topLeft.X),
+                (int)(this.bottomRight.Y - this.topLeft.Y)
+                );
+        }
+
+        /// <summary>
+        /// Returns the <see cref="string"/> representation.
+        /// </summary>
+        /// <returns><see cref="string"/> representation.</returns>
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("[Top Left: ");
+            sb.Append(this.topLeft.ToString());
+            sb.Append(", Bottom Right: ");
+            sb.Append(this.bottomRight.ToString());
+            sb.Append("]");
+            return sb.ToString();
         }
     }
 }

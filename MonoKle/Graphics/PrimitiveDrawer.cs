@@ -32,7 +32,7 @@
             {
                 indexArray[i] = i;
             }
-            this.Camera = new Camera2D(new Vector2Int32(this.graphicsDevice.Viewport.Width, this.graphicsDevice.Viewport.Height));
+            this.Camera = new Camera2D(new Vector2DInteger(this.graphicsDevice.Viewport.Width, this.graphicsDevice.Viewport.Height));
             this.Camera.Update(0);
         }
 

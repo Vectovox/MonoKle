@@ -17,7 +17,7 @@
     {
         private MouseScrollDirection currentScrollDirection;
         private Dictionary<MouseButton, double> heldTimeByButton;
-        private Vector2Int32 mousePosition;
+        private Vector2DInteger mousePosition;
         private HashSet<MouseButton> previousButtons;
         private int previousScrollValue;
 
@@ -27,7 +27,7 @@
             previousButtons = new HashSet<MouseButton>();
             currentScrollDirection = MouseScrollDirection.None;
             previousScrollValue = 0;
-            mousePosition = new Vector2Int32(0, 0);
+            mousePosition = new Vector2DInteger(0, 0);
         }
 
         /// <summary>
@@ -115,10 +115,10 @@
         }
 
         /// <summary>
-        /// Returns the <see cref="Vector2Int32"/> representation of the current mouse position.
+        /// Returns the <see cref="Vector2DInteger"/> representation of the current mouse position.
         /// </summary>
         /// <returns>Current mouse position.</returns>
-        public Vector2Int32 GetMousePosition()
+        public Vector2DInteger GetMousePosition()
         {
             return mousePosition;
         }
@@ -133,7 +133,7 @@
             return direction == currentScrollDirection;
         }
 
-        internal void Update(double seconds, Vector2Int32 screenSize)
+        internal void Update(double seconds, Vector2DInteger screenSize)
         {
             MouseState currentState = Mouse.GetState();
 
@@ -164,19 +164,19 @@
             // Mouse position
             if (VirtualMouseEnabled)
             {
-                mousePosition += new Vector2Int32(currentState.X, currentState.Y);
+                mousePosition += new Vector2DInteger(currentState.X, currentState.Y);
                 Mouse.SetPosition(screenSize.X / 2, screenSize.Y / 2);
                 ClampMousePosition(screenSize);
             }
             else
             {
-                mousePosition = new Vector2Int32(currentState.X, currentState.Y);
+                mousePosition = new Vector2DInteger(currentState.X, currentState.Y);
             }
         }
 
-        private void ClampMousePosition(Vector2Int32 screenSize)
+        private void ClampMousePosition(Vector2DInteger screenSize)
         {
-            this.mousePosition = this.mousePosition.Crop(screenSize);
+            this.mousePosition = new AreaInteger(screenSize.X, screenSize.Y).Clamp(this.mousePosition);
         }
 
         private void UpdateButton(MouseButton button, bool pressed, double time)

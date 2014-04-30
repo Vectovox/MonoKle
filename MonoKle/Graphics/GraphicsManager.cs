@@ -18,12 +18,12 @@ namespace MonoKle.Graphics
         /// <summary>
         /// Gets the current screen size.
         /// </summary>
-        public Vector2Int32 ScreenSize { get; private set; }
+        public Vector2DInteger ScreenSize { get; private set; }
         
         /// <summary>
         /// Gets the current screen center.
         /// </summary>
-        public Vector2Int32 ScreenCenter { get; private set; }
+        public Vector2DInteger ScreenCenter { get; private set; }
 
         public GraphicsManager(GraphicsDeviceManager graphicsDeviceManager)
         {
@@ -37,7 +37,7 @@ namespace MonoKle.Graphics
             return graphicsDeviceManager.GraphicsDevice;
         }
 
-        public void SetScreenSize(Vector2Int32 size)
+        public void SetScreenSize(Vector2DInteger size)
         {
             graphicsDeviceManager.PreferredBackBufferWidth = size.X;
             graphicsDeviceManager.PreferredBackBufferHeight = size.Y;
@@ -59,7 +59,7 @@ namespace MonoKle.Graphics
 
         private void PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
         {
-            Vector2Int32 value = new Vector2Int32(
+            Vector2DInteger value = new Vector2DInteger(
                     e.GraphicsDeviceInformation.PresentationParameters.BackBufferWidth,
                     e.GraphicsDeviceInformation.PresentationParameters.BackBufferHeight
                 );

@@ -16,7 +16,7 @@ namespace WindowsDemo
     {
         private SpriteBatch sb;
         private Timer timer = new Timer(5);
-        private Camera2D camera = new Camera2D(new Vector2Int32(800, 600));
+        private Camera2D camera = new Camera2D(new Vector2DInteger(800, 600));
 
         public override void Draw(double time)
         {

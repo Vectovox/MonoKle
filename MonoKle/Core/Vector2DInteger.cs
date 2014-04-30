@@ -8,7 +8,7 @@
     /// <summary>
     /// Two-dimensional, immutable, integer-based vector.
     /// </summary>
-    public struct Vector2Int32 : IEquatable<Vector2Int32>
+    public struct Vector2DInteger : IEquatable<Vector2DInteger>
     {
         private const int HASH_CODE_INITIAL = 73;
         private const int HASH_CODE_MULTIPLIER = 101;
@@ -21,7 +21,7 @@
         /// </summary>
         /// <param name="x">X-coordinate.</param>
         /// <param name="y">Y-coordinate.</param>
-        public Vector2Int32(int x, int y)
+        public Vector2DInteger(int x, int y)
         {
             this.x = x;
             this.y = y;
@@ -31,7 +31,7 @@
         /// Creates a new instance from a floating point vector, rounding down the composants to integer values.
         /// </summary>
         /// <param name="vector">The vector to copy values from.</param>
-        public Vector2Int32(Vector2 vector)
+        public Vector2DInteger(Vector2 vector)
         {
             this.x = (int)vector.X;
             this.y = (int)vector.Y;
@@ -40,17 +40,17 @@
         /// <summary>
         /// Gets a vector with all composant set to 1.
         /// </summary>
-        public static Vector2Int32 One
+        public static Vector2DInteger One
         {
-            get { return new Vector2Int32(1, 1); }
+            get { return new Vector2DInteger(1, 1); }
         }
 
         /// <summary>
         /// Gets a vector with all composant set to 0.
         /// </summary>
-        public static Vector2Int32 Zero
+        public static Vector2DInteger Zero
         {
-            get { return new Vector2Int32(0, 0); }
+            get { return new Vector2DInteger(0, 0); }
         }
 
         /// <summary>
@@ -70,66 +70,12 @@
         }
 
         /// <summary>
-        /// Crops the coordinate fit in the given bounds.
-        /// </summary>
-        /// <param name="bounds">Bounds to fit into.</param>
-        /// <returns>Cropped <see cref=">Vector2Int32"/>.</returns>
-        public Vector2Int32 Crop(Rectangle bounds)
-        {
-            bounds = bounds.Normalize();
-
-            int x = this.x;
-            int y = this.y;
-
-            if(x < bounds.Left)
-            {
-                x = bounds.Left;
-            }
-            else if(x > bounds.Right)
-            {
-                x = bounds.Right;
-            }
-
-            if(y < bounds.Top)
-            {
-                y = bounds.Top;
-            }
-            else if(y > bounds.Bottom)
-            {
-                y = bounds.Bottom;
-            }
-
-            return new Vector2Int32(x, y);
-        }
-
-        /// <summary>
-        /// Crops the coordinate fit in the given bounds spanned by (0,0) and the given coordinate.
-        /// </summary>
-        /// <param name="bounds">Bounds to fit into.</param>
-        /// <returns>Cropped <see cref=">Vector2Int32"/>.</returns>
-        public Vector2Int32 Crop(Vector2Int32 bounds)
-        {
-            return this.Crop(new Vector2Int32(0,0), bounds);
-        }
-
-        /// <summary>
-        /// Crops the coordinate fit in the given bounds spanned by the given coordinates.
-        /// </summary>
-        /// <param name="coordinateA">The first coordinate.</param>
-        /// <param name="coordinateB">The second coordinate.</param>
-        /// <returns>Cropped <see cref=">Vector2Int32"/>.</returns>
-        public Vector2Int32 Crop(Vector2Int32 coordinateA, Vector2Int32 coordinateB)
-        {
-            return this.Crop(new Rectangle(coordinateA.x, coordinateA.y, coordinateB.x - coordinateA.x, coordinateB.y - coordinateA.y));
-        }
-
-        /// <summary>
         /// Logic operator for non-equality.
         /// </summary>
         /// <param name="a">Left operand.</param>
         /// <param name="b">Right operand.</param>
         /// <returns>True if not equal, else false.</returns>
-        public static bool operator !=(Vector2Int32 a, Vector2Int32 b)
+        public static bool operator !=(Vector2DInteger a, Vector2DInteger b)
         {
             return a.X != b.X || a.Y != b.Y;
         }
@@ -140,9 +86,9 @@
         /// <param name="a">Left operand.</param>
         /// <param name="b">Right operand.</param>
         /// <returns>Multiplied result.</returns>
-        public static Vector2Int32 operator *(Vector2Int32 a, int b)
+        public static Vector2DInteger operator *(Vector2DInteger a, int b)
         {
-            return new Vector2Int32(a.X * b, a.Y * b);
+            return new Vector2DInteger(a.X * b, a.Y * b);
         }
 
         /// <summary>
@@ -151,31 +97,31 @@
         /// <param name="a">Left operand.</param>
         /// <param name="b">Right operand.</param>
         /// <returns>Multiplied result.</returns>
-        public static Vector2Int32 operator *(int b, Vector2Int32 a)
+        public static Vector2DInteger operator *(int b, Vector2DInteger a)
         {
-            return new Vector2Int32(a.X * b, a.Y * b);
+            return new Vector2DInteger(a.X * b, a.Y * b);
         }
 
         /// <summary>
-        /// Operator for addition with another <see cref="Vector2Int32"/>.
+        /// Operator for addition with another <see cref="Vector2DInteger"/>.
         /// </summary>
         /// <param name="a">Left operand.</param>
         /// <param name="b">Right operand.</param>
         /// <returns>Added result.</returns>
-        public static Vector2Int32 operator +(Vector2Int32 a, Vector2Int32 b)
+        public static Vector2DInteger operator +(Vector2DInteger a, Vector2DInteger b)
         {
-            return new Vector2Int32(a.X + b.X, a.Y + b.Y);
+            return new Vector2DInteger(a.X + b.X, a.Y + b.Y);
         }
 
         /// <summary>
-        /// Operator for subtraction with another <see cref="Vector2Int32"/>.
+        /// Operator for subtraction with another <see cref="Vector2DInteger"/>.
         /// </summary>
         /// <param name="a">Left operand.</param>
         /// <param name="b">Right operand.</param>
         /// <returns>Added result.</returns>
-        public static Vector2Int32 operator -(Vector2Int32 a, Vector2Int32 b)
+        public static Vector2DInteger operator -(Vector2DInteger a, Vector2DInteger b)
         {
-            return new Vector2Int32(a.X - b.X, a.Y - b.Y);
+            return new Vector2DInteger(a.X - b.X, a.Y - b.Y);
         }
 
         /// <summary>
@@ -184,9 +130,9 @@
         /// <param name="a">Left operand.</param>
         /// <param name="b">Right operand.</param>
         /// <returns>Divided result.</returns>
-        public static Vector2Int32 operator /(Vector2Int32 a, int b)
+        public static Vector2DInteger operator /(Vector2DInteger a, int b)
         {
-            return new Vector2Int32(a.X / b, a.Y / b);
+            return new Vector2DInteger(a.X / b, a.Y / b);
         }
 
         /// <summary>
@@ -195,31 +141,31 @@
         /// <param name="a">Left operand.</param>
         /// <param name="b">Right operand.</param>
         /// <returns>True if equal, else false.</returns>
-        public static bool operator ==(Vector2Int32 a, Vector2Int32 b)
+        public static bool operator ==(Vector2DInteger a, Vector2DInteger b)
         {
             return a.X == b.X && a.Y == b.Y;
         }
 
         /// <summary>
-        /// Returns whether the <see cref="Vector2Int32"/> is equal to the provided object.
+        /// Returns whether the <see cref="Vector2DInteger"/> is equal to the provided object.
         /// </summary>
         /// <param name="obj">The object to compare with.</param>
         /// <returns>True if they are equal, else false.</returns>
         public override bool Equals(object obj)
         {
-            if(obj is Vector2Int32)
+            if(obj is Vector2DInteger)
             {
-                return this == (Vector2Int32)obj;
+                return this == (Vector2DInteger)obj;
             }
             return false;
         }
 
         /// <summary>
-        /// Returns equality to another <see cref="Vector2Int32"/>.
+        /// Returns equality to another <see cref="Vector2DInteger"/>.
         /// </summary>
-        /// <param name="other">Another <see cref="Vector2Int32"/>.</param>
+        /// <param name="other">Another <see cref="Vector2DInteger"/>.</param>
         /// <returns>True if equal, else false.</returns>
-        public bool Equals(Vector2Int32 other)
+        public bool Equals(Vector2DInteger other)
         {
             return this == other;
         }
@@ -232,9 +178,9 @@
         {
             unchecked
             {
-                int hash = Vector2Int32.HASH_CODE_INITIAL;
-                hash = hash * Vector2Int32.HASH_CODE_MULTIPLIER + this.X;
-                hash = hash * Vector2Int32.HASH_CODE_MULTIPLIER + this.Y;
+                int hash = Vector2DInteger.HASH_CODE_INITIAL;
+                hash = hash * Vector2DInteger.HASH_CODE_MULTIPLIER + this.X;
+                hash = hash * Vector2DInteger.HASH_CODE_MULTIPLIER + this.Y;
                 return hash;
             }
         }

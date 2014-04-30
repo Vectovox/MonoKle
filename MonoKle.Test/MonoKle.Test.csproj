@@ -53,11 +53,11 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Core\AreaIntegerTest.cs" />
     <Compile Include="Core\TimerTest.cs" />
-    <Compile Include="Core\RectangleExtensionTest.cs" />
-    <Compile Include="Core\RectangleSingleTest.cs" />
-    <Compile Include="Core\Vector3Int32Test.cs" />
-    <Compile Include="Core\Vector2Int32Test.cs" />
+    <Compile Include="Core\AreaTest.cs" />
+    <Compile Include="Core\Vector3DIntegerTest.cs" />
+    <Compile Include="Core\Vector2DIntegerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

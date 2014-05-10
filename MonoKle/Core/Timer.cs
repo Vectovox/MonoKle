@@ -37,19 +37,21 @@
         }
 
         /// <summary>
-        /// Gets a value indicating whether the timer is done counting. True if it is done, else false.
+        /// Gets the time, in seconds, left of the timer.
         /// </summary>
-        public bool IsDone
+        /// <returns>Amount of seconds left.</returns>
+        public double GetTimeLeft()
         {
-            get { return this.timer <= 0; }
+            return this.timer;
         }
 
         /// <summary>
-        /// Gets a value indicating the time left, in seconds, of the timer.
+        /// Gets whether the timer is done counting or not.
         /// </summary>
-        public double TimeLeft
+        /// <returns>True if it is done, else false.</returns>
+        public bool IsDone()
         {
-            get { return this.timer; }
+            return this.timer <= 0;
         }
 
         /// <summary>
@@ -80,6 +82,14 @@
         }
 
         /// <summary>
+        /// Sets the timer to be done, regardless of time left.
+        /// </summary>
+        public void Trigger()
+        {
+            this.timer = 0;
+        }
+
+        /// <summary>
         /// Updates the timer with the given elapsed time.
         /// </summary>
         /// <param name="elapsedTime">The elapsed time to count down.</param>
@@ -96,16 +106,15 @@
         /// <returns>True if the timer is done counting.</returns>
         public bool Update(double elapsedSeconds)
         {
-            if (this.IsDone == false)
+            if(this.IsDone() == false)
             {
                 this.timer -= elapsedSeconds;
-                if (this.timer < 0)
+                if(this.timer < 0)
                 {
                     this.timer = 0;
                 }
             }
-
-            return this.IsDone;
+            return this.IsDone();
         }
     }
 }

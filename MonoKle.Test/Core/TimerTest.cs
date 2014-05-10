@@ -1,19 +1,12 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-
-namespace MonoKle.Core.Test
+﻿namespace MonoKle.Core.Test
 {
+    using System;
+
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
     [TestClass]
     public class TimerTest
     {
-        [TestMethod]
-        public void TestDuration()
-        {
-            double duration = 0.79;
-            Timer t = new Timer(duration);
-            Assert.AreEqual(t.Duration, duration);
-        }
-
         [TestMethod]
         public void TestConstructors()
         {
@@ -24,22 +17,20 @@ namespace MonoKle.Core.Test
         }
 
         [TestMethod]
+        public void TestDuration()
+        {
+            double duration = 0.79;
+            Timer t = new Timer(duration);
+            Assert.AreEqual(t.Duration, duration);
+        }
+
+        [TestMethod]
         public void TestIsDone()
         {
             double duration = 0.79;
             Timer t = new Timer(duration);
             t.Update(duration);
-            Assert.IsTrue(t.IsDone);
-        }
-
-        [TestMethod]
-        public void TestTimeLeft()
-        {
-            double duration = 0.79;
-            double subtract = 0.5;
-            Timer t = new Timer(duration);
-            t.Update(subtract);
-            Assert.AreEqual(t.TimeLeft, duration - subtract);
+            Assert.IsTrue(t.IsDone());
         }
 
         [TestMethod]
@@ -50,11 +41,11 @@ namespace MonoKle.Core.Test
             Timer t = new Timer(duration);
             t.Update(subtract);
             t.Reset();
-            Assert.AreEqual(t.TimeLeft, duration);
+            Assert.AreEqual(t.GetTimeLeft(), duration);
 
             t.Update(duration);
             t.Reset();
-            Assert.IsFalse(t.IsDone);
+            Assert.IsFalse(t.IsDone());
         }
 
         [TestMethod]
@@ -66,12 +57,12 @@ namespace MonoKle.Core.Test
             Timer t = new Timer(duration);
             t.Update(subtract);
             t.Set(duration2);
-            Assert.AreEqual(t.TimeLeft, duration2);
+            Assert.AreEqual(t.GetTimeLeft(), duration2);
 
             t.Update(duration2);
             t.Reset();
-            Assert.IsFalse(t.IsDone);
-            Assert.AreEqual(t.TimeLeft, duration2);
+            Assert.IsFalse(t.IsDone());
+            Assert.AreEqual(t.GetTimeLeft(), duration2);
             Assert.AreEqual(t.Duration, duration2);
 
             // Test that timespan works as well
@@ -83,22 +74,40 @@ namespace MonoKle.Core.Test
         }
 
         [TestMethod]
+        public void TestTimeLeft()
+        {
+            double duration = 0.79;
+            double subtract = 0.5;
+            Timer t = new Timer(duration);
+            t.Update(subtract);
+            Assert.AreEqual(t.GetTimeLeft(), duration - subtract);
+        }
+
+        [TestMethod]
+        public void TestTrigger()
+        {
+            Timer t = new Timer(500);
+            t.Trigger();
+            Assert.IsTrue(t.IsDone());
+        }
+
+        [TestMethod]
         public void TestUpdate()
         {
             TimeSpan duration = new TimeSpan(123456);
             TimeSpan sub = new TimeSpan(1234);
             Timer t = new Timer(duration);
             Assert.IsTrue(t.Update(duration));
-            Assert.IsTrue(t.IsDone);
-            Assert.AreEqual(0, t.TimeLeft);
+            Assert.IsTrue(t.IsDone());
+            Assert.AreEqual(0, t.GetTimeLeft());
             t.Reset();
             Assert.IsTrue(t.Update(duration.TotalSeconds));
-            Assert.IsTrue(t.IsDone);
-            Assert.AreEqual(0, t.TimeLeft);
+            Assert.IsTrue(t.IsDone());
+            Assert.AreEqual(0, t.GetTimeLeft());
             t.Reset();
             Assert.IsFalse(t.Update(sub));
-            Assert.IsFalse(t.IsDone);
-            Assert.AreEqual(duration.TotalSeconds - sub.TotalSeconds, t.TimeLeft);
+            Assert.IsFalse(t.IsDone());
+            Assert.AreEqual(duration.TotalSeconds - sub.TotalSeconds, t.GetTimeLeft());
         }
     }
 }

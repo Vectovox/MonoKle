@@ -7,6 +7,48 @@
     [TestClass]
     public class AreaIntegerTest
     {
+        private const int RANDOM_TEST_AMOUNT = 100;
+
+        private readonly Random random = new Random();
+
+        [TestMethod]
+        public void TestTranslate()
+        {
+            for(int i = 0; i < AreaIntegerTest.RANDOM_TEST_AMOUNT; i++)
+            {
+                int x = random.Next(-100, 100);
+                int y = random.Next(-100, 100);
+                int w = random.Next(0, 100);
+                int h = random.Next(0, 100);
+
+                int tx = random.Next(-100, 100);
+                int ty = random.Next(-100, 100);
+
+                AreaInteger a = new AreaInteger(x, y, w, h);
+                Assert.AreEqual(new AreaInteger(x + tx, y + ty, w, h), a.Translate(new Vector2DInteger(tx, ty)));
+
+                // Assert X Y methods
+                Assert.AreEqual(a.Translate(new Vector2DInteger(tx, 0)), a.TranslateX(tx));
+                Assert.AreEqual(a.Translate(new Vector2DInteger(0, ty)), a.TranslateY(ty));
+            }
+        }
+
+        [TestMethod]
+        public void TestWidthHeight()
+        {
+            for(int i = 0; i < AreaIntegerTest.RANDOM_TEST_AMOUNT; i++)
+            {
+                int x = random.Next(-100, 100);
+                int y = random.Next(-100, 100);
+                int x2 = random.Next(-100, 100);
+                int y2 = random.Next(-100, 100);
+
+                AreaInteger a = new AreaInteger(x, y, x2 - x, y2 - y);
+                Assert.AreEqual(Math.Abs(y2 - y), a.Height);
+                Assert.AreEqual(Math.Abs(x2 - x), a.Width);
+            }
+        }
+
         [TestMethod]
         public void TestConstructors()
         {

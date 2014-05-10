@@ -78,6 +78,52 @@
         }
 
         /// <summary>
+        /// Translates the <see cref="AreaInteger"/> with the given translation and returns the result.
+        /// </summary>
+        /// <param name="translation">The translation to make.</param>
+        /// <returns>Translated <see cref="AreaInteger"/></returns>
+        public AreaInteger Translate(Vector2DInteger translation)
+        {
+            return new AreaInteger(this.topLeft.X + translation.X, this.topLeft.Y + translation.Y, this.bottomRight.X - this.topLeft.X, this.bottomRight.Y - this.topLeft.Y);
+        }
+
+        /// <summary>
+        /// Translates the <see cref="AreaInteger"/> with the given X-translation and returns the result.
+        /// </summary>
+        /// <param name="x">The translation along the X-axis.</param>
+        /// <returns>Translated <see cref="AreaInteger"/></returns>
+        public AreaInteger TranslateX(int x)
+        {
+            return new AreaInteger(this.topLeft.X + x, this.topLeft.Y, this.bottomRight.X - this.topLeft.X, this.bottomRight.Y - this.topLeft.Y);
+        }
+
+        /// <summary>
+        /// Translates the <see cref="AreaInteger"/> with the given Y-translation and returns the result.
+        /// </summary>
+        /// <param name="x">The translation along the Y-axis.</param>
+        /// <returns>Translated <see cref="AreaInteger"/></returns>
+        public AreaInteger TranslateY(int y)
+        {
+            return new AreaInteger(this.topLeft.X, this.topLeft.Y + y, this.bottomRight.X - this.topLeft.X, this.bottomRight.Y - this.topLeft.Y);
+        }
+
+        /// <summary>
+        /// Gets the height.
+        /// </summary>
+        public int Width
+        {
+            get { return this.bottomRight.X - this.topLeft.X; }
+        }
+
+        /// <summary>
+        /// Gets the width.
+        /// </summary>
+        public int Height
+        {
+            get { return this.bottomRight.Y - this.topLeft.Y; }
+        }
+
+        /// <summary>
         /// Gets the Y-coordinate of the bottom border.
         /// </summary>
         public int Bottom

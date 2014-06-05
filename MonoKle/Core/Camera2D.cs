@@ -5,7 +5,7 @@
     using Microsoft.Xna.Framework;
 
     /// <summary>
-    /// Class representing a camera used in 2D environments, providing transformation capabilities.
+    /// Serializable class representing a 2D environment camera providing transformation capabilities.
     /// </summary>
     [Serializable()]
     public class Camera2D

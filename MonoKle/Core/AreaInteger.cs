@@ -6,7 +6,7 @@
     using Microsoft.Xna.Framework;
 
     /// <summary>
-    /// Struct for storing an immutable, normalized (non-negative width and height), integer-based area.
+    /// Struct for storing an immutable, serializable, normalized (non-negative width and height), integer-based area.
     /// </summary>
     [Serializable()]
     public struct AreaInteger : IEquatable<AreaInteger>

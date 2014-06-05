@@ -3,7 +3,7 @@
     using System;
 
     /// <summary>
-    /// An updateable timer that can return if the timer is done counting.
+    /// An serializable and updateable timer that can return whether the timer is done counting.
     /// </summary>
     [Serializable()]
     public class Timer

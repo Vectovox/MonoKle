@@ -6,7 +6,7 @@
     using Microsoft.Xna.Framework;
 
     /// <summary>
-    /// Two-dimensional, immutable, integer-based vector.
+    /// Two-dimensional, immutable, serializable, integer-based vector.
     /// </summary>
     [Serializable()]
     public struct Vector2DInteger : IEquatable<Vector2DInteger>

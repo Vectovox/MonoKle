@@ -6,7 +6,7 @@
     using Microsoft.Xna.Framework;
 
     /// <summary>
-    /// Three-dimensional Int32-based vector.
+    /// Three-dimensional, serializable, integer-based vector.
     /// </summary>
     [Serializable()]
     public struct Vector3DInteger

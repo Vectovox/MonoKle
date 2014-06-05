@@ -8,6 +8,7 @@
     /// <summary>
     /// Three-dimensional Int32-based vector.
     /// </summary>
+    [Serializable()]
     public struct Vector3DInteger
     {
         /// <summary>

@@ -7,6 +7,7 @@
     /// <summary>
     /// Class representing a camera used in 2D environments, providing transformation capabilities.
     /// </summary>
+    [Serializable()]
     public class Camera2D
     {
         // TODO: Add desired position and a method that travels to a given position from the current one. private Vector2 desiredPosition;

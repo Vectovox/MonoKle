@@ -5,6 +5,7 @@
     /// <summary>
     /// An updateable timer that can return if the timer is done counting.
     /// </summary>
+    [Serializable()]
     public class Timer
     {
         private double maxTimer = 0;

@@ -8,6 +8,7 @@
     /// <summary>
     /// Struct for storing an immutable, normalized (non-negative width and height), float-based area.
     /// </summary>
+    [Serializable()]
     public struct Area : IEquatable<Area>
     {
         private const int HASH_CODE_INITIAL = 17;

@@ -8,6 +8,7 @@
     /// <summary>
     /// Two-dimensional, immutable, integer-based vector.
     /// </summary>
+    [Serializable()]
     public struct Vector2DInteger : IEquatable<Vector2DInteger>
     {
         private const int HASH_CODE_INITIAL = 73;

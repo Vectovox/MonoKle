@@ -54,7 +54,6 @@
         {
             StringBuilder dataBuilder = new StringBuilder();
             dataBuilder.AppendLine(StructIOConstants.ENTRY_START);
-            StreamStructWriter<Microsoft.Xna.Framework.Color> s;
             Type type = source.GetType();
 
             FieldInfo[] fields = type.GetFields();

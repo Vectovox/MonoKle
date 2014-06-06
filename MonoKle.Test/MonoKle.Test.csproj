@@ -58,6 +58,7 @@
     <Compile Include="Core\AreaTest.cs" />
     <Compile Include="Core\Vector3DIntegerTest.cs" />
     <Compile Include="Core\Vector2DIntegerTest.cs" />
+    <Compile Include="IO\StreamStructReaderWriterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

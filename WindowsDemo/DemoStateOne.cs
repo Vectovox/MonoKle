@@ -31,7 +31,7 @@ namespace WindowsDemo
             sb.Draw(MonoKleGame.TextureManager.GetTexture("testbox"), new Vector2(250, 250), Color.White);
 
             // Test timer
-            MonoKleGame.FontManager.GetFont("TESTFONT").DrawString(sb, "Timer: " + timer.TimeLeft + " (" + timer.Duration + ") Done? " + timer.IsDone,
+            MonoKleGame.FontManager.GetFont("TESTFONT").DrawString(sb, "Timer: " + timer.GetTimeLeft() + " (" + timer.Duration + ") Done? " + timer.IsDone(),
                 new Vector2(50, 150), Color.Green);
 
             // Test linebreak

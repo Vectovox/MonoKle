@@ -160,7 +160,7 @@ using System.Collections.Generic;
         /// <summary>
         /// Gets the primitive drawer utility, used to draw primitives for screen (should mainly be used for debug purposes).
         /// </summary>
-        public static PrimitiveDrawer PrimitiveDrawer
+        public static IPrimitiveDrawer PrimitiveDrawer
         {
             get;
             private set;
@@ -212,7 +212,7 @@ using System.Collections.Generic;
             base.GraphicsDevice.Clear(Color.CornflowerBlue);
             double seconds = gameTime.ElapsedGameTime.TotalSeconds;
             MonoKleGame.StateManager.Draw(seconds);
-            MonoKleGame.PrimitiveDrawer.Render();
+            (MonoKleGame.PrimitiveDrawer as PrimitiveDrawer).Render();
             MonoKleGame.Console.Draw();
         }
 

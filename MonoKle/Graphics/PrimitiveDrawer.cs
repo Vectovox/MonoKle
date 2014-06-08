@@ -2,38 +2,42 @@
 {
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
-
     using MonoKle.Core;
+    using System;
 
     /// <summary>
     /// Class to easily draw simple primitives.
     /// </summary>
-    public class PrimitiveDrawer
+    public class PrimitiveDrawer : IPrimitiveDrawer
     {
-        private const int MAX_VERTICES = 128;
+        private const int INITIAL_VERTEX_AMOUNT = 1;
 
         private BasicEffect effect;
         private GraphicsDevice graphicsDevice;
-        private short[] indexArray = new short[MAX_VERTICES];
+        private short[] indexArray = new short[PrimitiveDrawer.INITIAL_VERTEX_AMOUNT];
         private int nVertices = 0;
-        private VertexPositionColor[] vertexArray = new VertexPositionColor[MAX_VERTICES];
+        private VertexPositionColor[] vertexArray = new VertexPositionColor[PrimitiveDrawer.INITIAL_VERTEX_AMOUNT];
         private VertexBuffer vertexBuffer;
 
-        internal PrimitiveDrawer(GraphicsDevice graphicsDevice)
+        /// <summary>
+        /// Creates a new instance of <see cref="PrimitiveDrawer"/>.
+        /// </summary>
+        /// <param name="graphicsDevice">The graphics device to draw with.</param>
+        public PrimitiveDrawer(GraphicsDevice graphicsDevice)
         {
             this.graphicsDevice = graphicsDevice;
-            this.vertexBuffer = new VertexBuffer(graphicsDevice,
-                VertexPositionColor.VertexDeclaration,
-                MAX_VERTICES,
-                BufferUsage.WriteOnly);
             this.effect = new BasicEffect(graphicsDevice);
             this.effect.VertexColorEnabled = true;
-            for (short i = 0; i < MAX_VERTICES; i++)
-            {
-                indexArray[i] = i;
-            }
-            this.Camera = new Camera2D(new Vector2DInteger(this.graphicsDevice.Viewport.Width, this.graphicsDevice.Viewport.Height));
-            this.Camera.Update(0);
+            
+            //this.vertexBuffer = new VertexBuffer(graphicsDevice,
+            //    VertexPositionColor.VertexDeclaration,
+            //    INITIAL_VERTEX_AMOUNT,
+            //    BufferUsage.WriteOnly);
+            //for (short i = 0; i < INITIAL_VERTEX_AMOUNT; i++)
+            //{
+            //    this.indexArray[i] = i;
+            //}
+            this.Grow();
         }
 
         /// <summary>
@@ -65,37 +69,80 @@
         /// <param name="endColor">Color of line on ending coordinate.</param>
         public void Draw2DLine(Vector2 start, Vector2 end, Color startColor, Color endColor)
         {
-            vertexArray[nVertices] = new VertexPositionColor(new Vector3(start, 0f), startColor);
-            vertexArray[nVertices + 1] = new VertexPositionColor(new Vector3(end, 0f), endColor);
-            nVertices += 2;
+            if(this.nVertices >= this.vertexArray.Length)
+            {
+                this.Grow();
+            }
+            this.vertexArray[nVertices] = new VertexPositionColor(new Vector3(start, 0f), startColor);
+            this.vertexArray[nVertices + 1] = new VertexPositionColor(new Vector3(end, 0f), endColor);
+            this.nVertices += 2;
         }
 
         // TODO: More shapes and stuff
         //public void Draw2DCircle(Vector2 topLeft, Vector2 bottomRight, Color color)
         //{
         //}
-        internal void Render()
+        /// <summary>
+        /// Renders the currently drawn primitives and clears them.
+        /// </summary>
+        public void Render()
         {
-            this.effect.Projection = this.Camera.GetTransformMatrix() * Matrix.CreateOrthographicOffCenter(0,
+            if(this.Camera == null)
+            {
+                this.effect.Projection = Matrix.CreateOrthographicOffCenter(0,
                 this.graphicsDevice.Viewport.Width,
                 this.graphicsDevice.Viewport.Height,
                 0,
                 0,
                 1);
+            }
+            else
+            {
+                this.effect.Projection = this.Camera.GetTransformMatrix() * Matrix.CreateOrthographicOffCenter(0,
+                this.graphicsDevice.Viewport.Width,
+                this.graphicsDevice.Viewport.Height,
+                0,
+                0,
+                1);
+            }
+            
 
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
                 this.graphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.LineList,
-                    vertexArray,
+                    this.vertexArray,
                     0,
-                    nVertices,
-                    indexArray,
+                    this.nVertices,
+                    this.indexArray,
                     0,
-                    nVertices / 2);
+                    this.nVertices / 2);
             }
 
-            nVertices = 0;
+            this.nVertices = 0;
+        }
+
+        private void Grow()
+        {
+            short[] newIndexArray = new short[indexArray.Length * 2];
+            VertexPositionColor[] newVertexArray = new VertexPositionColor[newIndexArray.Length];
+
+            this.vertexBuffer = new VertexBuffer(this.graphicsDevice,
+                VertexPositionColor.VertexDeclaration,
+                newIndexArray.Length,
+                BufferUsage.WriteOnly);
+
+            for(short i = 0; i < newIndexArray.Length; i++)
+            {
+                newIndexArray[i] = i;
+            }
+            for(int i = 0; i < this.vertexArray.Length; i++)
+            {
+                newVertexArray[i] = this.vertexArray[i];
+            }
+
+            this.indexArray = newIndexArray;
+            this.vertexArray = newVertexArray;
         }
     }
 }

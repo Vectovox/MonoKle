@@ -16,6 +16,7 @@
     using MonoKle.Script.Interface;
     using System.Text.RegularExpressions;
     using System.Text;
+using System.Collections.Generic;
 
 
     /// <summary>
@@ -31,7 +32,6 @@
             base.Content.RootDirectory = "Content";
             MonoKleGame.StateManager = new StateManager();
             MonoKleGame.GraphicsManager = new GraphicsManager(new GraphicsDeviceManager(this));
-            MonoKleGame.Mouse = new MouseInput();
             MonoKleGame.GamePad = new GamePadInput();
             MonoKleGame.Keyboard = new KeyboardInput();
             MonoKleGame.MessagePasser = new MessagePasser();
@@ -151,7 +151,7 @@
         /// <summary>
         /// Gets the mouse input utility.
         /// </summary>
-        public static MouseInput Mouse
+        public static IMouseInput Mouse
         {
             get;
             private set;
@@ -222,6 +222,7 @@
             MonoKleGame.FontManager = new FontManager(GraphicsManager.GetGraphicsDevice());
             MonoKleGame.PrimitiveDrawer = new PrimitiveDrawer(GraphicsManager.GetGraphicsDevice());
             MonoKleGame.Console = new GameConsole(new Rectangle(0, 0, GraphicsManager.ScreenSize.X, GraphicsManager.ScreenSize.Y / 3), GraphicsManager.GetGraphicsDevice());    // TODO: Break out magic numbers into config file.
+            MonoKleGame.Mouse = new MouseInput(GraphicsManager.ScreenSize);
         }
 
         protected override void Update(GameTime gameTime)
@@ -232,7 +233,7 @@
             MonoKleGame.Console.Update(seconds);
             MonoKleGame.GamePad.Update(seconds);
             MonoKleGame.Keyboard.Update(seconds);
-            MonoKleGame.Mouse.Update(seconds, GraphicsManager.ScreenSize);
+            (MonoKleGame.Mouse as MouseInput).Update(seconds);
             MonoKleGame.StateManager.Update(seconds);
         }
 

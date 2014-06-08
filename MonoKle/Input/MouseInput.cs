@@ -1,33 +1,41 @@
 ﻿namespace MonoKle.Input
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-
     using Microsoft.Xna.Framework.Input;
 
     using MonoKle.Core;
-    using MonoKle.Graphics;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Mouse input class.
     /// </summary>
-    public class MouseInput
+    public class MouseInput : IMouseInput
     {
         private MouseScrollDirection currentScrollDirection;
         private Dictionary<MouseButton, double> heldTimeByButton;
         private Vector2DInteger mousePosition;
+        private Vector2DInteger deltaPosition;
         private HashSet<MouseButton> previousButtons;
         private int previousScrollValue;
-
-        internal MouseInput()
+        
+        /// <summary>
+        /// Creates a new instance of <see cref="MouseInput"/>.
+        /// </summary>
+        public MouseInput()
         {
-            heldTimeByButton = new Dictionary<MouseButton, double>();
-            previousButtons = new HashSet<MouseButton>();
-            currentScrollDirection = MouseScrollDirection.None;
-            previousScrollValue = 0;
-            mousePosition = new Vector2DInteger(0, 0);
+            this.heldTimeByButton = new Dictionary<MouseButton, double>();
+            this.previousButtons = new HashSet<MouseButton>();
+            this.currentScrollDirection = MouseScrollDirection.None;
+            this.previousScrollValue = 0;
+            this.mousePosition = new Vector2DInteger(0, 0);
+        }
+
+        /// <summary>
+        /// Creates a new instance of <see cref="MouseInput"/> with the given screen size.
+        /// </summary>
+        /// <param name="screenSize"></param>
+        public MouseInput(Vector2DInteger screenSize) : this()
+        {
+            this.ScreenSize = screenSize;
         }
 
         /// <summary>
@@ -40,17 +48,44 @@
         }
 
         /// <summary>
+        /// Gets or sets the screen size for virtual mouse.
+        /// </summary>
+        public Vector2DInteger ScreenSize
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Returns the time a specified mouse button has been held down; -1 if it is not held.
         /// </summary>
         /// <param name="button">Enumerated value specifying the button to query.</param>
         /// <returns>The amount of time the specified button has been held down, -1 if it is not held.</returns>
         public double GetButtonHeldTime(MouseButton button)
         {
-            if (heldTimeByButton.ContainsKey(button))
+            if(this.heldTimeByButton.ContainsKey(button))
             {
-                return heldTimeByButton[button];
+                return this.heldTimeByButton[button];
             }
             return -1;
+        }
+
+        /// <summary>
+        /// Returns the <see cref="Vector2DInteger"/> representation of the mouse movement delta since the last update call.
+        /// </summary>
+        /// <returns>Mouse movement delta.</returns>
+        public Vector2DInteger GetDeltaPosition()
+        {
+            return this.deltaPosition;
+        }
+
+        /// <summary>
+        /// Returns the <see cref="Vector2DInteger"/> representation of the current mouse position.
+        /// </summary>
+        /// <returns>Current mouse position.</returns>
+        public Vector2DInteger GetPosition()
+        {
+            return this.mousePosition;
         }
 
         /// <summary>
@@ -60,7 +95,7 @@
         /// <returns>true if the button specified by button is down; false otherwise.</returns>
         public bool IsButtonDown(MouseButton button)
         {
-            return heldTimeByButton.ContainsKey(button);
+            return this.heldTimeByButton.ContainsKey(button);
         }
 
         /// <summary>
@@ -70,7 +105,7 @@
         /// <returns>true if the button specified by button is held down; false otherwise.</returns>
         public bool IsButtonHeld(MouseButton button)
         {
-            return IsButtonDown(button) && previousButtons.Contains(button);
+            return this.IsButtonDown(button) && this.previousButtons.Contains(button);
         }
 
         /// <summary>
@@ -81,7 +116,7 @@
         /// <returns>true if the button specified by button is held down; false otherwise.</returns>
         public bool IsButtonHeld(MouseButton button, double heldTime)
         {
-            return IsButtonHeld(button) && GetButtonHeldTime(button) >= heldTime;
+            return this.IsButtonHeld(button) && this.GetButtonHeldTime(button) >= heldTime;
         }
 
         /// <summary>
@@ -91,7 +126,7 @@
         /// <returns>true if the button specified by button is pressed; false otherwise.</returns>
         public bool IsButtonPressed(MouseButton button)
         {
-            return previousButtons.Contains(button) == false && IsButtonDown(button);
+            return this.previousButtons.Contains(button) == false && this.IsButtonDown(button);
         }
 
         /// <summary>
@@ -101,7 +136,7 @@
         /// <returns>true if the button specified by button is being released; false otherwise.</returns>
         public bool IsButtonReleased(MouseButton button)
         {
-            return previousButtons.Contains(button) && IsButtonUp(button);
+            return this.previousButtons.Contains(button) && this.IsButtonUp(button);
         }
 
         /// <summary>
@@ -111,16 +146,7 @@
         /// <returns>true if the button specified by button is up; false otherwise.</returns>
         public bool IsButtonUp(MouseButton button)
         {
-            return heldTimeByButton.ContainsKey(button) == false;
-        }
-
-        /// <summary>
-        /// Returns the <see cref="Vector2DInteger"/> representation of the current mouse position.
-        /// </summary>
-        /// <returns>Current mouse position.</returns>
-        public Vector2DInteger GetMousePosition()
-        {
-            return mousePosition;
+            return this.heldTimeByButton.ContainsKey(button) == false;
         }
 
         /// <summary>
@@ -130,71 +156,72 @@
         /// <returns>True if the specified direction was scrolled; false otherwise.</returns>
         public bool IsMouseScrolled(MouseScrollDirection direction)
         {
-            return direction == currentScrollDirection;
+            return direction == this.currentScrollDirection;
         }
 
-        internal void Update(double seconds, Vector2DInteger screenSize)
+        /// <summary>
+        /// Updates the internals.
+        /// </summary>
+        /// <param name="seconds">The amount of time since update was last called.</param>
+        public void Update(double seconds)
         {
             MouseState currentState = Mouse.GetState();
 
             // Buttons
-            previousButtons.Clear();
-            previousButtons.UnionWith(heldTimeByButton.Keys);
-            UpdateButton(MouseButton.Left, currentState.LeftButton == ButtonState.Pressed, seconds);
-            UpdateButton(MouseButton.Middle, currentState.MiddleButton == ButtonState.Pressed, seconds);
-            UpdateButton(MouseButton.Right, currentState.RightButton == ButtonState.Pressed, seconds);
-            UpdateButton(MouseButton.XButton1, currentState.XButton1 == ButtonState.Pressed, seconds);
-            UpdateButton(MouseButton.XButton2, currentState.XButton2 == ButtonState.Pressed, seconds);
+            this.previousButtons.Clear();
+            this.previousButtons.UnionWith(heldTimeByButton.Keys);
+            this.UpdateButton(MouseButton.Left, currentState.LeftButton == ButtonState.Pressed, seconds);
+            this.UpdateButton(MouseButton.Middle, currentState.MiddleButton == ButtonState.Pressed, seconds);
+            this.UpdateButton(MouseButton.Right, currentState.RightButton == ButtonState.Pressed, seconds);
+            this.UpdateButton(MouseButton.XButton1, currentState.XButton1 == ButtonState.Pressed, seconds);
+            this.UpdateButton(MouseButton.XButton2, currentState.XButton2 == ButtonState.Pressed, seconds);
 
             // Scroll wheel
             if (currentState.ScrollWheelValue > previousScrollValue)
             {
-                currentScrollDirection = MouseScrollDirection.Up;
+                this.currentScrollDirection = MouseScrollDirection.Up;
             }
             else if (currentState.ScrollWheelValue < previousScrollValue)
             {
-                currentScrollDirection = MouseScrollDirection.Down;
+                this.currentScrollDirection = MouseScrollDirection.Down;
             }
             else
             {
-                currentScrollDirection = MouseScrollDirection.None;
+                this.currentScrollDirection = MouseScrollDirection.None;
             }
-            previousScrollValue = currentState.ScrollWheelValue;
+            this.previousScrollValue = currentState.ScrollWheelValue;
 
             // Mouse position
-            if (VirtualMouseEnabled)
+            this.deltaPosition = this.mousePosition;
+            if (this.VirtualMouseEnabled)
             {
-                mousePosition += new Vector2DInteger(currentState.X, currentState.Y);
-                Mouse.SetPosition(screenSize.X / 2, screenSize.Y / 2);
-                ClampMousePosition(screenSize);
+                this.mousePosition += new Vector2DInteger(currentState.X, currentState.Y);
+                Mouse.SetPosition(this.ScreenSize.X / 2, ScreenSize.Y / 2);
+                this.mousePosition = new AreaInteger(ScreenSize.X, ScreenSize.Y).Clamp(this.mousePosition);
             }
             else
             {
-                mousePosition = new Vector2DInteger(currentState.X, currentState.Y);
+                this.mousePosition = new Vector2DInteger(currentState.X, currentState.Y);
             }
-        }
-
-        private void ClampMousePosition(Vector2DInteger screenSize)
-        {
-            this.mousePosition = new AreaInteger(screenSize.X, screenSize.Y).Clamp(this.mousePosition);
+            this.deltaPosition = this.mousePosition - this.deltaPosition;
         }
 
         private void UpdateButton(MouseButton button, bool pressed, double time)
         {
             if (pressed)
             {
-                if (heldTimeByButton.ContainsKey(button))
+                if (this.heldTimeByButton.ContainsKey(button))
                 {
-                    heldTimeByButton[button] += time;
+                    this.heldTimeByButton[button] += time;
                 }
                 else
                 {
-                    heldTimeByButton.Add(button, 0);
+                    this.heldTimeByButton.Add(button, 0);
                 }
             }
             else
             {
-                heldTimeByButton.Remove(button);
+                this.heldTimeByButton.Remove(button);
             }
         }
     }

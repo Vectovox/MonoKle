@@ -1,35 +1,40 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using MonoKle.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace MonoKle.Graphics
+﻿namespace MonoKle.Graphics
 {
+    using Microsoft.Xna.Framework;
+    using Microsoft.Xna.Framework.Graphics;
+
+    using MonoKle.Core;
+    using MonoKle.Graphics.Event;
+
     /// <summary>
     /// Manages graphics.
     /// </summary>
     public class GraphicsManager
     {
         private GraphicsDeviceManager graphicsDeviceManager;
-        
-        /// <summary>
-        /// Gets the current screen size.
-        /// </summary>
-        public Vector2DInteger ScreenSize { get; private set; }
-        
-        /// <summary>
-        /// Gets the current screen center.
-        /// </summary>
-        public Vector2DInteger ScreenCenter { get; private set; }
 
         public GraphicsManager(GraphicsDeviceManager graphicsDeviceManager)
         {
             this.graphicsDeviceManager = graphicsDeviceManager;
             this.graphicsDeviceManager.PreparingDeviceSettings += PreparingDeviceSettings;
-            // TODO: PerparingDeviceSettings event does not fire in the current MonoGame version.
+        }
+
+        public event ScreenSizeChangedEventHandler ScreenSizeChanged;
+
+        /// <summary>
+        /// Gets the current screen center.
+        /// </summary>
+        public Vector2DInteger ScreenCenter
+        {
+            get; private set;
+        }
+
+        /// <summary>
+        /// Gets the current screen size.
+        /// </summary>
+        public Vector2DInteger ScreenSize
+        {
+            get; private set;
         }
 
         public GraphicsDevice GetGraphicsDevice()
@@ -39,32 +44,48 @@ namespace MonoKle.Graphics
 
         public void SetScreenSize(Vector2DInteger size)
         {
-            graphicsDeviceManager.PreferredBackBufferWidth = size.X;
-            graphicsDeviceManager.PreferredBackBufferHeight = size.Y;
-            ScreenSize = size;          // TODO: Remove when PreparingDeviceSettings is received
-            ScreenCenter = size / 2;    // TODO: Remove when PreparingDeviceSettings is received
-            graphicsDeviceManager.ApplyChanges();
-            // TODO: ApplyChanges() does not work in the current MonoGame version.
+            this.graphicsDeviceManager.PreferredBackBufferWidth = size.X;
+            this.graphicsDeviceManager.PreferredBackBufferHeight = size.Y;
+            this.ScreenSize = size;          // TODO: Remove when PreparingDeviceSettings is received
+            this.ScreenCenter = size / 2;    // TODO: Remove when PreparingDeviceSettings is received
+            this.graphicsDeviceManager.ApplyChanges();
+            this.OnScreenSizeChanged(size);
         }
 
-        public void SetFullscreenEnabled(bool enabled)
+        private void OnScreenSizeChanged(Vector2DInteger newScreenSize)
         {
-            if (enabled && graphicsDeviceManager.IsFullScreen == false ||
-                enabled == false && graphicsDeviceManager.IsFullScreen)
+            var v = this.ScreenSizeChanged;
+            if(v != null)
             {
-                // TODO: This does not work in the current MonoGame version.
-                graphicsDeviceManager.ToggleFullScreen();
+                v(this, new ScreenSizeChangedEventArgs(newScreenSize));
             }
         }
 
+        // TODO: Fullscreen does not work in current Mono?
+        //public void SetFullscreenEnabled(bool enabled)
+        //{
+        //    if (enabled && graphicsDeviceManager.IsFullScreen == false ||
+        //        enabled == false && graphicsDeviceManager.IsFullScreen)
+        //    {
+        //        // TODO: This does not work in the current MonoGame version.
+        //        graphicsDeviceManager.ToggleFullScreen();
+        //    }
+        //}
+        //public void ToggleFullscren()
+        //{
+        //    graphicsDeviceManager.ToggleFullScreen();
+        //    graphicsDeviceManager.ApplyChanges();
+        //}
+        // TODO: PreparingDeviceSettings does only fire the first time applychanges is called (or maybe only before game started).
         private void PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
         {
-            Vector2DInteger value = new Vector2DInteger(
-                    e.GraphicsDeviceInformation.PresentationParameters.BackBufferWidth,
-                    e.GraphicsDeviceInformation.PresentationParameters.BackBufferHeight
-                );
-            ScreenSize = value;
-            ScreenCenter = value / 2;
+            this.SetScreenSize(new Vector2DInteger(e.GraphicsDeviceInformation.PresentationParameters.BackBufferWidth, e.GraphicsDeviceInformation.PresentationParameters.BackBufferHeight));
+            //Vector2DInteger value = new Vector2DInteger(
+            //        e.GraphicsDeviceInformation.PresentationParameters.BackBufferWidth,
+            //        e.GraphicsDeviceInformation.PresentationParameters.BackBufferHeight
+            //    );
+            //ScreenSize = value;
+            //ScreenCenter = value / 2;
         }
     }
 }

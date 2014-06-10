@@ -152,6 +152,15 @@ namespace WindowsDemo
                     camera.SetScale(camera.GetScale() - 0.01f);
                 }
 
+                if(MonoKleGame.Keyboard.IsKeyPressed(Keys.F2))
+                {
+                    MonoKleGame.GraphicsManager.SetScreenSize(new Vector2DInteger(1280, 720));
+                }
+                else if(MonoKleGame.Keyboard.IsKeyPressed(Keys.F3))
+                {
+                    MonoKleGame.GraphicsManager.SetScreenSize(new Vector2DInteger(800, 600));
+                }
+
                 if (MonoKleGame.Keyboard.IsKeyPressed(Keys.F12))
                 {
                     // CRASH ON PURPOSE

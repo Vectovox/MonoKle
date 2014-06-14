@@ -117,6 +117,7 @@
                     this.groupByGroupName.Remove(groupName);
                 }
                 this.textureByTextureName.Remove(id);
+                this.groupNameByTextureName.Remove(id);
                 return 1;
             }
             return 0;
@@ -193,9 +194,11 @@
                 String id = this.GetIdentifier(path).ToLower();
                 if(id != null && this.textureByTextureName.ContainsKey(id) == false)
                 {
-                    FileStream stream = File.OpenRead(path);
-                    Texture2D tex = Texture2D.FromStream(this.graphicsDevice, stream);
-                    stream.Close();
+                    Texture2D tex = null;
+                    using(FileStream stream = File.OpenRead(path))
+                    {
+                        tex = Texture2D.FromStream(this.graphicsDevice, stream);
+                    }
 
                     if (tex != null)
                     {

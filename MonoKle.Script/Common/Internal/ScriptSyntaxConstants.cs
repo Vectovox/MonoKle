@@ -1,10 +1,9 @@
 ﻿namespace MonoKle.Script.Common.Internal
 {
-    internal static class ScriptNamingConstants
+    internal static class ScriptSyntaxConstants
     {
         internal const string SCRIPT_START = "script";
         internal const string SCRIPT_END = "endscript";
-        internal const string SCRIPT_EXTENSION = ".ms";
         internal const string SCRIPT_COMMENT = ";";
         internal const string SCRIPT_STRING_TOKEN = "\"";
 

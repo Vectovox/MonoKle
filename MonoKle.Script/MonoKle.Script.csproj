@@ -48,7 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\Internal\CommonHelpers.cs" />
-    <Compile Include="Common\Internal\ScriptNamingConstants.cs" />
+    <Compile Include="Common\Internal\ScriptSyntaxConstants.cs" />
     <Compile Include="Common\Internal\ScriptSettingsConstants.cs" />
     <Compile Include="Compiler\CompilationEnvironment.cs" />
     <Compile Include="Compiler\CompilationResult.cs" />
@@ -60,6 +60,7 @@
     <Compile Include="Compiler\Listeners\SyntaxErrorListener.cs" />
     <Compile Include="Compiler\ScriptCompiler.cs" />
     <Compile Include="Compiler\Listeners\SemanticsListener.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="Debug\LanguageDebugger.cs" />
     <Compile Include="IO\Event\ScriptReadingErrorEventArgs.cs" />
     <Compile Include="IO\Event\ScriptReadingErrorEventHandler.cs" />

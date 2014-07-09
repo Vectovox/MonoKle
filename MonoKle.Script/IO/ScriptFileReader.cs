@@ -99,10 +99,10 @@
                 if (line.Length > 0 || begun)
                 {
                     // Skip commented lines completely
-                    if (line.StartsWith(ScriptNamingConstants.SCRIPT_COMMENT) == false)
+                    if (line.StartsWith(ScriptSyntaxConstants.SCRIPT_COMMENT) == false)
                     {
                         // If beginning / end / middle of script
-                        if (Regex.IsMatch(line, ScriptNamingConstants.REGEX_START_MATCH))
+                        if (Regex.IsMatch(line, ScriptSyntaxConstants.REGEX_START_MATCH))
                         {
                             // If already reading a script: give error
                             if (begun)
@@ -114,7 +114,7 @@
                                 begun = TryMakeHeader(line, out currentHeader);
                             }
                         }
-                        else if (Regex.IsMatch(line, ScriptNamingConstants.REGEX_END_MATCH))
+                        else if (Regex.IsMatch(line, ScriptSyntaxConstants.REGEX_END_MATCH))
                         {
                             if (begun)
                             {
@@ -155,14 +155,14 @@
             header = null;
 
             // Check for if the provided line is a valid header
-            if (Regex.IsMatch(line, ScriptNamingConstants.SCRIPT_HEADER_SPECIFICATION_REGEX))
+            if (Regex.IsMatch(line, ScriptSyntaxConstants.SCRIPT_HEADER_SPECIFICATION_REGEX))
             {
-                Type returnType = CommonHelpers.StringTypeToType(Regex.Match(line, ScriptNamingConstants.SCRIPT_HEADER_TYPE_MATCH_REGEX).Value);
+                Type returnType = CommonHelpers.StringTypeToType(Regex.Match(line, ScriptSyntaxConstants.SCRIPT_HEADER_TYPE_MATCH_REGEX).Value);
                 if (returnType != null)
                 {
-                    string name = Regex.Match(line, ScriptNamingConstants.SCRIPT_HEADER_NAME_MATCH_REGEX).Value;
-                    string argumentString = Regex.Match(line, ScriptNamingConstants.SCRIPT_HEADER_ARGUMENTS_MATCH_REGEX).Value;
-                    Match channelMatch = Regex.Match(line, ScriptNamingConstants.SCRIPT_HEADER_CHANNEL_MATCH_REGEX);
+                    string name = Regex.Match(line, ScriptSyntaxConstants.SCRIPT_HEADER_NAME_MATCH_REGEX).Value;
+                    string argumentString = Regex.Match(line, ScriptSyntaxConstants.SCRIPT_HEADER_ARGUMENTS_MATCH_REGEX).Value;
+                    Match channelMatch = Regex.Match(line, ScriptSyntaxConstants.SCRIPT_HEADER_CHANNEL_MATCH_REGEX);
                     string channel = channelMatch.Success ? channelMatch.Value : null;
                     LinkedList<ScriptVariable> arguments = new LinkedList<ScriptVariable>();
 
@@ -170,7 +170,7 @@
                     {
                         if (argumentString.Length > 0)
                         {
-                            foreach (string s in Regex.Split(argumentString, ScriptNamingConstants.SCRIPT_ARGUMENT_SEPARATOR))
+                            foreach (string s in Regex.Split(argumentString, ScriptSyntaxConstants.SCRIPT_ARGUMENT_SEPARATOR))
                             {
                                 string[] sArray = s.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                                 string argName = sArray[1].Trim();

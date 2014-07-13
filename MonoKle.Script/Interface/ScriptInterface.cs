@@ -12,7 +12,7 @@
     public class ScriptInterface
     {
         private VirtualMachine vm;
-        private ScriptFileReader reader;
+        private ScriptReader reader;
         private CompilationEnvironment compiler;
 
         public ScriptInterface()
@@ -20,7 +20,7 @@
             ScriptCompiler c = new ScriptCompiler();
             this.compiler = new CompilationEnvironment(c);
             this.vm = new VirtualMachine();
-            this.reader = new ScriptFileReader();
+            this.reader = new ScriptReader();
             this.vm.Print += OnPrint;
             this.vm.RuntimeError += OnRuntimeError;
         }
@@ -117,7 +117,7 @@
         /// <returns>Amount of script sources added.</returns>
         public int AddScriptSources(string path, bool recurse)
         {
-            return this.compiler.LoadSources(this.reader.GetScriptSources(path, recurse));
+            return this.compiler.LoadSources(this.reader.ReadScriptSources(path, recurse));
         }
 
         /// <summary>

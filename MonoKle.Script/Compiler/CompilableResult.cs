@@ -1,34 +1,30 @@
 ﻿namespace MonoKle.Script.Compiler
 {
-    using MonoKle.Script.Common.Script;
     using System.Collections.Generic;
 
     /// <summary>
-    /// Compilation result container.
+    /// Compilable result container.
     /// </summary>
-    public class CompilationResult : ICompilationResult
+    public class CompilableResult : ICompilableResult
     {
         /// <summary>
-        /// Creates a new instance of <see cref="CompilationResult"/>.
+        /// Creates a new instance of <see cref="CompilableResult"/>.
         /// </summary>
-        /// <param name="name">Name of the compiled script.</param>
-        /// <param name="success">Compilation success.</param>
+        /// <param name="name">Name of the evaluated script.</param>
         /// <param name="semanticsError">Semantics error.</param>
         /// <param name="syntaxError">Syntax error.</param>
-        /// <param name="script">Compiled script.</param>
         /// <param name="errorMessages">Error message.</param>
-        public CompilationResult(string name, bool syntaxError, bool semanticsError, ByteScript script, ICollection<string> errorMessages)
+        public CompilableResult(string name, bool syntaxError, bool semanticsError, ICollection<string> errorMessages)
         {
             this.ScriptName = name;
             this.Success = syntaxError == false && semanticsError == false;
             this.SyntaxError = syntaxError;
             this.SemanticsError = semanticsError;
-            this.Script = script;
             this.ErrorMessages = errorMessages;
         }
 
         /// <summary>
-        /// Gets the error messages associated with the compilation.
+        /// Gets the error messages associated with the evaluation.
         /// </summary>
         /// <returns>Collection of error messages.</returns>
         public ICollection<string> ErrorMessages
@@ -38,19 +34,9 @@
         }
 
         /// <summary>
-        /// Gets the compiled script.
+        /// Gets the name of the evalued script.
         /// </summary>
-        /// <returns>ByteScript if compilation was successful, otherwise null.</returns>
-        public ByteScript Script
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// Gets the name of the compiled script.
-        /// </summary>
-        /// <returns>Name of the compiled script.</returns>
+        /// <returns>Name of the evalued script.</returns>
         public string ScriptName
         {
             get;
@@ -58,9 +44,9 @@
         }
 
         /// <summary>
-        /// Gets whether the compilation resulted in semantics error.
+        /// Gets whether the evaluation resulted in semantics error.
         /// </summary>
-        /// <returns>True if compilation resulted in semantics error, otherwise false.</returns>
+        /// <returns>True if evaluation resulted in semantics error, otherwise false.</returns>
         public bool SemanticsError
         {
             get;
@@ -68,7 +54,7 @@
         }
 
         /// <summary>
-        /// Gets whether the compilation was successful or not.
+        /// Gets whether the evaluation was successful or not.
         /// </summary>
         /// <returns>True if successful, otherwise false.</returns>
         public bool Success
@@ -78,9 +64,9 @@
         }
 
         /// <summary>
-        /// Gets whether the compilation resulted in syntax error.
+        /// Gets whether the evaluation resulted in syntax error.
         /// </summary>
-        /// <returns>True if compilation resulted in syntax error, otherwise false.</returns>
+        /// <returns>True if evaluation resulted in syntax error, otherwise false.</returns>
         public bool SyntaxError
         {
             get;

@@ -1,8 +1,7 @@
 ﻿namespace MonoKle.Script.Compiler
 {
-    using System.Collections.Generic;
-
     using MonoKle.Script.Common.Script;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Compilation environment used to compile multiple scripts, which may reference each other, to bytecode in a single go.
@@ -35,7 +34,7 @@
                 failed = false;
                 foreach(ScriptSource s in loadedSources)
                 {
-                    if(this.compiler.IsCompilable(s, this.loadedHeaders) == false)
+                    if(this.compiler.CheckCompilable(s, this.loadedHeaders).Success == false)
                     {
                         failedScripts.Add(s);
                         failed = true;
@@ -81,7 +80,7 @@
         public int LoadSources(IEnumerable<ScriptSource> sources)
         {
             int nLoaded = 0;
-            foreach (ScriptSource s in sources)
+            foreach(ScriptSource s in sources)
             {
                 this.loadedSources.Add(s);
                 this.loadedHeaders.Add(s.Header);

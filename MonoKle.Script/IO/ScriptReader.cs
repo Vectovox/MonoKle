@@ -10,7 +10,10 @@
     using System.Text;
     using System.Text.RegularExpressions;
 
-    public class ScriptFileReader : IScriptFileReader
+    /// <summary>
+    /// Class for reading scripts from sources.
+    /// </summary>
+    public class ScriptReader : IScriptReader
     {
         /// <summary>
         /// File extension to look for when reading scripts.
@@ -28,11 +31,40 @@
         public const string DEFAULT_SCRIPT_EXTENSION = ".ms";
 
         /// <summary>
-        /// Creates a new instance of <see cref="ScriptFileReader"/>.
+        /// Creates a new instance of <see cref="ScriptReader"/>.
         /// </summary>
-        public ScriptFileReader()
+        public ScriptReader()
         {
-            this.FileExtension = ScriptFileReader.DEFAULT_SCRIPT_EXTENSION;
+            this.FileExtension = ScriptReader.DEFAULT_SCRIPT_EXTENSION;
+        }
+
+        /// <summary>
+        /// Reads all script sources found in the given string.
+        /// </summary>
+        /// <param name="scriptString">The string to read scripts from.</param>
+        /// <returns>Script sources.</returns>
+        public ICollection<ScriptSource> ReadScriptSources(string scriptString)
+        {
+            using (MemoryStream stream = new MemoryStream())
+            {
+                using(StreamWriter writer = new StreamWriter(stream))
+                {
+                    writer.Write(scriptString);
+                    writer.Flush();
+                    stream.Position = 0;
+                    return this.ReadStream(stream);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets all script sources found in the given stream. The given stream is not closed.
+        /// </summary>
+        /// <param name="stream">The stream to get scripts from. It is not closed by the operation.</param>
+        /// <returns>Script sources.</returns>
+        public ICollection<ScriptSource> ReadScriptSources(Stream stream)
+        {
+            return this.ReadStream(stream);
         }
 
         /// <summary>
@@ -41,13 +73,13 @@
         /// <param name="path">Path to search in. May point out a directory or a file.</param>
         /// <param name="recurse">If true, search will include sub-directories.</param>
         /// <returns>Collection of script sources.</returns>
-        public ICollection<ScriptSource> GetScriptSources(string path, bool recurse)
+        public ICollection<ScriptSource> ReadScriptSources(string path, bool recurse)
         {
             ICollection<ScriptSource> scripts = new LinkedList<ScriptSource>();
 
             if (File.Exists(path) && this.ExtensionValid(path))
             {
-                foreach (ScriptSource s in this.ParseFile(new FileStream(path, FileMode.Open)))
+                foreach (ScriptSource s in this.ReadStream(new FileStream(path, FileMode.Open)))
                 {
                     scripts.Add(s);
                 }
@@ -56,7 +88,7 @@
             {
                 foreach (string file in Directory.GetFiles(path))
                 {
-                    foreach (ScriptSource s in this.GetScriptSources(file, recurse))
+                    foreach (ScriptSource s in this.ReadScriptSources(file, recurse))
                     {
                         scripts.Add(s);
                     }
@@ -66,7 +98,7 @@
                 {
                     foreach (string directory in Directory.GetDirectories(path))
                     {
-                        foreach (ScriptSource s in this.GetScriptSources(directory, recurse))
+                        foreach (ScriptSource s in this.ReadScriptSources(directory, recurse))
                         {
                             scripts.Add(s);
                         }
@@ -82,7 +114,7 @@
             return path.EndsWith(this.FileExtension, StringComparison.CurrentCultureIgnoreCase);
         }
 
-        private IEnumerable<ScriptSource> ParseFile(Stream stream)
+        private ICollection<ScriptSource> ReadStream(Stream stream)
         {
             ICollection<ScriptSource> sources = new LinkedList<ScriptSource>();
             StreamReader reader = new StreamReader(stream);

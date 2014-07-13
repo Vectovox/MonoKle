@@ -51,9 +51,10 @@
     {
         static void Main(string[] args)
         {
-            ScriptFileReader reader = new ScriptFileReader();
+            ScriptReader reader = new ScriptReader();
+
             reader.ScriptReadingError +=Reader_ScriptReadingError;
-            ICollection<ScriptSource> sources = reader.GetScriptSources("./", false);
+            ICollection<ScriptSource> sources = reader.ReadScriptSources("./", false);
 
             // Remove comment to just print the parse trees.
             /*

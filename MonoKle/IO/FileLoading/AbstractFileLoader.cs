@@ -34,21 +34,43 @@
         /// <param name="pattern">The pattern that files have to fulfill in order to be loaded.</param>
         public FileLoadingResult LoadFiles(string path, bool recurse, string pattern)
         {
-            string[] files = Directory.GetFiles(path, pattern, recurse ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
             int successes = 0;
-            
-            foreach(string f in files)
+            int failures = 0;
+
+            if(File.Exists(path))
             {
-                using(FileStream stream = File.OpenRead(f))
+                using(FileStream stream = File.OpenRead(path))
                 {
                     if(this.OperateOnFile(stream))
                     {
                         successes++;
                     }
+                    else
+                    {
+                        failures++;
+                    }
+                }
+            }
+            else
+            {
+                string[] files = Directory.GetFiles(path, pattern, recurse ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+                foreach(string f in files)
+                {
+                    using(FileStream stream = File.OpenRead(f))
+                    {
+                        if(this.OperateOnFile(stream))
+                        {
+                            successes++;
+                        }
+                        else
+                        {
+                            failures++;
+                        }
+                    }
                 }
             }
 
-            return new FileLoadingResult(successes, files.Length - successes);
+            return new FileLoadingResult(successes, failures);
         }
 
         /// <summary>

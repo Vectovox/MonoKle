@@ -2,7 +2,6 @@
 {
     using MonoKle.Script.Common.Internal;
     using MonoKle.Script.Common.Script;
-    using MonoKle.Script.IO.Event;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -16,19 +15,14 @@
     public class ScriptReader : IScriptReader
     {
         /// <summary>
-        /// File extension to look for when reading scripts.
+        /// File extension to look for when reading scripts from files.
         /// </summary>
         public string FileExtension { get; set; }
 
         /// <summary>
-        /// Event fired if there is an error reading a script.
-        /// </summary>
-        public event ScriptReadingErrorEventHandler ScriptReadingError;
-
-        /// <summary>
         /// Default file extension used.
         /// </summary>
-        public const string DEFAULT_SCRIPT_EXTENSION = ".ms";
+        public const string DEFAULT_SCRIPT_EXTENSION = Constants.FILE_EXTENSION;
 
         /// <summary>
         /// Creates a new instance of <see cref="ScriptReader"/>.
@@ -42,8 +36,8 @@
         /// Reads all script sources found in the given string.
         /// </summary>
         /// <param name="scriptString">The string to read scripts from.</param>
-        /// <returns>Script sources.</returns>
-        public ICollection<ScriptSource> ReadScriptSources(string scriptString)
+        /// <returns>Script reading result.</returns>
+        public IScriptReaderResult ReadScriptSources(string scriptString)
         {
             using (MemoryStream stream = new MemoryStream())
             {
@@ -52,7 +46,7 @@
                     writer.Write(scriptString);
                     writer.Flush();
                     stream.Position = 0;
-                    return this.ReadStream(stream);
+                    return new ScriptReaderResult(this.ReadStream(stream), this.ConsumeErrors());
                 }
             }
         }
@@ -61,10 +55,10 @@
         /// Gets all script sources found in the given stream. The given stream is not closed.
         /// </summary>
         /// <param name="stream">The stream to get scripts from. It is not closed by the operation.</param>
-        /// <returns>Script sources.</returns>
-        public ICollection<ScriptSource> ReadScriptSources(Stream stream)
+        /// <returns>Script reading result.</returns>
+        public IScriptReaderResult ReadScriptSources(Stream stream)
         {
-            return this.ReadStream(stream);
+            return new ScriptReaderResult(this.ReadStream(stream), this.ConsumeErrors());
         }
 
         /// <summary>
@@ -72,46 +66,31 @@
         /// </summary>
         /// <param name="path">Path to search in. May point out a directory or a file.</param>
         /// <param name="recurse">If true, search will include sub-directories.</param>
-        /// <returns>Collection of script sources.</returns>
-        public ICollection<ScriptSource> ReadScriptSources(string path, bool recurse)
+        /// <returns>Script reading result.</returns>
+        public IScriptReaderResult ReadScriptSources(string path, bool recurse)
         {
             ICollection<ScriptSource> scripts = new LinkedList<ScriptSource>();
 
-            if (File.Exists(path) && this.ExtensionValid(path))
+            if(File.Exists(path))
             {
-                foreach (ScriptSource s in this.ReadStream(new FileStream(path, FileMode.Open)))
+                foreach(ScriptSource s in this.ReadStream(new FileStream(path, FileMode.Open)))
                 {
                     scripts.Add(s);
                 }
             }
-            else if (Directory.Exists(path))
+            else
             {
-                foreach (string file in Directory.GetFiles(path))
+                string[] files = Directory.GetFiles(path, "*." + this.FileExtension, recurse ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+                foreach(string file in files)
                 {
-                    foreach (ScriptSource s in this.ReadScriptSources(file, recurse))
+                    foreach(ScriptSource s in this.ReadStream(new FileStream(file, FileMode.Open)))
                     {
                         scripts.Add(s);
                     }
                 }
-
-                if (recurse)
-                {
-                    foreach (string directory in Directory.GetDirectories(path))
-                    {
-                        foreach (ScriptSource s in this.ReadScriptSources(directory, recurse))
-                        {
-                            scripts.Add(s);
-                        }
-                    }
-                }
             }
 
-            return scripts;
-        }
-
-        private bool ExtensionValid(string path)
-        {
-            return path.EndsWith(this.FileExtension, StringComparison.CurrentCultureIgnoreCase);
+            return new ScriptReaderResult(scripts, this.ConsumeErrors());
         }
 
         private ICollection<ScriptSource> ReadStream(Stream stream)
@@ -175,12 +154,17 @@
 
         private void OnError(string message)
         {
-            var l = this.ScriptReadingError;
-            if (l != null)
-            {
-                l(this, new ScriptReadingErrorEventArgs(message));
-            }
+            this.errorList.Add(message);
         }
+
+        private ICollection<string> ConsumeErrors()
+        {
+            ICollection<string> ret = new List<string>(errorList);
+            this.errorList.Clear();
+            return ret;
+        }
+
+        private List<string> errorList = new List<string>();
 
         private bool TryMakeHeader(string line, out ScriptHeader header)
         {

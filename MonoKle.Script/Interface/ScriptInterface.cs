@@ -117,7 +117,7 @@
         /// <returns>Amount of script sources added.</returns>
         public int AddScriptSources(string path, bool recurse)
         {
-            return this.compiler.LoadSources(this.reader.ReadScriptSources(path, recurse));
+            return this.compiler.LoadSources(this.reader.ReadScriptSources(path, recurse).Sources);
         }
 
         /// <summary>

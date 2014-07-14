@@ -6,8 +6,8 @@
     public static class Constants
     {
         /// <summary>
-        /// The file extension used for scripts.
+        /// The default file extension used for scripts.
         /// </summary>
-        public const string FILE_EXTENSION = ".ms";
+        public const string FILE_EXTENSION = "ms";
     }
 }

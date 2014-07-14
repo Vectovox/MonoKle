@@ -53,8 +53,7 @@
         {
             ScriptReader reader = new ScriptReader();
 
-            reader.ScriptReadingError +=Reader_ScriptReadingError;
-            ICollection<ScriptSource> sources = reader.ReadScriptSources("./", false);
+            ICollection<ScriptSource> sources = reader.ReadScriptSources("./", false).Sources;
 
             // Remove comment to just print the parse trees.
             /*
@@ -110,11 +109,6 @@
                 ExecutionResult res = vm.ExecuteScript(splitInput[0], arguments);
                 Console.WriteLine("Result> " + res.ToString());
             }
-        }
-
-        private static void Reader_ScriptReadingError(object sender, MonoKle.Script.IO.Event.ScriptReadingErrorEventArgs e)
-        {
-            Console.WriteLine(e.Message);
         }
 
         static void vm_Print(object sender, MonoKle.Script.VM.Event.PrintEventArgs e)

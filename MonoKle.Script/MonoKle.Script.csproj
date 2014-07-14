@@ -66,9 +66,9 @@
     <Compile Include="Compiler\SyntaxResult.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Debug\LanguageDebugger.cs" />
-    <Compile Include="IO\Event\ScriptReadingErrorEventArgs.cs" />
-    <Compile Include="IO\Event\ScriptReadingErrorEventHandler.cs" />
     <Compile Include="IO\IScriptReader.cs" />
+    <Compile Include="IO\IScriptReaderResult.cs" />
+    <Compile Include="IO\ScriptReaderResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Common\Internal\ByteCodeValues.cs" />
     <Compile Include="IO\ScriptReader.cs" />

@@ -17,6 +17,7 @@
     using System.Text.RegularExpressions;
     using System.Text;
 using System.Collections.Generic;
+using MonoKle.Assets.Effect;
 
 
     /// <summary>
@@ -185,6 +186,15 @@ using System.Collections.Generic;
         }
 
         /// <summary>
+        /// Gets the effect storage, loading and providing effects.
+        /// </summary>
+        public static EffectStorage EffectStorage
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
         /// Gets the total time spent in the game.
         /// </summary>
         public static TimeSpan TotalGameTime
@@ -221,6 +231,7 @@ using System.Collections.Generic;
             MonoKleGame.TextureManager = new TextureManager(GraphicsManager.GetGraphicsDevice());
             MonoKleGame.FontManager = new FontManager(GraphicsManager.GetGraphicsDevice());
             MonoKleGame.PrimitiveDrawer = new PrimitiveDrawer(GraphicsManager.GetGraphicsDevice());
+            MonoKleGame.EffectStorage = new EffectStorage(GraphicsManager.GetGraphicsDevice());
             MonoKleGame.Console = new GameConsole(new Rectangle(0, 0, GraphicsManager.ScreenSize.X, GraphicsManager.ScreenSize.Y / 3), GraphicsManager.GetGraphicsDevice());    // TODO: Break out magic numbers into config file.
             MonoKleGame.Mouse = new MouseInput(GraphicsManager.ScreenSize);
         }

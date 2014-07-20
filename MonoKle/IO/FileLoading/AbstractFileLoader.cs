@@ -41,7 +41,7 @@
             {
                 using(FileStream stream = File.OpenRead(path))
                 {
-                    if(this.OperateOnFile(stream))
+                    if(this.OperateOnFile(stream, path))
                     {
                         successes++;
                     }
@@ -51,14 +51,14 @@
                     }
                 }
             }
-            else
+            else if(Directory.Exists(path))
             {
                 string[] files = Directory.GetFiles(path, pattern, recurse ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
                 foreach(string f in files)
                 {
                     using(FileStream stream = File.OpenRead(f))
                     {
-                        if(this.OperateOnFile(stream))
+                        if(this.OperateOnFile(stream, f))
                         {
                             successes++;
                         }
@@ -77,6 +77,7 @@
         /// Template pattern method that is called on each file that is loaded. The stream is disposed after the call.
         /// </summary>
         /// <param name="fileStream">A filestream to an opened file.</param>
-        protected abstract bool OperateOnFile(Stream fileStream);
+        /// <param name="filePath">File path of the opened file.</param>
+        protected abstract bool OperateOnFile(Stream fileStream, string filePath);
     }
 }

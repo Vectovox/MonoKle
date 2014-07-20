@@ -207,6 +207,8 @@ namespace WindowsDemo
             timer.Reset();
             MonoKleGame.ScriptInterface.AddScriptSources("TestScripts.ms", false);
             MonoKleGame.ScriptInterface.CompileSources();
+
+            MonoKleGame.EffectStorage.LoadFiles("shader.fx");
         }
     }
 }

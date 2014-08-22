@@ -18,7 +18,6 @@
     using System.Text;
 using System.Collections.Generic;
 
-
     /// <summary>
     /// Main game class for MonoKle. Takes care of initiating utilities and making them draw and update themselves.
     /// </summary>
@@ -158,15 +157,6 @@ using System.Collections.Generic;
         }
 
         /// <summary>
-        /// Gets the primitive drawer utility, used to draw primitives for screen (should mainly be used for debug purposes).
-        /// </summary>
-        public static IPrimitiveDrawer PrimitiveDrawer
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
         /// Gets the state manager. This keeps track of the states and is used to switch between them.
         /// </summary>
         public static StateManager StateManager
@@ -212,7 +202,6 @@ using System.Collections.Generic;
             base.GraphicsDevice.Clear(Color.CornflowerBlue);
             double seconds = gameTime.ElapsedGameTime.TotalSeconds;
             MonoKleGame.StateManager.Draw(seconds);
-            (MonoKleGame.PrimitiveDrawer as PrimitiveDrawer).Render();
             MonoKleGame.Console.Draw();
         }
 
@@ -220,7 +209,6 @@ using System.Collections.Generic;
         {
             MonoKleGame.TextureManager = new TextureManager(GraphicsManager.GetGraphicsDevice());
             MonoKleGame.FontManager = new FontManager(GraphicsManager.GetGraphicsDevice());
-            MonoKleGame.PrimitiveDrawer = new PrimitiveDrawer(GraphicsManager.GetGraphicsDevice());
             MonoKleGame.Console = new GameConsole(new Rectangle(0, 0, GraphicsManager.ScreenSize.X, GraphicsManager.ScreenSize.Y / 3), GraphicsManager.GetGraphicsDevice());    // TODO: Break out magic numbers into config file.
             MonoKleGame.Mouse = new MouseInput(GraphicsManager.ScreenSize);
         }

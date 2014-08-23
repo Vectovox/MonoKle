@@ -5,6 +5,7 @@ using MonoKle;
 using MonoKle.Assets;
 using MonoKle.Core;
 using MonoKle.Graphics;
+using MonoKle.Graphics.Primitives;
 using MonoKle.Input;
 using MonoKle.Messaging;
 using MonoKle.State;
@@ -17,9 +18,15 @@ namespace WindowsDemo
         private SpriteBatch sb;
         private Timer timer = new Timer(5);
         private Camera2D camera = new Camera2D(new Vector2DInteger(800, 600));
+        private PrimitiveBatch2D primitive2D;
 
         public override void Draw(double time)
         {
+            this.primitive2D.Begin(this.camera.GetTransformMatrix());
+            this.primitive2D.DrawLine(new Vector2(80, 200), new Vector2(200, 80), Color.Red, Color.Blue);
+            this.primitive2D.DrawLine(new Vector2(380, 500), new Vector2(500, 380), Color.Red, Color.Blue);
+            this.primitive2D.End();
+
             sb.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullCounterClockwise, null, camera.GetTransformMatrix());
 
             sb.Draw(MonoKleGame.TextureManager.DefaultTexture, new Vector2(50, 50), Color.White);
@@ -203,6 +210,7 @@ namespace WindowsDemo
             timer.Reset();
             MonoKleGame.ScriptInterface.AddScriptSources("TestScripts.ms", false);
             MonoKleGame.ScriptInterface.CompileSources();
+            this.primitive2D = new PrimitiveBatch2D(MonoKleGame.GraphicsManager.GetGraphicsDevice());
         }
     }
 }

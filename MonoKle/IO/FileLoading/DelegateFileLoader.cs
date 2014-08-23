@@ -16,7 +16,7 @@
             get; set;
         }
 
-        protected override bool OperateOnFile(Stream fileStream)
+        protected override bool OperateOnFile(Stream fileStream, string filePath)
         {
             if(this.Delegate == null)
             {
@@ -24,7 +24,7 @@
             }
             else
             {
-                return Delegate(fileStream);
+                return Delegate(fileStream, filePath);
             }
         }
     }

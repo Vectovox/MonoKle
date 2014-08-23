@@ -43,6 +43,7 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Assets\Effect\EffectStorage.cs" />
     <Compile Include="Assets\Font\Font.cs" />
     <Compile Include="Assets\Font\FontManager.cs" />
     <Compile Include="Assets\Font\FontSerialization.cs" />

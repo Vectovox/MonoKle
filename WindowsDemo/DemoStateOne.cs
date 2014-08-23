@@ -211,6 +211,7 @@ namespace WindowsDemo
             MonoKleGame.ScriptInterface.AddScriptSources("TestScripts.ms", false);
             MonoKleGame.ScriptInterface.CompileSources();
             this.primitive2D = new PrimitiveBatch2D(MonoKleGame.GraphicsManager.GetGraphicsDevice());
+            MonoKleGame.EffectStorage.LoadFiles("shader.fx");
         }
     }
 }

@@ -83,7 +83,7 @@
             {
                 nLoaded = LoadFile(path);
             }
-            Logger.GetGlobalInstance().AddLog("Font loading (" + path + ") complete. " + nLoaded + " font(s) loaded.", LogLevel.Info);
+            Logger.Global.Log("Font loading (" + path + ") complete. " + nLoaded + " font(s) loaded.", LogLevel.Info);
             return nLoaded;
         }
 

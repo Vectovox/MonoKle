@@ -1,10 +1,11 @@
-﻿using System.Text;
-namespace MonoKle.Logging
+﻿namespace MonoKle.Logging
 {
+    using System.Text;
+
     /// <summary>
-    /// A class containing a log message and relevant accompanying information.
+    /// An immutable class containing a log message and relevant accompanying information.
     /// </summary>
-    public class Log
+    public sealed class Log
     {
         /// <summary>
         /// Creates a new instance of <see cref="Log"/>.

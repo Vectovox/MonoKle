@@ -101,7 +101,7 @@
             {
                 nLoaded = this.LoadFile(path, group);
             }
-            Logger.GetGlobalInstance().AddLog("Texture loading (" + path + ") complete. " + nLoaded + " texture(s) loaded into group " + group + ".", LogLevel.Info);
+            Logger.Global.Log("Texture loading (" + path + ") complete. " + nLoaded + " texture(s) loaded into group " + group + ".", LogLevel.Info);
             return nLoaded;
         }
 

@@ -41,9 +41,9 @@
             this.TextColor = Color.White;
             this.TextScale = 0.5f;
             // TODO: Break out all of these into either a settings struct or global script "variable"
-            Logger.GetGlobalInstance().LogAddedEvent += GameConsole_LogAddedEvent;
+            Logger.Global.LogAddedEvent += GameConsole_LogAddedEvent;
             this.UpdateCurrentLine();
-            Logger.GetGlobalInstance().AddLog("GameConsole activated!", LogLevel.Info);
+            Logger.Global.Log("GameConsole activated!", LogLevel.Info);
         }
 
         /// <summary>

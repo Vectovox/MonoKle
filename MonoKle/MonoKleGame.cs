@@ -16,8 +16,8 @@
     using MonoKle.Script.Interface;
     using System.Text.RegularExpressions;
     using System.Text;
-using System.Collections.Generic;
-using MonoKle.Assets.Effect;
+    using System.Collections.Generic;
+    using MonoKle.Assets.Effect;
 
     /// <summary>
     /// Main game class for MonoKle. Takes care of initiating utilities and making them draw and update themselves.
@@ -36,7 +36,7 @@ using MonoKle.Assets.Effect;
             MonoKleGame.Keyboard = new KeyboardInput();
             MonoKleGame.MessagePasser = new MessagePasser();
             MonoKleGame.MessagePasser.Subscribe(GameConsole.CHANNEL_ID, MonoKleGame_ConsoleCommand);
-            MonoKleGame.Logger = Logger.GetGlobalInstance();
+            MonoKleGame.Logger = Logger.Global;
             MonoKleGame.ScriptInterface = new ScriptInterface();
             MonoKleGame.ScriptInterface.CompilationError += HandleScriptCompilationError;
             MonoKleGame.ScriptInterface.Print += HandleScriptPrint;
@@ -46,7 +46,7 @@ using MonoKle.Assets.Effect;
 
         private void HandleScriptRuntimeError(object sender, Script.VM.Event.RuntimeErrorEventArgs e)
         {
-            MonoKleGame.Logger.AddLog(e.Message, LogLevel.Error);
+            MonoKleGame.Logger.Log(e.Message, LogLevel.Error);
         }
 
         private void HandleScriptPrint(object sender, Script.VM.Event.PrintEventArgs e)
@@ -63,7 +63,7 @@ using MonoKle.Assets.Effect;
             {
                 sb.AppendLine(s);
             }
-            MonoKleGame.Logger.AddLog(sb.ToString(), LogLevel.Error);
+            MonoKleGame.Logger.Log(sb.ToString(), LogLevel.Error);
         }
 
 
@@ -131,7 +131,7 @@ using MonoKle.Assets.Effect;
         }
 
         /// <summary>
-        /// Gets the logging utility, same as Logger.GetGlobalInstance().
+        /// Gets the logging utility, same as Logger.GlobalInstance.
         /// </summary>
         public static Logger Logger
         {
@@ -238,7 +238,7 @@ using MonoKle.Assets.Effect;
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            MonoKleGame.Logger.AddLog(e.ExceptionObject.ToString(), LogLevel.Error);
+            MonoKleGame.Logger.Log(e.ExceptionObject.ToString(), LogLevel.Error);
             FileStream fs = new FileStream("./crashdump.log", FileMode.OpenOrCreate | FileMode.Truncate);
             MonoKleGame.Logger.WriteLog(fs); // TODO: Remove magic constant. Not into a constants class, but into settings! E.g. Settings.GetValue("crashdump").
         }

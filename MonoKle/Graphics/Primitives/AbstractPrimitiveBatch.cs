@@ -95,13 +95,20 @@
         /// <param name="endColor">Color of line on ending coordinate.</param>
         protected void AddLine(Vector3 start, Vector3 end, Color startColor, Color endColor)
         {
-            if(this.nVertices >= this.vertexArray.Length)
+            if(this.hasBegun == false)
             {
-                this.Grow();
+                throw new InvalidOperationException(AbstractPrimitiveBatch.EXCEPTION_MSG_NOT_BEGUN);
             }
-            this.vertexArray[nVertices] = new VertexPositionColor(start, startColor);
-            this.vertexArray[nVertices + 1] = new VertexPositionColor(end, endColor);
-            this.nVertices += 2;
+            else
+            {
+                if(this.nVertices >= this.vertexArray.Length)
+                {
+                    this.Grow();
+                }
+                this.vertexArray[nVertices] = new VertexPositionColor(start, startColor);
+                this.vertexArray[nVertices + 1] = new VertexPositionColor(end, endColor);
+                this.nVertices += 2;
+            }
         }
 
         /// <summary>

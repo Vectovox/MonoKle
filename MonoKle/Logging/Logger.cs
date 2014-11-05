@@ -10,7 +10,9 @@
     {
         private static Logger globalLogger;
 
+        private LogLevel loggingLevel;
         private LinkedList<Log> logs = new LinkedList<Log>();
+        private short size;
 
         /// <summary>
         /// Creates instance of <see cref="Logger"/>.
@@ -27,12 +29,25 @@
         public event LogAddedEventHandler LogAddedEvent;
 
         /// <summary>
+        /// Returns the instance of the global logger.
+        /// </summary>
+        /// <returns></returns>
+        public static Logger Global
+        {
+            get
+            {
+                Logger.globalLogger = Logger.globalLogger ?? new Logger();
+                return Logger.globalLogger;
+            }
+        }
+
+        /// <summary>
         /// The current logging level accepted.
         /// </summary>
         public LogLevel LoggingLevel
         {
-            get;
-            set;
+            get { return this.loggingLevel; }
+            set { this.loggingLevel = value; }
         }
 
         /// <summary>
@@ -40,41 +55,31 @@
         /// </summary>
         public short Size
         {
-            get;
-            set;
+            get { return this.size; }
+            set { this.size = value; this.TrimLogs(); }
         }
 
         /// <summary>
-        /// Returns the instance of the global logger.
+        /// Logs a given message with a logging level of <see cref="LogLevel.Info"/>.
         /// </summary>
-        /// <returns></returns>
-        public static Logger GetGlobalInstance()
+        /// <param name="message">The message to log.</param>
+        public void Log(string message)
         {
-            Logger.globalLogger = Logger.globalLogger ?? new Logger();
-            return Logger.globalLogger;
+            this.Log(message, LogLevel.Info);
         }
 
         /// <summary>
-        /// Adds a given log with a logging level of <see cref="LogLevel.Info"/>.
+        /// Logs a given message with the provided logging level.
         /// </summary>
-        /// <param name="message">The log to add.</param>
-        public void AddLog(string message)
+        /// <param name="message">The message to log.</param>
+        /// <param name="level">The level of the log.</param>
+        public void Log(string message, LogLevel level)
         {
-            this.AddLog(message, LogLevel.Info);
-        }
-
-        /// <summary>
-        /// Addds a given log with the provided logging level.
-        /// </summary>
-        /// <param name="message"></param>
-        /// <param name="level"></param>
-        public void AddLog(string message, LogLevel level)
-        {
-            if (level <= this.LoggingLevel)
+            if(level <= this.loggingLevel)
             {
                 Log newLog = new Log(message, level);
                 this.logs.AddLast(newLog);
-                while (this.logs.Count > this.Size)
+                if(this.logs.Count > this.size)
                 {
                     this.logs.RemoveFirst();
                 }
@@ -101,12 +106,12 @@
         }
 
         /// <summary>
-        /// Returns the currently stored logs.
+        /// Returns a list containing the currently stored logs.
         /// </summary>
         /// <returns><see cref="IEnumerable"/> containing current logs.</returns>
         public IEnumerable<Log> GetLogs()
         {
-            return this.logs;
+            return new LinkedList<Log>(this.logs);
         }
 
         /// <summary>
@@ -116,7 +121,7 @@
         public void WriteLog(Stream stream)
         {
             StreamWriter writer = new StreamWriter(stream);
-            foreach (Log l in this.GetLogs())
+            foreach(Log l in this.GetLogs())
             {
                 writer.WriteLine(l.ToString());
             }
@@ -129,9 +134,17 @@
         protected void OnLogAdded(LogAddedEventArgs e)
         {
             LogAddedEventHandler handler = this.LogAddedEvent;
-            if (handler != null)
+            if(handler != null)
             {
                 handler(this, e);
+            }
+        }
+
+        private void TrimLogs()
+        {
+            while(this.logs.Count > this.size)
+            {
+                this.logs.RemoveFirst();
             }
         }
     }

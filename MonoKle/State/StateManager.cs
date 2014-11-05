@@ -38,7 +38,7 @@
             }
             else
             {
-                Logger.GetGlobalInstance().AddLog("Could not add state. Existing state exists with the identifier: " + identifier, LogLevel.Error);
+                Logger.Global.Log("Could not add state. Existing state exists with the identifier: " + identifier, LogLevel.Error);
             }
         }
 
@@ -55,7 +55,7 @@
             }
             else
             {
-                Logger.GetGlobalInstance().AddLog("Could not remove state. There is no state with the identifier: " + identifier, LogLevel.Error);
+                Logger.Global.Log("Could not remove state. There is no state with the identifier: " + identifier, LogLevel.Error);
             }
         }
 

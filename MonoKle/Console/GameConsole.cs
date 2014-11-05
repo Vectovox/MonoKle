@@ -235,7 +235,7 @@
 
         private void GameConsole_LogAddedEvent(object sender, LogAddedEventArgs e)
         {
-            this.WriteLine(e.Log.Message);
+            this.WriteLine(e.Log.ToString());
         }
 
         private void EraseCharacter()

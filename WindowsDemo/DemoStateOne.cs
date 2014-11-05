@@ -7,6 +7,7 @@ using MonoKle.Core;
 using MonoKle.Graphics;
 using MonoKle.Graphics.Primitives;
 using MonoKle.Input;
+using MonoKle.Logging;
 using MonoKle.Messaging;
 using MonoKle.State;
 using System;
@@ -175,6 +176,11 @@ namespace WindowsDemo
                 {
                     MonoKleGame.MessagePasser.SendMessage("testChannel", new MessageEventArgs("I AM HELLO"));
                     MonoKleGame.MessagePasser.SendMessage("noChannel", new MessageEventArgs("I AM NOT HELLO"));
+                }
+
+                if(MonoKleGame.Keyboard.IsKeyPressed(Keys.N))
+                {
+                    Logger.Global.Log("I am logging", this.GetType());
                 }
             }
             

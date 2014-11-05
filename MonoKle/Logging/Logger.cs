@@ -1,7 +1,9 @@
 ﻿namespace MonoKle.Logging
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Runtime.CompilerServices;
 
     /// <summary>
     /// Class for handling logs and triggering log events.
@@ -60,34 +62,6 @@
         }
 
         /// <summary>
-        /// Logs a given message with a logging level of <see cref="LogLevel.Info"/>.
-        /// </summary>
-        /// <param name="message">The message to log.</param>
-        public void Log(string message)
-        {
-            this.Log(message, LogLevel.Info);
-        }
-
-        /// <summary>
-        /// Logs a given message with the provided logging level.
-        /// </summary>
-        /// <param name="message">The message to log.</param>
-        /// <param name="level">The level of the log.</param>
-        public void Log(string message, LogLevel level)
-        {
-            if(level <= this.loggingLevel)
-            {
-                Log newLog = new Log(message, level);
-                this.logs.AddLast(newLog);
-                if(this.logs.Count > this.size)
-                {
-                    this.logs.RemoveFirst();
-                }
-                this.OnLogAdded(new LogAddedEventArgs(newLog));
-            }
-        }
-
-        /// <summary>
         /// Clears all current logs from memory.
         /// </summary>
         public void Clear()
@@ -108,10 +82,42 @@
         /// <summary>
         /// Returns a list containing the currently stored logs.
         /// </summary>
-        /// <returns><see cref="IEnumerable"/> containing current logs.</returns>
+        /// <returns><see cref="IEnumerable<Log>"/> containing current logs.</returns>
         public IEnumerable<Log> GetLogs()
         {
             return new LinkedList<Log>(this.logs);
+        }
+
+        /// <summary>
+        /// Logs a given message with a logging level of <see cref="LogLevel.Info"/>.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
+        /// <param name="caller">Optional parameter denoting the calling type.</param>
+        /// <param name="method">Optional parameter denoting the caller method. Will automatically be set to the caller unless explicitly set.</param>
+        public void Log(string message, Type caller = null, [CallerMemberName] string method = "")
+        {
+            this.Log(message, LogLevel.Info, caller, method);
+        }
+
+        /// <summary>
+        /// Logs a given message with the provided logging level.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
+        /// <param name="level">The level of the log.</param>
+        /// <param name="caller">Optional parameter denoting the calling type.</param>
+        /// <param name="method">Optional parameter denoting the caller method. Will automatically be set to the caller unless explicitly set.</param>
+        public void Log(string message, LogLevel level, Type caller = null, [CallerMemberName] string method = "")
+        {
+            if(level <= this.loggingLevel)
+            {
+                Log newLog = new Log(message, level, caller, method, DateTime.Now);
+                this.logs.AddLast(newLog);
+                if(this.logs.Count > this.size)
+                {
+                    this.logs.RemoveFirst();
+                }
+                this.OnLogAdded(new LogAddedEventArgs(newLog));
+            }
         }
 
         /// <summary>

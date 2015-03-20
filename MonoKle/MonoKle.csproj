@@ -139,12 +139,6 @@
       <LastGenOutput>TextureResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\MonoKle.Script\MonoKle.Script.csproj">
-      <Project>{0f3b0e02-30a0-4a37-a424-23300847e2ca}</Project>
-      <Name>MonoKle.Script</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

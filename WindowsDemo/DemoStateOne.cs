@@ -214,10 +214,10 @@ namespace WindowsDemo
             Console.WriteLine(MonoKleGame.FontManager.Load("Assets\\Fonts", true) + " fonts loaded.");
             sb = new SpriteBatch(MonoKleGame.GraphicsManager.GetGraphicsDevice());
             timer.Reset();
-            MonoKleGame.ScriptInterface.AddScriptSources("TestScripts.ms", false);
-            MonoKleGame.ScriptInterface.CompileSources();
+            //MonoKleGame.ScriptInterface.AddScriptSources("TestScripts.ms", false);
+            //MonoKleGame.ScriptInterface.CompileSources();
             this.primitive2D = new PrimitiveBatch2D(MonoKleGame.GraphicsManager.GetGraphicsDevice());
-            MonoKleGame.EffectStorage.LoadFiles("shader.fx");
+            //MonoKleGame.EffectStorage.LoadFiles("shader.fx");
         }
     }
 }

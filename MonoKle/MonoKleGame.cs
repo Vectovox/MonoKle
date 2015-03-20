@@ -13,7 +13,7 @@
     using MonoKle.Logging;
     using MonoKle.Messaging;
     using MonoKle.State;
-    using MonoKle.Script.Interface;
+    //using MonoKle.Script.Interface;
     using System.Text.RegularExpressions;
     using System.Text;
     using System.Collections.Generic;
@@ -37,44 +37,44 @@
             MonoKleGame.MessagePasser = new MessagePasser();
             MonoKleGame.MessagePasser.Subscribe(GameConsole.CHANNEL_ID, MonoKleGame_ConsoleCommand);
             MonoKleGame.Logger = Logger.Global;
-            MonoKleGame.ScriptInterface = new ScriptInterface();
-            MonoKleGame.ScriptInterface.CompilationError += HandleScriptCompilationError;
-            MonoKleGame.ScriptInterface.Print += HandleScriptPrint;
-            MonoKleGame.ScriptInterface.RuntimeError += HandleScriptRuntimeError;
+            //MonoKleGame.ScriptInterface = new ScriptInterface();
+            //MonoKleGame.ScriptInterface.CompilationError += HandleScriptCompilationError;
+            //MonoKleGame.ScriptInterface.Print += HandleScriptPrint;
+            //MonoKleGame.ScriptInterface.RuntimeError += HandleScriptRuntimeError;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         }
 
-        private void HandleScriptRuntimeError(object sender, Script.VM.Event.RuntimeErrorEventArgs e)
-        {
-            MonoKleGame.Logger.Log(e.Message, LogLevel.Error);
-        }
+        //private void HandleScriptRuntimeError(object sender, Script.VM.Event.RuntimeErrorEventArgs e)
+        //{
+        //    MonoKleGame.Logger.Log(e.Message, LogLevel.Error);
+        //}
 
-        private void HandleScriptPrint(object sender, Script.VM.Event.PrintEventArgs e)
-        {
-            MonoKleGame.Console.WriteLine(e.Message);
-        }
+        //private void HandleScriptPrint(object sender, Script.VM.Event.PrintEventArgs e)
+        //{
+        //    MonoKleGame.Console.WriteLine(e.Message);
+        //}
 
-        private void HandleScriptCompilationError(object sender, Script.Interface.Event.CompilationErrorEventArgs e)
-        {
-            StringBuilder sb = new StringBuilder("Script compilation error in [");
-            sb.Append(e.Script);
-            sb.AppendLine("]:");
-            foreach(string s in e.Messages)
-            {
-                sb.AppendLine(s);
-            }
-            MonoKleGame.Logger.Log(sb.ToString(), LogLevel.Error);
-        }
+        //private void HandleScriptCompilationError(object sender, Script.Interface.Event.CompilationErrorEventArgs e)
+        //{
+        //    StringBuilder sb = new StringBuilder("Script compilation error in [");
+        //    sb.Append(e.Script);
+        //    sb.AppendLine("]:");
+        //    foreach(string s in e.Messages)
+        //    {
+        //        sb.AppendLine(s);
+        //    }
+        //    MonoKleGame.Logger.Log(sb.ToString(), LogLevel.Error);
+        //}
 
 
         /// <summary>
         /// Gets the script interface. Used for scripting.
         /// </summary>
-        public static ScriptInterface ScriptInterface
-        {
-            get;
-            private set;
-        }
+        //public static ScriptInterface ScriptInterface
+        //{
+        //    get;
+        //    private set;
+        //}
 
         /// <summary>
         /// Gets the console utility. This displays log messages recorded by the logger and has the ability to send written commands.
@@ -248,38 +248,38 @@
             // TODO: Create specialized parser for console commands.
             if (sender == MonoKleGame.Console)
             {
-                string s = e.Data as string;
-                if (s != null)
-                {
-                    if (s.Equals("exit"))
-                    {
-                        this.Exit();
-                    } else if(s.StartsWith("run "))
-                    {
-                        string script = s.Substring(4, s.Length - 4);
-                        string[] argumentStrings = Regex.Split(script, " ");
+                //string s = e.Data as string;
+                //if (s != null)
+                //{
+                //    if (s.Equals("exit"))
+                //    {
+                //        this.Exit();
+                //    } else if(s.StartsWith("run "))
+                //    {
+                //        string script = s.Substring(4, s.Length - 4);
+                //        string[] argumentStrings = Regex.Split(script, " ");
 
-                        object[] arguments = new object[argumentStrings.Length - 1];
-                        for (int i = 1; i < argumentStrings.Length; i++)
-                        {
-                            if(Regex.IsMatch(argumentStrings[i], "true|false"))
-                            {
-                                arguments[i] = bool.Parse(argumentStrings[i]);
-                            }
-                            else if(Regex.IsMatch(argumentStrings[i], "((\\d*)|(\\d+)\\.(\\d)+)"))
-                            {
-                                arguments[i] = float.Parse(argumentStrings[i], System.Globalization.CultureInfo.InvariantCulture);
-                            }
-                            else
-                            {
-                                arguments[i-1] = argumentStrings[i];
-                            }
-                        }
+                //        object[] arguments = new object[argumentStrings.Length - 1];
+                //        for (int i = 1; i < argumentStrings.Length; i++)
+                //        {
+                //            if(Regex.IsMatch(argumentStrings[i], "true|false"))
+                //            {
+                //                arguments[i] = bool.Parse(argumentStrings[i]);
+                //            }
+                //            else if(Regex.IsMatch(argumentStrings[i], "((\\d*)|(\\d+)\\.(\\d)+)"))
+                //            {
+                //                arguments[i] = float.Parse(argumentStrings[i], System.Globalization.CultureInfo.InvariantCulture);
+                //            }
+                //            else
+                //            {
+                //                arguments[i-1] = argumentStrings[i];
+                //            }
+                //        }
 
-                        Script.VM.ExecutionResult result = MonoKleGame.ScriptInterface.ExecuteScript(argumentStrings[0], arguments);
-                        MonoKleGame.Console.WriteLine("Return value: " + result.ToString());
-                    }
-                }
+                //        Script.VM.ExecutionResult result = MonoKleGame.ScriptInterface.ExecuteScript(argumentStrings[0], arguments);
+                //        MonoKleGame.Console.WriteLine("Return value: " + result.ToString());
+                //    }
+                //}
             }
         }
     }

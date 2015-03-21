@@ -4,19 +4,31 @@
     using System.Net.Sockets;
     using System.Runtime.Serialization.Formatters.Binary;
 
-    public class TcpConnection : AbstractConnection, IDisposable
+    public class TcpConnection : IDisposable
     {
+        public TcpClient TcpClient { get { return this.client; } }
         private TcpClient client;
         private NetworkStream stream;
         private BinaryFormatter formatter = new BinaryFormatter();
 
         public TcpConnection(TcpClient client)
         {
+            if (client == null)
+            {
+                throw new ArgumentNullException("Client must not be null.");
+            }
             this.client = client;
-            this.stream = client.GetStream();
+            try
+            {
+                this.stream = client.GetStream();
+            }
+            catch (Exception e)
+            {
+                throw new ArgumentException("Could not access stream from TcpClient.", e);
+            }
         }
 
-        public override bool IsConnected
+        public bool IsConnected
         {
             get
             {
@@ -31,35 +43,81 @@
 
         public T ReceiveObject<T>()
         {
-            return (T)this.formatter.Deserialize(this.stream);
+            try
+            {
+                return (T)this.formatter.Deserialize(this.stream);
+            }
+            catch(Exception e)
+            {
+                return default(T);
+            }
+        }
+
+        public bool ReceiveObject<T>(out T result)
+        {
+            try
+            {
+                result = (T)this.formatter.Deserialize(this.stream);
+            }
+            catch (Exception e)
+            {
+                result = default(T);
+                return false;
+            }
+            return true;
         }
 
         public object ReceiveObject()
         {
-            return this.formatter.Deserialize(this.stream);
+            try
+            {
+                return this.formatter.Deserialize(this.stream);
+            }
+            catch(Exception e)
+            {
+                return null;
+            }
         }
 
-        public void SendRaw(byte[] data, int offset, int size)
+        public bool ReceiveObject(out object result)
         {
-            this.client.GetStream().Write(data, offset, size);
+            try
+            {
+                result = this.formatter.Deserialize(this.stream);
+            }
+            catch (Exception e)
+            {
+                result = null;
+                return false;
+            }
+            return true;
         }
 
-        public void SendObject(object data)
+        public bool SendRaw(byte[] data, int offset, int size)
         {
-            this.formatter.Serialize(this.client.GetStream(), data);
+            try
+            {
+                this.stream.Write(data, offset, size);
+            }
+            catch(Exception e)
+            {
+                return false;
+            }
+            return true;
         }
 
-        //public void SendObjectWithType(object data)
-        //{
-        //    this.formatter.Serialize(this.client.GetStream(), data.GetType());
-        //    this.formatter.Serialize(this.client.GetStream(), data);
-        //}
-
-        //public void SendObjectWithType<T>(T data)
-        //{
-        //    this.formatter.Serialize(this.client.GetStream(), typeof(T));
-        //    this.formatter.Serialize(this.client.GetStream(), data);
-        //}
+        public bool SendObject(object data)
+        {
+            try
+            {
+                this.formatter.Serialize(this.stream, data);
+            }
+            catch(Exception e)
+            {
+                return false;
+            }
+            return true;
+        }
 
         public void Dispose()
         {

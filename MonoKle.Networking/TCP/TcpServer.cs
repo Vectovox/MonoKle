@@ -11,8 +11,6 @@
 
         private TcpListener listener;
 
-        private LinkedList<TcpClient> connectionList = new LinkedList<TcpClient>();
-
         public TcpServer(IPEndPoint localEndpoint)
         {
             this.LocalEndpoint = localEndpoint;
@@ -29,12 +27,16 @@
         {
             if(this.listener.Pending())
             {
-                TcpClient connection = this.listener.AcceptTcpClient();
+                TcpClient client = this.listener.AcceptTcpClient();
+                TcpConnection connection = new TcpConnection(client);
                 if (this.ValidateConnection(connection))
                 {
-                    Thread t = new Thread(ConnectionWorker);
-                    t.Start(connection);
+                    new Thread(ConnectionWorker).Start(connection);
                     this.OnConnectionEstablished(connection);
+                }
+                else
+                {
+                    connection.Dispose();
                 }
             }
             else
@@ -47,28 +49,24 @@
         {
             base.OnStopping();
             this.listener.Stop();
-            foreach(TcpClient c in connectionList)
-            {
-                c.Close();
-            }
         }
 
-        protected abstract void DoConnectionWork(TcpClient connection);
+        protected abstract void DoConnectionWork(TcpConnection connection);
 
         private void ConnectionWorker(object connection)
         {
-            using(TcpClient c = connection as TcpClient)
+            using (TcpConnection c = connection as TcpConnection)
             {
                 this.DoConnectionWork(c);
             }
         }
 
-        protected virtual bool ValidateConnection(TcpClient connection)
+        protected virtual bool ValidateConnection(TcpConnection connection)
         {
             return true;
         }
 
-        protected virtual void OnConnectionEstablished(TcpClient connection)
+        protected virtual void OnConnectionEstablished(TcpConnection connection)
         {
         }
     }

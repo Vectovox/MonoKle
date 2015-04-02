@@ -6,6 +6,8 @@
 
     public class TcpConnection : IDisposable
     {
+        public string ErrorMessage { get; set; }
+
         public TcpClient TcpClient { get { return this.client; } }
         private TcpClient client;
         private NetworkStream stream;
@@ -49,6 +51,7 @@
             }
             catch(Exception e)
             {
+                this.ErrorMessage = e.Message;
                 return default(T);
             }
         }
@@ -61,6 +64,7 @@
             }
             catch (Exception e)
             {
+                this.ErrorMessage = e.Message;
                 result = default(T);
                 return false;
             }
@@ -75,6 +79,7 @@
             }
             catch(Exception e)
             {
+                this.ErrorMessage = e.Message;
                 return null;
             }
         }
@@ -87,6 +92,7 @@
             }
             catch (Exception e)
             {
+                this.ErrorMessage = e.Message;
                 result = null;
                 return false;
             }
@@ -101,6 +107,7 @@
             }
             catch(Exception e)
             {
+                this.ErrorMessage = e.Message;
                 return false;
             }
             return true;
@@ -114,6 +121,7 @@
             }
             catch(Exception e)
             {
+                this.ErrorMessage = e.Message;
                 return false;
             }
             return true;

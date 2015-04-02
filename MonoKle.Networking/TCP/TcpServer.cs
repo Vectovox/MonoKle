@@ -1,25 +1,24 @@
 ﻿namespace MonoKle.Networking.TCP
 {
-    using System.Collections.Generic;
     using System.Net;
     using System.Net.Sockets;
     using System.Threading;
 
     public abstract class TcpServer : AbstractServer
     {
-        public IPEndPoint LocalEndpoint { get; private set; }
+        public int ListeningPort { get; private set; }
 
         private TcpListener listener;
 
-        public TcpServer(IPEndPoint localEndpoint)
+        public TcpServer(int port)
         {
-            this.LocalEndpoint = localEndpoint;
+            this.ListeningPort = port;
         }
 
         protected override void OnStarting()
         {
             base.OnStarting();
-            this.listener = new TcpListener(this.LocalEndpoint);
+            this.listener = new TcpListener(IPAddress.Any, this.ListeningPort);
             this.listener.Start();
         }
 

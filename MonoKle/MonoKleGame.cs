@@ -18,6 +18,7 @@
     using System.Text;
     using System.Collections.Generic;
     using MonoKle.Assets.Effect;
+    using MonoKle.Script;
 
     /// <summary>
     /// Main game class for MonoKle. Takes care of initiating utilities and making them draw and update themselves.
@@ -68,13 +69,13 @@
 
 
         /// <summary>
-        /// Gets the script interface. Used for scripting.
+        /// Gets the script environment. Used for scripting.
         /// </summary>
-        //public static ScriptInterface ScriptInterface
-        //{
-        //    get;
-        //    private set;
-        //}
+        public static ScriptEnvironment ScriptEnvironment
+        {
+            get;
+            private set;
+        }
 
         /// <summary>
         /// Gets the console utility. This displays log messages recorded by the logger and has the ability to send written commands.

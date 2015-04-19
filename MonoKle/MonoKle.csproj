@@ -101,6 +101,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>TextureResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Script\ChannelAttribute.cs" />
+    <Compile Include="Script\CompilationResult.cs" />
+    <Compile Include="Script\ScriptEnvironment.cs" />
     <Compile Include="State\GameState.cs" />
     <Compile Include="State\StateSwitchData.cs" />
     <Compile Include="State\StateManager.cs" />

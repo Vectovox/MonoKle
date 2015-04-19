@@ -49,56 +49,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\Internal\CommonHelpers.cs" />
-    <Compile Include="Common\Internal\ScriptSyntaxConstants.cs" />
-    <Compile Include="Common\Internal\ScriptSettingsConstants.cs" />
-    <Compile Include="Compiler\CompilationEnvironment.cs" />
-    <Compile Include="Compiler\CompilableResult.cs" />
-    <Compile Include="Compiler\CompilationResult.cs" />
-    <Compile Include="Compiler\ICompilableResult.cs" />
-    <Compile Include="Compiler\ICompilationResult.cs" />
-    <Compile Include="Compiler\ISyntaxResult.cs" />
-    <Compile Include="Compiler\Listeners\CompilerListener.cs" />
-    <Compile Include="Compiler\ICompilationEnvironment.cs" />
-    <Compile Include="Compiler\IScriptCompiler.cs" />
-    <Compile Include="Compiler\Listeners\LexerErrorListener.cs" />
-    <Compile Include="Compiler\Listeners\SyntaxErrorListener.cs" />
-    <Compile Include="Compiler\ScriptCompiler.cs" />
-    <Compile Include="Compiler\Listeners\SemanticsListener.cs" />
-    <Compile Include="Compiler\SyntaxResult.cs" />
-    <Compile Include="Constants.cs" />
-    <Compile Include="Debug\LanguageDebugger.cs" />
-    <Compile Include="IO\IScriptReader.cs" />
-    <Compile Include="IO\IScriptReaderResult.cs" />
-    <Compile Include="IO\ScriptReaderResult.cs" />
+    <Compile Include="CompilationResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Common\Internal\ByteCodeValues.cs" />
-    <Compile Include="IO\ScriptReader.cs" />
-    <Compile Include="Common\Script\ByteScript.cs" />
-    <Compile Include="Common\Script\ScriptVariable.cs" />
-    <Compile Include="Common\Script\ScriptHeader.cs" />
-    <Compile Include="Common\Script\ScriptSource.cs" />
-    <Compile Include="Interface\Event\CompilationErrorEventArgs.cs" />
-    <Compile Include="Interface\Event\CompilationErrorEventHandler.cs" />
-    <Compile Include="Interface\ScriptInterface.cs" />
-    <Compile Include="VM\ChannelResult.cs" />
-    <Compile Include="VM\Event\PrintEventArgs.cs" />
-    <Compile Include="VM\Event\RuntimeErrorEventArgs.cs" />
-    <Compile Include="VM\Event\PrintEventHandler.cs" />
-    <Compile Include="VM\Event\RuntimeErrorEventHandler.cs" />
-    <Compile Include="VM\IVirtualMachine.cs" />
-    <Compile Include="VM\ExecutionResult.cs" />
-    <Compile Include="VM\ScriptExecuter.cs" />
-    <Compile Include="VM\VirtualMachine.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Antlr4 Include="MonoKleScript.g4">
-      <Generator>MSBuild:Compile</Generator>
-      <CustomToolNamespace>MonoKle.Script.Grammar</CustomToolNamespace>
-    </Antlr4>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
+    <Compile Include="MScriptCompiler.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MonoKle.Utilities\MonoKle.Utilities.csproj">

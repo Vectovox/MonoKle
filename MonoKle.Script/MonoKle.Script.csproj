@@ -49,9 +49,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChannelAttribute.cs" />
     <Compile Include="CompilationResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="MScriptCompiler.cs" />
+    <Compile Include="ScriptEnvironment.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MonoKle.Utilities\MonoKle.Utilities.csproj">

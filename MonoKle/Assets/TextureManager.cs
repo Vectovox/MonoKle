@@ -148,13 +148,14 @@
 
         private string GetIdentifier(string path)
         {
-            int lastPeriod = path.LastIndexOf('.');
-            int lastSlash = path.LastIndexOfAny(new char[] { '\\', '/' });
-            if (lastPeriod != -1 && lastSlash != -1 && lastPeriod > lastSlash)
-            {
-                return path.Substring(lastSlash + 1, lastPeriod - lastSlash - 1);
-            }
-            return null;
+            //int lastPeriod = path.LastIndexOf('.');
+            //int lastSlash = path.LastIndexOfAny(new char[] { '\\', '/' });
+            //if (lastPeriod != -1 && lastSlash != -1 && lastPeriod > lastSlash)
+            //{
+            //    return path.Substring(lastSlash + 1, lastPeriod - lastSlash - 1);
+            //}
+            //return null;
+            return path;
         }
 
         private bool IsCompatible(string path)

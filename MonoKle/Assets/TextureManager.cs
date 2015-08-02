@@ -92,6 +92,11 @@
 
         public int Load(string path, bool recurse, string group)
         {
+            if(Path.IsPathRooted(path))
+            {
+                throw new ArgumentException("Rooted paths are not supported.");
+            }
+
             int nLoaded = 0;
             if(Directory.Exists(path))
             {

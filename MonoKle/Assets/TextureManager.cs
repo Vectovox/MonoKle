@@ -110,6 +110,31 @@
             return nLoaded;
         }
 
+        public int LoadAlias(string path, string alias)
+        {
+            return this.LoadAlias(path, alias, TextureManager.DEFAULT_GROUP_NAME);
+        }
+
+        public int LoadAlias(string path, string alias, string group)
+        {
+            return this.LoadFile(path, group, alias);
+        }
+
+        public int LoadAlias(Dictionary<string, string> dictionary)
+        {
+            return this.LoadAlias(dictionary, TextureManager.DEFAULT_GROUP_NAME);
+        }
+
+        public int LoadAlias(Dictionary<string, string> dictionary, string group)
+        {
+            int counter = 0;
+            foreach(string s in dictionary.Keys)
+            {
+                counter += this.LoadAlias(s, dictionary[s], group);
+            }
+            return counter;
+        }
+
         public int UnloadTexture(string id)
         {
             if(this.textureByTextureName.ContainsKey(id))
@@ -151,18 +176,6 @@
             return nUnloaded;
         }
 
-        private string GetIdentifier(string path)
-        {
-            //int lastPeriod = path.LastIndexOf('.');
-            //int lastSlash = path.LastIndexOfAny(new char[] { '\\', '/' });
-            //if (lastPeriod != -1 && lastSlash != -1 && lastPeriod > lastSlash)
-            //{
-            //    return path.Substring(lastSlash + 1, lastPeriod - lastSlash - 1);
-            //}
-            //return null;
-            return path;
-        }
-
         private bool IsCompatible(string path)
         {
             return path.EndsWith(".gif", StringComparison.CurrentCultureIgnoreCase)
@@ -195,21 +208,27 @@
 
         private int LoadFile(string path, string group)
         {
-            if(File.Exists(path) && this.IsCompatible(path))
+            string id = path;
+            return this.LoadFile(path, group, id);
+        }
+
+        private int LoadFile(string path, string group, string id)
+        {
+            string finalID = id.ToLower();
+            if (File.Exists(path) && this.IsCompatible(path))
             {
-                String id = this.GetIdentifier(path).ToLower();
-                if(id != null && this.textureByTextureName.ContainsKey(id) == false)
+                if (finalID != null && this.textureByTextureName.ContainsKey(finalID) == false)
                 {
                     Texture2D tex = null;
-                    using(FileStream stream = File.OpenRead(path))
+                    using (FileStream stream = File.OpenRead(path))
                     {
                         tex = Texture2D.FromStream(this.graphicsDevice, stream);
                     }
 
                     if (tex != null)
                     {
-                        this.textureByTextureName.Add(id, tex);
-                        this.AddToGroup(group, id);
+                        this.textureByTextureName.Add(finalID, tex);
+                        this.AddToGroup(group, finalID);
                         return 1;
                     }
                 }

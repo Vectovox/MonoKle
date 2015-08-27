@@ -21,6 +21,8 @@ namespace WindowsDemo
         private Camera2D camera = new Camera2D(new Vector2DInteger(800, 600));
         private PrimitiveBatch2D primitive2D;
 
+        public DemoStateOne() : base("stateOne") { }
+
         public override void Draw(double time)
         {
             this.primitive2D.Begin(this.camera.GetTransformMatrix());
@@ -121,7 +123,7 @@ namespace WindowsDemo
 
                 if (MonoKleGame.Keyboard.IsKeyPressed(Keys.Space))
                 {
-                    MonoKleGame.StateManager.SwitchState(new StateSwitchData("stateTwo", null));
+                    MonoKleGame.StateManager.SwitchState("stateTwo", null);
                 }
 
                 if (MonoKleGame.Keyboard.IsKeyHeld(Keys.I))

@@ -5,7 +5,24 @@
     /// </summary>
     public abstract class GameState
     {
-        private bool isActive;
+        private bool hasBeenActivated;
+
+        /// <summary>
+        /// Gets the identifier of the state.
+        /// </summary>
+        /// <value>
+        /// The identifier of the state.
+        /// </value>
+        public string Identifier { get; private set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GameState"/> class.
+        /// </summary>
+        /// <param name="identifier">The identifier of the state.</param>
+        public GameState(string identifier)
+        {
+            this.Identifier = identifier;
+        }
 
         /// <summary>
         /// Called when the state is being activated.
@@ -13,10 +30,10 @@
         /// <param name="data">State data to receive.</param>
         public void Activate(StateSwitchData data)
         {
-            if(this.isActive == false)
+            if(this.hasBeenActivated == false)
             {
                 this.BeforeFirstActivation(data);
-                this.isActive = true;
+                this.hasBeenActivated = true;
             }
 
             this.Activated(data);

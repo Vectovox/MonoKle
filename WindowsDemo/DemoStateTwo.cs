@@ -15,6 +15,12 @@ namespace WindowsDemo
 
         private Vector3 camPos = new Vector3(0f, 0f, 500f);
 
+        public DemoStateTwo()
+            : base("stateTwo")
+        {
+
+        }
+
         public override void Draw(double time)
         {
             Matrix view = Matrix.CreateLookAt(camPos, camPos + new Vector3(0f, 0f, -1f), Vector3.Up);
@@ -56,7 +62,7 @@ namespace WindowsDemo
 
             if (MonoKleGame.Keyboard.IsKeyPressed(Keys.Space))
             {
-                MonoKleGame.StateManager.SwitchState(new StateSwitchData("stateOne", "HELLO!"));
+                MonoKleGame.StateManager.SwitchState("stateOne", "HELLO!");
             }
         }
 

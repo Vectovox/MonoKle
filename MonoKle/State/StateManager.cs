@@ -1,6 +1,7 @@
 ﻿namespace MonoKle.State
 {
     using MonoKle.Logging;
+    using System;
     using System.Collections.Generic;
 
     /// <summary>
@@ -12,7 +13,10 @@
         private Dictionary<string, GameState> stateByString;
         private StateSwitchData switchData;
 
-        internal StateManager()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StateManager"/> class.
+        /// </summary>
+        public StateManager()
         {
             this.stateByString = new Dictionary<string, GameState>();
         }
@@ -26,19 +30,23 @@
         }
 
         /// <summary>
-        /// Adds a state with the specified identifier.
+        /// Adds a state.
         /// </summary>
-        /// <param name="identifier">String identifier.</param>
         /// <param name="state">State to add.</param>
-        public void AddState(string identifier, GameState state)
+        public void AddState(GameState state)
         {
-            if (this.stateByString.ContainsKey(identifier) == false)
+            if(state == null)
             {
-                this.stateByString.Add(identifier, state);
+                throw new ArgumentNullException("State must not be null.");
+            }
+
+            if (this.stateByString.ContainsKey(state.Identifier) == false)
+            {
+                this.stateByString.Add(state.Identifier, state);
             }
             else
             {
-                Logger.Global.Log("Could not add state. Existing state exists with the identifier: " + identifier, LogLevel.Error);
+                Logger.Global.Log("Could not add state. Existing state exists with the identifier: " + state.Identifier, LogLevel.Error);
             }
         }
 
@@ -60,15 +68,25 @@
         }
 
         /// <summary>
-        /// Prepares for a state switch using the provided data.
+        /// Prepares for a state switch without data.
         /// </summary>
-        /// <param name="data">The data to utilize when switching.</param>
-        public void SwitchState(StateSwitchData data)
+        /// <param name="stateIdentifier">The identifier of the state to switch to.</param>
+        public void SwitchState(string stateIdentifier)
         {
-            this.switchData = data;
+            this.SwitchState(stateIdentifier, null);
         }
 
-        internal void Draw(double seconds)
+        /// <summary>
+        /// Prepares for a state switch using the provided data.
+        /// </summary>
+        /// <param name="stateIdentifier">The identifier of the state to switch to.</param>
+        /// <param name="data">Data to send with the switch. May be null.</param>
+        public void SwitchState(string stateIdentifier, object data)
+        {
+            this.switchData = new StateSwitchData(stateIdentifier, this.currentState == null ? null : this.currentState.Identifier, data);
+        }
+
+        public void Draw(double seconds)
         {
             if (this.currentState != null)
             {
@@ -76,7 +94,7 @@
             }
         }
 
-        internal void Update(double seconds)
+        public void Update(double seconds)
         {
             if (this.switchData != null && this.stateByString.ContainsKey(this.switchData.NextState))
             {

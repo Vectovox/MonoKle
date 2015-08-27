@@ -24,9 +24,9 @@ namespace WindowsDemo
         {
             using (MonoKleGame game = MonoKleGame.GetInstance())
             {
-                MonoKleGame.StateManager.AddState("stateOne", new DemoStateOne());
-                MonoKleGame.StateManager.AddState("stateTwo", new DemoStateTwo());
-                MonoKleGame.StateManager.SwitchState(new StateSwitchData("stateOne", null));
+                MonoKleGame.StateManager.AddState(new DemoStateOne());
+                MonoKleGame.StateManager.AddState(new DemoStateTwo());
+                MonoKleGame.StateManager.SwitchState("stateOne", null);
                 MonoKleGame.GraphicsManager.SetScreenSize(new MonoKle.Core.Vector2DInteger(800, 600));
                 game.Run();
             }

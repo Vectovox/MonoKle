@@ -33,7 +33,7 @@
         /// Adds a state.
         /// </summary>
         /// <param name="state">State to add.</param>
-        public void AddState(GameState state)
+        public bool AddState(GameState state)
         {
             if(state == null)
             {
@@ -43,28 +43,28 @@
             if (this.stateByString.ContainsKey(state.Identifier) == false)
             {
                 this.stateByString.Add(state.Identifier, state);
+                return true;
             }
-            else
-            {
-                Logger.Global.Log("Could not add state. Existing state exists with the identifier: " + state.Identifier, LogLevel.Error);
-            }
+            
+            Logger.Global.Log("Could not add state. Existing state exists with the identifier: " + state.Identifier, LogLevel.Error);
+            return false;
         }
 
         /// <summary>
         /// Removes the state with the specified identifier.
         /// </summary>
         /// <param name="identifier">String identifier of the state to remove.</param>
-        public void RemoveState(string identifier)
+        public bool RemoveState(string identifier)
         {
             if (this.stateByString.ContainsKey(identifier))
             {
                 this.stateByString[identifier].Remove();
                 this.stateByString.Remove(identifier);
+                return true;
             }
-            else
-            {
-                Logger.Global.Log("Could not remove state. There is no state with the identifier: " + identifier, LogLevel.Error);
-            }
+
+            Logger.Global.Log("Could not remove state. There is no state with the identifier: " + identifier, LogLevel.Error);
+            return false;
         }
 
         /// <summary>
@@ -96,11 +96,16 @@
 
         public void Update(double seconds)
         {
+            // Switch state
             if (this.switchData != null && this.stateByString.ContainsKey(this.switchData.NextState))
             {
                 if (this.currentState != null)
                 {
                     this.currentState.Deactivate(this.switchData);
+                    if(this.currentState.IsTemporary)
+                    {
+                        this.RemoveState(this.currentState.Identifier);
+                    }
                 }
 
                 this.currentState = this.stateByString[this.switchData.NextState];
@@ -108,6 +113,7 @@
                 this.switchData = null;
             }
 
+            // Update current state
             if (this.currentState != null)
             {
                 this.currentState.Update(seconds);

@@ -16,12 +16,30 @@
         public string Identifier { get; private set; }
 
         /// <summary>
+        /// Gets a value indicating whether this instance is temporary, meaning it should be removed after it is switched away from.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this instance is temporary; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsTemporary { get; private set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="GameState"/> class.
         /// </summary>
         /// <param name="identifier">The identifier of the state.</param>
         public GameState(string identifier)
         {
             this.Identifier = identifier;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GameState"/> class.
+        /// </summary>
+        /// <param name="identifier">The identifier of the state.</param>
+        /// <param name="isTemporary">If set to <c>true</c>, the state [is temporary].</param>
+        public GameState(string identifier, bool isTemporary) : this(identifier)
+        {
+            this.IsTemporary = isTemporary;
         }
 
         /// <summary>

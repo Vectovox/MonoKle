@@ -48,12 +48,16 @@
             Area d = new Area(new Vector2DInteger(0, 0), new Vector2DInteger(-5, -5));
             Area e = new Area(0, 0, -5f, -5f);
             Area f = new Area(new Vector2(-5, -5));
+            Area g = new Area(new Vector2(-2.5f, -2.5f), 2.5f);
+            Area h = new Area(new Vector2(-2.5f, -2.5f), -2.5f);
 
             Assert.AreEqual(a, b);
             Assert.AreEqual(b, c);
             Assert.AreEqual(c, d);
             Assert.AreEqual(d, e);
             Assert.AreEqual(e, f);
+            Assert.AreEqual(f, g);
+            Assert.AreEqual(g, h);
 
             // Test negative size
             Assert.AreEqual(new Area(0, 0, 10, 10), new Area(10, 10, -10, -10));

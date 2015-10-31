@@ -6,7 +6,7 @@
     using Microsoft.Xna.Framework;
 
     /// <summary>
-    /// Struct for storing an immutable, serializable, normalized (non-negative width and height), float-based area.
+    /// Struct for storing an immutable, serializable, normalized (non-negative width and height), floating point precision area.
     /// </summary>
     [Serializable()]
     public struct Area : IEquatable<Area>
@@ -101,6 +101,21 @@
             float yBottom = Math.Max(coordA.Y, coordB.Y);
             this.topLeft = new Vector2(xLeft, yTop);
             this.bottomRight = new Vector2(xRight, yBottom);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Area"/> struct, equating to the bounding box of the provided circle.
+        /// </summary>
+        /// <param name="center">The center of the circle.</param>
+        /// <param name="radius">The radius of the circle.</param>
+        public Area(Vector2 center, float radius)
+        {
+            if(radius < 0)
+            {
+                radius *= -1f;
+            }
+            this.topLeft = new Vector2(center.X - radius, center.Y - radius);
+            this.bottomRight = new Vector2(center.X + radius, center.Y + radius);
         }
 
         /// <summary>

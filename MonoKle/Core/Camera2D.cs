@@ -19,15 +19,15 @@
         private Vector2 position;
         private float rotation;
         private float scale = 1f;
-        private Vector2DInteger size;
+        private IntVector2 size;
         private Matrix transformMatrix;
         private Matrix transformMatrixInv;
 
         /// <summary>
         /// Initiates a new instance of <see cref="Camera2D"/>.
         /// </summary>
-        /// <param name="size">The <see cref="Vector2DInteger"/> represenetation of the camera size.</param>
-        public Camera2D(Vector2DInteger size)
+        /// <param name="size">The <see cref="IntVector2"/> represenetation of the camera size.</param>
+        public Camera2D(IntVector2 size)
         {
             this.size = size;
         }
@@ -35,7 +35,7 @@
         /// <summary>
         /// Gets the size of the camera. 
         /// </summary>
-        public Vector2DInteger Size
+        public IntVector2 Size
         {
             get { return size; }
             set { size = value; matrixNeedsUpdate = true; }

@@ -53,12 +53,12 @@
     <Compile Include="Assets\Font\FontSerialization.cs" />
     <Compile Include="Assets\TextureManager.cs" />
     <Compile Include="Console\GameConsole.cs" />
-    <Compile Include="Core\AreaInteger.cs" />
+    <Compile Include="Core\IntArea.cs" />
     <Compile Include="Core\Camera2D.cs" />
     <Compile Include="Core\Area.cs" />
     <Compile Include="Core\Timer.cs" />
-    <Compile Include="Core\Vector2DInteger.cs" />
-    <Compile Include="Core\Vector3DInteger.cs" />
+    <Compile Include="Core\IntVector2.cs" />
+    <Compile Include="Core\IntVector3.cs" />
     <Compile Include="Graphics\Primitives\AbstractPrimitiveBatch.cs" />
     <Compile Include="Graphics\Event\ScreenSizeChangedEventArgs.cs" />
     <Compile Include="Graphics\Primitives\IPrimitiveBatch.cs" />

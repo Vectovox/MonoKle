@@ -12,8 +12,8 @@
     {
         private MouseScrollDirection currentScrollDirection;
         private Dictionary<MouseButton, double> heldTimeByButton;
-        private Vector2DInteger mousePosition;
-        private Vector2DInteger deltaPosition;
+        private IntVector2 mousePosition;
+        private IntVector2 deltaPosition;
         private HashSet<MouseButton> previousButtons;
         private int previousScrollValue;
         
@@ -26,14 +26,14 @@
             this.previousButtons = new HashSet<MouseButton>();
             this.currentScrollDirection = MouseScrollDirection.None;
             this.previousScrollValue = 0;
-            this.mousePosition = new Vector2DInteger(0, 0);
+            this.mousePosition = new IntVector2(0, 0);
         }
 
         /// <summary>
         /// Creates a new instance of <see cref="MouseInput"/> with the given screen size.
         /// </summary>
         /// <param name="screenSize"></param>
-        public MouseInput(Vector2DInteger screenSize) : this()
+        public MouseInput(IntVector2 screenSize) : this()
         {
             this.ScreenSize = screenSize;
         }
@@ -50,7 +50,7 @@
         /// <summary>
         /// Gets or sets the screen size for virtual mouse.
         /// </summary>
-        public Vector2DInteger ScreenSize
+        public IntVector2 ScreenSize
         {
             get;
             set;
@@ -71,19 +71,19 @@
         }
 
         /// <summary>
-        /// Returns the <see cref="Vector2DInteger"/> representation of the mouse movement delta since the last update call.
+        /// Returns the <see cref="IntVector2"/> representation of the mouse movement delta since the last update call.
         /// </summary>
         /// <returns>Mouse movement delta.</returns>
-        public Vector2DInteger GetDeltaPosition()
+        public IntVector2 GetDeltaPosition()
         {
             return this.deltaPosition;
         }
 
         /// <summary>
-        /// Returns the <see cref="Vector2DInteger"/> representation of the current mouse position.
+        /// Returns the <see cref="IntVector2"/> representation of the current mouse position.
         /// </summary>
         /// <returns>Current mouse position.</returns>
-        public Vector2DInteger GetPosition()
+        public IntVector2 GetPosition()
         {
             return this.mousePosition;
         }
@@ -195,13 +195,13 @@
             this.deltaPosition = this.mousePosition;
             if (this.VirtualMouseEnabled)
             {
-                this.mousePosition += new Vector2DInteger(currentState.X, currentState.Y);
+                this.mousePosition += new IntVector2(currentState.X, currentState.Y);
                 Mouse.SetPosition(this.ScreenSize.X / 2, ScreenSize.Y / 2);
-                this.mousePosition = new AreaInteger(ScreenSize.X, ScreenSize.Y).Clamp(this.mousePosition);
+                this.mousePosition = new IntArea(ScreenSize.X, ScreenSize.Y).Clamp(this.mousePosition);
             }
             else
             {
-                this.mousePosition = new Vector2DInteger(currentState.X, currentState.Y);
+                this.mousePosition = new IntVector2(currentState.X, currentState.Y);
             }
             this.deltaPosition = this.mousePosition - this.deltaPosition;
         }

@@ -32,7 +32,7 @@
         /// <param name="start">The start coordinate.</param>
         /// <param name="end">The end coordinate.</param>
         /// <returns>List of traversed cells.</returns>
-        public List<Vector2DInteger> TraverseAll(Vector2 start, Vector2 end)
+        public List<IntVector2> TraverseAll(Vector2 start, Vector2 end)
         {
             return this.TraverseIteratively(start, end).ToList();
         }
@@ -51,7 +51,7 @@
         /// <summary>
         /// Enumerable
         /// </summary>
-        public class Enumerable : IEnumerable<Vector2DInteger>
+        public class Enumerable : IEnumerable<IntVector2>
         {
             private GridTraverser traverser;
             private Vector2 start;
@@ -70,7 +70,7 @@
             /// <returns>
             /// A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the collection.
             /// </returns>
-            public IEnumerator<Vector2DInteger> GetEnumerator()
+            public IEnumerator<IntVector2> GetEnumerator()
             {
                 return new Enumerator(this);
             }
@@ -83,7 +83,7 @@
             /// <summary>
             /// Enumerator
             /// </summary>
-            public class Enumerator : IEnumerator<Vector2DInteger>
+            public class Enumerator : IEnumerator<IntVector2>
             {
                 private Enumerable e;
 
@@ -101,7 +101,7 @@
                 private int currentX;
                 private int currentY;
 
-                private Vector2DInteger endPoint;
+                private IntVector2 endPoint;
 
                 private bool first;
                 private bool over;
@@ -118,7 +118,7 @@
                     this.stepY = dy > 0 ? 1 : -1;
                     this.tDeltaY = e.traverser.cellSize / dy;
 
-                    this.endPoint = new Vector2DInteger(this.e.end / this.e.traverser.cellSize);
+                    this.endPoint = new IntVector2(this.e.end / this.e.traverser.cellSize);
 
                     this.Reset();
                 }
@@ -126,9 +126,9 @@
                 /// <summary>
                 /// Gets the element in the collection at the current position of the enumerator.
                 /// </summary>
-                public Vector2DInteger Current
+                public IntVector2 Current
                 {
-                    get { return new Vector2DInteger(this.currentX, this.currentY); }
+                    get { return new IntVector2(this.currentX, this.currentY); }
                 }
 
                 /// <summary>

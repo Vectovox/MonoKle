@@ -71,11 +71,11 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Core\AreaIntegerTest.cs" />
+    <Compile Include="Core\IntAreaTest.cs" />
     <Compile Include="Core\TimerTest.cs" />
     <Compile Include="Core\AreaTest.cs" />
-    <Compile Include="Core\Vector3DIntegerTest.cs" />
-    <Compile Include="Core\Vector2DIntegerTest.cs" />
+    <Compile Include="Core\IntVector3Test.cs" />
+    <Compile Include="Core\IntVector2Test.cs" />
     <Compile Include="IO\StreamStructReaderWriterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\GridTraverserTest.cs" />

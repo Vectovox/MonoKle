@@ -18,10 +18,10 @@
         private Vector2 topLeft;
 
         /// <summary>
-        /// Creates a new instance of <see cref="Area"/> from the given <see cref="AreaInteger"/>.
+        /// Creates a new instance of <see cref="Area"/> from the given <see cref="IntArea"/>.
         /// <param name="area">The area to instantiate from.</param>
         /// </summary>
-        public Area(AreaInteger area)
+        public Area(IntArea area)
         {
             this.topLeft = area.TopLeft.ToVector2();
             this.bottomRight = area.BottomRight.ToVector2();
@@ -93,7 +93,7 @@
         /// </summary>
         /// <param name="coordA">The first coordinate.</param>
         /// <param name="coordB">The second coordinate.</param>
-        public Area(Vector2DInteger coordA, Vector2DInteger coordB)
+        public Area(IntVector2 coordA, IntVector2 coordB)
         {
             float xLeft = Math.Min(coordA.X, coordB.X);
             float xRight = Math.Max(coordA.X, coordB.X);
@@ -268,11 +268,11 @@
         }
 
         /// <summary>
-        /// Checks if contains the provided <see cref="AreaInteger"/>.
+        /// Checks if contains the provided <see cref="IntArea"/>.
         /// </summary>
-        /// <param name="area">The <see cref="AreaInteger"/> to check if contained.</param>
-        /// <returns>True if the specified <see cref="AreaInteger"/> is contained, otherwise false.</returns>
-        public bool Contains(AreaInteger area)
+        /// <param name="area">The <see cref="IntArea"/> to check if contained.</param>
+        /// <returns>True if the specified <see cref="IntArea"/> is contained, otherwise false.</returns>
+        public bool Contains(IntArea area)
         {
             return this.Contains(area.TopLeft) && this.Contains(area.TopRight)
                 && this.Contains(area.BottomLeft) && this.Contains(area.BottomRight);
@@ -292,9 +292,9 @@
         /// <summary>
         /// Checks if the <see cref="Area"/> contains the provided coordinate.
         /// </summary>
-        /// <param name="coordinate">The <see cref="Vector2DInteger"/> to check if contained.</param>
-        /// <returns>True if the specified <see cref="Vector2DInteger"/> is contained, otherwise false.</returns>
-        public bool Contains(Vector2DInteger coordinate)
+        /// <param name="coordinate">The <see cref="IntVector2"/> to check if contained.</param>
+        /// <returns>True if the specified <see cref="IntVector2"/> is contained, otherwise false.</returns>
+        public bool Contains(IntVector2 coordinate)
         {
             return coordinate.X >= this.topLeft.X && coordinate.X <= this.bottomRight.X
                 && coordinate.Y >= this.topLeft.Y && coordinate.Y <= this.bottomRight.Y;
@@ -312,11 +312,11 @@
         }
 
         /// <summary>
-        /// Checks if envelops, contains with a marigin to all borders, the provided <see cref="AreaInteger"/>.
+        /// Checks if envelops, contains with a marigin to all borders, the provided <see cref="IntArea"/>.
         /// </summary>
-        /// <param name="area">The <see cref="AreaInteger"/> to check if enveloped.</param>
-        /// <returns>True if the specified <see cref="AreaInteger"/> is enveloped, otherwise false.</returns>
-        public bool Envelops(AreaInteger area)
+        /// <param name="area">The <see cref="IntArea"/> to check if enveloped.</param>
+        /// <returns>True if the specified <see cref="IntArea"/> is enveloped, otherwise false.</returns>
+        public bool Envelops(IntArea area)
         {
             return this.Envelops(area.TopLeft) && this.Envelops(area.TopRight)
                 && this.Envelops(area.BottomLeft) && this.Envelops(area.BottomRight);
@@ -336,9 +336,9 @@
         /// <summary>
         /// Checks if envelops, contains with a marigin to all borders, the provided coordinate.
         /// </summary>
-        /// <param name="coordinate">The <see cref="Vector2DInteger"/> to check if enveloped.</param>
-        /// <returns>True if the <see cref="Vector2DInteger"/> is enveloped, otherwise false.</returns>
-        public bool Envelops(Vector2DInteger coordinate)
+        /// <param name="coordinate">The <see cref="IntVector2"/> to check if enveloped.</param>
+        /// <returns>True if the <see cref="IntVector2"/> is enveloped, otherwise false.</returns>
+        public bool Envelops(IntVector2 coordinate)
         {
             return coordinate.X > this.topLeft.X && coordinate.X < this.bottomRight.X
                 && coordinate.Y > this.topLeft.Y && coordinate.Y < this.bottomRight.Y;

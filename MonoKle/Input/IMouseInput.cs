@@ -24,16 +24,16 @@
         double GetButtonHeldTime(MouseButton button);
 
         /// <summary>
-        /// Returns the <see cref="Vector2DInteger"/> representation of the mouse movement delta.
+        /// Returns the <see cref="IntVector2"/> representation of the mouse movement delta.
         /// </summary>
         /// <returns>Mouse movement delta.</returns>
-        Vector2DInteger GetDeltaPosition();
+        IntVector2 GetDeltaPosition();
 
         /// <summary>
-        /// Returns the <see cref="Vector2DInteger"/> representation of the current mouse position.
+        /// Returns the <see cref="IntVector2"/> representation of the current mouse position.
         /// </summary>
         /// <returns>Current mouse position.</returns>
-        Vector2DInteger GetPosition();
+        IntVector2 GetPosition();
 
         /// <summary>
         /// Returns whether a specified mouse button is down.

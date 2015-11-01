@@ -18,7 +18,7 @@ namespace WindowsDemo
     {
         private SpriteBatch sb;
         private Timer timer = new Timer(5);
-        private Camera2D camera = new Camera2D(new Vector2DInteger(800, 600));
+        private Camera2D camera = new Camera2D(new IntVector2(800, 600));
         private PrimitiveBatch2D primitive2D;
 
         public DemoStateOne() : base("stateOne") { }
@@ -161,11 +161,11 @@ namespace WindowsDemo
 
                 if(MonoKleGame.Keyboard.IsKeyPressed(Keys.F2))
                 {
-                    MonoKleGame.GraphicsManager.SetScreenSize(new Vector2DInteger(1280, 720));
+                    MonoKleGame.GraphicsManager.SetScreenSize(new IntVector2(1280, 720));
                 }
                 else if(MonoKleGame.Keyboard.IsKeyPressed(Keys.F3))
                 {
-                    MonoKleGame.GraphicsManager.SetScreenSize(new Vector2DInteger(800, 600));
+                    MonoKleGame.GraphicsManager.SetScreenSize(new IntVector2(800, 600));
                 }
 
                 if (MonoKleGame.Keyboard.IsKeyPressed(Keys.F12))

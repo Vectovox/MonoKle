@@ -17,7 +17,7 @@ namespace MonoKle.Utilities
 
             var all = gt.TraverseAll(new Vector2(5, 10), new Vector2(55, 120));
             int i = 0;
-            foreach(Vector2DInteger v in gt.TraverseIteratively(new Vector2(5, 10), new Vector2(55, 120)))
+            foreach(IntVector2 v in gt.TraverseIteratively(new Vector2(5, 10), new Vector2(55, 120)))
             {
                 Assert.AreEqual(all[i], v);
                 i++;
@@ -29,10 +29,10 @@ namespace MonoKle.Utilities
         {
             GridTraverser gt = new GridTraverser(cellSize);
 
-            CollectionAssert.AreEqual(new Vector2DInteger[]{
-                new Vector2DInteger(0,1),
-                new Vector2DInteger(1,1),
-                new Vector2DInteger(2,1)
+            CollectionAssert.AreEqual(new IntVector2[]{
+                new IntVector2(0,1),
+                new IntVector2(1,1),
+                new IntVector2(2,1)
             }, gt.TraverseAll(new Vector2(14, 49), new Vector2(82, 49)).ToArray());
         }
 
@@ -41,10 +41,10 @@ namespace MonoKle.Utilities
         {
             GridTraverser gt = new GridTraverser(cellSize);
 
-            CollectionAssert.AreEqual(new Vector2DInteger[]{
-                new Vector2DInteger(1,0),
-                new Vector2DInteger(1,1),
-                new Vector2DInteger(1,2)
+            CollectionAssert.AreEqual(new IntVector2[]{
+                new IntVector2(1,0),
+                new IntVector2(1,1),
+                new IntVector2(1,2)
             }, gt.TraverseAll(new Vector2(47, 14), new Vector2(47, 81)).ToArray());
         }
 
@@ -53,10 +53,10 @@ namespace MonoKle.Utilities
         {
             GridTraverser gt = new GridTraverser(cellSize);
 
-            CollectionAssert.AreEqual(new Vector2DInteger[]{
-                new Vector2DInteger(1,0),
-                new Vector2DInteger(1,1),
-                new Vector2DInteger(2,1)
+            CollectionAssert.AreEqual(new IntVector2[]{
+                new IntVector2(1,0),
+                new IntVector2(1,1),
+                new IntVector2(2,1)
             }, gt.TraverseAll(new Vector2(46, 26), new Vector2(75, 55)).ToArray());
         }
 
@@ -65,10 +65,10 @@ namespace MonoKle.Utilities
         {
             GridTraverser gt = new GridTraverser(cellSize);
 
-            CollectionAssert.AreEqual(new Vector2DInteger[]{
-                new Vector2DInteger(0,1),
-                new Vector2DInteger(0,2),
-                new Vector2DInteger(1,2)
+            CollectionAssert.AreEqual(new IntVector2[]{
+                new IntVector2(0,1),
+                new IntVector2(0,2),
+                new IntVector2(1,2)
             }, gt.TraverseAll(new Vector2(11, 58), new Vector2(42, 89)).ToArray());
         }
 
@@ -77,12 +77,12 @@ namespace MonoKle.Utilities
         {
             GridTraverser gt = new GridTraverser(cellSize);
 
-            CollectionAssert.AreEqual(new Vector2DInteger[]{
-                new Vector2DInteger(0,0),
-                new Vector2DInteger(0,1),
-                new Vector2DInteger(1,1),
-                new Vector2DInteger(1,2),
-                new Vector2DInteger(2,2)
+            CollectionAssert.AreEqual(new IntVector2[]{
+                new IntVector2(0,0),
+                new IntVector2(0,1),
+                new IntVector2(1,1),
+                new IntVector2(1,2),
+                new IntVector2(2,2)
             }, gt.TraverseAll(new Vector2(9, 21), new Vector2(76, 91)).ToArray());
         }
 

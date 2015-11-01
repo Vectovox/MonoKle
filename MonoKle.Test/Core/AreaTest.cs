@@ -42,10 +42,10 @@
         public void TestConstructors()
         {
             // Test that all constructors work the same
-            Area a = new Area(new AreaInteger(-5, -5, 5, 5));
+            Area a = new Area(new IntArea(-5, -5, 5, 5));
             Area b = new Area(-5, -5);
             Area c = new Area(new Vector2(0, 0), new Vector2(-5, -5));
-            Area d = new Area(new Vector2DInteger(0, 0), new Vector2DInteger(-5, -5));
+            Area d = new Area(new IntVector2(0, 0), new IntVector2(-5, -5));
             Area e = new Area(0, 0, -5f, -5f);
             Area f = new Area(new Vector2(-5, -5));
             Area g = new Area(new Vector2(-2.5f, -2.5f), 2.5f);
@@ -82,15 +82,15 @@
         [TestMethod]
         public void TestContainsAreaInt()
         {
-            Assert.IsTrue(new Area(50, 51, 50, 50).Contains(new AreaInteger(50, 51, 50, 50)));
-            Assert.IsTrue(new Area(50, 51, 50, 50).Contains(new AreaInteger(60, 60, 20, 20)));
-            Assert.IsTrue(new Area(-10, -10, 20, 20).Contains(new AreaInteger(-5, -5, 10, 10)));
+            Assert.IsTrue(new Area(50, 51, 50, 50).Contains(new IntArea(50, 51, 50, 50)));
+            Assert.IsTrue(new Area(50, 51, 50, 50).Contains(new IntArea(60, 60, 20, 20)));
+            Assert.IsTrue(new Area(-10, -10, 20, 20).Contains(new IntArea(-5, -5, 10, 10)));
 
-            Assert.IsFalse(new Area(-10, -10, 20, 20).Contains(new AreaInteger(-5, -5, 30, 10)));
-            Assert.IsFalse(new Area(-10, -10, 20, 20).Contains(new AreaInteger(-5, -5, 10, 30)));
-            Assert.IsFalse(new Area(-10, -10, 20, 20).Contains(new AreaInteger(-11, -5, 10, 10)));
-            Assert.IsFalse(new Area(-10, -10, 20, 20).Contains(new AreaInteger(-5, -11, 10, 10)));
-            Assert.IsFalse(new Area(-10, -10, 20, 20).Contains(new AreaInteger(50, 50, 10, 10)));
+            Assert.IsFalse(new Area(-10, -10, 20, 20).Contains(new IntArea(-5, -5, 30, 10)));
+            Assert.IsFalse(new Area(-10, -10, 20, 20).Contains(new IntArea(-5, -5, 10, 30)));
+            Assert.IsFalse(new Area(-10, -10, 20, 20).Contains(new IntArea(-11, -5, 10, 10)));
+            Assert.IsFalse(new Area(-10, -10, 20, 20).Contains(new IntArea(-5, -11, 10, 10)));
+            Assert.IsFalse(new Area(-10, -10, 20, 20).Contains(new IntArea(50, 50, 10, 10)));
         }
 
         [TestMethod]
@@ -124,29 +124,29 @@
         [TestMethod]
         public void TestContainsCoordinateInt()
         {
-            Assert.IsTrue(new Area(50, 51, 50, 50).Contains(new Vector2DInteger(50, 51)));
-            Assert.IsTrue(new Area(50, 51, 50, 50).Contains(new Vector2DInteger(100, 101)));
-            Assert.IsTrue(new Area(50, 51, 50, 50).Contains(new Vector2DInteger(75, 75)));
+            Assert.IsTrue(new Area(50, 51, 50, 50).Contains(new IntVector2(50, 51)));
+            Assert.IsTrue(new Area(50, 51, 50, 50).Contains(new IntVector2(100, 101)));
+            Assert.IsTrue(new Area(50, 51, 50, 50).Contains(new IntVector2(75, 75)));
 
-            Assert.IsTrue(new Area(-50, -51, 50, 50).Contains(new Vector2DInteger(-25, -25)));
-            Assert.IsTrue(new Area(-50, -51, 50, 50).Contains(new Vector2DInteger(-50, -51)));
-            Assert.IsTrue(new Area(-50, -51, 50, 50).Contains(new Vector2DInteger(0, -1)));
+            Assert.IsTrue(new Area(-50, -51, 50, 50).Contains(new IntVector2(-25, -25)));
+            Assert.IsTrue(new Area(-50, -51, 50, 50).Contains(new IntVector2(-50, -51)));
+            Assert.IsTrue(new Area(-50, -51, 50, 50).Contains(new IntVector2(0, -1)));
 
-            Assert.IsTrue(new Area(-5, -5, 10, 10).Contains(new Vector2DInteger(0, 0)));
-            Assert.IsTrue(new Area(-5, -5, 10, 10).Contains(new Vector2DInteger(0, 1)));
-            Assert.IsTrue(new Area(-5, -5, 10, 10).Contains(new Vector2DInteger(1, 0)));
-            Assert.IsTrue(new Area(-5, -5, 10, 10).Contains(new Vector2DInteger(1, 1)));
+            Assert.IsTrue(new Area(-5, -5, 10, 10).Contains(new IntVector2(0, 0)));
+            Assert.IsTrue(new Area(-5, -5, 10, 10).Contains(new IntVector2(0, 1)));
+            Assert.IsTrue(new Area(-5, -5, 10, 10).Contains(new IntVector2(1, 0)));
+            Assert.IsTrue(new Area(-5, -5, 10, 10).Contains(new IntVector2(1, 1)));
 
-            Assert.IsFalse(new Area(50, 51, 50, 50).Contains(new Vector2DInteger(49, 51)));
-            Assert.IsFalse(new Area(50, 51, 50, 50).Contains(new Vector2DInteger(50, 50)));
-            Assert.IsFalse(new Area(50, 51, 50, 50).Contains(new Vector2DInteger(100, 102)));
-            Assert.IsFalse(new Area(50, 51, 50, 50).Contains(new Vector2DInteger(101, 101)));
-            Assert.IsFalse(new Area(50, 51, 50, 50).Contains(new Vector2DInteger(-75, -75)));
+            Assert.IsFalse(new Area(50, 51, 50, 50).Contains(new IntVector2(49, 51)));
+            Assert.IsFalse(new Area(50, 51, 50, 50).Contains(new IntVector2(50, 50)));
+            Assert.IsFalse(new Area(50, 51, 50, 50).Contains(new IntVector2(100, 102)));
+            Assert.IsFalse(new Area(50, 51, 50, 50).Contains(new IntVector2(101, 101)));
+            Assert.IsFalse(new Area(50, 51, 50, 50).Contains(new IntVector2(-75, -75)));
 
-            Assert.IsFalse(new Area(-50, -51, 50, 50).Contains(new Vector2DInteger(-50, -52)));
-            Assert.IsFalse(new Area(-50, -51, 50, 50).Contains(new Vector2DInteger(-51, -51)));
-            Assert.IsFalse(new Area(-50, -51, 50, 50).Contains(new Vector2DInteger(0, 0)));
-            Assert.IsFalse(new Area(-50, -51, 50, 50).Contains(new Vector2DInteger(1, -1)));
+            Assert.IsFalse(new Area(-50, -51, 50, 50).Contains(new IntVector2(-50, -52)));
+            Assert.IsFalse(new Area(-50, -51, 50, 50).Contains(new IntVector2(-51, -51)));
+            Assert.IsFalse(new Area(-50, -51, 50, 50).Contains(new IntVector2(0, 0)));
+            Assert.IsFalse(new Area(-50, -51, 50, 50).Contains(new IntVector2(1, -1)));
         }
 
         [TestMethod]
@@ -170,19 +170,19 @@
         [TestMethod]
         public void TestEnvelopsAreaInt()
         {
-            Assert.IsTrue(new Area(50, 51, 50, 50).Envelops(new AreaInteger(60, 60, 20, 20)));
-            Assert.IsTrue(new Area(-10, -10, 20, 20).Envelops(new AreaInteger(-5, -5, 10, 10)));
+            Assert.IsTrue(new Area(50, 51, 50, 50).Envelops(new IntArea(60, 60, 20, 20)));
+            Assert.IsTrue(new Area(-10, -10, 20, 20).Envelops(new IntArea(-5, -5, 10, 10)));
 
             Assert.IsFalse(new Area(50, 51, 50, 50).Envelops(new Area(50, 60, 20, 20)));
             Assert.IsFalse(new Area(50, 51, 50, 50).Envelops(new Area(60, 60, 40, 20)));
             Assert.IsFalse(new Area(50, 51, 50, 50).Envelops(new Area(60, 51, 20, 20)));
             Assert.IsFalse(new Area(50, 51, 50, 50).Envelops(new Area(60, 60, 20, 41)));
 
-            Assert.IsFalse(new Area(-10, -10, 20, 20).Envelops(new AreaInteger(-5, -5, 30, 10)));
-            Assert.IsFalse(new Area(-10, -10, 20, 20).Envelops(new AreaInteger(-5, -5, 10, 30)));
-            Assert.IsFalse(new Area(-10, -10, 20, 20).Envelops(new AreaInteger(-11, -5, 10, 10)));
-            Assert.IsFalse(new Area(-10, -10, 20, 20).Envelops(new AreaInteger(-5, -11, 10, 10)));
-            Assert.IsFalse(new Area(-10, -10, 20, 20).Envelops(new AreaInteger(50, 50, 10, 10)));
+            Assert.IsFalse(new Area(-10, -10, 20, 20).Envelops(new IntArea(-5, -5, 30, 10)));
+            Assert.IsFalse(new Area(-10, -10, 20, 20).Envelops(new IntArea(-5, -5, 10, 30)));
+            Assert.IsFalse(new Area(-10, -10, 20, 20).Envelops(new IntArea(-11, -5, 10, 10)));
+            Assert.IsFalse(new Area(-10, -10, 20, 20).Envelops(new IntArea(-5, -11, 10, 10)));
+            Assert.IsFalse(new Area(-10, -10, 20, 20).Envelops(new IntArea(50, 50, 10, 10)));
         }
 
         [TestMethod]
@@ -216,29 +216,29 @@
         [TestMethod]
         public void TestEnvelopsCoordinateInt()
         {
-            Assert.IsFalse(new Area(50, 51, 50, 50).Envelops(new Vector2DInteger(50, 75)));
-            Assert.IsFalse(new Area(50, 51, 50, 50).Envelops(new Vector2DInteger(100, 75)));
-            Assert.IsFalse(new Area(50, 51, 50, 50).Envelops(new Vector2DInteger(75, 51)));
-            Assert.IsFalse(new Area(50, 51, 50, 50).Envelops(new Vector2DInteger(75, 101)));
-            Assert.IsTrue(new Area(50, 51, 50, 50).Envelops(new Vector2DInteger(75, 75)));
+            Assert.IsFalse(new Area(50, 51, 50, 50).Envelops(new IntVector2(50, 75)));
+            Assert.IsFalse(new Area(50, 51, 50, 50).Envelops(new IntVector2(100, 75)));
+            Assert.IsFalse(new Area(50, 51, 50, 50).Envelops(new IntVector2(75, 51)));
+            Assert.IsFalse(new Area(50, 51, 50, 50).Envelops(new IntVector2(75, 101)));
+            Assert.IsTrue(new Area(50, 51, 50, 50).Envelops(new IntVector2(75, 75)));
 
-            Assert.IsTrue(new Area(-50, -51, 50, 50).Envelops(new Vector2DInteger(-25, -25)));
+            Assert.IsTrue(new Area(-50, -51, 50, 50).Envelops(new IntVector2(-25, -25)));
 
-            Assert.IsTrue(new Area(-5, -5, 10, 10).Envelops(new Vector2DInteger(0, 0)));
-            Assert.IsTrue(new Area(-5, -5, 10, 10).Envelops(new Vector2DInteger(0, 1)));
-            Assert.IsTrue(new Area(-5, -5, 10, 10).Envelops(new Vector2DInteger(1, 0)));
-            Assert.IsTrue(new Area(-5, -5, 10, 10).Envelops(new Vector2DInteger(1, 1)));
+            Assert.IsTrue(new Area(-5, -5, 10, 10).Envelops(new IntVector2(0, 0)));
+            Assert.IsTrue(new Area(-5, -5, 10, 10).Envelops(new IntVector2(0, 1)));
+            Assert.IsTrue(new Area(-5, -5, 10, 10).Envelops(new IntVector2(1, 0)));
+            Assert.IsTrue(new Area(-5, -5, 10, 10).Envelops(new IntVector2(1, 1)));
 
-            Assert.IsFalse(new Area(50, 51, 50, 50).Envelops(new Vector2DInteger(49, 51)));
-            Assert.IsFalse(new Area(50, 51, 50, 50).Envelops(new Vector2DInteger(50, 50)));
-            Assert.IsFalse(new Area(50, 51, 50, 50).Envelops(new Vector2DInteger(100, 102)));
-            Assert.IsFalse(new Area(50, 51, 50, 50).Envelops(new Vector2DInteger(101, 101)));
-            Assert.IsFalse(new Area(50, 51, 50, 50).Envelops(new Vector2DInteger(-75, -75)));
+            Assert.IsFalse(new Area(50, 51, 50, 50).Envelops(new IntVector2(49, 51)));
+            Assert.IsFalse(new Area(50, 51, 50, 50).Envelops(new IntVector2(50, 50)));
+            Assert.IsFalse(new Area(50, 51, 50, 50).Envelops(new IntVector2(100, 102)));
+            Assert.IsFalse(new Area(50, 51, 50, 50).Envelops(new IntVector2(101, 101)));
+            Assert.IsFalse(new Area(50, 51, 50, 50).Envelops(new IntVector2(-75, -75)));
 
-            Assert.IsFalse(new Area(-50, -51, 50, 50).Envelops(new Vector2DInteger(-50, -52)));
-            Assert.IsFalse(new Area(-50, -51, 50, 50).Envelops(new Vector2DInteger(-51, -51)));
-            Assert.IsFalse(new Area(-50, -51, 50, 50).Envelops(new Vector2DInteger(0, 0)));
-            Assert.IsFalse(new Area(-50, -51, 50, 50).Envelops(new Vector2DInteger(1, -1)));
+            Assert.IsFalse(new Area(-50, -51, 50, 50).Envelops(new IntVector2(-50, -52)));
+            Assert.IsFalse(new Area(-50, -51, 50, 50).Envelops(new IntVector2(-51, -51)));
+            Assert.IsFalse(new Area(-50, -51, 50, 50).Envelops(new IntVector2(0, 0)));
+            Assert.IsFalse(new Area(-50, -51, 50, 50).Envelops(new IntVector2(1, -1)));
         }
 
         [TestMethod]

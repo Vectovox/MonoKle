@@ -12,7 +12,7 @@
         /// Creates a new instance of <see cref="ScreenSizeChangedEventArgs"/>.
         /// </summary>
         /// <param name="newScreenSize">The new screen size.</param>
-        public ScreenSizeChangedEventArgs(Vector2DInteger newScreenSize)
+        public ScreenSizeChangedEventArgs(IntVector2 newScreenSize)
         {
             this.NewScreenSize = newScreenSize;
         }
@@ -20,7 +20,7 @@
         /// <summary>
         /// The new screen size.
         /// </summary>
-        public Vector2DInteger NewScreenSize
+        public IntVector2 NewScreenSize
         {
             get;
             private set;

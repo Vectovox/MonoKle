@@ -24,7 +24,7 @@
         /// <summary>
         /// Gets the current screen center.
         /// </summary>
-        public Vector2DInteger ScreenCenter
+        public IntVector2 ScreenCenter
         {
             get; private set;
         }
@@ -32,7 +32,7 @@
         /// <summary>
         /// Gets the current screen size.
         /// </summary>
-        public Vector2DInteger ScreenSize
+        public IntVector2 ScreenSize
         {
             get; private set;
         }
@@ -42,7 +42,7 @@
             return graphicsDeviceManager.GraphicsDevice;
         }
 
-        public void SetScreenSize(Vector2DInteger size)
+        public void SetScreenSize(IntVector2 size)
         {
             this.graphicsDeviceManager.PreferredBackBufferWidth = size.X;
             this.graphicsDeviceManager.PreferredBackBufferHeight = size.Y;
@@ -52,7 +52,7 @@
             this.OnScreenSizeChanged(size);
         }
 
-        private void OnScreenSizeChanged(Vector2DInteger newScreenSize)
+        private void OnScreenSizeChanged(IntVector2 newScreenSize)
         {
             var v = this.ScreenSizeChanged;
             if(v != null)
@@ -79,7 +79,7 @@
         // TODO: PreparingDeviceSettings does only fire the first time applychanges is called (or maybe only before game started).
         private void PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
         {
-            this.SetScreenSize(new Vector2DInteger(e.GraphicsDeviceInformation.PresentationParameters.BackBufferWidth, e.GraphicsDeviceInformation.PresentationParameters.BackBufferHeight));
+            this.SetScreenSize(new IntVector2(e.GraphicsDeviceInformation.PresentationParameters.BackBufferWidth, e.GraphicsDeviceInformation.PresentationParameters.BackBufferHeight));
             //Vector2DInteger value = new Vector2DInteger(
             //        e.GraphicsDeviceInformation.PresentationParameters.BackBufferWidth,
             //        e.GraphicsDeviceInformation.PresentationParameters.BackBufferHeight

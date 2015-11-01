@@ -1,73 +1,74 @@
 ﻿namespace MonoKle.Core
 {
+    using Microsoft.Xna.Framework;
     using System;
     using System.Text;
-
-    using Microsoft.Xna.Framework;
 
     /// <summary>
     /// Two-dimensional, immutable, serializable, integer-based vector.
     /// </summary>
     [Serializable()]
-    public struct Vector2DInteger : IEquatable<Vector2DInteger>
+    public struct IntVector2 : IEquatable<IntVector2>
     {
+        /// <summary>
+        /// The x coordinate.
+        /// </summary>
+        public readonly int X;
+
+        /// <summary>
+        /// The y coordinate.
+        /// </summary>
+        public readonly int Y;
+
         private const int HASH_CODE_INITIAL = 73;
         private const int HASH_CODE_MULTIPLIER = 101;
-
-        private int x;
-        private int y;
 
         /// <summary>
         /// Creates a new instance.
         /// </summary>
         /// <param name="x">X-coordinate.</param>
         /// <param name="y">Y-coordinate.</param>
-        public Vector2DInteger(int x, int y)
+        public IntVector2(int x, int y)
         {
-            this.x = x;
-            this.y = y;
+            this.X = x;
+            this.Y = y;
         }
 
         /// <summary>
         /// Creates a new instance from a floating point vector, rounding down the composants to integer values.
         /// </summary>
         /// <param name="vector">The vector to copy values from.</param>
-        public Vector2DInteger(Vector2 vector)
+        public IntVector2(Vector2 vector)
         {
-            this.x = (int)vector.X;
-            this.y = (int)vector.Y;
+            this.X = (int)vector.X;
+            this.Y = (int)vector.Y;
         }
 
         /// <summary>
         /// Gets a vector with all composant set to 1.
         /// </summary>
-        public static Vector2DInteger One
+        public static IntVector2 One
         {
-            get { return new Vector2DInteger(1, 1); }
+            get { return new IntVector2(1, 1); }
         }
 
         /// <summary>
         /// Gets a vector with all composant set to 0.
         /// </summary>
-        public static Vector2DInteger Zero
+        public static IntVector2 Zero
         {
-            get { return new Vector2DInteger(0, 0); }
+            get { return new IntVector2(0, 0); }
         }
 
         /// <summary>
-        /// X-coordinate.
+        /// Operator for subtraction with another <see cref="IntVector2"/>.
         /// </summary>
-        public int X
+        /// <param name="a">Left operand.</param>
+        /// <param name="b">Right operand.</param>
+        /// <returns>Added result.</returns>
+        public static IntVector2 operator -(IntVector2 a, IntVector2 b)
         {
-            get { return this.x; }
-        }
-
-        /// <summary>
-        /// Y-coordinate.
-        /// </summary>
-        public int Y
-        {
-            get { return this.y; }
+            return new IntVector2(a.X - b.X, a.Y - b.Y);
         }
 
         /// <summary>
@@ -76,7 +77,7 @@
         /// <param name="a">Left operand.</param>
         /// <param name="b">Right operand.</param>
         /// <returns>True if not equal, else false.</returns>
-        public static bool operator !=(Vector2DInteger a, Vector2DInteger b)
+        public static bool operator !=(IntVector2 a, IntVector2 b)
         {
             return a.X != b.X || a.Y != b.Y;
         }
@@ -87,9 +88,9 @@
         /// <param name="a">Left operand.</param>
         /// <param name="b">Right operand.</param>
         /// <returns>Multiplied result.</returns>
-        public static Vector2DInteger operator *(Vector2DInteger a, int b)
+        public static IntVector2 operator *(IntVector2 a, int b)
         {
-            return new Vector2DInteger(a.X * b, a.Y * b);
+            return new IntVector2(a.X * b, a.Y * b);
         }
 
         /// <summary>
@@ -98,31 +99,9 @@
         /// <param name="a">Left operand.</param>
         /// <param name="b">Right operand.</param>
         /// <returns>Multiplied result.</returns>
-        public static Vector2DInteger operator *(int b, Vector2DInteger a)
+        public static IntVector2 operator *(int b, IntVector2 a)
         {
-            return new Vector2DInteger(a.X * b, a.Y * b);
-        }
-
-        /// <summary>
-        /// Operator for addition with another <see cref="Vector2DInteger"/>.
-        /// </summary>
-        /// <param name="a">Left operand.</param>
-        /// <param name="b">Right operand.</param>
-        /// <returns>Added result.</returns>
-        public static Vector2DInteger operator +(Vector2DInteger a, Vector2DInteger b)
-        {
-            return new Vector2DInteger(a.X + b.X, a.Y + b.Y);
-        }
-
-        /// <summary>
-        /// Operator for subtraction with another <see cref="Vector2DInteger"/>.
-        /// </summary>
-        /// <param name="a">Left operand.</param>
-        /// <param name="b">Right operand.</param>
-        /// <returns>Added result.</returns>
-        public static Vector2DInteger operator -(Vector2DInteger a, Vector2DInteger b)
-        {
-            return new Vector2DInteger(a.X - b.X, a.Y - b.Y);
+            return new IntVector2(a.X * b, a.Y * b);
         }
 
         /// <summary>
@@ -131,9 +110,20 @@
         /// <param name="a">Left operand.</param>
         /// <param name="b">Right operand.</param>
         /// <returns>Divided result.</returns>
-        public static Vector2DInteger operator /(Vector2DInteger a, int b)
+        public static IntVector2 operator /(IntVector2 a, int b)
         {
-            return new Vector2DInteger(a.X / b, a.Y / b);
+            return new IntVector2(a.X / b, a.Y / b);
+        }
+
+        /// <summary>
+        /// Operator for addition with another <see cref="IntVector2"/>.
+        /// </summary>
+        /// <param name="a">Left operand.</param>
+        /// <param name="b">Right operand.</param>
+        /// <returns>Added result.</returns>
+        public static IntVector2 operator +(IntVector2 a, IntVector2 b)
+        {
+            return new IntVector2(a.X + b.X, a.Y + b.Y);
         }
 
         /// <summary>
@@ -142,31 +132,31 @@
         /// <param name="a">Left operand.</param>
         /// <param name="b">Right operand.</param>
         /// <returns>True if equal, else false.</returns>
-        public static bool operator ==(Vector2DInteger a, Vector2DInteger b)
+        public static bool operator ==(IntVector2 a, IntVector2 b)
         {
             return a.X == b.X && a.Y == b.Y;
         }
 
         /// <summary>
-        /// Returns whether the <see cref="Vector2DInteger"/> is equal to the provided object.
+        /// Returns whether the <see cref="IntVector2"/> is equal to the provided object.
         /// </summary>
         /// <param name="obj">The object to compare with.</param>
         /// <returns>True if they are equal, else false.</returns>
         public override bool Equals(object obj)
         {
-            if(obj is Vector2DInteger)
+            if (obj is IntVector2)
             {
-                return this == (Vector2DInteger)obj;
+                return this == (IntVector2)obj;
             }
             return false;
         }
 
         /// <summary>
-        /// Returns equality to another <see cref="Vector2DInteger"/>.
+        /// Returns equality to another <see cref="IntVector2"/>.
         /// </summary>
-        /// <param name="other">Another <see cref="Vector2DInteger"/>.</param>
+        /// <param name="other">Another <see cref="IntVector2"/>.</param>
         /// <returns>True if equal, else false.</returns>
-        public bool Equals(Vector2DInteger other)
+        public bool Equals(IntVector2 other)
         {
             return this == other;
         }
@@ -179,9 +169,9 @@
         {
             unchecked
             {
-                int hash = Vector2DInteger.HASH_CODE_INITIAL;
-                hash = hash * Vector2DInteger.HASH_CODE_MULTIPLIER + this.X;
-                hash = hash * Vector2DInteger.HASH_CODE_MULTIPLIER + this.Y;
+                int hash = IntVector2.HASH_CODE_INITIAL;
+                hash = hash * IntVector2.HASH_CODE_MULTIPLIER + this.X;
+                hash = hash * IntVector2.HASH_CODE_MULTIPLIER + this.Y;
                 return hash;
             }
         }
@@ -225,6 +215,27 @@
         public Vector2 ToVector2()
         {
             return new Vector2(this.X, this.Y);
+        }
+
+        /// <summary>
+        /// Translates with the specified delta.
+        /// </summary>
+        /// <param name="dx">The x translation.</param>
+        /// <param name="dy">The y translation.</param>
+        /// <returns></returns>
+        public IntVector2 Translate(int dx, int dy)
+        {
+            return new IntVector2(this.X + dx, this.Y + dy);
+        }
+
+        /// <summary>
+        /// Translates with the specified delta.
+        /// </summary>
+        /// <param name="delta">The delta.</param>
+        /// <returns></returns>
+        public IntVector2 Translate(IntVector2 delta)
+        {
+            return new IntVector2(this.X + delta.X, this.Y + delta.Y);
         }
     }
 }

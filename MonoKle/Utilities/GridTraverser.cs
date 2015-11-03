@@ -6,12 +6,13 @@
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Runtime.CompilerServices;
 
     /// <summary>
     /// Helper class for traversing grids between arbitrary points, providing the tiles traversed inbetween.
     /// </summary>
     /// <remarks>
-    /// Based on the paper by Woo & Amanatides (1987) http://www.cse.yorku.ca/~amana/research/grid.pdf
+    /// Based on the paper by Woo and Amanatides (1987) http://www.cse.yorku.ca/~amana/research/grid.pdf
     /// </remarks>
     public class GridTraverser
     {
@@ -53,9 +54,9 @@
         /// </summary>
         public class Enumerable : IEnumerable<IntVector2>
         {
-            private GridTraverser traverser;
-            private Vector2 start;
             private Vector2 end;
+            private Vector2 start;
+            private GridTraverser traverser;
 
             internal Enumerable(GridTraverser traverser, Vector2 start, Vector2 end)
             {
@@ -85,26 +86,20 @@
             /// </summary>
             public class Enumerator : IEnumerator<IntVector2>
             {
-                private Enumerable e;
-
-                private float dx;
-                private float tDeltaX;
-                private float tMaxX;
-
-                private float dy;
-                private float tDeltaY;
-                private float tMaxY;
-
-                private int stepX;
-                private int stepY;
-
                 private int currentX;
                 private int currentY;
-
+                private float dx;
+                private float dy;
+                private Enumerable e;
                 private IntVector2 endPoint;
-
                 private bool first;
                 private bool over;
+                private int stepX;
+                private int stepY;
+                private float tDeltaX;
+                private float tDeltaY;
+                private float tMaxX;
+                private float tMaxY;
 
                 internal Enumerator(Enumerable e)
                 {
@@ -129,6 +124,11 @@
                 public IntVector2 Current
                 {
                     get { return new IntVector2(this.currentX, this.currentY); }
+                }
+
+                object IEnumerator.Current
+                {
+                    get { return this.Current; }
                 }
 
                 /// <summary>
@@ -177,19 +177,19 @@
                 {
                     if (this.stepX >= 0)
                     {
-                        this.tMaxX = this.tDeltaX * (1.0f - Frac(e.start.X / e.traverser.cellSize));
+                        this.tMaxX = this.tDeltaX * (1.0f - this.Frac(e.start.X / e.traverser.cellSize));
                     }
                     else
                     {
-                        this.tMaxX = this.tDeltaX * (Frac(e.start.X / e.traverser.cellSize));
+                        this.tMaxX = this.tDeltaX * (this.Frac(e.start.X / e.traverser.cellSize));
                     }
                     if (this.stepY >= 0)
                     {
-                        this.tMaxY = this.tDeltaY * (1.0f - Frac(e.start.Y / e.traverser.cellSize));
+                        this.tMaxY = this.tDeltaY * (1.0f - this.Frac(e.start.Y / e.traverser.cellSize));
                     }
                     else
                     {
-                        this.tMaxY = this.tDeltaY * (Frac(e.start.Y / e.traverser.cellSize));
+                        this.tMaxY = this.tDeltaY * (this.Frac(e.start.Y / e.traverser.cellSize));
                     }
                     this.currentX = (int)(this.e.start.X / this.e.traverser.cellSize);
                     this.currentY = (int)(this.e.start.Y / this.e.traverser.cellSize);
@@ -197,11 +197,7 @@
                     this.over = false;
                 }
 
-                object IEnumerator.Current
-                {
-                    get { return this.Current; }
-                }
-
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 private float Frac(float value)
                 {
                     return value - (int)value;

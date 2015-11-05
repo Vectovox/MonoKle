@@ -6,6 +6,7 @@
 //    using System.Text;
 //    using System.Threading.Tasks;
 
+        //[Serializable()]
 //    public struct MVector3
 //    {
 //        // TODO: Fill in

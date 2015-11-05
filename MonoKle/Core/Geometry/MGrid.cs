@@ -8,8 +8,9 @@
     using System.Runtime.CompilerServices;
 
     /// <summary>
-    /// Class representing a grid with accompanying operations.
+    /// Class representing a serializable grid with accompanying operations.
     /// </summary>
+    [Serializable()]
     public class MGrid
     {
         private float cellSize;

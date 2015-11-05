@@ -36,6 +36,16 @@
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="MVector2"/> struct, with both components set to the provided value.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        public MVector2(float value)
+        {
+            this.X = value;
+            this.Y = value;
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="MVector2"/> struct.
         /// </summary>
         /// <param name="point">The point to intialize from.</param>

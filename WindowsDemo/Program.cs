@@ -1,5 +1,6 @@
 ﻿#region Using Statements
 using MonoKle;
+using MonoKle.Core.Geometry;
 using System;
 
 #endregion
@@ -22,7 +23,7 @@ namespace WindowsDemo
                 MonoKleGame.StateManager.AddState(new DemoStateOne());
                 MonoKleGame.StateManager.AddState(new DemoStateTwo());
                 MonoKleGame.StateManager.SwitchState("stateOne", null);
-                MonoKleGame.GraphicsManager.SetScreenSize(new MonoKle.Core.IntVector2(800, 600));
+                MonoKleGame.GraphicsManager.SetScreenSize(new MPoint2(800, 600));
                 game.Run();
             }
         }

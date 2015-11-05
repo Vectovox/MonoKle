@@ -73,15 +73,15 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Core\IntAreaTest.cs" />
+    <Compile Include="Core\Geometry\IntAreaTest.cs" />
+    <Compile Include="Core\Geometry\MCircleTest.cs" />
     <Compile Include="Core\TimerTest.cs" />
-    <Compile Include="Core\AreaTest.cs" />
-    <Compile Include="Core\IntVector3Test.cs" />
-    <Compile Include="Core\IntVector2Test.cs" />
+    <Compile Include="Core\Geometry\AreaTest.cs" />
+    <Compile Include="Core\Geometry\MPoint2Test.cs" />
+    <Compile Include="Core\Geometry\MVector2Test.cs" />
     <Compile Include="IO\StreamStructReaderWriterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utilities\GridTraverserTest.cs" />
-    <Compile Include="Utilities\ProximityHelperTest.cs" />
+    <Compile Include="Core\Geometry\GridTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MonoKle\MonoKle.csproj">

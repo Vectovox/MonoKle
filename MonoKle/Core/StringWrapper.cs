@@ -1,4 +1,4 @@
-﻿namespace MonoKle.Utilities
+﻿namespace MonoKle.Core
 {
     using MonoKle.Assets.Font;
 

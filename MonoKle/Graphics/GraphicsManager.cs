@@ -3,7 +3,7 @@
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
 
-    using MonoKle.Core;
+    using Core.Geometry;
     using MonoKle.Graphics.Event;
 
     /// <summary>
@@ -24,7 +24,7 @@
         /// <summary>
         /// Gets the current screen center.
         /// </summary>
-        public IntVector2 ScreenCenter
+        public MPoint2 ScreenCenter
         {
             get; private set;
         }
@@ -32,7 +32,7 @@
         /// <summary>
         /// Gets the current screen size.
         /// </summary>
-        public IntVector2 ScreenSize
+        public MPoint2 ScreenSize
         {
             get; private set;
         }
@@ -42,7 +42,7 @@
             return graphicsDeviceManager.GraphicsDevice;
         }
 
-        public void SetScreenSize(IntVector2 size)
+        public void SetScreenSize(MPoint2 size)
         {
             this.graphicsDeviceManager.PreferredBackBufferWidth = size.X;
             this.graphicsDeviceManager.PreferredBackBufferHeight = size.Y;
@@ -52,7 +52,7 @@
             this.OnScreenSizeChanged(size);
         }
 
-        private void OnScreenSizeChanged(IntVector2 newScreenSize)
+        private void OnScreenSizeChanged(MPoint2 newScreenSize)
         {
             var v = this.ScreenSizeChanged;
             if(v != null)
@@ -79,7 +79,7 @@
         // TODO: PreparingDeviceSettings does only fire the first time applychanges is called (or maybe only before game started).
         private void PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
         {
-            this.SetScreenSize(new IntVector2(e.GraphicsDeviceInformation.PresentationParameters.BackBufferWidth, e.GraphicsDeviceInformation.PresentationParameters.BackBufferHeight));
+            this.SetScreenSize(new MPoint2(e.GraphicsDeviceInformation.PresentationParameters.BackBufferWidth, e.GraphicsDeviceInformation.PresentationParameters.BackBufferHeight));
             //Vector2DInteger value = new Vector2DInteger(
             //        e.GraphicsDeviceInformation.PresentationParameters.BackBufferWidth,
             //        e.GraphicsDeviceInformation.PresentationParameters.BackBufferHeight

@@ -1,6 +1,6 @@
 ﻿namespace MonoKle.Graphics.Event
 {
-    using MonoKle.Core;
+    using Core.Geometry;
     using System;
 
     /// <summary>
@@ -12,7 +12,7 @@
         /// Creates a new instance of <see cref="ScreenSizeChangedEventArgs"/>.
         /// </summary>
         /// <param name="newScreenSize">The new screen size.</param>
-        public ScreenSizeChangedEventArgs(IntVector2 newScreenSize)
+        public ScreenSizeChangedEventArgs(MPoint2 newScreenSize)
         {
             this.NewScreenSize = newScreenSize;
         }
@@ -20,7 +20,7 @@
         /// <summary>
         /// The new screen size.
         /// </summary>
-        public IntVector2 NewScreenSize
+        public MPoint2 NewScreenSize
         {
             get;
             private set;

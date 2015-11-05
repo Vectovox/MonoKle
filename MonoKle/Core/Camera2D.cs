@@ -3,6 +3,7 @@
     using System;
 
     using Microsoft.Xna.Framework;
+    using Geometry;
 
     /// <summary>
     /// Serializable class representing a 2D environment camera providing transformation capabilities.
@@ -16,18 +17,18 @@
         private float desiredScale;
         private float desiredScaleSpeed = 0;
         private bool matrixNeedsUpdate = true;
-        private Vector2 position;
+        private MVector2 position;
         private float rotation;
         private float scale = 1f;
-        private IntVector2 size;
+        private MPoint2 size;
         private Matrix transformMatrix;
         private Matrix transformMatrixInv;
 
         /// <summary>
         /// Initiates a new instance of <see cref="Camera2D"/>.
         /// </summary>
-        /// <param name="size">The <see cref="IntVector2"/> represenetation of the camera size.</param>
-        public Camera2D(IntVector2 size)
+        /// <param name="size">The <see cref="MPoint2"/> represenetation of the camera size.</param>
+        public Camera2D(MPoint2 size)
         {
             this.size = size;
         }
@@ -35,7 +36,7 @@
         /// <summary>
         /// Gets the size of the camera. 
         /// </summary>
-        public IntVector2 Size
+        public MPoint2 Size
         {
             get { return size; }
             set { size = value; matrixNeedsUpdate = true; }
@@ -162,7 +163,7 @@
         /// </summary>
         /// <param name="coordinate">The coordinate to transform.</param>
         /// <returns>Transformed coordinate.</returns>
-        public Vector2 TransformInv(Vector2 coordinate)
+        public Vector2 TransformInv(MVector2 coordinate)
         {
             return Vector2.Transform(coordinate, transformMatrixInv);
         }
@@ -187,7 +188,7 @@
 
             if(this.matrixNeedsUpdate)
             {
-                Vector2 center = size.ToVector2() * 0.5f;
+                MVector2 center = size.ToMVector2() * 0.5f;
                 this.transformMatrix = Matrix.CreateTranslation(-new Vector3(position - center, 0f))
                 * Matrix.CreateTranslation(-new Vector3(center, 0f))
                 * Matrix.CreateRotationZ(-rotation)

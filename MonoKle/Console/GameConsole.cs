@@ -11,7 +11,7 @@
     using MonoKle.Core;
     using MonoKle.Logging;
     using MonoKle.Messaging;
-    using MonoKle.Utilities;
+    using MonoKle.Core;
 
     /// <summary>
     /// Class that maintains and displays a console.

@@ -53,12 +53,14 @@
     <Compile Include="Assets\Font\FontSerialization.cs" />
     <Compile Include="Assets\TextureManager.cs" />
     <Compile Include="Console\GameConsole.cs" />
-    <Compile Include="Core\IntArea.cs" />
+    <Compile Include="Core\Geometry\MCircle.cs" />
+    <Compile Include="Core\Geometry\MVector2.cs" />
+    <Compile Include="Core\Geometry\MRectangleInt.cs" />
     <Compile Include="Core\Camera2D.cs" />
-    <Compile Include="Core\Area.cs" />
+    <Compile Include="Core\Geometry\MRectangle.cs" />
+    <Compile Include="Core\Geometry\MVector3.cs" />
     <Compile Include="Core\Timer.cs" />
-    <Compile Include="Core\IntVector2.cs" />
-    <Compile Include="Core\IntVector3.cs" />
+    <Compile Include="Core\Geometry\MPoint2.cs" />
     <Compile Include="Graphics\Primitives\AbstractPrimitiveBatch.cs" />
     <Compile Include="Graphics\Event\ScreenSizeChangedEventArgs.cs" />
     <Compile Include="Graphics\Primitives\IPrimitiveBatch.cs" />
@@ -107,9 +109,8 @@
     <Compile Include="State\GameState.cs" />
     <Compile Include="State\StateSwitchData.cs" />
     <Compile Include="State\StateManager.cs" />
-    <Compile Include="Utilities\GridTraverser.cs" />
-    <Compile Include="Utilities\ProximityHelper.cs" />
-    <Compile Include="Utilities\StringWrapper.cs" />
+    <Compile Include="Core\Geometry\MGrid.cs" />
+    <Compile Include="Core\StringWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="OpenTK">

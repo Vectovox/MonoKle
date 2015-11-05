@@ -1,7 +1,6 @@
-﻿namespace MonoKle.Utilities
+﻿namespace MonoKle.Core.Geometry
 {
     using Microsoft.Xna.Framework;
-    using MonoKle.Core;
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -9,56 +8,102 @@
     using System.Runtime.CompilerServices;
 
     /// <summary>
-    /// Helper class for traversing grids between arbitrary points, providing the tiles traversed inbetween.
+    /// Class representing a grid with accompanying operations.
     /// </summary>
-    /// <remarks>
-    /// Based on the paper by Woo and Amanatides (1987) http://www.cse.yorku.ca/~amana/research/grid.pdf
-    /// </remarks>
-    public class GridTraverser
+    public class MGrid
     {
         private float cellSize;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GridTraverser"/> class.
+        /// Initializes a new instance of the <see cref="MGrid"/> class.
         /// </summary>
         /// <param name="cellSize">Size of the cells.</param>
-        public GridTraverser(float cellSize)
+        public MGrid(float cellSize)
         {
             this.cellSize = cellSize;
         }
 
         /// <summary>
-        /// Traverses all the cells and returns a list of them.
+        /// Gets the size of the cells.
         /// </summary>
-        /// <param name="start">The start coordinate.</param>
-        /// <param name="end">The end coordinate.</param>
-        /// <returns>List of traversed cells.</returns>
-        public List<IntVector2> TraverseAll(Vector2 start, Vector2 end)
+        /// <value>
+        /// The size of the cells.
+        /// </value>
+        public float CellSize => cellSize;
+
+        /// <summary>
+        /// Returns the cell containing the provided point.
+        /// </summary>
+        /// <param name="point">The provided point.</param>
+        /// <returns>Cell containing the provided point.</returns>
+        public MPoint2 CellFromPoint(MVector2 point) =>
+            new MPoint2((int)(point.X / this.cellSize) + (point.X > 0 ? 0 : -1),
+                (int)(point.Y / this.cellSize) + (point.Y > 0 ? 0 : -1));
+
+        /// <summary>
+        /// Returns the bounding rectangle of the provided cell.
+        /// </summary>
+        /// <param name="cell">The cell.</param>
+        /// <returns>Bounding area.</returns>
+        public MRectangle CellRectangle(MPoint2 cell) => new MRectangle(cell.X * this.cellSize, cell.Y * this.cellSize, this.cellSize, this.cellSize);
+
+        /// <summary>
+        /// Returns all the cells containing the provided circle.
+        /// </summary>
+        /// <param name="circle">The circle.</param>
+        /// <returns>List of cells.</returns>
+        public List<MPoint2> CellsFromCircle(MCircle circle)
         {
-            return this.TraverseIteratively(start, end).ToList();
+            List<MPoint2> cellList = new List<MPoint2>();
+            MRectangleInt circleBox = new MRectangleInt(
+                this.CellFromPoint(new MVector2(circle.Origin.X - circle.Radius, circle.Origin.Y - circle.Radius)),
+                this.CellFromPoint(new MVector2(circle.Origin.X + circle.Radius, circle.Origin.Y + circle.Radius))
+                );
+
+            for (int x = circleBox.Left; x <= circleBox.Right; x++)
+            {
+                for (int y = circleBox.Top; y <= circleBox.Bottom; y++)
+                {
+                    MPoint2 point = new MPoint2(x, y);
+                    if (circle.Intersects(this.CellRectangle(point)))
+                    {
+                        cellList.Add(point);
+                    }
+                }
+            }
+
+            return cellList;
         }
 
         /// <summary>
-        /// Traverses iteratively by returning an enumerable type.
+        /// Returns all the cells containing the provided line. Cells are in order of occurance.
         /// </summary>
-        /// <param name="start">The start coordinate.</param>
-        /// <param name="end">The end coordinate.</param>
+        /// <param name="lineStart">The start coordinate of the line.</param>
+        /// <param name="lineEnd">The end coordinate of the line.</param>
+        /// <returns>List of cells.</returns>
+        public List<MPoint2> CellsFromLine(MVector2 lineStart, MVector2 lineEnd) => this.TraverseLine(lineStart, lineEnd).ToList();
+
+        /// <summary>
+        /// Returns an <see cref="IEnumerable{MPoint2}"/> for iteratively traversing the cells containing the provided line.
+        /// </summary>
+        /// <param name="lineStart">The start coordinate.</param>
+        /// <param name="lineEnd">The end coordinate.</param>
         /// <returns>Enumerable type.</returns>
-        public Enumerable TraverseIteratively(Vector2 start, Vector2 end)
-        {
-            return new Enumerable(this, start, end);
-        }
+        /// <remarks>
+        /// Based on the paper by Woo and Amanatides (1987) http://www.cse.yorku.ca/~amana/research/grid.pdf
+        /// </remarks>
+        public IEnumerable<MPoint2> TraverseLine(MVector2 lineStart, MVector2 lineEnd) => new LineEnumerable(this, lineStart, lineEnd);
 
         /// <summary>
         /// Enumerable
         /// </summary>
-        public class Enumerable : IEnumerable<IntVector2>
+        public class LineEnumerable : IEnumerable<MPoint2>
         {
             private Vector2 end;
             private Vector2 start;
-            private GridTraverser traverser;
+            private MGrid traverser;
 
-            internal Enumerable(GridTraverser traverser, Vector2 start, Vector2 end)
+            internal LineEnumerable(MGrid traverser, MVector2 start, MVector2 end)
             {
                 this.traverser = traverser;
                 this.start = start;
@@ -71,9 +116,9 @@
             /// <returns>
             /// A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the collection.
             /// </returns>
-            public IEnumerator<IntVector2> GetEnumerator()
+            public IEnumerator<MPoint2> GetEnumerator()
             {
-                return new Enumerator(this);
+                return new LineEnumerator(this);
             }
 
             IEnumerator IEnumerable.GetEnumerator()
@@ -84,14 +129,14 @@
             /// <summary>
             /// Enumerator
             /// </summary>
-            public class Enumerator : IEnumerator<IntVector2>
+            public class LineEnumerator : IEnumerator<MPoint2>
             {
                 private int currentX;
                 private int currentY;
                 private float dx;
                 private float dy;
-                private Enumerable e;
-                private IntVector2 endPoint;
+                private LineEnumerable e;
+                private MPoint2 endPoint;
                 private bool first;
                 private bool over;
                 private int stepX;
@@ -101,7 +146,7 @@
                 private float tMaxX;
                 private float tMaxY;
 
-                internal Enumerator(Enumerable e)
+                internal LineEnumerator(LineEnumerable e)
                 {
                     this.e = e;
 
@@ -113,7 +158,7 @@
                     this.stepY = dy > 0 ? 1 : -1;
                     this.tDeltaY = e.traverser.cellSize / dy;
 
-                    this.endPoint = new IntVector2(this.e.end / this.e.traverser.cellSize);
+                    this.endPoint = new MPoint2(this.e.end / this.e.traverser.cellSize);
 
                     this.Reset();
                 }
@@ -121,9 +166,9 @@
                 /// <summary>
                 /// Gets the element in the collection at the current position of the enumerator.
                 /// </summary>
-                public IntVector2 Current
+                public MPoint2 Current
                 {
-                    get { return new IntVector2(this.currentX, this.currentY); }
+                    get { return new MPoint2(this.currentX, this.currentY); }
                 }
 
                 object IEnumerator.Current

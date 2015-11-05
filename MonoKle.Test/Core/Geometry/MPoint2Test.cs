@@ -1,25 +1,22 @@
-﻿namespace MonoKle.Core.Test
+﻿namespace MonoKle.Core.Geometry
 {
-    using System;
-
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Microsoft.Xna.Framework;
-
-    using MonoKle.Core;
+    using System;
 
     [TestClass]
-    public class IntVector2Test
+    public class MPoint2Test
     {
         [TestMethod]
         public void TestConstructors()
         {
             int x = 27, y = -39;
-            IntVector2 v = new IntVector2(x, y);
+            MPoint2 v = new MPoint2(x, y);
             Assert.AreEqual(v.X, x);
             Assert.AreEqual(v.Y, y);
 
             Vector2 xy = new Vector2(-57.28f, 23f);
-            IntVector2 v2 = new IntVector2(xy);
+            MPoint2 v2 = new MPoint2(xy);
             Assert.AreEqual(v2.X, (int)xy.X);
             Assert.AreEqual(v2.Y, (int)xy.Y);
         }
@@ -27,9 +24,9 @@
         [TestMethod]
         public void TestEqualsObject()
         {
-            IntVector2 a = new IntVector2(5, 7);
-            IntVector2 b = new IntVector2(5, 7);
-            IntVector2 c = new IntVector2(4, 7);
+            MPoint2 a = new MPoint2(5, 7);
+            MPoint2 b = new MPoint2(5, 7);
+            MPoint2 c = new MPoint2(4, 7);
             Assert.IsTrue(a.Equals((object)b));
             Assert.IsFalse(a.Equals((object)c));
         }
@@ -37,9 +34,9 @@
         [TestMethod]
         public void TestEqualsVector()
         {
-            IntVector2 a = new IntVector2(5, 7);
-            IntVector2 b = new IntVector2(5, 7);
-            IntVector2 c = new IntVector2(4, 7);
+            MPoint2 a = new MPoint2(5, 7);
+            MPoint2 b = new MPoint2(5, 7);
+            MPoint2 c = new MPoint2(4, 7);
             Assert.IsTrue(a.Equals(b));
             Assert.IsFalse(a.Equals(c));
         }
@@ -48,81 +45,81 @@
         public void TestLength()
         {
             int x = 3, y = -7;
-            Assert.AreEqual(Math.Abs(x), new IntVector2(x, 0).Length());
-            Assert.AreEqual(Math.Abs(y), new IntVector2(0, y).Length());
-            Assert.AreEqual(Math.Sqrt(x * x + y * y), new IntVector2(x, y).Length());
+            Assert.AreEqual(Math.Abs(x), new MPoint2(x, 0).Length());
+            Assert.AreEqual(Math.Abs(y), new MPoint2(0, y).Length());
+            Assert.AreEqual(Math.Sqrt(x * x + y * y), new MPoint2(x, y).Length());
         }
 
         [TestMethod]
         public void TestLengthSquared()
         {
-            IntVector2 v = new IntVector2(23, -19);
+            MPoint2 v = new MPoint2(23, -19);
             Assert.AreEqual(v.Length(), Math.Sqrt(v.LengthSquared()));
         }
 
         [TestMethod]
         public void TestOne()
         {
-            Assert.AreEqual(IntVector2.One, new IntVector2(1, 1));
+            Assert.AreEqual(MPoint2.One, new MPoint2(1, 1));
         }
 
         [TestMethod]
         public void TestOperatorDivide()
         {
-            Assert.AreEqual(new IntVector2(3, 2), new IntVector2(15, 10) / 5);
+            Assert.AreEqual(new MPoint2(3, 2), new MPoint2(15, 10) / 5);
         }
 
         [TestMethod]
         public void TestOperatorEquals()
         {
-            Assert.IsTrue(new IntVector2(3, 2) == new IntVector2(3, 2));
+            Assert.IsTrue(new MPoint2(3, 2) == new MPoint2(3, 2));
         }
 
         [TestMethod]
         public void TestOperatorMinus()
         {
-            Assert.AreEqual(new IntVector2(-1, 10), new IntVector2(1, 3) - new IntVector2(2, -7));
+            Assert.AreEqual(new MPoint2(-1, 10), new MPoint2(1, 3) - new MPoint2(2, -7));
         }
 
         [TestMethod]
         public void TestOperatorMultiply()
         {
-            Assert.AreEqual(new IntVector2(5, 15), new IntVector2(1, 3) * 5);
-            Assert.AreEqual(new IntVector2(1, 3) * 5, 5 * new IntVector2(1, 3));
+            Assert.AreEqual(new MPoint2(5, 15), new MPoint2(1, 3) * 5);
+            Assert.AreEqual(new MPoint2(1, 3) * 5, 5 * new MPoint2(1, 3));
         }
 
         [TestMethod]
         public void TestOperatorNotEquals()
         {
-            Assert.IsTrue(new IntVector2(1, 3) != new IntVector2(1, 4));
+            Assert.IsTrue(new MPoint2(1, 3) != new MPoint2(1, 4));
         }
 
         [TestMethod]
         public void TestOperatorPlus()
         {
-            Assert.AreEqual(new IntVector2(3, -4), new IntVector2(1, 3) + new IntVector2(2, -7));
+            Assert.AreEqual(new MPoint2(3, -4), new MPoint2(1, 3) + new MPoint2(2, -7));
         }
 
         [TestMethod]
-        public void TestToVector2()
+        public void TestToMVector2()
         {
             int x = 23, y = -19;
-            IntVector2 v = new IntVector2(x, y);
-            Assert.AreEqual(new Vector2(x, y), v.ToVector2());
+            MPoint2 v = new MPoint2(x, y);
+            Assert.AreEqual(new MVector2(x, y), v.ToMVector2());
         }
 
         [TestMethod]
         public void TestZero()
         {
-            Assert.AreEqual(IntVector2.Zero, new IntVector2(0, 0));
+            Assert.AreEqual(MPoint2.Zero, new MPoint2(0, 0));
         }
 
         [TestMethod]
         public void TestTranslate()
         {
-            IntVector2 orig = new IntVector2(-2, -3);
-            Assert.AreEqual(orig, new IntVector2(2, 3).Translate(-4, -6));
-            Assert.AreEqual(orig.Translate(new IntVector2(1, -2)), orig.Translate(1, -2));
+            MPoint2 orig = new MPoint2(-2, -3);
+            Assert.AreEqual(orig, new MPoint2(2, 3).Translate(-4, -6));
+            Assert.AreEqual(orig.Translate(new MPoint2(1, -2)), orig.Translate(1, -2));
         }
     }
 }

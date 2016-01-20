@@ -157,54 +157,55 @@
         /// <returns></returns>
         public MVector2 SeparationVector(MRectangle rectangle)
         {
-            if(this.Intersects(rectangle))
+            MVector2 left = new MVector2(rectangle.TopLeft.X - (this.Origin.X + this.Radius), 0);
+            MVector2 right = new MVector2(rectangle.BottomRight.X - (this.Origin.X - this.Radius), 0);
+            MVector2 up = new MVector2(0, rectangle.TopLeft.Y - (this.Origin.Y + this.Radius));
+            MVector2 down = new MVector2(0, rectangle.BottomRight.Y - (this.Origin.Y - this.Radius));
+
+            if (left.X < 0 && right.X > 0 || up.Y < 0 && down.Y > 0)
             {
-                MVector2?[] translationArray = new MVector2?[5];
-                translationArray[0] = new MVector2(rectangle.Left - (this.Origin.X + this.Radius), 0);          // Left
-                translationArray[1] = new MVector2(rectangle.Right - (this.Origin.X - this.Radius), 0);         // Right
-                translationArray[2] = new MVector2(0, rectangle.Top - (this.Origin.Y + this.Radius));           // Up
-                translationArray[3] = new MVector2(0, rectangle.Bottom - (this.Origin.Y - this.Radius));        // Down
+                MVector2 shortest = new MVector2(float.MaxValue, float.MaxValue);
 
-                if(this.Origin.X < rectangle.Left && this.Origin.Y < rectangle.Top)
+                if (this.Origin.X < rectangle.Left && this.Origin.Y < rectangle.Top)
                 {
-                    translationArray[4] = this.SeparationVector(rectangle.TopLeft);                            // Top-left
+                    shortest = this.SeparationVector(rectangle.TopLeft);
+                }
+                else if (this.Origin.X > rectangle.Right && this.Origin.Y < rectangle.Top)
+                {
+                    shortest = this.SeparationVector(rectangle.TopRight);
+                }
+                else if (this.Origin.X < rectangle.Left && this.Origin.Y > rectangle.Bottom)
+                {
+                    shortest = this.SeparationVector(rectangle.BottomLeft);
+                }
+                else if (this.Origin.X > rectangle.Right && this.Origin.Y > rectangle.Bottom)
+                {
+                    shortest = this.SeparationVector(rectangle.BottomRight);
                 }
 
-                if (this.Origin.X > rectangle.Right && this.Origin.Y < rectangle.Top)
+                if (left.X < 0 && left.LengthSquared() < shortest.LengthSquared())
                 {
-                    translationArray[4] = this.SeparationVector(rectangle.TopRight);                           // Top-right
+                    shortest = left;
+                }
+                if (right.X > 0 && right.LengthSquared() < shortest.LengthSquared())
+                {
+                    shortest = right;
+                }
+                if (up.Y < 0 && up.LengthSquared() < shortest.LengthSquared())
+                {
+                    shortest = up;
+                }
+                if (down.Y > 0 && down.LengthSquared() < shortest.LengthSquared())
+                {
+                    shortest = down;
                 }
 
-                if (this.Origin.X < rectangle.Left && this.Origin.Y > rectangle.Bottom)
-                {
-                    translationArray[4] = this.SeparationVector(rectangle.BottomLeft);                         // Bottom-left
-                }
-
-                if (this.Origin.X > rectangle.Right && this.Origin.Y > rectangle.Bottom)
-                {
-                    translationArray[4] = this.SeparationVector(rectangle.BottomRight);                        // Bottom-right
-                }
-
-                MVector2? shortest = translationArray[0];
-                float length = shortest.Value.LengthSquared();
-
-                for (byte i = 1; i < 5; i++)
-                {
-                    if(translationArray[i] != null)
-                    {
-                        float nLength = translationArray[i].Value.LengthSquared();
-                        if(nLength < length)
-                        {
-                            shortest = translationArray[i].Value;
-                            length = nLength;
-                        }
-                    }
-                }
-
-                return shortest.Value;
+                return shortest;
             }
-
-            return MVector2.Zero;
+            else
+            {
+                return MVector2.Zero;
+            }
         }
 
         /// <summary>

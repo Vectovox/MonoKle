@@ -202,10 +202,8 @@
 
                 return shortest;
             }
-            else
-            {
-                return MVector2.Zero;
-            }
+
+            return MVector2.Zero;
         }
 
         /// <summary>

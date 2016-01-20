@@ -56,12 +56,9 @@
         }
 
         /// <summary>
-        /// Gets the absolute <see cref="MVector2"/>, both components being positive.
+        /// Gets the <see cref="MVector2"/> with both components being positive.
         /// </summary>
-        /// <value>
-        /// The absolute vector.
-        /// </value>
-        public MVector2 Absolute => new MVector2(Math.Abs(this.X), Math.Abs(this.Y));
+        public MVector2 AbsoluteComponents => new MVector2(Math.Abs(this.X), Math.Abs(this.Y));
 
         /// <summary>
         /// Gets the normalized <see cref="MVector2"/>.

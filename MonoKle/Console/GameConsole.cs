@@ -38,7 +38,8 @@
             this.TextColor = Color.White;
             this.TextScale = 0.5f;
             this.CursorToken = "_";
-            this.TabToken = "  ";
+            this.TabToken = ' ';
+            this.TabLength = 4;
             this.CommandToken = ">> ";
             // TODO: Break out all of these into either a settings struct or global script "variable"
             Logger.Global.LogAddedEvent += LogAdded;
@@ -125,13 +126,18 @@
             set;
         }
 
+        public int TabLength
+        {
+            get; set;
+        }
+
         /// <summary>
         /// Gets or sets the tab token.
         /// </summary>
         /// <value>
         /// The tab token.
         /// </value>
-        public string TabToken
+        public char TabToken
         {
             get; set;
         }
@@ -189,17 +195,35 @@
         /// <param name="line">The line to write.</param>
         public void WriteLine(string line)
         {
-            string formattedLine = line.Replace("\t", this.TabToken);
-            this.history.AddLast(formattedLine);
-            this.TrimHistory();
-        }
-
-        private void TrimHistory()
-        {
-            while (this.history.Count > this.Size)
+            StringBuilder sb = new StringBuilder();
+            int column = 0;
+            for (int i = 0; i < line.Length; i++)
             {
-                this.history.RemoveLast();
+                if (line[i] == '\t')
+                {
+                    int amnt = this.TabLength - (column % this.TabLength);
+                    for (int j = 0; j < amnt; j++)
+                    {
+                        sb.Append(this.TabToken);
+                        column++;
+                    }
+                }
+                else
+                {
+                    sb.Append(line[i]);
+                    if (line[i] == '\n')
+                    {
+                        column = 0;
+                    }
+                    else
+                    {
+                        column++;
+                    }
+                }
             }
+
+            this.history.AddLast(sb.ToString());
+            this.TrimHistory();
         }
 
         internal void Draw()
@@ -330,12 +354,19 @@
             this.Clear();
         }
 
+        private void CommandEcho(string[] arguments)
+        {
+            this.WriteLine(arguments[0]);
+        }
+
         private void CommandHelp(string[] arguments)
         {
             this.WriteLine("Listing availabe commands:");
+            this.WriteLine("\tCommand\t\tArguments");
+            this.WriteLine("============================");
             foreach (CommandBroker.Command c in this.CommandBroker.Commands)
             {
-                this.WriteLine("\t" + c.Name + "\t(" + c.ArgumentLength + ")");
+                this.WriteLine("\t" + c.Name + "\t\t" + c.ArgumentLength);
             }
         }
 
@@ -414,6 +445,15 @@
             this.CommandBroker = new CommandBroker();
             this.CommandBroker.Register("clear", this.CommandClear);
             this.CommandBroker.Register("help", this.CommandHelp);
+            this.CommandBroker.Register("echo", 1, this.CommandEcho);
+        }
+
+        private void TrimHistory()
+        {
+            while (this.history.Count > this.Size)
+            {
+                this.history.RemoveLast();
+            }
         }
     }
 }

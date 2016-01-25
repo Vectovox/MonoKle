@@ -42,52 +42,8 @@
             Logger.Global.LogAddedEvent += LogAdded;
             this.InputUpdateCurrentLine();
             Logger.Global.Log("GameConsole activated!", LogLevel.Info);
-            
+
             this.SetupBroker();
-        }
-
-        private void SetupBroker()
-        {
-            this.CommandBroker = new CommandBroker();
-            this.CommandBroker.Register("clear", this.CommandClear);
-            this.CommandBroker.Register("help", this.CommandHelp);
-        }
-
-        private void CommandHelp(string[] arguments)
-        {
-            this.WriteLine("Listing availabe commands:");
-            foreach(string c in this.CommandBroker.Commands)
-            {
-                this.WriteLine(this.TabToken + c);
-            }
-        }
-
-        private void CommandClear(string[] arguments)
-        {
-            this.Clear();
-        }
-
-        /// <summary>
-        /// Gets or sets the cursor token.
-        /// </summary>
-        /// <value>
-        /// The cursor token.
-        /// </value>
-        public string CursorToken
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets or sets the tab token.
-        /// </summary>
-        /// <value>
-        /// The tab token.
-        /// </value>
-        public string TabToken
-        {
-            get; set;
         }
 
         /// <summary>
@@ -97,18 +53,6 @@
         {
             get;
             set;
-        }
-
-        /// <summary>
-        /// Gets the command broker. Used for executing console commands.
-        /// </summary>
-        /// <value>
-        /// The command broker.
-        /// </value>
-        public CommandBroker CommandBroker
-        {
-            get;
-            private set;
         }
 
         /// <summary>
@@ -130,6 +74,38 @@
         }
 
         /// <summary>
+        /// Gets the command broker. Used for executing console commands.
+        /// </summary>
+        /// <value>
+        /// The command broker.
+        /// </value>
+        public CommandBroker CommandBroker
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets or sets the command token.
+        /// </summary>
+        /// <value>
+        /// The command token.
+        /// </value>
+        public string CommandToken { get; set; }
+
+        /// <summary>
+        /// Gets or sets the cursor token.
+        /// </summary>
+        /// <value>
+        /// The cursor token.
+        /// </value>
+        public string CursorToken
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Gets or sets wether the console is open.
         /// </summary>
         public bool IsOpen
@@ -145,6 +121,17 @@
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// Gets or sets the tab token.
+        /// </summary>
+        /// <value>
+        /// The tab token.
+        /// </value>
+        public string TabToken
+        {
+            get; set;
         }
 
         /// <summary>
@@ -187,6 +174,14 @@
         }
 
         /// <summary>
+        /// Clears all history.
+        /// </summary>
+        public void Clear()
+        {
+            this.history.Clear();
+        }
+
+        /// <summary>
         /// Writes the provided line.
         /// </summary>
         /// <param name="line">The line to write.</param>
@@ -197,14 +192,6 @@
             {
                 this.history.RemoveLast();
             }
-        }
-
-        /// <summary>
-        /// Clears all history.
-        /// </summary>
-        public void Clear()
-        {
-            this.history.Clear();
         }
 
         internal void Draw()
@@ -302,7 +289,7 @@
                 }
 
                 // Autocomplete
-                if(MonoKleGame.Keyboard.IsKeyPressed(Keys.Tab))
+                if (MonoKleGame.Keyboard.IsKeyPressed(Keys.Tab))
                 {
                     this.AutoComplete();
                 }
@@ -331,16 +318,18 @@
             }
         }
 
-        private string InputText()
+        private void CommandClear(string[] arguments)
         {
-            return this.currentLineBuilder.ToString();
+            this.Clear();
         }
 
-        private void InputSet(string text)
+        private void CommandHelp(string[] arguments)
         {
-            this.currentLineBuilder.Clear();
-            this.currentLineBuilder.Append(text);
-            this.InputUpdateCurrentLine();
+            this.WriteLine("Listing availabe commands:");
+            foreach (string c in this.CommandBroker.Commands)
+            {
+                this.WriteLine(this.TabToken + c);
+            }
         }
 
         private void InputAppend(char character)
@@ -370,6 +359,24 @@
             }
         }
 
+        private void InputSet(string text)
+        {
+            this.currentLineBuilder.Clear();
+            this.currentLineBuilder.Append(text);
+            this.InputUpdateCurrentLine();
+        }
+
+        private string InputText()
+        {
+            return this.currentLineBuilder.ToString();
+        }
+
+        private void InputUpdateCurrentLine()
+        {
+            this.currentLine = this.CommandToken + this.currentLineBuilder.ToString();
+            this.currentLineCursor = this.currentLine + this.CursorToken;
+        }
+
         private void LogAdded(object sender, LogAddedEventArgs e)
         {
             this.WriteLine(e.Log.ToString());
@@ -378,8 +385,8 @@
         private void SendCommand()
         {
             this.WriteLine(this.currentLine);
-            
-            string[] split = this.InputText().Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+
+            string[] split = this.InputText().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             if (split.Length > 0)
             {
                 string command = split[0];
@@ -395,18 +402,11 @@
             this.InputEraseAll();
         }
 
-        private void InputUpdateCurrentLine()
+        private void SetupBroker()
         {
-            this.currentLine = this.CommandToken + this.currentLineBuilder.ToString();
-            this.currentLineCursor = this.currentLine + this.CursorToken;
+            this.CommandBroker = new CommandBroker();
+            this.CommandBroker.Register("clear", this.CommandClear);
+            this.CommandBroker.Register("help", this.CommandHelp);
         }
-
-        /// <summary>
-        /// Gets or sets the command token.
-        /// </summary>
-        /// <value>
-        /// The command token.
-        /// </value>
-        public string CommandToken { get; set; }
     }
 }

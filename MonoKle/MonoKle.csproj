@@ -52,6 +52,8 @@
     <Compile Include="Assets\Font\FontManager.cs" />
     <Compile Include="Assets\Font\FontSerialization.cs" />
     <Compile Include="Assets\TextureManager.cs" />
+    <Compile Include="Console\CommandBroker.cs" />
+    <Compile Include="Console\ConsoleCommandHandler.cs" />
     <Compile Include="Console\GameConsole.cs" />
     <Compile Include="Core\Geometry\MCircle.cs" />
     <Compile Include="Core\Geometry\MVector2.cs" />

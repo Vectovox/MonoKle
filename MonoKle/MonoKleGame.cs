@@ -36,7 +36,6 @@
             MonoKleGame.GamePad = new GamePadInput();
             MonoKleGame.Keyboard = new KeyboardInput();
             MonoKleGame.MessagePasser = new MessagePasser();
-            MonoKleGame.MessagePasser.Subscribe(GameConsole.CHANNEL_ID, MonoKleGame_ConsoleCommand);
             MonoKleGame.Logger = Logger.Global;
             //MonoKleGame.ScriptInterface = new ScriptInterface();
             //MonoKleGame.ScriptInterface.CompilationError += HandleScriptCompilationError;
@@ -221,7 +220,7 @@
             MonoKleGame.TextureManager = new TextureManager(GraphicsManager.GetGraphicsDevice());
             MonoKleGame.FontManager = new FontManager(GraphicsManager.GetGraphicsDevice());
             MonoKleGame.EffectStorage = new EffectStorage(GraphicsManager.GetGraphicsDevice());
-            MonoKleGame.Console = new GameConsole(new Rectangle(0, 0, GraphicsManager.ScreenSize.X, GraphicsManager.ScreenSize.Y / 3), GraphicsManager.GetGraphicsDevice());    // TODO: Break out magic numbers into config file.
+            this.SetUpConsole();
             MonoKleGame.Mouse = new MouseInput(GraphicsManager.ScreenSize);
         }
 
@@ -244,44 +243,16 @@
             MonoKleGame.Logger.WriteLog(fs); // TODO: Remove magic constant. Not into a constants class, but into settings! E.g. Settings.GetValue("crashdump").
         }
 
-        private void MonoKleGame_ConsoleCommand(object sender, MessageEventArgs e)
+        private void SetUpConsole()
         {
-            // TODO: Create specialized parser for console commands.
-            if (sender == MonoKleGame.Console)
-            {
-                //string s = e.Data as string;
-                //if (s != null)
-                //{
-                //    if (s.Equals("exit"))
-                //    {
-                //        this.Exit();
-                //    } else if(s.StartsWith("run "))
-                //    {
-                //        string script = s.Substring(4, s.Length - 4);
-                //        string[] argumentStrings = Regex.Split(script, " ");
+            MonoKleGame.Console = new GameConsole(new Rectangle(0, 0, GraphicsManager.ScreenSize.X, GraphicsManager.ScreenSize.Y / 3), GraphicsManager.GetGraphicsDevice());    // TODO: Break out magic numbers into config file.
+            MonoKleGame.Console.ToggleKey = Microsoft.Xna.Framework.Input.Keys.F1;
+            MonoKleGame.Console.CommandBroker.Register("exit", CommandExit);
+        }
 
-                //        object[] arguments = new object[argumentStrings.Length - 1];
-                //        for (int i = 1; i < argumentStrings.Length; i++)
-                //        {
-                //            if(Regex.IsMatch(argumentStrings[i], "true|false"))
-                //            {
-                //                arguments[i] = bool.Parse(argumentStrings[i]);
-                //            }
-                //            else if(Regex.IsMatch(argumentStrings[i], "((\\d*)|(\\d+)\\.(\\d)+)"))
-                //            {
-                //                arguments[i] = float.Parse(argumentStrings[i], System.Globalization.CultureInfo.InvariantCulture);
-                //            }
-                //            else
-                //            {
-                //                arguments[i-1] = argumentStrings[i];
-                //            }
-                //        }
-
-                //        Script.VM.ExecutionResult result = MonoKleGame.ScriptInterface.ExecuteScript(argumentStrings[0], arguments);
-                //        MonoKleGame.Console.WriteLine("Return value: " + result.ToString());
-                //    }
-                //}
-            }
+        private void CommandExit(string[] arguments)
+        {
+            this.Exit();
         }
     }
 }

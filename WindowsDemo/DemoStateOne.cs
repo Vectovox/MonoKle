@@ -109,11 +109,6 @@ namespace WindowsDemo
 
         public override void Update(double seconds)
         {
-            if (MonoKleGame.Keyboard.IsKeyPressed(Keys.F1))
-            {
-                MonoKleGame.Console.IsOpen = !MonoKleGame.Console.IsOpen;
-            }
-
             if(MonoKleGame.Console.IsOpen == false)
             {
 

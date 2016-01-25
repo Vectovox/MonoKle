@@ -1,26 +1,21 @@
 ﻿namespace MonoKle.Console
 {
-    using System.Collections.Generic;
-    using System.Text;
-
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
     using Microsoft.Xna.Framework.Input;
-
     using MonoKle.Assets.Font;
     using MonoKle.Core;
     using MonoKle.Logging;
-    using MonoKle.Messaging;
-    using MonoKle.Core;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
 
     /// <summary>
     /// Class that maintains and displays a console.
     /// </summary>
     public class GameConsole
     {
-        public const string CHANNEL_ID = "CONSOLE";
-        private const string CURSOR_TOKEN = "_";
-
         private string currentLine;
         private StringBuilder currentLineBuilder = new StringBuilder();
         private string currentLineCursor;
@@ -40,10 +35,59 @@
             this.BackgroundColor = new Color(0, 0, 0, 0.7f);
             this.TextColor = Color.White;
             this.TextScale = 0.5f;
+            this.CursorToken = "*";
+            this.TabToken = "  ";
+            this.CommandToken = ">> ";
             // TODO: Break out all of these into either a settings struct or global script "variable"
-            Logger.Global.LogAddedEvent += GameConsole_LogAddedEvent;
-            this.UpdateCurrentLine();
+            Logger.Global.LogAddedEvent += LogAdded;
+            this.InputUpdateCurrentLine();
             Logger.Global.Log("GameConsole activated!", LogLevel.Info);
+            
+            this.SetupBroker();
+        }
+
+        private void SetupBroker()
+        {
+            this.CommandBroker = new CommandBroker();
+            this.CommandBroker.Register("clear", this.CommandClear);
+            this.CommandBroker.Register("help", this.CommandHelp);
+        }
+
+        private void CommandHelp(string[] arguments)
+        {
+            this.WriteLine("Listing availabe commands:");
+            foreach(string c in this.CommandBroker.Commands)
+            {
+                this.WriteLine(this.TabToken + c);
+            }
+        }
+
+        private void CommandClear(string[] arguments)
+        {
+            this.Clear();
+        }
+
+        /// <summary>
+        /// Gets or sets the cursor token.
+        /// </summary>
+        /// <value>
+        /// The cursor token.
+        /// </value>
+        public string CursorToken
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the tab token.
+        /// </summary>
+        /// <value>
+        /// The tab token.
+        /// </value>
+        public string TabToken
+        {
+            get; set;
         }
 
         /// <summary>
@@ -53,6 +97,18 @@
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// Gets the command broker. Used for executing console commands.
+        /// </summary>
+        /// <value>
+        /// The command broker.
+        /// </value>
+        public CommandBroker CommandBroker
+        {
+            get;
+            private set;
         }
 
         /// <summary>
@@ -119,6 +175,18 @@
         }
 
         /// <summary>
+        /// Gets or sets the toggle key.
+        /// </summary>
+        /// <value>
+        /// The toggle key.
+        /// </value>
+        public Keys ToggleKey
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Writes the provided line.
         /// </summary>
         /// <param name="line">The line to write.</param>
@@ -129,6 +197,14 @@
             {
                 this.history.RemoveLast();
             }
+        }
+
+        /// <summary>
+        /// Clears all history.
+        /// </summary>
+        public void Clear()
+        {
+            this.history.Clear();
         }
 
         internal void Draw()
@@ -160,21 +236,27 @@
 
         internal void Update(double seconds)
         {
-            if (this.cursorTimer.Update(seconds))
+            if (MonoKleGame.Keyboard.IsKeyPressed(this.ToggleKey))
             {
-                this.drawCursor = !this.drawCursor;
-                this.cursorTimer.Reset();
+                this.IsOpen = !this.IsOpen;
+                this.drawCursor = false;
             }
 
             if (this.IsOpen)
             {
+                if (this.cursorTimer.Update(seconds))
+                {
+                    this.drawCursor = !this.drawCursor;
+                    this.cursorTimer.Reset();
+                }
+
                 // Check letters
                 for (int i = 65; i <= 90; i++)
                 {
                     if (MonoKleGame.Keyboard.IsKeyPressed((Keys)i))
                     {
                         bool upperCase = MonoKleGame.Keyboard.IsKeyHeld(Keys.LeftShift) || MonoKleGame.Keyboard.IsKeyHeld(Keys.RightShift);
-                        this.AppendLine((char)(i + (upperCase ? +0 : 32)));
+                        this.InputAppend((char)(i + (upperCase ? +0 : 32)));
                     }
                 }
 
@@ -183,34 +265,34 @@
                 {
                     if (MonoKleGame.Keyboard.IsKeyPressed((Keys)i))
                     {
-                        this.AppendLine((char)i);
+                        this.InputAppend((char)i);
                     }
                 }
 
                 if (MonoKleGame.Keyboard.IsKeyPressed(Keys.Space))
                 {
-                    this.AppendLine(' ');
+                    this.InputAppend(' ');
                 }
 
                 if (MonoKleGame.Keyboard.IsKeyPressed(Keys.OemPeriod))
                 {
-                    this.AppendLine('.');
+                    this.InputAppend('.');
                 }
 
                 if (MonoKleGame.Keyboard.IsKeyPressed(Keys.OemPlus))
                 {
-                    this.AppendLine('+');
+                    this.InputAppend('+');
                 }
 
                 if (MonoKleGame.Keyboard.IsKeyPressed(Keys.OemMinus))
                 {
-                    this.AppendLine('-');
+                    this.InputAppend('-');
                 }
 
                 // Check for eraser
                 if (MonoKleGame.Keyboard.IsKeyPressed(Keys.Back))
                 {
-                    this.EraseCharacter();
+                    this.InputEraseCharacter();
                 }
 
                 // Check for if command is given
@@ -218,53 +300,113 @@
                 {
                     this.SendCommand();
                 }
+
+                // Autocomplete
+                if(MonoKleGame.Keyboard.IsKeyPressed(Keys.Tab))
+                {
+                    this.AutoComplete();
+                }
             }
         }
 
-        private void AppendLine(char character)
+        private void AutoComplete()
+        {
+            string current = this.InputText();
+
+            if (current.Length > 0)
+            {
+                IList<string> matches = this.CommandBroker.Commands.Where(o => o.StartsWith(current)).ToList();
+                if (matches.Count == 1)
+                {
+                    this.InputSet(matches.First());
+                }
+                else if (matches.Count > 1)
+                {
+                    this.WriteLine("Matches for: " + current);
+                    foreach (string m in matches)
+                    {
+                        this.WriteLine(this.TabToken + m);
+                    }
+                }
+            }
+        }
+
+        private string InputText()
+        {
+            return this.currentLineBuilder.ToString();
+        }
+
+        private void InputSet(string text)
+        {
+            this.currentLineBuilder.Clear();
+            this.currentLineBuilder.Append(text);
+            this.InputUpdateCurrentLine();
+        }
+
+        private void InputAppend(char character)
         {
             this.currentLineBuilder.Append(character);
-            this.UpdateCurrentLine();
+            this.InputUpdateCurrentLine();
         }
 
-        private void AppendLine(string text)
+        private void InputAppend(string text)
         {
             this.currentLineBuilder.Append(text);
-            this.UpdateCurrentLine();
+            this.InputUpdateCurrentLine();
         }
 
-        private void GameConsole_LogAddedEvent(object sender, LogAddedEventArgs e)
+        private void InputEraseAll()
         {
-            this.WriteLine(e.Log.ToString());
+            this.currentLineBuilder.Clear();
+            this.InputUpdateCurrentLine();
         }
 
-        private void EraseCharacter()
+        private void InputEraseCharacter()
         {
             if (this.currentLineBuilder.Length > 0)
             {
                 this.currentLineBuilder.Remove(this.currentLineBuilder.Length - 1, 1);
-                this.UpdateCurrentLine();
+                this.InputUpdateCurrentLine();
             }
         }
 
-        private void EraseLine()
+        private void LogAdded(object sender, LogAddedEventArgs e)
         {
-            this.currentLineBuilder.Clear();
-            this.UpdateCurrentLine();
+            this.WriteLine(e.Log.ToString());
         }
 
         private void SendCommand()
         {
-            string s = this.currentLine;
-            this.EraseLine();
-            this.WriteLine(s);
-            MonoKleGame.MessagePasser.SendMessage(GameConsole.CHANNEL_ID, new MessageEventArgs(s), this);  // TODO: Break out into settings file (the message channel)
+            this.WriteLine(this.currentLine);
+            
+            string[] split = this.InputText().Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+            if (split.Length > 0)
+            {
+                string command = split[0];
+                string[] arguments = new string[split.Length - 1];
+                Array.Copy(split, 1, arguments, 0, arguments.Length);
+
+                if (this.CommandBroker.Call(command, arguments) == false)
+                {
+                    this.WriteLine("'" + command + "' is not a recognized command or has an invalid amount of arguments.");
+                }
+            }
+
+            this.InputEraseAll();
         }
 
-        private void UpdateCurrentLine()
+        private void InputUpdateCurrentLine()
         {
-            this.currentLine = this.currentLineBuilder.ToString();
-            this.currentLineCursor = this.currentLine + GameConsole.CURSOR_TOKEN;
+            this.currentLine = this.CommandToken + this.currentLineBuilder.ToString();
+            this.currentLineCursor = this.currentLine + this.CursorToken;
         }
+
+        /// <summary>
+        /// Gets or sets the command token.
+        /// </summary>
+        /// <value>
+        /// The command token.
+        /// </value>
+        public string CommandToken { get; set; }
     }
 }

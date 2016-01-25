@@ -189,7 +189,13 @@
         /// <param name="line">The line to write.</param>
         public void WriteLine(string line)
         {
-            this.history.AddLast(line);
+            string formattedLine = line.Replace("\t", this.TabToken);
+            this.history.AddLast(formattedLine);
+            this.TrimHistory();
+        }
+
+        private void TrimHistory()
+        {
             while (this.history.Count > this.Size)
             {
                 this.history.RemoveLast();
@@ -304,17 +310,17 @@
 
             if (current.Length > 0)
             {
-                IList<string> matches = this.CommandBroker.Commands.Where(o => o.StartsWith(current)).ToList();
+                IList<CommandBroker.Command> matches = this.CommandBroker.Commands.Where(o => o.Name.StartsWith(current)).ToList();
                 if (matches.Count == 1)
                 {
-                    this.InputSet(matches.First());
+                    this.InputSet(matches.First().Name);
                 }
                 else if (matches.Count > 1)
                 {
                     this.WriteLine("Matches for: " + current);
-                    foreach (string m in matches)
+                    foreach (CommandBroker.Command c in matches)
                     {
-                        this.WriteLine(this.TabToken + m);
+                        this.WriteLine("\t" + c.Name);
                     }
                 }
             }
@@ -328,9 +334,9 @@
         private void CommandHelp(string[] arguments)
         {
             this.WriteLine("Listing availabe commands:");
-            foreach (string c in this.CommandBroker.Commands)
+            foreach (CommandBroker.Command c in this.CommandBroker.Commands)
             {
-                this.WriteLine(this.TabToken + c);
+                this.WriteLine("\t" + c.Name + "\t(" + c.ArgumentLength + ")");
             }
         }
 

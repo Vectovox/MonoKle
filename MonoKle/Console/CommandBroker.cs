@@ -15,7 +15,7 @@
         /// <value>
         /// The registered commands.
         /// </value>
-        public ICollection<string> Commands { get { return this.dictionary.Keys; } }
+        public ICollection<Command> Commands { get { return this.dictionary.Values; } }
 
         /// <summary>
         /// Calls the specified command. Verifies a correct arguments length.
@@ -27,7 +27,7 @@
             if (this.dictionary.ContainsKey(command))
             {
                 Command c = this.dictionary[command];
-                if (c.ArgumentLenth == 0)
+                if (c.ArgumentLength == 0)
                 {
                     c.Handler(new string[0]);
                     return true;
@@ -47,7 +47,7 @@
             if (this.dictionary.ContainsKey(command))
             {
                 Command c = this.dictionary[command];
-                if (c.ArgumentLenth == arguments.Length)
+                if (c.ArgumentLength == arguments.Length)
                 {
                     c.Handler(arguments);
                     return true;
@@ -86,7 +86,7 @@
         {
             if (this.dictionary.ContainsKey(command) == false)
             {
-                this.dictionary.Add(command, new Command() { Handler = handler, ArgumentLenth = argumentLength });
+                this.dictionary.Add(command, new Command(command, argumentLength, handler));
                 return true;
             }
 
@@ -103,10 +103,47 @@
             return this.dictionary.Remove(command);
         }
 
-        private class Command
+        /// <summary>
+        /// Container for console command information.
+        /// </summary>
+        public class Command
         {
-            public byte ArgumentLenth;
-            public ConsoleCommandHandler Handler;
+            /// <summary>
+            /// Initializes a new instance of the <see cref="Command"/> class.
+            /// </summary>
+            /// <param name="name">The name of the command.</param>
+            /// <param name="argumentLength">Amount of arguments.</param>
+            /// <param name="handler">The handler to execute the command.</param>
+            public Command(string name, byte argumentLength, ConsoleCommandHandler handler)
+            {
+                this.Name = name;
+                this.ArgumentLength = argumentLength;
+                this.Handler = handler;
+            }
+
+            /// <summary>
+            /// Gets the amount of arguments.
+            /// </summary>
+            /// <value>
+            /// The amount of arguments.
+            /// </value>
+            public byte ArgumentLength { get; private set; }
+
+            /// <summary>
+            /// Gets the handler to execute the command.
+            /// </summary>
+            /// <value>
+            /// The handler.
+            /// </value>
+            public ConsoleCommandHandler Handler { get; private set; }
+
+            /// <summary>
+            /// Gets the name of the command.
+            /// </summary>
+            /// <value>
+            /// The name.
+            /// </value>
+            public string Name { get; private set; }
         }
     }
 }

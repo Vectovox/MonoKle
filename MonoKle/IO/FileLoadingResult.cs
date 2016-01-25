@@ -1,4 +1,4 @@
-﻿namespace MonoKle.IO.FileLoading
+﻿namespace MonoKle.IO
 {
     /// <summary>
     /// Immutable struct for the results of loading files.

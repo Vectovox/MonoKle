@@ -88,7 +88,7 @@
         /// <summary>
         /// Gets the font manager. This provides all fonts and is responsible for loading them in from paths.
         /// </summary>
-        public static FontManager FontManager
+        public static FontStorage FontManager
         {
             get;
             private set;
@@ -218,10 +218,20 @@
         protected override void LoadContent()
         {
             MonoKleGame.TextureManager = new TextureManager(GraphicsManager.GetGraphicsDevice());
-            MonoKleGame.FontManager = new FontManager(GraphicsManager.GetGraphicsDevice());
+            this.SetUpFontManager();
             MonoKleGame.EffectStorage = new EffectStorage(GraphicsManager.GetGraphicsDevice());
             this.SetUpConsole();
             MonoKleGame.Mouse = new MouseInput(GraphicsManager.ScreenSize);
+        }
+
+        private void SetUpFontManager()
+        {
+            MonoKleGame.FontManager = new FontStorage(GraphicsManager.GetGraphicsDevice());
+            using (MemoryStream ms = new MemoryStream(Resources.FontResources.DefaultFont))
+            {
+                MonoKleGame.FontManager.LoadStream(ms, "default");
+                MonoKleGame.FontManager.DefaultValue = MonoKleGame.FontManager.GetData("default");
+            }
         }
 
         protected override void Update(GameTime gameTime)
@@ -245,9 +255,15 @@
 
         private void SetUpConsole()
         {
+            // Set up font
+            using (MemoryStream ms = new MemoryStream(Resources.FontResources.ConsoleFont))
+            {
+                MonoKleGame.FontManager.LoadStream(ms, "console");
+            }
             MonoKleGame.Console = new GameConsole(new Rectangle(0, 0, GraphicsManager.ScreenSize.X, GraphicsManager.ScreenSize.Y / 3), GraphicsManager.GetGraphicsDevice());    // TODO: Break out magic numbers into config file.
             MonoKleGame.Console.ToggleKey = Microsoft.Xna.Framework.Input.Keys.F1;
             MonoKleGame.Console.CommandBroker.Register("exit", CommandExit);
+            MonoKleGame.Console.TextFont = MonoKleGame.FontManager.GetData("console");
         }
 
         private void CommandExit(string[] arguments)

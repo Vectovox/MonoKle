@@ -148,7 +148,7 @@
         /// <summary>
         /// Gets or sets the string identifier of the text font. If null, the default font will be used.
         /// </summary>
-        public string TextFont
+        public Font TextFont
         {
             get;
             set;
@@ -207,8 +207,7 @@
             if (this.IsOpen)
             {
                 Texture2D background = this.BackgroundTexture == null ? MonoKleGame.TextureManager.WhiteTexture : MonoKleGame.TextureManager.GetTexture(BackgroundTexture);
-                Font font = this.TextFont == null ? MonoKleGame.FontManager.DefaultFont : MonoKleGame.FontManager.GetFont(this.TextFont);
-
+                Font font = this.TextFont;
                 spriteBatch.Begin();
                 spriteBatch.Draw(background, this.Area, this.BackgroundColor);
 

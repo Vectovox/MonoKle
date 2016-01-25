@@ -1,0 +1,10 @@
+1. Use tool http://www.angelcode.com/products/bmfont/
+	- Select font
+	- Export options:
+		* 32bit
+		* White text with alpha
+		* XML
+		* PNG
+2. Use MonoKle's Oven tool to bake both .fnt and .png to a .mfnt
+2. Load .mfnt via MonoKle
+3. Go!

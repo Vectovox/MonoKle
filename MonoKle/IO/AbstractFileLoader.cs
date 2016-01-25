@@ -1,4 +1,4 @@
-﻿namespace MonoKle.IO.FileLoading
+﻿namespace MonoKle.IO
 {
     using System.IO;
 
@@ -39,15 +39,18 @@
 
             if(File.Exists(path))
             {
-                using(FileStream stream = File.OpenRead(path))
+                if(this.CheckFile(path))
                 {
-                    if(this.OperateOnFile(stream, path))
+                    using (FileStream stream = File.OpenRead(path))
                     {
-                        successes++;
-                    }
-                    else
-                    {
-                        failures++;
+                        if (this.OperateOnFile(stream, path))
+                        {
+                            successes++;
+                        }
+                        else
+                        {
+                            failures++;
+                        }
                     }
                 }
             }
@@ -79,5 +82,15 @@
         /// <param name="fileStream">A filestream to an opened file.</param>
         /// <param name="filePath">File path of the opened file.</param>
         protected abstract bool OperateOnFile(Stream fileStream, string filePath);
+
+        /// <summary>
+        /// Checks if the file is valid.
+        /// </summary>
+        /// <param name="filePath">The file path.</param>
+        /// <returns></returns>
+        protected virtual bool CheckFile(string filePath)
+        {
+            return true;
+        }
     }
 }

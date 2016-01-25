@@ -25,8 +25,8 @@
         public TextureManager(GraphicsDevice graphicsDevice)
         {
             this.graphicsDevice = graphicsDevice;
-            this.DefaultTexture = GraphicsHelper.BitmapToTexture2D(graphicsDevice, TextureResources.DefaultTexture);
-            this.WhiteTexture = GraphicsHelper.BitmapToTexture2D(graphicsDevice, TextureResources.WhiteTexture);
+            this.DefaultTexture = GraphicsHelper.ImageToTexture2D(graphicsDevice, TextureResources.DefaultTexture);
+            this.WhiteTexture = GraphicsHelper.ImageToTexture2D(graphicsDevice, TextureResources.WhiteTexture);
         }
 
         /// <summary>

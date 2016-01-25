@@ -1,4 +1,4 @@
-﻿namespace MonoKle.IO.FileLoading
+﻿namespace MonoKle.IO
 {
     /// <summary>
     /// Interface defining a file loader.

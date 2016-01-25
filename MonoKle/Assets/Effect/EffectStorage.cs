@@ -1,7 +1,7 @@
 ﻿namespace MonoKle.Assets.Effect
 {
     using Microsoft.Xna.Framework.Graphics;
-    using MonoKle.IO.FileLoading;
+    using MonoKle.IO;
     using System.Collections.Generic;
     using System.IO;
 

@@ -9,14 +9,14 @@
 
     public static class GraphicsHelper
     {
-        public static Texture2D BitmapToTexture2D(GraphicsDevice graphicsDevice, Bitmap bitmap)
+        public static Texture2D ImageToTexture2D(GraphicsDevice graphicsDevice, Image image)
         {
             // Size = Height * Width * 4 bytes for each colour value
-            int size = bitmap.Height * bitmap.Width * 4;
+            int size = image.Height * image.Width * 4;
 
             // Save image to stream
             MemoryStream ms = new MemoryStream(size);
-            bitmap.Save(ms, ImageFormat.Png);
+            image.Save(ms, ImageFormat.Png);
 
             return Texture2D.FromStream(graphicsDevice, ms);
         }

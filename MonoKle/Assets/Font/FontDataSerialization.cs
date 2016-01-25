@@ -8,6 +8,7 @@
 // The code has however been modified to fit MonoKle, and it thus contains changes to the original work.
 
 using Microsoft.Xna.Framework;
+using MonoKle.Core.Geometry;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -124,22 +125,22 @@ namespace MonoKle.Assets.Font
             set;
         }
 
-        private Rectangle _Padding;
+        private MRectangle _Padding;
         [XmlAttribute("padding")]
         public String Padding
         {
             get
             {
-                return _Padding.X + "," + _Padding.Y + "," + _Padding.Width + "," + _Padding.Height;
+                return _Padding.Left + "," + _Padding.Top + "," + _Padding.Width + "," + _Padding.Height;
             }
             set
             {
                 String[] padding = value.Split(',');
-                _Padding = new Rectangle(Convert.ToInt32(padding[0]), Convert.ToInt32(padding[1]), Convert.ToInt32(padding[2]), Convert.ToInt32(padding[3]));
+                _Padding = new MRectangle(Convert.ToInt32(padding[0]), Convert.ToInt32(padding[1]), Convert.ToInt32(padding[2]), Convert.ToInt32(padding[3]));
             }
         }
 
-        private Point _Spacing;
+        private MPoint2 _Spacing;
         [XmlAttribute("spacing")]
         public String Spacing
         {

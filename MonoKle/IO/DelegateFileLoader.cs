@@ -1,4 +1,4 @@
-﻿namespace MonoKle.IO.FileLoading
+﻿namespace MonoKle.IO
 {
     using System;
     using System.IO;

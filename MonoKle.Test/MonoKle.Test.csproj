@@ -79,7 +79,6 @@
     <Compile Include="Core\Geometry\AreaTest.cs" />
     <Compile Include="Core\Geometry\MPoint2Test.cs" />
     <Compile Include="Core\Geometry\MVector2Test.cs" />
-    <Compile Include="IO\StreamStructReaderWriterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\Geometry\GridTest.cs" />
   </ItemGroup>

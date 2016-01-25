@@ -39,69 +39,69 @@ namespace WindowsDemo
             sb.Draw(MonoKleGame.TextureManager.GetTexture("testbox"), new Vector2(250, 250), Color.White);
 
             // Test timer
-            MonoKleGame.FontManager.GetFont("TESTFONT").DrawString(sb, "Timer: " + timer.GetTimeLeft() + " (" + timer.Duration + ") Done? " + timer.IsDone(),
+            MonoKleGame.FontManager.GetData("TESTFONT").DrawString(sb, "Timer: " + timer.GetTimeLeft() + " (" + timer.Duration + ") Done? " + timer.IsDone(),
                 new Vector2(50, 150), Color.Green);
 
             // Test linebreak
-            MonoKleGame.FontManager.GetFont("TESTFONT").DrawString(sb, "ABCDEF\nabcdef",
+            MonoKleGame.FontManager.GetData("TESTFONT").DrawString(sb, "ABCDEF\nabcdef",
                 new Vector2(50, 250), Color.Green);
 
             // Test scale
-            MonoKleGame.FontManager.GetFont("TESTFONT").DrawString(sb, "ABCDEF\nabcdef",
+            MonoKleGame.FontManager.GetData("TESTFONT").DrawString(sb, "ABCDEF\nabcdef",
                 new Vector2(250, 250), Color.Green, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
 
             // Test rotation
-            MonoKleGame.FontManager.GetFont("TESTFONT").DrawString(sb, "Rotating",
+            MonoKleGame.FontManager.GetData("TESTFONT").DrawString(sb, "Rotating",
                 new Vector2(50, 350), Color.Green, (float)MonoKleGame.TotalGameTime.TotalSeconds, Vector2.Zero, 1f, SpriteEffects.None, 0f);
 
             // Test rotation
-            MonoKleGame.FontManager.GetFont("TESTFONT").DrawString(sb, "Rotating",
+            MonoKleGame.FontManager.GetData("TESTFONT").DrawString(sb, "Rotating",
                 new Vector2(0, 0), Color.Green, (float)MonoKleGame.TotalGameTime.TotalSeconds, Vector2.Zero, 1f, SpriteEffects.None, 0f);
 
             // Rotation with scale
-            MonoKleGame.FontManager.GetFont("TESTFONT").DrawString(sb, "Rotating scale",
+            MonoKleGame.FontManager.GetData("TESTFONT").DrawString(sb, "Rotating scale",
                 new Vector2(350, 350), Color.Green, (float)MonoKleGame.TotalGameTime.TotalSeconds, Vector2.Zero, 2f, SpriteEffects.None, 0f);
 
             // Rotation with scale and origin
-            Vector2 orig = MonoKleGame.FontManager.GetFont("TESTFONT").MeasureString("Rotating origin scale") * 0.5f;
-            MonoKleGame.FontManager.GetFont("TESTFONT").DrawString(sb, "Rotating origin scale",
+            Vector2 orig = MonoKleGame.FontManager.GetData("TESTFONT").MeasureString("Rotating origin scale") * 0.5f;
+            MonoKleGame.FontManager.GetData("TESTFONT").DrawString(sb, "Rotating origin scale",
                 new Vector2(550, 150), Color.Green, (float)MonoKleGame.TotalGameTime.TotalSeconds, orig, 2f, SpriteEffects.None, 0f);
 
             // XXX
-            Vector2 o = MonoKleGame.FontManager.GetFont("TESTFONT").MeasureString("<=+=>") * 0.5f;
-            MonoKleGame.FontManager.GetFont("TESTFONT").DrawString(sb, "<=+=>",
+            Vector2 o = MonoKleGame.FontManager.GetData("TESTFONT").MeasureString("<=+=>") * 0.5f;
+            MonoKleGame.FontManager.GetData("TESTFONT").DrawString(sb, "<=+=>",
                 new Vector2(400, 300), Color.Green, (float)MonoKleGame.TotalGameTime.TotalSeconds, o, 1f, SpriteEffects.None, 0f);
 
 
             string s = "Testin size";
-            MonoKleGame.FontManager.DefaultFont.DrawString(sb, s, new Vector2(450, 350), Color.Green);
-            MonoKleGame.FontManager.DefaultFont.DrawString(sb, s, new Vector2(450, 350 + MonoKleGame.FontManager.DefaultFont.MeasureString(s).Y), Color.Green);
-            MonoKleGame.FontManager.DefaultFont.DrawString(sb, s, new Vector2(450, 350 + 2 * MonoKleGame.FontManager.DefaultFont.MeasureString(s).Y), Color.Green);
+            MonoKleGame.FontManager.DefaultValue.DrawString(sb, s, new Vector2(450, 350), Color.Green);
+            MonoKleGame.FontManager.DefaultValue.DrawString(sb, s, new Vector2(450, 350 + MonoKleGame.FontManager.DefaultValue.MeasureString(s).Y), Color.Green);
+            MonoKleGame.FontManager.DefaultValue.DrawString(sb, s, new Vector2(450, 350 + 2 * MonoKleGame.FontManager.DefaultValue.MeasureString(s).Y), Color.Green);
 
             string s2 = "Testin size\nLol";
-            MonoKleGame.FontManager.DefaultFont.DrawString(sb, s2, new Vector2(0, 0), Color.Green);
-            MonoKleGame.FontManager.DefaultFont.DrawString(sb, s2, new Vector2(0, 0 + MonoKleGame.FontManager.DefaultFont.MeasureString(s2).Y), Color.Green);
-            MonoKleGame.FontManager.DefaultFont.DrawString(sb, s2, new Vector2(0, 0 + 2 * MonoKleGame.FontManager.DefaultFont.MeasureString(s2).Y), Color.Green);
+            MonoKleGame.FontManager.DefaultValue.DrawString(sb, s2, new Vector2(0, 0), Color.Green);
+            MonoKleGame.FontManager.DefaultValue.DrawString(sb, s2, new Vector2(0, 0 + MonoKleGame.FontManager.DefaultValue.MeasureString(s2).Y), Color.Green);
+            MonoKleGame.FontManager.DefaultValue.DrawString(sb, s2, new Vector2(0, 0 + 2 * MonoKleGame.FontManager.DefaultValue.MeasureString(s2).Y), Color.Green);
 
             // Test size measurements.
             Vector2 pos = new Vector2(50, 450);
-            MonoKleGame.FontManager.GetFont("TESTFONT").DrawString(sb, "One-",
+            MonoKleGame.FontManager.GetData("TESTFONT").DrawString(sb, "One-",
                 pos, Color.Green);
-            pos.X += MonoKleGame.FontManager.GetFont("TESTFONT").MeasureString("One-").X;
+            pos.X += MonoKleGame.FontManager.GetData("TESTFONT").MeasureString("One-").X;
 
-            MonoKleGame.FontManager.GetFont("TESTFONT").DrawString(sb, "Two",
+            MonoKleGame.FontManager.GetData("TESTFONT").DrawString(sb, "Two",
                 pos, Color.Red);
 
-            pos.Y -= MonoKleGame.FontManager.GetFont("TESTFONT").MeasureString("Three").Y;
-            MonoKleGame.FontManager.GetFont("TESTFONT").DrawString(sb, "Three",
+            pos.Y -= MonoKleGame.FontManager.GetData("TESTFONT").MeasureString("Three").Y;
+            MonoKleGame.FontManager.GetData("TESTFONT").DrawString(sb, "Three",
                 pos, Color.Orange);
 
-            pos.X += MonoKleGame.FontManager.GetFont("TESTFONT").MeasureString("Three").X;
-            MonoKleGame.FontManager.GetFont("TESTFONT").DrawString(sb, "Four",
+            pos.X += MonoKleGame.FontManager.GetData("TESTFONT").MeasureString("Three").X;
+            MonoKleGame.FontManager.GetData("TESTFONT").DrawString(sb, "Four",
                 pos, Color.Blue, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
 
-            pos.X += MonoKleGame.FontManager.GetFont("TESTFONT").MeasureString("Four", 2f).X;
-            MonoKleGame.FontManager.GetFont("TESTFONT").DrawString(sb, "Five",
+            pos.X += MonoKleGame.FontManager.GetData("TESTFONT").MeasureString("Four", 2f).X;
+            MonoKleGame.FontManager.GetData("TESTFONT").DrawString(sb, "Five",
                 pos, Color.Black);
 
             sb.End();
@@ -209,7 +209,7 @@ namespace WindowsDemo
             MonoKleGame.MessagePasser.Subscribe("CONSOLE", ConsoleMessage);
             Console.WriteLine("State one activated! Message: " + (string)data.Data);
             Console.WriteLine(MonoKleGame.TextureManager.Load("Assets\\Textures", true) + " textures loaded.");
-            Console.WriteLine(MonoKleGame.FontManager.Load("Assets\\Fonts", true) + " fonts loaded.");
+            Console.WriteLine(MonoKleGame.FontManager.LoadFiles("Assets\\Fonts", true) + " fonts loaded.");
             sb = new SpriteBatch(MonoKleGame.GraphicsManager.GetGraphicsDevice());
             timer.Reset();
             //MonoKleGame.ScriptInterface.AddScriptSources("TestScripts.ms", false);

@@ -13,17 +13,17 @@
     {
         private FontFile data;
         private Dictionary<char, FontChar> fontCharByChar = new Dictionary<char, FontChar>();
-        private Texture2D image;
+        private List<Texture2D> imageList;
 
         /// <summary>
         /// Creates a new instance of <see cref="Font"/>
         /// </summary>
         /// <param name="data">The data representation.</param>
-        /// <param name="image">The image representation.</param>
-        public Font(FontFile data, Texture2D image)
+        /// <param name="imageList">The image representations.</param>
+        public Font(FontFile data, List<Texture2D> imageList)
         {
             this.data = data;
-            this.image = image;
+            this.imageList = imageList;
             foreach (var fc in data.Chars)
             {
                 char c = (char)fc.ID;
@@ -95,7 +95,7 @@
                         destinationVector.X = (float)x + position.X;
                         destinationVector.Y = (float)y + position.Y;
 
-                        spriteBatch.Draw(this.image, destinationVector, sourceRectangle, color, rotation, Vector2.Zero, scale, effect, depth);
+                        spriteBatch.Draw(this.imageList[fc.Page], destinationVector, sourceRectangle, color, rotation, Vector2.Zero, scale, effect, depth);
                         drawPos.X += fc.XAdvance * scale;
                     }
                 }

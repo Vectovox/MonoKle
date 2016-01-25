@@ -16,6 +16,8 @@
     /// </summary>
     public class GameConsole
     {
+        private const double KEY_TYPED_CYCLE_INTERVAL = 0.02;
+        private const double KEY_TYPED_TIMEROFFSET = 0.5;
         private string currentLine;
         private StringBuilder currentLineBuilder = new StringBuilder();
         private string currentLineCursor;
@@ -35,7 +37,7 @@
             this.BackgroundColor = new Color(0, 0, 0, 0.7f);
             this.TextColor = Color.White;
             this.TextScale = 0.5f;
-            this.CursorToken = "*";
+            this.CursorToken = "_";
             this.TabToken = "  ";
             this.CommandToken = ">> ";
             // TODO: Break out all of these into either a settings struct or global script "variable"
@@ -240,7 +242,7 @@
                 // Check letters
                 for (int i = 65; i <= 90; i++)
                 {
-                    if (MonoKleGame.Keyboard.IsKeyPressed((Keys)i))
+                    if (MonoKleGame.Keyboard.IsKeyTyped((Keys)i, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                     {
                         bool upperCase = MonoKleGame.Keyboard.IsKeyHeld(Keys.LeftShift) || MonoKleGame.Keyboard.IsKeyHeld(Keys.RightShift);
                         this.InputAppend((char)(i + (upperCase ? +0 : 32)));
@@ -250,34 +252,34 @@
                 // Check numbers
                 for (int i = 48; i <= 58; i++)
                 {
-                    if (MonoKleGame.Keyboard.IsKeyPressed((Keys)i))
+                    if (MonoKleGame.Keyboard.IsKeyTyped((Keys)i, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                     {
                         this.InputAppend((char)i);
                     }
                 }
 
-                if (MonoKleGame.Keyboard.IsKeyPressed(Keys.Space))
+                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.Space, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
                     this.InputAppend(' ');
                 }
 
-                if (MonoKleGame.Keyboard.IsKeyPressed(Keys.OemPeriod))
+                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.OemPeriod, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
                     this.InputAppend('.');
                 }
 
-                if (MonoKleGame.Keyboard.IsKeyPressed(Keys.OemPlus))
+                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.OemPlus, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
                     this.InputAppend('+');
                 }
 
-                if (MonoKleGame.Keyboard.IsKeyPressed(Keys.OemMinus))
+                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.OemMinus, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
                     this.InputAppend('-');
                 }
 
                 // Check for eraser
-                if (MonoKleGame.Keyboard.IsKeyPressed(Keys.Back))
+                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.Back, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
                     this.InputEraseCharacter();
                 }

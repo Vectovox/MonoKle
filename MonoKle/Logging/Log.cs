@@ -13,25 +13,12 @@
         /// </summary>
         /// <param name="message">The message of the log.</param>
         /// <param name="level">The level of the log.</param>
-        /// <param name="caller">The calling type of the log.</param>
-        /// <param name="method">The calling method of the log.</param>
         /// <param name="time">The time of the log.</param>
-        public Log(string message, LogLevel level, Type caller, string method, DateTime time)
+        public Log(string message, LogLevel level, DateTime time)
         {
             this.Message = message;
             this.Level = level;
-            this.Caller = caller;
-            this.Method = method;
             this.Time = time;
-        }
-
-        /// <summary>
-        /// The calling type of the log.
-        /// </summary>
-        public Type Caller
-        {
-            get;
-            private set;
         }
 
         /// <summary>
@@ -53,15 +40,6 @@
         }
 
         /// <summary>
-        /// The calling method of the log.
-        /// </summary>
-        public string Method
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
         /// The time the log was made.
         /// </summary>
         public DateTime Time
@@ -77,14 +55,11 @@
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append(this.Time.ToLongTimeString());
-            sb.Append(" <");
+            sb.Append('[');
             sb.Append(this.Level);
-            sb.Append("> ");
-            sb.Append(this.Caller == null ? "?" : this.Caller.Name);
-            sb.Append(".");
-            sb.Append(this.Method);
-            sb.Append(" -> ");
+            sb.Append("] ");
+            sb.Append(this.Time.ToLongTimeString());
+            sb.Append(" :: ");
             sb.Append(this.Message);
             return sb.ToString();
         }

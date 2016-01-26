@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Runtime.CompilerServices;
 
     /// <summary>
     /// Class for handling logs and triggering log events.
@@ -92,31 +91,27 @@
         /// Logs a given message with a logging level of <see cref="LogLevel.Info"/>.
         /// </summary>
         /// <param name="message">The message to log.</param>
-        /// <param name="caller">Optional parameter denoting the calling type.</param>
-        /// <param name="method">Optional parameter denoting the caller method. Will automatically be set to the caller unless explicitly set.</param>
-        public void Log(string message, Type caller = null, [CallerMemberName] string method = "")
+        public void Log(string message)
         {
-            this.Log(message, LogLevel.Info, caller, method);
+            this.Log(message, LogLevel.Info);
         }
 
         /// <summary>
         /// Logs a given message with the provided logging level.
         /// </summary>
         /// <param name="message">The message to log.</param>
-        /// <param name="level">The level of the log.</param>
-        /// <param name="caller">Optional parameter denoting the calling type.</param>
-        /// <param name="method">Optional parameter denoting the caller method. Will automatically be set to the caller unless explicitly set.</param>
-        public void Log(string message, LogLevel level, Type caller = null, [CallerMemberName] string method = "")
+        /// <param name="level">The severity level of the log.</param>
+        public void Log(string message, LogLevel level)
         {
-            if(level <= this.loggingLevel)
+            if (level <= this.loggingLevel)
             {
-                Log newLog = new Log(message, level, caller, method, DateTime.Now);
+                Log newLog = new Log(message, level, DateTime.Now);
                 this.logs.AddLast(newLog);
-                if(this.logs.Count > this.size)
+                if (this.logs.Count > this.size)
                 {
                     this.logs.RemoveFirst();
                 }
-                this.OnLogAdded(new LogAddedEventArgs(newLog));
+                this.OnLogAdded(newLog);
             }
         }
 
@@ -127,7 +122,7 @@
         public void WriteLog(Stream stream)
         {
             StreamWriter writer = new StreamWriter(stream);
-            foreach(Log l in this.GetLogs())
+            foreach (Log l in this.GetLogs())
             {
                 writer.WriteLine(l.ToString());
             }
@@ -137,18 +132,18 @@
         /// <summary>
         /// Raises the LogAddedEvent.
         /// </summary>
-        protected void OnLogAdded(LogAddedEventArgs e)
+        protected void OnLogAdded(Log newLog)
         {
             LogAddedEventHandler handler = this.LogAddedEvent;
-            if(handler != null)
+            if (handler != null)
             {
-                handler(this, e);
+                handler(this, new LogAddedEventArgs(newLog));
             }
         }
 
         private void TrimLogs()
         {
-            while(this.logs.Count > this.size)
+            while (this.logs.Count > this.size)
             {
                 this.logs.RemoveFirst();
             }

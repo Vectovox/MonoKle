@@ -178,7 +178,7 @@ namespace WindowsDemo
 
                 if(MonoKleGame.Keyboard.IsKeyPressed(Keys.N))
                 {
-                    Logger.Global.Log("I am logging", this.GetType());
+                    Logger.Global.Log("I am logging");
                 }
             }
             

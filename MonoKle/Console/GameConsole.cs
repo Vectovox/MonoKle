@@ -16,6 +16,19 @@
     /// </summary>
     public class GameConsole
     {
+        private class Line
+        {
+            public string Text { get; private set; }
+
+            public Color Color { get; private set; }
+
+            public Line(string text, Color color)
+            {
+                this.Text = text;
+                this.Color = color;
+            }
+        }
+
         private const double KEY_TYPED_CYCLE_INTERVAL = 0.02;
         private const double KEY_TYPED_TIMEROFFSET = 0.5;
         private string currentLine;
@@ -24,7 +37,7 @@
         private Timer cursorTimer = new Timer(0.25); // TODO: Break out into settings.
         private bool drawCursor;
         private GraphicsDevice graphicsDevice;
-        private LinkedList<string> history = new LinkedList<string>();
+        private LinkedList<Line> history = new LinkedList<Line>();
         private SpriteBatch spriteBatch;
 
         internal GameConsole(Rectangle area, GraphicsDevice graphicsDevice)
@@ -35,7 +48,9 @@
             this.Area = area;
             this.Size = byte.MaxValue;
             this.BackgroundColor = new Color(0, 0, 0, 0.7f);
-            this.TextColor = Color.White;
+            this.DefaultTextColour = Color.WhiteSmoke;
+            this.WarningTextColour = Color.Yellow;
+            this.ErrorTextColour = Color.Red;
             this.TextScale = 0.5f;
             this.CursorToken = "_";
             this.TabToken = ' ';
@@ -126,6 +141,12 @@
             set;
         }
 
+        /// <summary>
+        /// Gets or sets the length of the tabs.
+        /// </summary>
+        /// <value>
+        /// The length of the tabs.
+        /// </value>
         public int TabLength
         {
             get; set;
@@ -143,9 +164,33 @@
         }
 
         /// <summary>
-        /// Gets or sets the color that the text will be drawn with.
+        /// Gets or sets the color that the text will be drawn with if no other colour is specified.
         /// </summary>
-        public Color TextColor
+        public Color DefaultTextColour
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the warning text colour.
+        /// </summary>
+        /// <value>
+        /// The warning text colour.
+        /// </value>
+        public Color WarningTextColour
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the error text colour.
+        /// </summary>
+        /// <value>
+        /// The error text colour.
+        /// </value>
+        public Color ErrorTextColour
         {
             get;
             set;
@@ -189,17 +234,28 @@
             this.history.Clear();
         }
 
+
         /// <summary>
-        /// Writes the provided line.
+        /// Writes the provided text with the colour <see cref="GameConsole.DefaultTextColour"/>.
         /// </summary>
-        /// <param name="line">The line to write.</param>
-        public void WriteLine(string line)
+        /// <param name="text">The text to write.</param>
+        public void WriteLine(string text)
+        {
+            this.WriteLine(text, this.DefaultTextColour);
+        }
+
+        /// <summary>
+        /// Writes the provided text with the given color.
+        /// </summary>
+        /// <param name="text">The text to write.</param>
+        /// <param name="color">Color of the line.</param>
+        public void WriteLine(string text, Color color)
         {
             StringBuilder sb = new StringBuilder();
             int column = 0;
-            for (int i = 0; i < line.Length; i++)
+            for (int i = 0; i < text.Length; i++)
             {
-                if (line[i] == '\t')
+                if (text[i] == '\t')
                 {
                     int amnt = this.TabLength - (column % this.TabLength);
                     for (int j = 0; j < amnt; j++)
@@ -210,8 +266,8 @@
                 }
                 else
                 {
-                    sb.Append(line[i]);
-                    if (line[i] == '\n')
+                    sb.Append(text[i]);
+                    if (text[i] == '\n')
                     {
                         column = 0;
                     }
@@ -222,7 +278,7 @@
                 }
             }
 
-            this.history.AddLast(sb.ToString());
+            this.history.AddLast(new Line(sb.ToString(), color));
             this.TrimHistory();
         }
 
@@ -238,15 +294,15 @@
 
                 string drawnLine = this.drawCursor ? this.currentLineCursor : this.currentLine;
                 Vector2 textPos = new Vector2(this.Area.Left, this.Area.Bottom - font.MeasureString(drawnLine, this.TextScale).Y);
-                LinkedListNode<string> node = history.Last;
+                LinkedListNode<Line> node = history.Last;
                 StringWrapper wrapper = new StringWrapper();
 
-                font.DrawString(this.spriteBatch, drawnLine, textPos, this.TextColor, 0f, Vector2.Zero, this.TextScale, SpriteEffects.None, 0f);
+                font.DrawString(this.spriteBatch, drawnLine, textPos, this.DefaultTextColour, 0f, Vector2.Zero, this.TextScale, SpriteEffects.None, 0f);
                 while (textPos.Y > 0 && node != null)
                 {
-                    string toDraw = wrapper.WrapWidth(node.Value, font, Area.Width, this.TextScale);
+                    string toDraw = wrapper.WrapWidth(node.Value.Text, font, Area.Width, this.TextScale);
                     textPos.Y -= font.MeasureString(toDraw, this.TextScale).Y;
-                    font.DrawString(this.spriteBatch, toDraw, textPos, this.TextColor, 0f, Vector2.Zero, this.TextScale, SpriteEffects.None, 0f);
+                    font.DrawString(this.spriteBatch, toDraw, textPos, node.Value.Color, 0f, Vector2.Zero, this.TextScale, SpriteEffects.None, 0f);
                     node = node.Previous;
                 }
                 spriteBatch.End();
@@ -418,7 +474,16 @@
 
         private void LogAdded(object sender, LogAddedEventArgs e)
         {
-            this.WriteLine(e.Log.ToString());
+            Color c = this.DefaultTextColour;
+            if(e.Log.Level == LogLevel.Warning)
+            {
+                c = this.WarningTextColour;
+            }
+            else if(e.Log.Level == LogLevel.Info)
+            {
+                c = this.ErrorTextColour;
+            }
+            this.WriteLine(e.Log.ToString(), c);
         }
 
         private void SendCommand()
@@ -453,7 +518,7 @@
         {
             while (this.history.Count > this.Size)
             {
-                this.history.RemoveLast();
+                this.history.RemoveFirst();
             }
         }
     }

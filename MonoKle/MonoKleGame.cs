@@ -274,7 +274,22 @@
             MonoKleGame.Console = new GameConsole(new Rectangle(0, 0, GraphicsManager.ScreenSize.X, GraphicsManager.ScreenSize.Y / 3), GraphicsManager.GetGraphicsDevice());    // TODO: Break out magic numbers into config file.
             MonoKleGame.Console.ToggleKey = Microsoft.Xna.Framework.Input.Keys.F1;
             MonoKleGame.Console.CommandBroker.Register("exit", CommandExit);
+            MonoKleGame.Console.CommandBroker.Register("loglevel", 1, this.CommandLogLevel);
             MonoKleGame.Console.TextFont = MonoKleGame.FontStorage.GetAsset("console");
+        }
+
+        private void CommandLogLevel(string[] arguments)
+        {
+            LogLevel level;
+            if(Enum.TryParse(arguments[0], out level))
+            {
+                MonoKleGame.Logger.LoggingLevel = level;
+                MonoKleGame.Console.WriteLine("Logging level set to: " + level);
+            }
+            else
+            {
+                MonoKleGame.Console.WriteLine("Incorrect logging level specified.");
+            }
         }
 
         private void CommandExit(string[] arguments)

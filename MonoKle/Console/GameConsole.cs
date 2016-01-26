@@ -16,28 +16,25 @@
     /// </summary>
     public class GameConsole
     {
-        private class Line
-        {
-            public string Text { get; private set; }
-
-            public Color Color { get; private set; }
-
-            public Line(string text, Color color)
-            {
-                this.Text = text;
-                this.Color = color;
-            }
-        }
-
         private const double KEY_TYPED_CYCLE_INTERVAL = 0.02;
+
         private const double KEY_TYPED_TIMEROFFSET = 0.5;
+
         private string currentLine;
+
         private StringBuilder currentLineBuilder = new StringBuilder();
+
         private string currentLineCursor;
-        private Timer cursorTimer = new Timer(0.25); // TODO: Break out into settings.
+
+        private Timer cursorTimer = new Timer(0.25);
+
+        // TODO: Break out into settings.
         private bool drawCursor;
+
         private GraphicsDevice graphicsDevice;
+
         private LinkedList<Line> history = new LinkedList<Line>();
+
         private SpriteBatch spriteBatch;
 
         internal GameConsole(Rectangle area, GraphicsDevice graphicsDevice)
@@ -124,6 +121,27 @@
         }
 
         /// <summary>
+        /// Gets or sets the color that the text will be drawn with if no other colour is specified.
+        /// </summary>
+        public Color DefaultTextColour
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the error text colour.
+        /// </summary>
+        /// <value>
+        /// The error text colour.
+        /// </value>
+        public Color ErrorTextColour
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Gets or sets wether the console is open.
         /// </summary>
         public bool IsOpen
@@ -164,39 +182,6 @@
         }
 
         /// <summary>
-        /// Gets or sets the color that the text will be drawn with if no other colour is specified.
-        /// </summary>
-        public Color DefaultTextColour
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets or sets the warning text colour.
-        /// </summary>
-        /// <value>
-        /// The warning text colour.
-        /// </value>
-        public Color WarningTextColour
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets or sets the error text colour.
-        /// </summary>
-        /// <value>
-        /// The error text colour.
-        /// </value>
-        public Color ErrorTextColour
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// Gets or sets the string identifier of the text font. If null, the default font will be used.
         /// </summary>
         public Font TextFont
@@ -227,13 +212,24 @@
         }
 
         /// <summary>
+        /// Gets or sets the warning text colour.
+        /// </summary>
+        /// <value>
+        /// The warning text colour.
+        /// </value>
+        public Color WarningTextColour
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Clears all history.
         /// </summary>
         public void Clear()
         {
             this.history.Clear();
         }
-
 
         /// <summary>
         /// Writes the provided text with the colour <see cref="GameConsole.DefaultTextColour"/>.
@@ -475,11 +471,11 @@
         private void LogAdded(object sender, LogAddedEventArgs e)
         {
             Color c = this.DefaultTextColour;
-            if(e.Log.Level == LogLevel.Warning)
+            if (e.Log.Level == LogLevel.Warning)
             {
                 c = this.WarningTextColour;
             }
-            else if(e.Log.Level == LogLevel.Info)
+            else if (e.Log.Level == LogLevel.Info)
             {
                 c = this.ErrorTextColour;
             }
@@ -520,6 +516,18 @@
             {
                 this.history.RemoveFirst();
             }
+        }
+
+        private class Line
+        {
+            public Line(string text, Color color)
+            {
+                this.Text = text;
+                this.Color = color;
+            }
+
+            public Color Color { get; private set; }
+            public string Text { get; private set; }
         }
     }
 }

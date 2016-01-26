@@ -10,10 +10,18 @@
     /// <typeparam name="T">Type of asset to store.</typeparam>
     public abstract class AbstractAssetStorage<T> : AbstractFileLoader
     {
+        private Dictionary<string, T> assetStorage = new Dictionary<string, T>();
         private string currentGroup = null;
         private Dictionary<string, HashSet<string>> groupDictionary = new Dictionary<string, HashSet<string>>();
-        private Dictionary<string, string> groupFromEntry = new Dictionary<string, string>();
-        private Dictionary<string, T> storage = new Dictionary<string, T>();
+        private Dictionary<string, string> groupFromAsset = new Dictionary<string, string>();
+
+        /// <summary>
+        /// Gets the amount of assets.
+        /// </summary>
+        /// <value>
+        /// The asset count.
+        /// </value>
+        public int AssetCount { get { return this.assetStorage.Count; } }
 
         /// <summary>
         /// Gets or sets the default value, returned whenever trying to access a non-existing asset.
@@ -24,6 +32,14 @@
         public T DefaultValue { get; set; }
 
         /// <summary>
+        /// Gets the amount of groups.
+        /// </summary>
+        /// <value>
+        /// The group count.
+        /// </value>
+        public int GroupCount { get { return this.groupDictionary.Count; } }
+
+        /// <summary>
         /// Gets the asset with the associated id.
         /// </summary>
         /// <param name="id">The identifier.</param>
@@ -31,11 +47,60 @@
         public T GetAsset(string id)
         {
             id = id.ToLower();
-            if (this.storage.ContainsKey(id))
+            if (this.assetStorage.ContainsKey(id))
             {
-                return this.storage[id];
+                return this.assetStorage[id];
+            }
+            else
+            {
+                Logging.Logger.Global.Log("Asset not found: " + id, Logging.LogLevel.Warning);
             }
             return this.DefaultValue;
+        }
+
+        /// <summary>
+        /// Gets the group of the specified asset.
+        /// </summary>
+        /// <param name="asset">The asset to get the group for.</param>
+        /// <returns></returns>
+        public string GetAssetGroup(string asset)
+        {
+            if (this.groupFromAsset.ContainsKey(asset))
+            {
+                return this.groupFromAsset[asset];
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Gets all asset identifiers.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<string> GetAssetIdentifiers()
+        {
+            return new List<string>(this.assetStorage.Keys);
+        }
+
+        /// <summary>
+        /// Gets all asset identifiers in the specified group.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<string> GetAssetIdentifiers(string group)
+        {
+            if (this.groupDictionary.ContainsKey(group))
+            {
+                return new List<string>(this.groupDictionary[group]);
+            }
+            return new List<string>();
+        }
+
+        /// <summary>
+        /// Gets all groups.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<string> GetGroups()
+        {
+            return new List<string>(this.groupDictionary.Keys);
         }
 
         /// <summary>
@@ -52,16 +117,16 @@
             this.currentGroup = null;
             if (result.Successes > 0)
             {
-                T value = this.storage[path];
-                this.storage.Remove(path);
-                this.storage.Add(id, value);
+                T value = this.assetStorage[path];
+                this.assetStorage.Remove(path);
+                this.assetStorage.Add(id, value);
 
                 if (group != null)
                 {
                     this.groupDictionary[group].Remove(path);
                     this.groupDictionary[group].Add(id);
-                    this.groupFromEntry.Remove(path);
-                    this.groupFromEntry.Add(id, group);
+                    this.groupFromAsset.Remove(path);
+                    this.groupFromAsset.Add(id, group);
                 }
             }
             return result;
@@ -92,12 +157,12 @@
         public bool LoadStream(Stream stream, string id)
         {
             id = id.ToLower();
-            if (this.storage.ContainsKey(id) == false)
+            if (this.assetStorage.ContainsKey(id) == false)
             {
                 T value = this.DoLoadStream(stream);
                 if (value != null)
                 {
-                    this.storage.Add(id, value);
+                    this.assetStorage.Add(id, value);
                     return true;
                 }
             }
@@ -121,7 +186,7 @@
                     this.groupDictionary.Add(group, new HashSet<string>());
                 }
                 this.groupDictionary[group].Add(id);
-                this.groupFromEntry.Add(id, group);
+                this.groupFromAsset.Add(id, group);
             }
             return result;
         }
@@ -132,10 +197,11 @@
         /// <returns>Integer representing the amount of unloaded entries.</returns>
         public int UnloadAll()
         {
-            int nUnloaded = this.storage.Keys.Count;
-            this.storage.Clear();
+            int nUnloaded = this.assetStorage.Keys.Count;
+            this.assetStorage.Clear();
             this.groupDictionary.Clear();
-            this.groupFromEntry.Clear();
+            this.groupFromAsset.Clear();
+            Logging.Logger.Global.Log("Unloaded all assets", Logging.LogLevel.Info);
             return nUnloaded;
         }
 
@@ -146,17 +212,18 @@
         /// <returns>Integer representing the amount of unloaded entries.</returns>
         public int UnloadAsset(string id)
         {
-            if (this.storage.Remove(id))
+            if (this.assetStorage.Remove(id))
             {
-                if (this.groupFromEntry.ContainsKey(id))
+                if (this.groupFromAsset.ContainsKey(id))
                 {
-                    this.groupDictionary[this.groupFromEntry[id]].Remove(id);
-                    if (this.groupDictionary[this.groupFromEntry[id]].Count == 0)
+                    this.groupDictionary[this.groupFromAsset[id]].Remove(id);
+                    if (this.groupDictionary[this.groupFromAsset[id]].Count == 0)
                     {
-                        this.groupDictionary.Remove(this.groupFromEntry[id]);
+                        this.groupDictionary.Remove(this.groupFromAsset[id]);
                     }
-                    this.groupFromEntry.Remove(id);
+                    this.groupFromAsset.Remove(id);
                 }
+                Logging.Logger.Global.Log("Unloaded asset:" + id, Logging.LogLevel.Debug);
                 return 1;
             }
             return 0;

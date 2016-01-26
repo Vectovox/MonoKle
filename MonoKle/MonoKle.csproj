@@ -48,13 +48,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Assets\AbstractAssetStorage.cs" />
-    <Compile Include="Assets\AssetLoadingResult.cs" />
     <Compile Include="Assets\Effect\EffectStorage.cs" />
     <Compile Include="Assets\Font\Font.cs" />
     <Compile Include="Assets\Font\FontBaker.cs" />
     <Compile Include="Assets\Font\FontStorage.cs" />
     <Compile Include="Assets\Font\FontDataSerialization.cs" />
-    <Compile Include="Assets\TextureManager.cs" />
+    <Compile Include="Assets\Texture\TextureStorage.cs" />
     <Compile Include="Console\CommandBroker.cs" />
     <Compile Include="Console\ConsoleCommandHandler.cs" />
     <Compile Include="Console\GameConsole.cs" />

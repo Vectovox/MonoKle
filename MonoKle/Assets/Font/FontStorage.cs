@@ -26,10 +26,10 @@
 
         protected override bool CheckFile(string filePath)
         {
-            return filePath.EndsWith(".fnt", StringComparison.CurrentCultureIgnoreCase);
+            return filePath.EndsWith(".mfnt", StringComparison.CurrentCultureIgnoreCase);
         }
 
-        protected override Font DoLoadStream(Stream stream, string id)
+        protected override Font DoLoadStream(Stream stream)
         {
             BinaryFormatter bf = new BinaryFormatter();
             object o = bf.Deserialize(stream);

@@ -230,7 +230,8 @@
         {
             if (this.IsOpen)
             {
-                Texture2D background = this.BackgroundTexture == null ? MonoKleGame.TextureManager.WhiteTexture : MonoKleGame.TextureManager.GetTexture(BackgroundTexture);
+                Texture2D background = this.BackgroundTexture == null ?
+                    MonoKleGame.TextureStorage.WhiteTexture : MonoKleGame.TextureStorage.GetAsset(this.BackgroundTexture);
                 Font font = this.TextFont;
                 spriteBatch.Begin();
                 spriteBatch.Draw(background, this.Area, this.BackgroundColor);

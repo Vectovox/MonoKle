@@ -1,4 +1,6 @@
-﻿namespace MonoKle.IO
+﻿using System.Collections.Generic;
+
+namespace MonoKle.IO
 {
     /// <summary>
     /// Immutable struct for the results of loading files.
@@ -8,22 +10,22 @@
         /// <summary>
         /// Creates a new <see cref="FileLoadingResult"/>.
         /// </summary>
-        /// <param name="successes">The amount of successfully loaded files.</param>
+        /// <param name="loadedFiles">The successfully loaded file paths.</param>
         /// <param name="failures">The amount of files that failed to load.</param>
-        public FileLoadingResult(int successes, int failures)
-            : this(successes, failures, null)
+        public FileLoadingResult(IList<string> loadedFiles, int failures)
+            : this(loadedFiles, failures, null)
         {
         }
 
         /// <summary>
         /// Creates a new <see cref="FileLoadingResult"/>.
         /// </summary>
-        /// <param name="successes">The amount of successfully loaded files.</param>
+        /// <param name="loadedFiles">The successfully loaded file paths.</param>
         /// <param name="failures">The amount of files that failed to load.</param>
         /// <param name="extra">Extra data to associate with the file loading.</param>
-        public FileLoadingResult(int successes, int failures, object extra) : this()
+        public FileLoadingResult(IList<string> loadedFiles, int failures, object extra) : this()
         {
-            this.Successes = successes;
+            this.LoadedFiles = loadedFiles;
             this.Failures = failures;
             this.Extra = extra;
         }
@@ -35,6 +37,14 @@
         {
             get; private set;
         }
+
+        /// <summary>
+        /// Gets the paths of the loaded files.
+        /// </summary>
+        /// <value>
+        /// The loaded file paths.
+        /// </value>
+        public IList<string> LoadedFiles { get; private set; }
 
         /// <summary>
         /// Gets the amount of files that failed to load.
@@ -49,7 +59,7 @@
         /// </summary>
         public int Successes
         {
-            get; private set;
+            get { return this.LoadedFiles.Count; }
         }
 
         /// <summary>

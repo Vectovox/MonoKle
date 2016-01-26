@@ -19,6 +19,9 @@
     using System.Collections.Generic;
     using MonoKle.Assets.Effect;
     using MonoKle.Script;
+    using Assets.Texture;
+    using Microsoft.Xna.Framework.Graphics;
+    using Resources;
 
     /// <summary>
     /// Main game class for MonoKle. Takes care of initiating utilities and making them draw and update themselves.
@@ -77,7 +80,7 @@
         }
 
         /// <summary>
-        /// Gets the console utility. This displays log messages recorded by the logger and has the ability to send written commands.
+        /// Gets the game console, printing logs and accepting input.
         /// </summary>
         public static GameConsole Console
         {
@@ -86,9 +89,9 @@
         }
 
         /// <summary>
-        /// Gets the font manager. This provides all fonts and is responsible for loading them in from paths.
+        /// Gets the font storage, loading and providing fonts.
         /// </summary>
-        public static FontStorage FontManager
+        public static FontStorage FontStorage
         {
             get;
             private set;
@@ -104,7 +107,7 @@
         }
 
         /// <summary>
-        /// Gets the graphics manager utility. This is in charge of screen settings (resolution, full-screen, etc.) and provides the <see cref="GraphicsDevice"/>.
+        /// Gets the graphics manager. This is in charge of screen settings (resolution, full-screen, etc.) and provides the <see cref="GraphicsDevice"/>.
         /// </summary>
         public static GraphicsManager GraphicsManager
         {
@@ -131,7 +134,7 @@
         }
 
         /// <summary>
-        /// Gets the logging utility, same as Logger.GlobalInstance.
+        /// Gets the logging utility, same as <see cref="Logger.Global"/>.
         /// </summary>
         public static Logger Logger
         {
@@ -149,7 +152,7 @@
         }
 
         /// <summary>
-        /// Gets the mouse input utility.
+        /// Gets the mouse input.
         /// </summary>
         public static IMouseInput Mouse
         {
@@ -167,9 +170,9 @@
         }
 
         /// <summary>
-        /// Gets the texture manager. This provides all textures and is responsible for loading them in from paths.
+        /// Gets the texture storage, loading and providing textures.
         /// </summary>
-        public static TextureManager TextureManager
+        public static TextureStorage TextureStorage
         {
             get;
             private set;
@@ -217,20 +220,28 @@
 
         protected override void LoadContent()
         {
-            MonoKleGame.TextureManager = new TextureManager(GraphicsManager.GetGraphicsDevice());
-            this.SetUpFontManager();
+            this.SetUpTextureStorage();
+            this.SetUpFontStorage();
             MonoKleGame.EffectStorage = new EffectStorage(GraphicsManager.GetGraphicsDevice());
             this.SetUpConsole();
             MonoKleGame.Mouse = new MouseInput(GraphicsManager.ScreenSize);
         }
 
-        private void SetUpFontManager()
+        private void SetUpTextureStorage()
         {
-            MonoKleGame.FontManager = new FontStorage(GraphicsManager.GetGraphicsDevice());
+            MonoKleGame.TextureStorage = new TextureStorage(GraphicsManager.GetGraphicsDevice(),
+                GraphicsHelper.ImageToTexture2D(GraphicsManager.GetGraphicsDevice(), TextureResources.DefaultTexture),
+                GraphicsHelper.ImageToTexture2D(GraphicsManager.GetGraphicsDevice(), TextureResources.WhiteTexture)
+                );
+        }
+
+        private void SetUpFontStorage()
+        {
+            MonoKleGame.FontStorage = new FontStorage(GraphicsManager.GetGraphicsDevice());
             using (MemoryStream ms = new MemoryStream(Resources.FontResources.DefaultFont))
             {
-                MonoKleGame.FontManager.LoadStream(ms, "default");
-                MonoKleGame.FontManager.DefaultValue = MonoKleGame.FontManager.GetData("default");
+                MonoKleGame.FontStorage.LoadStream(ms, "default");
+                MonoKleGame.FontStorage.DefaultValue = MonoKleGame.FontStorage.GetAsset("default");
             }
         }
 
@@ -258,12 +269,12 @@
             // Set up font
             using (MemoryStream ms = new MemoryStream(Resources.FontResources.ConsoleFont))
             {
-                MonoKleGame.FontManager.LoadStream(ms, "console");
+                MonoKleGame.FontStorage.LoadStream(ms, "console");
             }
             MonoKleGame.Console = new GameConsole(new Rectangle(0, 0, GraphicsManager.ScreenSize.X, GraphicsManager.ScreenSize.Y / 3), GraphicsManager.GetGraphicsDevice());    // TODO: Break out magic numbers into config file.
             MonoKleGame.Console.ToggleKey = Microsoft.Xna.Framework.Input.Keys.F1;
             MonoKleGame.Console.CommandBroker.Register("exit", CommandExit);
-            MonoKleGame.Console.TextFont = MonoKleGame.FontManager.GetData("console");
+            MonoKleGame.Console.TextFont = MonoKleGame.FontStorage.GetAsset("console");
         }
 
         private void CommandExit(string[] arguments)

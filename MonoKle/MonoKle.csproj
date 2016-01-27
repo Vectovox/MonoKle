@@ -57,6 +57,8 @@
     <Compile Include="Console\CommandBroker.cs" />
     <Compile Include="Console\ConsoleCommandHandler.cs" />
     <Compile Include="Console\GameConsole.cs" />
+    <Compile Include="Console\InputField.cs" />
+    <Compile Include="Console\Line.cs" />
     <Compile Include="Core\Geometry\MCircle.cs" />
     <Compile Include="Core\Geometry\MVector2.cs" />
     <Compile Include="Core\Geometry\MRectangleInt.cs" />

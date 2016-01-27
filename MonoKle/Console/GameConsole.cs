@@ -16,25 +16,15 @@
     /// </summary>
     public class GameConsole
     {
+        // TODO: Break constants and things in class out into settings
         private const double KEY_TYPED_CYCLE_INTERVAL = 0.02;
 
         private const double KEY_TYPED_TIMEROFFSET = 0.5;
 
-        private string currentLine;
-
-        private StringBuilder currentLineBuilder = new StringBuilder();
-
-        private string currentLineCursor;
-
-        private Timer cursorTimer = new Timer(0.25);
-
-        // TODO: Break out into settings.
-        private bool drawCursor;
-
+        private int drawingOffset = 0;
         private GraphicsDevice graphicsDevice;
-
-        private LinkedList<Line> history = new LinkedList<Line>();
-
+        private InputField input = new InputField("|", ">> ", 0.25, 10);
+        private LinkedList<Line> lines = new LinkedList<Line>();
         private SpriteBatch spriteBatch;
 
         internal GameConsole(Rectangle area, GraphicsDevice graphicsDevice)
@@ -49,13 +39,9 @@
             this.WarningTextColour = Color.Yellow;
             this.ErrorTextColour = Color.Red;
             this.TextScale = 0.5f;
-            this.CursorToken = "_";
             this.TabToken = ' ';
             this.TabLength = 4;
-            this.CommandToken = ">> ";
-            // TODO: Break out all of these into either a settings struct or global script "variable"
             Logger.Global.LogAddedEvent += LogAdded;
-            this.InputUpdateCurrentLine();
             Logger.Global.Log("GameConsole activated!", LogLevel.Info);
 
             this.SetupBroker();
@@ -101,26 +87,6 @@
         }
 
         /// <summary>
-        /// Gets or sets the command token.
-        /// </summary>
-        /// <value>
-        /// The command token.
-        /// </value>
-        public string CommandToken { get; set; }
-
-        /// <summary>
-        /// Gets or sets the cursor token.
-        /// </summary>
-        /// <value>
-        /// The cursor token.
-        /// </value>
-        public string CursorToken
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// Gets or sets the color that the text will be drawn with if no other colour is specified.
         /// </summary>
         public Color DefaultTextColour
@@ -142,6 +108,15 @@
         }
 
         /// <summary>
+        /// Gets or sets the maximum amount of previous commands to keep in history.
+        /// </summary>
+        public int HistorySize
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Gets or sets wether the console is open.
         /// </summary>
         public bool IsOpen
@@ -151,7 +126,7 @@
         }
 
         /// <summary>
-        /// Gets or sets the maximum amount of entries to keep in history.
+        /// Gets or sets the maximum amount of entries to keep.
         /// </summary>
         public int Size
         {
@@ -228,7 +203,7 @@
         /// </summary>
         public void Clear()
         {
-            this.history.Clear();
+            this.lines.Clear();
         }
 
         /// <summary>
@@ -247,35 +222,37 @@
         /// <param name="color">Color of the line.</param>
         public void WriteLine(string text, Color color)
         {
+            // Divide into separate rows for \n
+            string[] rows = text.Split('\n');
+
             StringBuilder sb = new StringBuilder();
-            int column = 0;
-            for (int i = 0; i < text.Length; i++)
+            foreach (string r in rows)
             {
-                if (text[i] == '\t')
+                // Add tabs
+                sb.Clear();
+                int column = 0;
+                for (int i = 0; i < r.Length; i++)
                 {
-                    int amnt = this.TabLength - (column % this.TabLength);
-                    for (int j = 0; j < amnt; j++)
+                    if (r[i] == '\t')
                     {
-                        sb.Append(this.TabToken);
-                        column++;
-                    }
-                }
-                else
-                {
-                    sb.Append(text[i]);
-                    if (text[i] == '\n')
-                    {
-                        column = 0;
+                        int amnt = this.TabLength - (column % this.TabLength);
+                        for (int j = 0; j < amnt; j++)
+                        {
+                            sb.Append(this.TabToken);
+                            column++;
+                        }
                     }
                     else
                     {
+                        sb.Append(r[i]);
                         column++;
                     }
                 }
+
+                this.lines.AddLast(new Line(sb.ToString(), color));
             }
 
-            this.history.AddLast(new Line(sb.ToString(), color));
-            this.TrimHistory();
+            this.TrimLines();
         }
 
         internal void Draw()
@@ -288,9 +265,9 @@
                 spriteBatch.Begin();
                 spriteBatch.Draw(background, this.Area, this.BackgroundColor);
 
-                string drawnLine = this.drawCursor ? this.currentLineCursor : this.currentLine;
+                string drawnLine = this.input.GetText(true);
                 Vector2 textPos = new Vector2(this.Area.Left, this.Area.Bottom - font.MeasureString(drawnLine, this.TextScale).Y);
-                LinkedListNode<Line> node = history.Last;
+                LinkedListNode<Line> node = lines.Find(lines.ElementAtOrDefault(lines.Count - this.drawingOffset - 1));
                 StringWrapper wrapper = new StringWrapper();
 
                 font.DrawString(this.spriteBatch, drawnLine, textPos, this.DefaultTextColour, 0f, Vector2.Zero, this.TextScale, SpriteEffects.None, 0f);
@@ -309,25 +286,18 @@
         {
             if (MonoKleGame.Keyboard.IsKeyPressed(this.ToggleKey))
             {
-                this.IsOpen = !this.IsOpen;
-                this.drawCursor = false;
+                this.IsOpen = !this.IsOpen; ;
             }
 
             if (this.IsOpen)
             {
-                if (this.cursorTimer.Update(seconds))
-                {
-                    this.drawCursor = !this.drawCursor;
-                    this.cursorTimer.Reset();
-                }
-
                 // Check letters
                 for (int i = 65; i <= 90; i++)
                 {
                     if (MonoKleGame.Keyboard.IsKeyTyped((Keys)i, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                     {
                         bool upperCase = MonoKleGame.Keyboard.IsKeyHeld(Keys.LeftShift) || MonoKleGame.Keyboard.IsKeyHeld(Keys.RightShift);
-                        this.InputAppend((char)(i + (upperCase ? +0 : 32)));
+                        this.input.Type((char)(i + (upperCase ? +0 : 32)));
                     }
                 }
 
@@ -336,60 +306,110 @@
                 {
                     if (MonoKleGame.Keyboard.IsKeyTyped((Keys)i, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                     {
-                        this.InputAppend((char)i);
+                        this.input.Type((char)i);
                     }
                 }
 
                 if (MonoKleGame.Keyboard.IsKeyTyped(Keys.Space, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
-                    this.InputAppend(' ');
+                    this.input.Type(' ');
                 }
 
                 if (MonoKleGame.Keyboard.IsKeyTyped(Keys.OemPeriod, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
-                    this.InputAppend('.');
+                    this.input.Type('.');
                 }
 
                 if (MonoKleGame.Keyboard.IsKeyTyped(Keys.OemPlus, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
-                    this.InputAppend('+');
+                    this.input.Type('+');
                 }
 
                 if (MonoKleGame.Keyboard.IsKeyTyped(Keys.OemMinus, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
-                    this.InputAppend('-');
+                    this.input.Type('-');
                 }
 
                 // Check for eraser
                 if (MonoKleGame.Keyboard.IsKeyTyped(Keys.Back, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
-                    this.InputEraseCharacter();
+                    this.input.Erase();
+                }
+
+                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.Delete, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+                {
+                    this.input.Delete();
                 }
 
                 // Check for if command is given
-                if (MonoKleGame.Keyboard.IsKeyPressed(Keys.Enter))
+                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.Enter, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
                     this.SendCommand();
                 }
 
                 // Autocomplete
-                if (MonoKleGame.Keyboard.IsKeyPressed(Keys.Tab))
+                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.Tab, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
                     this.AutoComplete();
                 }
+
+                // History
+                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.Up, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+                {
+                    this.input.PreviousMemory();
+                }
+
+                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.Down, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+                {
+                    this.input.NextMemory();
+                }
+
+                // Cursor
+                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.Left, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+                {
+                    this.input.CursorLeft();
+                }
+
+                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.Right, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+                {
+                    this.input.CursorRight();
+                }
+
+                // Scrolling
+                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.PageUp, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+                {
+                    this.ScrollUp();
+                }
+
+                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.PageDown, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+                {
+                    this.ScrollDown();
+                }
+
+                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.Home, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+                {
+                    this.ScrollTop();
+                }
+
+                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.End, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+                {
+                    this.ScrollBottom();
+                }
+
+                this.input.Update(seconds);
             }
         }
 
         private void AutoComplete()
         {
-            string current = this.InputText();
+            string current = this.input.GetInput();
 
             if (current.Length > 0)
             {
                 IList<CommandBroker.Command> matches = this.CommandBroker.Commands.Where(o => o.Name.StartsWith(current)).ToList();
                 if (matches.Count == 1)
                 {
-                    this.InputSet(matches.First().Name);
+                    this.input.Set(matches.First().Name);
                 }
                 else if (matches.Count > 1)
                 {
@@ -423,51 +443,6 @@
             }
         }
 
-        private void InputAppend(char character)
-        {
-            this.currentLineBuilder.Append(character);
-            this.InputUpdateCurrentLine();
-        }
-
-        private void InputAppend(string text)
-        {
-            this.currentLineBuilder.Append(text);
-            this.InputUpdateCurrentLine();
-        }
-
-        private void InputEraseAll()
-        {
-            this.currentLineBuilder.Clear();
-            this.InputUpdateCurrentLine();
-        }
-
-        private void InputEraseCharacter()
-        {
-            if (this.currentLineBuilder.Length > 0)
-            {
-                this.currentLineBuilder.Remove(this.currentLineBuilder.Length - 1, 1);
-                this.InputUpdateCurrentLine();
-            }
-        }
-
-        private void InputSet(string text)
-        {
-            this.currentLineBuilder.Clear();
-            this.currentLineBuilder.Append(text);
-            this.InputUpdateCurrentLine();
-        }
-
-        private string InputText()
-        {
-            return this.currentLineBuilder.ToString();
-        }
-
-        private void InputUpdateCurrentLine()
-        {
-            this.currentLine = this.CommandToken + this.currentLineBuilder.ToString();
-            this.currentLineCursor = this.currentLine + this.CursorToken;
-        }
-
         private void LogAdded(object sender, LogAddedEventArgs e)
         {
             Color c = this.DefaultTextColour;
@@ -482,11 +457,42 @@
             this.WriteLine(e.Log.ToString(), c);
         }
 
+        private void Scroll(int delta)
+        {
+            this.drawingOffset += delta;
+            this.drawingOffset = Math.Min(this.drawingOffset, this.lines.Count - 1);
+            this.drawingOffset = Math.Max(this.drawingOffset, 0);
+        }
+
+        private void ScrollBottom()
+        {
+            this.Scroll(-this.drawingOffset);
+        }
+
+        private void ScrollDown()
+        {
+            float height = this.TextFont.MeasureString("M", this.TextScale).Y;
+            int maxRows = (int)(this.Area.Height / height);
+            this.Scroll(-maxRows / 2);
+        }
+
+        private void ScrollTop()
+        {
+            this.Scroll(this.lines.Count - this.drawingOffset);
+        }
+
+        private void ScrollUp()
+        {
+            float height = this.TextFont.MeasureString("M", this.TextScale).Y;
+            int maxRows = (int)(this.Area.Height / height);
+            this.Scroll(maxRows / 2);
+        }
+
         private void SendCommand()
         {
-            this.WriteLine(this.currentLine);
+            this.WriteLine(this.input.GetText());
 
-            string[] split = this.InputText().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] split = this.input.GetInput().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             if (split.Length > 0)
             {
                 string command = split[0];
@@ -497,9 +503,10 @@
                 {
                     this.WriteLine("'" + command + "' is not a recognized command or has an invalid amount of arguments.");
                 }
+                this.input.Remember();
             }
 
-            this.InputEraseAll();
+            this.input.Clear();
         }
 
         private void SetupBroker()
@@ -510,24 +517,12 @@
             this.CommandBroker.Register("echo", 1, this.CommandEcho);
         }
 
-        private void TrimHistory()
+        private void TrimLines()
         {
-            while (this.history.Count > this.Size)
+            while (this.lines.Count > this.Size)
             {
-                this.history.RemoveFirst();
+                this.lines.RemoveFirst();
             }
-        }
-
-        private class Line
-        {
-            public Line(string text, Color color)
-            {
-                this.Text = text;
-                this.Color = color;
-            }
-
-            public Color Color { get; private set; }
-            public string Text { get; private set; }
         }
     }
 }

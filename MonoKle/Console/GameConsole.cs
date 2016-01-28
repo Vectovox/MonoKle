@@ -1,9 +1,10 @@
 ﻿namespace MonoKle.Console
 {
+    using Input;
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
     using Microsoft.Xna.Framework.Input;
-    using MonoKle.Assets.Font;
+    using MonoKle.Asset.Font;
     using MonoKle.Core;
     using MonoKle.Logging;
     using System;
@@ -26,14 +27,24 @@
         private InputField input = new InputField("|", ">> ", 0.25, 10);
         private LinkedList<Line> lines = new LinkedList<Line>();
         private SpriteBatch spriteBatch;
+        private KeyboardInput keyboard;
 
-        internal GameConsole(Rectangle area, GraphicsDevice graphicsDevice)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GameConsole"/> class.
+        /// </summary>
+        /// <param name="area">The area.</param>
+        /// <param name="graphicsDevice">The graphics device.</param>
+        /// <param name="keyboard">The keyboard.</param>
+        /// <param name="backgroundTexture">The background texture.</param>
+        public GameConsole(Rectangle area, GraphicsDevice graphicsDevice, KeyboardInput keyboard, Texture2D backgroundTexture)
         {
             this.graphicsDevice = graphicsDevice;
             this.spriteBatch = new SpriteBatch(graphicsDevice);
+            this.keyboard = keyboard;
 
             this.Area = area;
             this.Size = byte.MaxValue;
+            this.BackgroundTexture = backgroundTexture;
             this.BackgroundColor = new Color(0, 0, 0, 0.7f);
             this.DefaultTextColour = Color.WhiteSmoke;
             this.WarningTextColour = Color.Yellow;
@@ -65,9 +76,9 @@
         }
 
         /// <summary>
-        /// Gets or sets the string identifier of the background texture. If null, the default background will be used.
+        /// Gets or sets the background texture.
         /// </summary>
-        public string BackgroundTexture
+        public Texture2D BackgroundTexture
         {
             get;
             set;
@@ -243,15 +254,16 @@
             this.TrimLines();
         }
 
-        internal void Draw()
+        /// <summary>
+        /// Draws this instance.
+        /// </summary>
+        public void Draw()
         {
             if (this.IsOpen)
             {
-                Texture2D background = this.BackgroundTexture == null ?
-                    MonoKleGame.TextureStorage.WhiteTexture : MonoKleGame.TextureStorage.GetAsset(this.BackgroundTexture);
                 Font font = this.TextFont;
                 spriteBatch.Begin();
-                spriteBatch.Draw(background, this.Area, this.BackgroundColor);
+                spriteBatch.Draw(this.BackgroundTexture, this.Area, this.BackgroundColor);
 
                 string drawnLine = this.input.GetText(true);
                 Vector2 textPos = new Vector2(this.Area.Left, this.Area.Bottom - font.MeasureString(drawnLine, this.TextScale).Y);
@@ -270,9 +282,13 @@
             }
         }
 
-        internal void Update(double seconds)
+        /// <summary>
+        /// Updates the specified seconds.
+        /// </summary>
+        /// <param name="seconds">The seconds elapsed.</param>
+        public void Update(double seconds)
         {
-            if (MonoKleGame.Keyboard.IsKeyPressed(this.ToggleKey))
+            if (this.keyboard.IsKeyPressed(this.ToggleKey))
             {
                 this.IsOpen = !this.IsOpen; ;
             }
@@ -282,9 +298,9 @@
                 // Check letters
                 for (int i = 65; i <= 90; i++)
                 {
-                    if (MonoKleGame.Keyboard.IsKeyTyped((Keys)i, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+                    if (this.keyboard.IsKeyTyped((Keys)i, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                     {
-                        bool upperCase = MonoKleGame.Keyboard.IsKeyHeld(Keys.LeftShift) || MonoKleGame.Keyboard.IsKeyHeld(Keys.RightShift);
+                        bool upperCase = this.keyboard.IsKeyHeld(Keys.LeftShift) || this.keyboard.IsKeyHeld(Keys.RightShift);
                         this.input.Type((char)(i + (upperCase ? +0 : 32)));
                     }
                 }
@@ -292,94 +308,94 @@
                 // Check numbers
                 for (int i = 48; i <= 58; i++)
                 {
-                    if (MonoKleGame.Keyboard.IsKeyTyped((Keys)i, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+                    if (this.keyboard.IsKeyTyped((Keys)i, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                     {
                         this.input.Type((char)i);
                     }
                 }
 
-                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.Space, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+                if (this.keyboard.IsKeyTyped(Keys.Space, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
                     this.input.Type(' ');
                 }
 
-                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.OemPeriod, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+                if (this.keyboard.IsKeyTyped(Keys.OemPeriod, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
                     this.input.Type('.');
                 }
 
-                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.OemPlus, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+                if (this.keyboard.IsKeyTyped(Keys.OemPlus, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
                     this.input.Type('+');
                 }
 
-                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.OemMinus, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+                if (this.keyboard.IsKeyTyped(Keys.OemMinus, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
                     this.input.Type('-');
                 }
 
                 // Check for eraser
-                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.Back, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+                if (this.keyboard.IsKeyTyped(Keys.Back, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
                     this.input.Erase();
                 }
 
-                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.Delete, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+                if (this.keyboard.IsKeyTyped(Keys.Delete, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
                     this.input.Delete();
                 }
 
                 // Check for if command is given
-                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.Enter, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+                if (this.keyboard.IsKeyTyped(Keys.Enter, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
                     this.SendCommand();
                 }
 
                 // Autocomplete
-                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.Tab, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+                if (this.keyboard.IsKeyTyped(Keys.Tab, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
                     this.AutoComplete();
                 }
 
                 // History
-                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.Up, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+                if (this.keyboard.IsKeyTyped(Keys.Up, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
                     this.input.PreviousMemory();
                 }
 
-                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.Down, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+                if (this.keyboard.IsKeyTyped(Keys.Down, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
                     this.input.NextMemory();
                 }
 
                 // Cursor
-                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.Left, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+                if (this.keyboard.IsKeyTyped(Keys.Left, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
                     this.input.CursorLeft();
                 }
 
-                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.Right, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+                if (this.keyboard.IsKeyTyped(Keys.Right, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
                     this.input.CursorRight();
                 }
 
                 // Scrolling
-                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.PageUp, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+                if (this.keyboard.IsKeyTyped(Keys.PageUp, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
                     this.ScrollUp();
                 }
 
-                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.PageDown, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+                if (this.keyboard.IsKeyTyped(Keys.PageDown, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
                     this.ScrollDown();
                 }
 
-                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.Home, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+                if (this.keyboard.IsKeyTyped(Keys.Home, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
                     this.ScrollTop();
                 }
 
-                if (MonoKleGame.Keyboard.IsKeyTyped(Keys.End, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+                if (this.keyboard.IsKeyTyped(Keys.End, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
                     this.ScrollBottom();
                 }

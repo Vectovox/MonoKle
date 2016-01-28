@@ -1,4 +1,4 @@
-﻿namespace MonoKle.Assets.Texture
+﻿namespace MonoKle.Asset.Texture
 {
     using Microsoft.Xna.Framework.Graphics;
     using System;
@@ -21,7 +21,7 @@
         {
             this.graphicsDevice = graphicsDevice;
             this.DefaultValue = defaultTexture;
-            this.WhiteTexture = whiteTexture;
+            this.White = whiteTexture;
         }
 
         /// <summary>
@@ -30,7 +30,7 @@
         /// <value>
         /// The white texture.
         /// </value>
-        public Texture2D WhiteTexture { get; private set; }
+        public Texture2D White { get; private set; }
 
         protected override bool CheckFile(string filePath)
         {

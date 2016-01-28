@@ -1,4 +1,4 @@
-﻿namespace MonoKle.Assets
+﻿namespace MonoKle.Asset
 {
     using MonoKle.IO;
     using System.Collections.Generic;

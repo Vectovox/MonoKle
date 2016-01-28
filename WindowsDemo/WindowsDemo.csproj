@@ -78,6 +78,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MonoKle.Engine\MonoKle.Engine.csproj">
+      <Project>{ed1f6a43-4191-4eaa-bb98-4622bc3d29e0}</Project>
+      <Name>MonoKle.Engine</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MonoKle\MonoKle.csproj">
       <Project>{34afe7b2-73e7-4417-b677-3ccd65f2c3fd}</Project>
       <Name>MonoKle</Name>

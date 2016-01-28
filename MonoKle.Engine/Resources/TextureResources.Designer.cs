@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace MonoKle.Resources {
+namespace MonoKle.Engine.Resources {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace MonoKle.Resources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MonoKle.Resources.TextureResources", typeof(TextureResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MonoKle.Engine.Resources.TextureResources", typeof(TextureResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

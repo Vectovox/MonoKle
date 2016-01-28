@@ -1,4 +1,4 @@
-﻿namespace MonoKle.Assets.Effect
+﻿namespace MonoKle.Asset.Effect
 {
     using Microsoft.Xna.Framework.Graphics;
     using System.IO;

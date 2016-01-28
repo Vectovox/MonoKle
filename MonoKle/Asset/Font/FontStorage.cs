@@ -1,4 +1,4 @@
-﻿namespace MonoKle.Assets.Font
+﻿namespace MonoKle.Asset.Font
 {
     using Microsoft.Xna.Framework.Graphics;
     using MonoKle.Graphics;

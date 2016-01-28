@@ -1,6 +1,7 @@
 ﻿#region Using Statements
 using MonoKle;
 using MonoKle.Core.Geometry;
+using MonoKle.Engine;
 using System;
 
 #endregion
@@ -18,12 +19,12 @@ namespace WindowsDemo
         [STAThread]
         static void Main()
         {
-            using (MonoKleGame game = MonoKleGame.GetInstance())
+            using (MGame game = MBackend.Initialize(true))
             {
-                MonoKleGame.StateManager.AddState(new DemoStateOne());
-                MonoKleGame.StateManager.AddState(new DemoStateTwo());
-                MonoKleGame.StateManager.SwitchState("stateOne", null);
-                MonoKleGame.GraphicsManager.SetScreenSize(new MPoint2(800, 600));
+                MBackend.StateManager.AddState(new DemoStateOne());
+                MBackend.StateManager.AddState(new DemoStateTwo());
+                MBackend.StateManager.SwitchState("stateOne", null);
+                MBackend.GraphicsManager.SetScreenSize(new MPoint2(800, 600));
                 game.Run();
             }
         }

@@ -1,6 +1,6 @@
 ﻿namespace MonoKle.Core
 {
-    using MonoKle.Assets.Font;
+    using MonoKle.Asset.Font;
 
     /// <summary>
     /// Class that wraps strings to fit with a specified size criteria.

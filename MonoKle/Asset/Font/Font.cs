@@ -1,4 +1,4 @@
-﻿namespace MonoKle.Assets.Font
+﻿namespace MonoKle.Asset.Font
 {
     using System;
     using System.Collections.Generic;

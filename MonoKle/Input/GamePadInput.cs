@@ -1,21 +1,27 @@
 ﻿namespace MonoKle.Input
 {
+    using Microsoft.Xna.Framework;
+    using Microsoft.Xna.Framework.Input;
     using System;
-    using System.Collections;
     using System.Collections.Generic;
 
-    using Microsoft.Xna.Framework.Input;
-    using Microsoft.Xna.Framework;
-
+    /// <summary>
+    /// Class providing gamepad input methods.
+    /// </summary>
     public class GamePadInput
     {
+        private HashSet<Buttons>[] currentButtons;
+
         //private static GamePadState[] previousStateArray;
         private GamePadState[] currentState;
-        private HashSet<Buttons>[] currentButtons;
-        private Dictionary<Buttons, double>[] timeHeldByButton;
-        private HashSet<Buttons>[] previousButtons;
 
-        internal GamePadInput()
+        private HashSet<Buttons>[] previousButtons;
+        private Dictionary<Buttons, double>[] timeHeldByButton;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GamePadInput"/> class.
+        /// </summary>
+        public GamePadInput()
         {
             //previousStateArray = new GamePadState[4];
             currentState = new GamePadState[4];
@@ -31,6 +37,53 @@
             }
         }
 
+        public double GetButtonHeldTime(Buttons button, byte playerIndex)
+        {
+            if (playerIndex > 3)
+            {
+                throw new ArgumentOutOfRangeException("Player index must be in the interval 0-3.");
+            }
+            double ret = 0;
+            timeHeldByButton[playerIndex].TryGetValue(button, out ret);
+            return ret;
+        }
+
+        public Vector2 GetLeftThumbstick(byte playerIndex)
+        {
+            if (playerIndex > 3)
+            {
+                throw new ArgumentOutOfRangeException("Player index must be in the interval 0-3.");
+            }
+            return currentState[playerIndex].ThumbSticks.Left;
+        }
+
+        public float GetLeftTrigger(byte playerIndex)
+        {
+            if (playerIndex > 3)
+            {
+                throw new ArgumentOutOfRangeException("Player index must be in the interval 0-3.");
+            }
+            return currentState[playerIndex].Triggers.Left;
+        }
+
+        public Vector2 GetRightThumbstick(byte playerIndex)
+        {
+            if (playerIndex > 3)
+            {
+                throw new ArgumentOutOfRangeException("Player index must be in the interval 0-3.");
+            }
+            return currentState[playerIndex].ThumbSticks.Right;
+        }
+
+        public float GetRightTrigger(byte playerIndex)
+        {
+            if (playerIndex > 3)
+            {
+                throw new ArgumentOutOfRangeException("Player index must be in the interval 0-3.");
+            }
+            return currentState[playerIndex].Triggers.Right;
+        }
+
         public bool IsButtonDown(Buttons button, byte playerIndex)
         {
             if (playerIndex > 3)
@@ -38,15 +91,6 @@
                 throw new ArgumentOutOfRangeException("Player index must be in the interval 0-3.");
             }
             return currentButtons[playerIndex].Contains(button);
-        }
-
-        public bool IsButtonUp(Buttons button, byte playerIndex)
-        {
-            if (playerIndex > 3)
-            {
-                throw new ArgumentOutOfRangeException("Player index must be in the interval 0-3.");
-            }
-            return currentButtons[playerIndex].Contains(button) == false;
         }
 
         public bool IsButtonHeld(Buttons button, byte playerIndex)
@@ -85,15 +129,13 @@
             return IsButtonUp(button, playerIndex) && previousButtons[playerIndex].Contains(button);
         }
 
-        public double GetButtonHeldTime(Buttons button, byte playerIndex)
+        public bool IsButtonUp(Buttons button, byte playerIndex)
         {
             if (playerIndex > 3)
             {
                 throw new ArgumentOutOfRangeException("Player index must be in the interval 0-3.");
             }
-            double ret = 0;
-            timeHeldByButton[playerIndex].TryGetValue(button, out ret);
-            return ret;
+            return currentButtons[playerIndex].Contains(button) == false;
         }
 
         public bool IsConnected(byte playerIndex)
@@ -103,42 +145,6 @@
                 throw new ArgumentOutOfRangeException("Player index must be in the interval 0-3.");
             }
             return currentState[playerIndex].IsConnected;
-        }
-
-        public Vector2 GetLeftThumbstick(byte playerIndex)
-        {
-            if (playerIndex > 3)
-            {
-                throw new ArgumentOutOfRangeException("Player index must be in the interval 0-3.");
-            }
-            return currentState[playerIndex].ThumbSticks.Left;
-        }
-
-        public Vector2 GetRightThumbstick(byte playerIndex)
-        {
-            if (playerIndex > 3)
-            {
-                throw new ArgumentOutOfRangeException("Player index must be in the interval 0-3.");
-            }
-            return currentState[playerIndex].ThumbSticks.Right;
-        }
-
-        public float GetLeftTrigger(byte playerIndex)
-        {
-            if (playerIndex > 3)
-            {
-                throw new ArgumentOutOfRangeException("Player index must be in the interval 0-3.");
-            }
-            return currentState[playerIndex].Triggers.Left;
-        }
-
-        public float GetRightTrigger(byte playerIndex)
-        {
-            if (playerIndex > 3)
-            {
-                throw new ArgumentOutOfRangeException("Player index must be in the interval 0-3.");
-            }
-            return currentState[playerIndex].Triggers.Right;
         }
 
         public void Update(double seconds)

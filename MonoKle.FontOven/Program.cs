@@ -1,6 +1,6 @@
 ﻿namespace MonoKle.FontOven
 {
-    using Assets.Font;
+    using Asset.Font;
     using System;
 
     internal class Program

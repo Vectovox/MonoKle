@@ -1,10 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using MonoKle;
 using MonoKle.Engine;
-using MonoKle.Graphics;
 using MonoKle.Graphics.Primitives;
-using MonoKle.Input;
 using MonoKle.State;
 using System;
 
@@ -19,7 +16,6 @@ namespace WindowsDemo
         public DemoStateTwo()
             : base("stateTwo")
         {
-
         }
 
         public override void Draw(double time)
@@ -44,19 +40,19 @@ namespace WindowsDemo
                 MBackend.GameInstance.Exit();
             }
 
-            if(MBackend.Keyboard.IsKeyHeld(Keys.I))
+            if (MBackend.Keyboard.IsKeyHeld(Keys.I))
             {
                 camPos.Y += 5;
             }
-            if(MBackend.Keyboard.IsKeyHeld(Keys.K))
+            if (MBackend.Keyboard.IsKeyHeld(Keys.K))
             {
                 camPos.Y -= 5;
             }
-            if(MBackend.Keyboard.IsKeyHeld(Keys.L))
+            if (MBackend.Keyboard.IsKeyHeld(Keys.L))
             {
                 camPos.X += 5;
             }
-            if(MBackend.Keyboard.IsKeyHeld(Keys.J))
+            if (MBackend.Keyboard.IsKeyHeld(Keys.J))
             {
                 camPos.X -= 5;
             }

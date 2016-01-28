@@ -1,14 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using MonoKle;
-using MonoKle.Asset;
 using MonoKle.Core;
 using MonoKle.Core.Geometry;
 using MonoKle.Engine;
-using MonoKle.Graphics;
 using MonoKle.Graphics.Primitives;
-using MonoKle.Input;
 using MonoKle.Logging;
 using MonoKle.Messaging;
 using MonoKle.State;
@@ -23,7 +19,9 @@ namespace WindowsDemo
         private Camera2D camera = new Camera2D(new MPoint2(800, 600));
         private PrimitiveBatch2D primitive2D;
 
-        public DemoStateOne() : base("stateOne") { }
+        public DemoStateOne() : base("stateOne")
+        {
+        }
 
         public override void Draw(double time)
         {
@@ -73,7 +71,6 @@ namespace WindowsDemo
             MBackend.FontStorage.GetAsset("TESTFONT").DrawString(sb, "<=+=>",
                 new Vector2(400, 300), Color.Green, (float)MBackend.TotalGameTime.TotalSeconds, o, 1f, SpriteEffects.None, 0f);
 
-
             string s = "Testin size";
             MBackend.FontStorage.DefaultValue.DrawString(sb, s, new Vector2(450, 350), Color.Green);
             MBackend.FontStorage.DefaultValue.DrawString(sb, s, new Vector2(450, 350 + MBackend.FontStorage.DefaultValue.MeasureString(s).Y), Color.Green);
@@ -110,9 +107,8 @@ namespace WindowsDemo
 
         public override void Update(double seconds)
         {
-            if(MBackend.Console.IsOpen == false)
+            if (MBackend.Console.IsOpen == false)
             {
-
                 if (MBackend.Keyboard.IsKeyHeld(Keys.Escape, 1))
                 {
                     MBackend.GameInstance.Exit();
@@ -156,11 +152,11 @@ namespace WindowsDemo
                     camera.SetScale(camera.GetScale() - 0.01f);
                 }
 
-                if(MBackend.Keyboard.IsKeyPressed(Keys.F2))
+                if (MBackend.Keyboard.IsKeyPressed(Keys.F2))
                 {
                     MBackend.GraphicsManager.SetScreenSize(new MPoint2(1280, 720));
                 }
-                else if(MBackend.Keyboard.IsKeyPressed(Keys.F3))
+                else if (MBackend.Keyboard.IsKeyPressed(Keys.F3))
                 {
                     MBackend.GraphicsManager.SetScreenSize(new MPoint2(800, 600));
                 }
@@ -177,12 +173,12 @@ namespace WindowsDemo
                     MBackend.MessagePasser.SendMessage("noChannel", new MessageEventArgs("I AM NOT HELLO"));
                 }
 
-                if(MBackend.Keyboard.IsKeyPressed(Keys.N))
+                if (MBackend.Keyboard.IsKeyPressed(Keys.N))
                 {
                     Logger.Global.Log("I am logging");
                 }
             }
-            
+
             camera.Update(seconds);
             timer.Update(seconds);
         }
@@ -196,7 +192,7 @@ namespace WindowsDemo
         {
             string data = args.Data as string;
 
-            if(data.Equals("reset timer"))
+            if (data.Equals("reset timer"))
             {
                 timer.Reset();
             }

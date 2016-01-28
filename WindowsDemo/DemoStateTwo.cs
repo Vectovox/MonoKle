@@ -59,7 +59,7 @@ namespace WindowsDemo
 
             if (MBackend.Keyboard.IsKeyPressed(Keys.Space))
             {
-                MBackend.StateManager.SwitchState("stateOne", "HELLO!");
+                MBackend.StateSystem.SwitchState("stateOne", "HELLO!");
             }
         }
 

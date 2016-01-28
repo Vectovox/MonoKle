@@ -1,12 +1,15 @@
 ﻿namespace MonoKle.Asset.Font
 {
     using Microsoft.Xna.Framework.Graphics;
+    using Baking;
     using MonoKle.Graphics;
     using System;
     using System.Collections.Generic;
     using System.Drawing;
     using System.IO;
     using System.Runtime.Serialization.Formatters.Binary;
+    using System.Drawing.Imaging;
+    using System.Xml.Serialization;
 
     /// <summary>
     /// Manages drawable fonts.
@@ -31,13 +34,13 @@
 
         protected override Font DoLoadStream(Stream stream)
         {
-            BinaryFormatter bf = new BinaryFormatter();
-            object o = bf.Deserialize(stream);
-            FontBaker.BakedFont baked;
+            XmlSerializer serializer = new XmlSerializer(typeof(BakedFont));
+            object o = serializer.Deserialize(stream);
+            BakedFont baked;
 
             try
             {
-                baked = (FontBaker.BakedFont)o;
+                baked = (BakedFont)o;
             }
             catch
             {
@@ -45,9 +48,11 @@
             }
 
             List<Texture2D> texList = new List<Texture2D>();
-            foreach (Image i in baked.ImageList)
+            ImageSerializer isr = new ImageSerializer(ImageFormat.Png);
+            foreach (byte[] i in baked.ImageList)
             {
-                texList.Add(GraphicsHelper.ImageToTexture2D(graphicsDevice, i));
+                Image image = isr.BytesToImage(i);
+                texList.Add(GraphicsHelper.ImageToTexture2D(graphicsDevice, image));
             }
 
             return new Font(baked.FontFile, texList);

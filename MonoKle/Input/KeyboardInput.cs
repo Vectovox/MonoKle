@@ -7,7 +7,7 @@
     /// <summary>
     /// Class providing polling functionality for keyboard input.
     /// </summary>
-    public class KeyboardInput
+    public class KeyboardInput : IKeyboardInput, IMUpdateable
     {
         private HashSet<Keys> currentKeys;
         private Dictionary<Keys, double> heldTimerByKey;
@@ -127,9 +127,9 @@
         }
 
         /// <summary>
-        /// Updates the internals. Should be called once per frame.
+        /// Updates the component with the specified seconds since last update.
         /// </summary>
-        /// <param name="seconds">Time passed since last call.</param>
+        /// <param name="seconds">The amount of seconds since last update.</param>
         public void Update(double seconds)
         {
             this.previousKeys = this.currentKeys;

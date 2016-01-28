@@ -1,21 +1,24 @@
 ﻿namespace MonoKle.Input
 {
-    using MonoKle.Core;
     using Core.Geometry;
 
     /// <summary>
-    /// Interface for mouse input.
+    /// Interface providing polling functionality for mouse input.
     /// </summary>
     public interface IMouseInput
     {
         /// <summary>
         /// Gets or sets whether the virtual mouse is enabled.
         /// </summary>
-        bool VirtualMouseEnabled
-        {
-            get;
-            set;
-        }
+        bool VirtualMouseEnabled { get; set; }
+
+        /// <summary>
+        /// Gets or sets the size of the screen used for the virtual mouse.
+        /// </summary>
+        /// <value>
+        /// The size of the screen.
+        /// </value>
+        MPoint2 ScreenSize { get; set; }
 
         /// <summary>
         /// Returns the time a specified mouse button has been held down; -1 if it is not held.

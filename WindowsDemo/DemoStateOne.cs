@@ -116,7 +116,7 @@ namespace WindowsDemo
 
                 if (MBackend.Keyboard.IsKeyPressed(Keys.Space))
                 {
-                    MBackend.StateManager.SwitchState("stateTwo", null);
+                    MBackend.StateSystem.SwitchState("stateTwo", null);
                 }
 
                 if (MBackend.Keyboard.IsKeyHeld(Keys.I))

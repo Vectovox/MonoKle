@@ -15,7 +15,7 @@
     /// <summary>
     /// Class that maintains and displays a console.
     /// </summary>
-    public class GameConsole
+    public class GameConsole : IGameConsole, IMComponent
     {
         // TODO: Break constants and things in class out into settings
         private const double KEY_TYPED_CYCLE_INTERVAL = 0.02;
@@ -25,9 +25,9 @@
         private int drawingOffset = 0;
         private GraphicsDevice graphicsDevice;
         private InputField input = new InputField("|", ">> ", 0.25, 10);
+        private KeyboardInput keyboard;
         private LinkedList<Line> lines = new LinkedList<Line>();
         private SpriteBatch spriteBatch;
-        private KeyboardInput keyboard;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameConsole"/> class.
@@ -206,58 +206,9 @@
         }
 
         /// <summary>
-        /// Writes the provided text with the colour <see cref="GameConsole.DefaultTextColour"/>.
-        /// </summary>
-        /// <param name="text">The text to write.</param>
-        public void WriteLine(string text)
-        {
-            this.WriteLine(text, this.DefaultTextColour);
-        }
-
-        /// <summary>
-        /// Writes the provided text with the given color.
-        /// </summary>
-        /// <param name="text">The text to write.</param>
-        /// <param name="color">Color of the line.</param>
-        public void WriteLine(string text, Color color)
-        {
-            // Divide into separate rows for \n
-            string[] rows = text.Split('\n');
-
-            StringBuilder sb = new StringBuilder();
-            foreach (string r in rows)
-            {
-                // Add tabs
-                sb.Clear();
-                int column = 0;
-                for (int i = 0; i < r.Length; i++)
-                {
-                    if (r[i] == '\t')
-                    {
-                        int amnt = this.TabLength - (column % this.TabLength);
-                        for (int j = 0; j < amnt; j++)
-                        {
-                            sb.Append(' ');
-                            column++;
-                        }
-                    }
-                    else
-                    {
-                        sb.Append(r[i]);
-                        column++;
-                    }
-                }
-
-                this.lines.AddLast(new Line(sb.ToString(), color));
-            }
-
-            this.TrimLines();
-        }
-
-        /// <summary>
         /// Draws this instance.
         /// </summary>
-        public void Draw()
+        public void Draw(double seconds)
         {
             if (this.IsOpen)
             {
@@ -402,6 +353,55 @@
 
                 this.input.Update(seconds);
             }
+        }
+
+        /// <summary>
+        /// Writes the provided text with the colour <see cref="GameConsole.DefaultTextColour"/>.
+        /// </summary>
+        /// <param name="text">The text to write.</param>
+        public void WriteLine(string text)
+        {
+            this.WriteLine(text, this.DefaultTextColour);
+        }
+
+        /// <summary>
+        /// Writes the provided text with the given color.
+        /// </summary>
+        /// <param name="text">The text to write.</param>
+        /// <param name="color">Color of the line.</param>
+        public void WriteLine(string text, Color color)
+        {
+            // Divide into separate rows for \n
+            string[] rows = text.Split('\n');
+
+            StringBuilder sb = new StringBuilder();
+            foreach (string r in rows)
+            {
+                // Add tabs
+                sb.Clear();
+                int column = 0;
+                for (int i = 0; i < r.Length; i++)
+                {
+                    if (r[i] == '\t')
+                    {
+                        int amnt = this.TabLength - (column % this.TabLength);
+                        for (int j = 0; j < amnt; j++)
+                        {
+                            sb.Append(' ');
+                            column++;
+                        }
+                    }
+                    else
+                    {
+                        sb.Append(r[i]);
+                        column++;
+                    }
+                }
+
+                this.lines.AddLast(new Line(sb.ToString(), color));
+            }
+
+            this.TrimLines();
         }
 
         private void AutoComplete()

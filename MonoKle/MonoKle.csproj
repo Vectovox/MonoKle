@@ -47,15 +47,18 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Assets\AbstractAssetStorage.cs" />
-    <Compile Include="Assets\Effect\EffectStorage.cs" />
-    <Compile Include="Assets\Font\Font.cs" />
-    <Compile Include="Assets\Font\FontBaker.cs" />
-    <Compile Include="Assets\Font\FontStorage.cs" />
-    <Compile Include="Assets\Font\FontDataSerialization.cs" />
-    <Compile Include="Assets\Texture\TextureStorage.cs" />
+    <Compile Include="Asset\AbstractAssetStorage.cs" />
+    <Compile Include="Asset\Effect\EffectStorage.cs" />
+    <Compile Include="Asset\Font\Baking\BakedFont.cs" />
+    <Compile Include="Asset\Font\Baking\ImageSerializer.cs" />
+    <Compile Include="Asset\Font\Font.cs" />
+    <Compile Include="Asset\Font\Baking\FontBaker.cs" />
+    <Compile Include="Asset\Font\FontStorage.cs" />
+    <Compile Include="Asset\Font\FontDataSerialization.cs" />
+    <Compile Include="Asset\Texture\TextureStorage.cs" />
     <Compile Include="Console\CommandBroker.cs" />
     <Compile Include="Console\ConsoleCommandHandler.cs" />
+    <Compile Include="Console\IGameConsole.cs" />
     <Compile Include="Console\GameConsole.cs" />
     <Compile Include="Console\InputField.cs" />
     <Compile Include="Console\Line.cs" />
@@ -77,9 +80,13 @@
     <Compile Include="Graphics\GraphicsManager.cs" />
     <Compile Include="Graphics\Event\ScreenSizeChangedEventHandler.cs" />
     <Compile Include="Graphics\Primitives\PrimitiveBatch3D.cs" />
+    <Compile Include="IMDrawable.cs" />
+    <Compile Include="IMComponent.cs" />
     <Compile Include="Input\Enums.cs" />
+    <Compile Include="Input\IGamePadInput.cs" />
     <Compile Include="Input\GamePadInput.cs" />
     <Compile Include="Input\IMouseInput.cs" />
+    <Compile Include="Input\IKeyboardInput.cs" />
     <Compile Include="Input\KeyboardInput.cs" />
     <Compile Include="Input\MouseInput.cs" />
     <Compile Include="IO\AbstractFileLoader.cs" />
@@ -87,6 +94,7 @@
     <Compile Include="IO\FileLoadingDelegate.cs" />
     <Compile Include="IO\FileLoadingResult.cs" />
     <Compile Include="IO\IFileLoader.cs" />
+    <Compile Include="IMUpdateable.cs" />
     <Compile Include="Logging\Log.cs" />
     <Compile Include="Logging\LogAddedEventArgs.cs" />
     <Compile Include="Logging\LogAddedEventHandler.cs" />
@@ -100,7 +108,8 @@
     <Compile Include="Script\ScriptEnvironment.cs" />
     <Compile Include="State\GameState.cs" />
     <Compile Include="State\StateSwitchData.cs" />
-    <Compile Include="State\StateManager.cs" />
+    <Compile Include="State\IStateSystem.cs" />
+    <Compile Include="State\StateSystem.cs" />
     <Compile Include="Core\Geometry\MGrid.cs" />
     <Compile Include="Core\StringWrapper.cs" />
   </ItemGroup>

@@ -20,16 +20,17 @@
     /// </summary>
     public static class MBackend
     {
+        private static GameConsole console;
+        private static GamePadInput gamepad;
         private static bool initializing;
+        private static KeyboardInput keyboard;
+        private static MouseInput mouse;
+        private static StateSystem stateSystem;
 
         /// <summary>
         /// Gets the game console, printing logs and accepting input.
         /// </summary>
-        public static GameConsole Console
-        {
-            get;
-            private set;
-        }
+        public static IGameConsole Console { get { return MBackend.console; } }
 
         /// <summary>
         /// Gets a value indicating whether the console is enabled.
@@ -65,11 +66,7 @@
         /// <summary>
         /// Gets the gamepad input.
         /// </summary>
-        public static GamePadInput GamePad
-        {
-            get;
-            private set;
-        }
+        public static IGamePadInput GamePad { get { return MBackend.gamepad; } }
 
         /// <summary>
         /// Gets the graphics manager. This is in charge of screen settings (resolution, full-screen, etc.) and provides the <see cref="GraphicsDevice"/>.
@@ -92,11 +89,7 @@
         /// <summary>
         /// Gets the keyboard input.
         /// </summary>
-        public static KeyboardInput Keyboard
-        {
-            get;
-            private set;
-        }
+        public static IKeyboardInput Keyboard { get { return MBackend.keyboard; } }
 
         /// <summary>
         /// Gets the logging utility, same as <see cref="Logger.Global"/>.
@@ -121,8 +114,7 @@
         /// </summary>
         public static IMouseInput Mouse
         {
-            get;
-            private set;
+            get { return MBackend.mouse; }
         }
 
         /// <summary>
@@ -135,13 +127,9 @@
         }
 
         /// <summary>
-        /// Gets the state manager. This keeps track of the states and is used to switch between them.
+        /// Gets the state system, which keeps track of the states and switches between them.
         /// </summary>
-        public static StateManager StateManager
-        {
-            get;
-            private set;
-        }
+        public static IStateSystem StateSystem { get { return MBackend.stateSystem; } }
 
         /// <summary>
         /// Gets the texture storage, loading and providing textures.
@@ -175,10 +163,10 @@
 
             MBackend.GameInstance = new MGame();
             MBackend.GraphicsManager = new GraphicsManager(new GraphicsDeviceManager(MBackend.GameInstance));
-            MBackend.GamePad = new GamePadInput();
-            MBackend.Keyboard = new KeyboardInput();
-            MBackend.Mouse = new MouseInput();
-            MBackend.StateManager = new StateManager();
+            MBackend.gamepad = new GamePadInput();
+            MBackend.keyboard = new KeyboardInput();
+            MBackend.mouse = new MouseInput();
+            MBackend.stateSystem = new StateSystem();
 
             MBackend.GameInstance.RunOneFrame();
 
@@ -188,7 +176,7 @@
             MBackend.MessagePasser = new MessagePasser();
             MBackend.InitializeConsole();
 
-            (MBackend.Mouse as MouseInput).ScreenSize = GraphicsManager.ScreenSize;
+            mouse.ScreenSize = GraphicsManager.ScreenSize;
 
             MBackend.initializing = false;
 
@@ -201,8 +189,8 @@
             {
                 double seconds = time.ElapsedGameTime.TotalSeconds;
                 MBackend.GraphicsManager.GetGraphicsDevice().Clear(Color.CornflowerBlue);
-                MBackend.StateManager.Draw(seconds);
-                MBackend.Console.Draw();
+                MBackend.stateSystem.Draw(seconds);
+                MBackend.console.Draw(seconds);
             }
         }
 
@@ -213,11 +201,11 @@
                 double seconds = time.ElapsedGameTime.TotalSeconds;
                 MBackend.IsRunningSlowly = time.IsRunningSlowly;
                 MBackend.TotalGameTime = time.TotalGameTime;
-                MBackend.Console.Update(seconds);
-                MBackend.GamePad.Update(seconds);
-                MBackend.Keyboard.Update(seconds);
-                (MBackend.Mouse as MouseInput).Update(seconds);
-                MBackend.StateManager.Update(seconds);
+                MBackend.console.Update(seconds);
+                MBackend.gamepad.Update(seconds);
+                MBackend.keyboard.Update(seconds);
+                MBackend.mouse.Update(seconds);
+                MBackend.stateSystem.Update(seconds);
             }
         }
 
@@ -247,9 +235,9 @@
             {
                 MBackend.FontStorage.LoadStream(ms, "console");
             }
-            MBackend.Console = new GameConsole(new Rectangle(0, 0, GraphicsManager.ScreenSize.X, GraphicsManager.ScreenSize.Y / 3),
+            MBackend.console = new GameConsole(new Rectangle(0, 0, GraphicsManager.ScreenSize.X, GraphicsManager.ScreenSize.Y / 3),
                 MBackend.GraphicsManager.GetGraphicsDevice(),
-                MBackend.Keyboard,
+                MBackend.keyboard,
                 MBackend.TextureStorage.White);    // TODO: Break out magic numbers into config file.
             MBackend.Console.ToggleKey = Microsoft.Xna.Framework.Input.Keys.F1;
             MBackend.Console.CommandBroker.Register("exit", CommandExit);

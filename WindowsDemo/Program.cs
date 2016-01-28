@@ -1,13 +1,9 @@
-﻿#region Using Statements
-using MonoKle;
-using MonoKle.Core.Geometry;
-using MonoKle.Engine;
-using System;
-
-#endregion
-
-namespace WindowsDemo
+﻿namespace WindowsDemo
 {
+    using MonoKle.Core.Geometry;
+    using MonoKle.Engine;
+    using System;
+
     /// <summary>
     /// The main class.
     /// </summary>
@@ -17,13 +13,13 @@ namespace WindowsDemo
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        private static void Main()
         {
             using (MGame game = MBackend.Initialize(true))
             {
-                MBackend.StateManager.AddState(new DemoStateOne());
-                MBackend.StateManager.AddState(new DemoStateTwo());
-                MBackend.StateManager.SwitchState("stateOne", null);
+                MBackend.StateSystem.AddState(new DemoStateOne());
+                MBackend.StateSystem.AddState(new DemoStateTwo());
+                MBackend.StateSystem.SwitchState("stateOne", null);
                 MBackend.GraphicsManager.SetScreenSize(new MPoint2(800, 600));
                 game.Run();
             }

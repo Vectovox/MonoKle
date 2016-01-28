@@ -7,16 +7,16 @@
     /// <summary>
     /// Class maintaining game states.
     /// </summary>
-    public class StateManager
+    public class StateSystem : IStateSystem, IMComponent
     {
         private GameState currentState;
         private Dictionary<string, GameState> stateByString;
         private StateSwitchData switchData;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StateManager"/> class.
+        /// Initializes a new instance of the <see cref="StateSystem"/> class.
         /// </summary>
-        public StateManager()
+        public StateSystem()
         {
             this.stateByString = new Dictionary<string, GameState>();
         }
@@ -35,7 +35,7 @@
         /// <param name="state">State to add.</param>
         public bool AddState(GameState state)
         {
-            if(state == null)
+            if (state == null)
             {
                 throw new ArgumentNullException("State must not be null.");
             }
@@ -45,9 +45,21 @@
                 this.stateByString.Add(state.Identifier, state);
                 return true;
             }
-            
+
             Logger.Global.Log("Could not add state. Existing state exists with the identifier: " + state.Identifier, LogLevel.Error);
             return false;
+        }
+
+        /// <summary>
+        /// Draws the specified component with the specified seconds since last drawal.
+        /// </summary>
+        /// <param name="seconds">The amount of seconds since last drawal.</param>
+        public void Draw(double seconds)
+        {
+            if (this.currentState != null)
+            {
+                this.currentState.Draw(seconds);
+            }
         }
 
         /// <summary>
@@ -86,14 +98,10 @@
             this.switchData = new StateSwitchData(stateIdentifier, this.currentState == null ? null : this.currentState.Identifier, data);
         }
 
-        public void Draw(double seconds)
-        {
-            if (this.currentState != null)
-            {
-                this.currentState.Draw(seconds);
-            }
-        }
-
+        /// <summary>
+        /// Updates the component with the specified seconds since last update.
+        /// </summary>
+        /// <param name="seconds">The amount of seconds since last update.</param>
         public void Update(double seconds)
         {
             // Switch state
@@ -102,7 +110,7 @@
                 if (this.currentState != null)
                 {
                     this.currentState.Deactivate(this.switchData);
-                    if(this.currentState.IsTemporary)
+                    if (this.currentState.IsTemporary)
                     {
                         this.RemoveState(this.currentState.Identifier);
                     }

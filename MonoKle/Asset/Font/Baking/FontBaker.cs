@@ -1,13 +1,12 @@
-﻿namespace MonoKle.Asset.Font
+﻿namespace MonoKle.Asset.Font.Baking
 {
     using System;
     using System.Collections.Generic;
     using System.Drawing;
+    using System.Drawing.Imaging;
     using System.IO;
-    using System.Linq;
     using System.Runtime.Serialization.Formatters.Binary;
-    using System.Text;
-    using System.Threading.Tasks;
+    using System.Xml.Serialization;
 
     public class FontBaker
     {
@@ -26,20 +25,21 @@
                     fontFile = FontLoader.Load(fontFileStream);
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 this.ErrorMessage = "Could not open font-file for reading.";
                 this.DetailedError = e.Message;
                 return false;
             }
-            
-            List<Image> images = new List<Image>();
+
+            List<byte[]> dataList = new List<byte[]>();
+            ImageSerializer isr = new ImageSerializer(ImageFormat.Png);
             foreach (FontPage p in fontFile.Pages)
             {
                 try
                 {
                     Image image = Image.FromFile(p.File);
-                    images.Add(image);
+                    dataList.Add(isr.ImageToBytes(image));
                 }
                 catch (Exception e)
                 {
@@ -51,17 +51,17 @@
 
             BakedFont baked = new BakedFont();
             baked.FontFile = fontFile;
-            baked.ImageList = images;
+            baked.ImageList = dataList;
 
             try
             {
                 using (FileStream bakeStream = File.OpenWrite(outputPath))
                 {
-                    BinaryFormatter bf = new BinaryFormatter();
-                    bf.Serialize(bakeStream, baked);
+                    XmlSerializer xx = new XmlSerializer(typeof(BakedFont));
+                    xx.Serialize(bakeStream, baked);
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 this.ErrorMessage = "Could not bake to output file: " + outputPath;
                 this.DetailedError = e.Message;
@@ -69,13 +69,6 @@
             }
 
             return true;
-        }
-
-        [Serializable()]
-        public class BakedFont
-        {
-            public List<Image> ImageList { get; set; }
-            public FontFile FontFile { get; set; }
         }
     }
 }

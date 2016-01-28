@@ -1,23 +1,21 @@
 ﻿namespace MonoKle.Input
 {
-    using Microsoft.Xna.Framework.Input;
-
-    using MonoKle.Core;
     using Core.Geometry;
+    using Microsoft.Xna.Framework.Input;
     using System.Collections.Generic;
 
     /// <summary>
-    /// Mouse input class.
+    /// Class providing polling functionality for keyboard input.
     /// </summary>
-    public class MouseInput : IMouseInput
+    public class MouseInput : IMouseInput, IMUpdateable
     {
         private MouseScrollDirection currentScrollDirection;
+        private MPoint2 deltaPosition;
         private Dictionary<MouseButton, double> heldTimeByButton;
         private MPoint2 mousePosition;
-        private MPoint2 deltaPosition;
         private HashSet<MouseButton> previousButtons;
         private int previousScrollValue;
-        
+
         /// <summary>
         /// Creates a new instance of <see cref="MouseInput"/>.
         /// </summary>
@@ -40,18 +38,21 @@
         }
 
         /// <summary>
-        /// Gets or sets whether the virtual mouse is enabled.
+        /// Gets or sets the size of the screen used for the virtual mouse.
         /// </summary>
-        public bool VirtualMouseEnabled
+        /// <value>
+        /// The size of the screen.
+        /// </value>
+        public MPoint2 ScreenSize
         {
             get;
             set;
         }
 
         /// <summary>
-        /// Gets or sets the screen size for virtual mouse.
+        /// Gets or sets whether the virtual mouse is enabled.
         /// </summary>
-        public MPoint2 ScreenSize
+        public bool VirtualMouseEnabled
         {
             get;
             set;
@@ -64,7 +65,7 @@
         /// <returns>The amount of time the specified button has been held down, -1 if it is not held.</returns>
         public double GetButtonHeldTime(MouseButton button)
         {
-            if(this.heldTimeByButton.ContainsKey(button))
+            if (this.heldTimeByButton.ContainsKey(button))
             {
                 return this.heldTimeByButton[button];
             }
@@ -161,9 +162,9 @@
         }
 
         /// <summary>
-        /// Updates the internals.
+        /// Updates the component with the specified seconds since last update.
         /// </summary>
-        /// <param name="seconds">The amount of time since update was last called.</param>
+        /// <param name="seconds">The amount of seconds since last update.</param>
         public void Update(double seconds)
         {
             MouseState currentState = Mouse.GetState();

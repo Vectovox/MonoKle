@@ -1,9 +1,26 @@
-NOTES: MonoKleGame is under development and will change a lot until its first Major release. Do not expect perfect performance, features, or code.
+Using MonoKle is as straight forward as referencing the .DLLs in your project.
 
-Using MonoKle is as straight forward as installing MonoGame, OpenAL, and referencing the .DLL in your
-project.
 
-Some quick pointers:
-- To start a game, in program.cs get an instance of MonoKleGame from MonoKleGame.GetInstance() and call run() on it. (Example source will come later).
-- Everything runs in states and are added via the MonoKleGame.StateManager. It is possible to have a single state, but it is reasonable to have a state for intro, menu, and game (for instance). When you have added your states (which can be done at run-time as well) you have to set the starting state also.
-- ...
+### REQUIREMENTS ###
+- MonoGame 3.4 installed
+- OpenAL installed (as per MonoGame)
+
+
+### CONFIGURATIONS ###
+MonoKle consists of two configurations that can be used.
+
+>> MonoKle
+Main framework, consisting of systems that help you create games. Requires extra logic to maintain the systems and is only recommended if MonoKle.Engine is not flexible enough.
+
+>> MonoKle + MonoKle.Engine
+The MonoKle framework with an Engine that initializes all systems from MonoKle together in a central location, maintaining them in the background. Somewhat less flexible than just using the MonoKle framework but requires no logic for mainting the systems, letting you focus on the games.
+
+
+### GETTING STARTED ###
+>> MonoKle
+Add the MonoKle .DLL and create a game using ordinary MonoGame methods while utilizing the MonoKle systems in your code.
+
+>> MonoKle + MonoKle.Engine
+- Initialize a game by running MBackend.Initialize(), which returns a MGame that is runnable.
+- All systems are accessible via MBackend.
+- Your logic will run in states, which are added via MBackend.StateSystem. It is possible to have a single state containing your entire game, but it is reasonable to, for instance, have a state for intro, menu, and gameplay. Create a new state by subclassing GameState and add an instance to MBackend.StateSystem. StateSystem.SwitchState() lets you choose which state to run.

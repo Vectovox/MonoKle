@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoKle.Asset.Font;
 using MonoKle.Core;
 using MonoKle.Core.Geometry;
 using MonoKle.Engine;
@@ -37,38 +38,40 @@ namespace WindowsDemo
 
             sb.Draw(MBackend.TextureStorage.GetAsset("assets\\textures\\testbox.png"), new Vector2(250, 250), Color.White);
 
+            Font font = MBackend.FontStorage.GetAsset("Assets\\Fonts\\testfont.mfnt");
+
             // Test timer
-            MBackend.FontStorage.GetAsset("TESTFONT").DrawString(sb, "Timer: " + timer.GetTimeLeft() + " (" + timer.Duration + ") Done? " + timer.IsDone(),
+            font.DrawString(sb, "Timer: " + timer.GetTimeLeft() + " (" + timer.Duration + ") Done? " + timer.IsDone(),
                 new Vector2(50, 150), Color.Green);
 
             // Test linebreak
-            MBackend.FontStorage.GetAsset("TESTFONT").DrawString(sb, "ABCDEF\nabcdef",
+           font.DrawString(sb, "ABCDEF\nabcdef",
                 new Vector2(50, 250), Color.Green);
 
             // Test scale
-            MBackend.FontStorage.GetAsset("TESTFONT").DrawString(sb, "ABCDEF\nabcdef",
+           font.DrawString(sb, "ABCDEF\nabcdef",
                 new Vector2(250, 250), Color.Green, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
 
             // Test rotation
-            MBackend.FontStorage.GetAsset("TESTFONT").DrawString(sb, "Rotating",
+           font.DrawString(sb, "Rotating",
                 new Vector2(50, 350), Color.Green, (float)MBackend.TotalGameTime.TotalSeconds, Vector2.Zero, 1f, SpriteEffects.None, 0f);
 
             // Test rotation
-            MBackend.FontStorage.GetAsset("TESTFONT").DrawString(sb, "Rotating",
+           font.DrawString(sb, "Rotating",
                 new Vector2(0, 0), Color.Green, (float)MBackend.TotalGameTime.TotalSeconds, Vector2.Zero, 1f, SpriteEffects.None, 0f);
 
             // Rotation with scale
-            MBackend.FontStorage.GetAsset("TESTFONT").DrawString(sb, "Rotating scale",
+           font.DrawString(sb, "Rotating scale",
                 new Vector2(350, 350), Color.Green, (float)MBackend.TotalGameTime.TotalSeconds, Vector2.Zero, 2f, SpriteEffects.None, 0f);
 
             // Rotation with scale and origin
-            Vector2 orig = MBackend.FontStorage.GetAsset("TESTFONT").MeasureString("Rotating origin scale") * 0.5f;
-            MBackend.FontStorage.GetAsset("TESTFONT").DrawString(sb, "Rotating origin scale",
+            Vector2 orig =font.MeasureString("Rotating origin scale") * 0.5f;
+           font.DrawString(sb, "Rotating origin scale",
                 new Vector2(550, 150), Color.Green, (float)MBackend.TotalGameTime.TotalSeconds, orig, 2f, SpriteEffects.None, 0f);
 
             // XXX
-            Vector2 o = MBackend.FontStorage.GetAsset("TESTFONT").MeasureString("<=+=>") * 0.5f;
-            MBackend.FontStorage.GetAsset("TESTFONT").DrawString(sb, "<=+=>",
+            Vector2 o =font.MeasureString("<=+=>") * 0.5f;
+           font.DrawString(sb, "<=+=>",
                 new Vector2(400, 300), Color.Green, (float)MBackend.TotalGameTime.TotalSeconds, o, 1f, SpriteEffects.None, 0f);
 
             string s = "Testin size";
@@ -83,23 +86,23 @@ namespace WindowsDemo
 
             // Test size measurements.
             Vector2 pos = new Vector2(50, 450);
-            MBackend.FontStorage.GetAsset("TESTFONT").DrawString(sb, "One-",
+           font.DrawString(sb, "One-",
                 pos, Color.Green);
-            pos.X += MBackend.FontStorage.GetAsset("TESTFONT").MeasureString("One-").X;
+            pos.X +=font.MeasureString("One-").X;
 
-            MBackend.FontStorage.GetAsset("TESTFONT").DrawString(sb, "Two",
+           font.DrawString(sb, "Two",
                 pos, Color.Red);
 
-            pos.Y -= MBackend.FontStorage.GetAsset("TESTFONT").MeasureString("Three").Y;
-            MBackend.FontStorage.GetAsset("TESTFONT").DrawString(sb, "Three",
+            pos.Y -=font.MeasureString("Three").Y;
+           font.DrawString(sb, "Three",
                 pos, Color.Orange);
 
-            pos.X += MBackend.FontStorage.GetAsset("TESTFONT").MeasureString("Three").X;
-            MBackend.FontStorage.GetAsset("TESTFONT").DrawString(sb, "Four",
+            pos.X +=font.MeasureString("Three").X;
+           font.DrawString(sb, "Four",
                 pos, Color.Blue, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
 
-            pos.X += MBackend.FontStorage.GetAsset("TESTFONT").MeasureString("Four", 2f).X;
-            MBackend.FontStorage.GetAsset("TESTFONT").DrawString(sb, "Five",
+            pos.X +=font.MeasureString("Four", 2f).X;
+           font.DrawString(sb, "Five",
                 pos, Color.Black);
 
             sb.End();

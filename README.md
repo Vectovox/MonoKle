@@ -7,7 +7,7 @@ MonoKle is an open source game development library for MonoGame, and it is desig
 It is originally based on the source of a private XNA project by Robert Kaufmann, but it has since changed a lot in features and design.
 
 <H3>Usage</H3>
-It is quite easy to get started using MonoKle. Just reference the DLL in your game and you are up and running. Do not forget to copy the .XML documentation file to the same folder as the library though, since it provides invaluable documentation within Visual Studio.
+It is quite easy to get started using MonoKle. Just reference the DLL in your game and you are up and running. Do not forget to copy the .XML documentation file to the same folder as the library since it provides documentation within Visual Studio.
 
 If you want to contribute to MonoKle or fork it you need to have MonoGame installed (along with OpenAL). After that you just clone the repository and open the project file. It is as easy as that!
 

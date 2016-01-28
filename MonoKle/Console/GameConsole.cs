@@ -52,7 +52,7 @@
             this.TextScale = 0.5f;
             this.TabLength = 4;
             Logger.Global.LogAddedEvent += LogAdded;
-            Logger.Global.Log("GameConsole activated!", LogLevel.Info);
+            Logger.Global.Log("GameConsole activated.", LogLevel.Debug);
 
             this.SetupBroker();
         }
@@ -454,7 +454,7 @@
             {
                 c = this.WarningTextColour;
             }
-            else if (e.Log.Level == LogLevel.Info)
+            else if (e.Log.Level == LogLevel.Error)
             {
                 c = this.ErrorTextColour;
             }

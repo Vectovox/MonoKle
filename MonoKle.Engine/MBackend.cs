@@ -14,6 +14,7 @@
     using State;
     using System;
     using System.IO;
+    using System.Reflection;
 
     /// <summary>
     /// Backend for the MonoKle engine. Provides global access to all MonoKle systems.
@@ -178,6 +179,8 @@
 
             mouse.ScreenSize = GraphicsManager.ScreenSize;
 
+            console.WriteLine("MonoKle Engine initialized!", Color.LightGreen);
+            console.WriteLine("Running version: " + Assembly.GetCallingAssembly().GetName().Version, Color.LightGreen);
             MBackend.initializing = false;
 
             return MBackend.GameInstance;
@@ -213,7 +216,7 @@
         {
             MBackend.GameInstance.Exit();
         }
-
+        
         private static void CommandLogLevel(string[] arguments)
         {
             LogLevel level;
@@ -226,6 +229,12 @@
             {
                 MBackend.Console.WriteLine("Incorrect logging level specified.");
             }
+        }
+
+        private static void CommandVersion(string[] arguments)
+        {
+            MBackend.console.WriteLine("       MonoKle Version:\t" + Assembly.GetAssembly(typeof(MonoKle.Core.Timer)).GetName().Version);
+            MBackend.console.WriteLine("MonoKle Engine Version:\t" + Assembly.GetCallingAssembly().GetName().Version);
         }
 
         private static void InitializeConsole()
@@ -242,6 +251,7 @@
             MBackend.Console.ToggleKey = Microsoft.Xna.Framework.Input.Keys.F1;
             MBackend.Console.CommandBroker.Register("exit", CommandExit);
             MBackend.Console.CommandBroker.Register("loglevel", 1, MBackend.CommandLogLevel);
+            MBackend.Console.CommandBroker.Register("version", 0, MBackend.CommandVersion);
             MBackend.Console.TextFont = MBackend.FontStorage.GetAsset("console");
         }
 

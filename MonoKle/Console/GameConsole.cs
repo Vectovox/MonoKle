@@ -39,7 +39,6 @@
             this.WarningTextColour = Color.Yellow;
             this.ErrorTextColour = Color.Red;
             this.TextScale = 0.5f;
-            this.TabToken = ' ';
             this.TabLength = 4;
             Logger.Global.LogAddedEvent += LogAdded;
             Logger.Global.Log("GameConsole activated!", LogLevel.Info);
@@ -146,17 +145,6 @@
         }
 
         /// <summary>
-        /// Gets or sets the tab token.
-        /// </summary>
-        /// <value>
-        /// The tab token.
-        /// </value>
-        public char TabToken
-        {
-            get; set;
-        }
-
-        /// <summary>
         /// Gets or sets the string identifier of the text font. If null, the default font will be used.
         /// </summary>
         public Font TextFont
@@ -238,7 +226,7 @@
                         int amnt = this.TabLength - (column % this.TabLength);
                         for (int j = 0; j < amnt; j++)
                         {
-                            sb.Append(this.TabToken);
+                            sb.Append(' ');
                             column++;
                         }
                     }

@@ -13,7 +13,6 @@
     using MonoKle.Logging;
     using MonoKle.Messaging;
     using MonoKle.State;
-    //using MonoKle.Script.Interface;
     using System.Text.RegularExpressions;
     using System.Text;
     using System.Collections.Generic;
@@ -30,7 +29,9 @@
     {
         private static MonoKleGame gameInstance;
 
-        private MonoKleGame()
+        private MonoKleGame() : this(false) { }
+
+        private MonoKleGame(bool consoleEnabled)
             : base()
         {
             base.Content.RootDirectory = "Content";
@@ -40,35 +41,13 @@
             MonoKleGame.Keyboard = new KeyboardInput();
             MonoKleGame.MessagePasser = new MessagePasser();
             MonoKleGame.Logger = Logger.Global;
-            //MonoKleGame.ScriptInterface = new ScriptInterface();
-            //MonoKleGame.ScriptInterface.CompilationError += HandleScriptCompilationError;
-            //MonoKleGame.ScriptInterface.Print += HandleScriptPrint;
-            //MonoKleGame.ScriptInterface.RuntimeError += HandleScriptRuntimeError;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         }
 
-        //private void HandleScriptRuntimeError(object sender, Script.VM.Event.RuntimeErrorEventArgs e)
-        //{
-        //    MonoKleGame.Logger.Log(e.Message, LogLevel.Error);
-        //}
-
-        //private void HandleScriptPrint(object sender, Script.VM.Event.PrintEventArgs e)
-        //{
-        //    MonoKleGame.Console.WriteLine(e.Message);
-        //}
-
-        //private void HandleScriptCompilationError(object sender, Script.Interface.Event.CompilationErrorEventArgs e)
-        //{
-        //    StringBuilder sb = new StringBuilder("Script compilation error in [");
-        //    sb.Append(e.Script);
-        //    sb.AppendLine("]:");
-        //    foreach(string s in e.Messages)
-        //    {
-        //        sb.AppendLine(s);
-        //    }
-        //    MonoKleGame.Logger.Log(sb.ToString(), LogLevel.Error);
-        //}
-
+        /// <summary>
+        /// Gets a value indicating whether the console is enabled.
+        /// </summary>
+        public bool ConsoleEnabled { get; }
 
         /// <summary>
         /// Gets the script environment. Used for scripting.
@@ -204,7 +183,7 @@
         {
             if (MonoKleGame.gameInstance == null)
             {
-                MonoKleGame.gameInstance = new MonoKleGame();
+                MonoKleGame.gameInstance = new MonoKleGame(true);
             }
             return MonoKleGame.gameInstance;
         }

@@ -106,6 +106,8 @@
     <Compile Include="Script\ChannelAttribute.cs" />
     <Compile Include="Script\CompilationResult.cs" />
     <Compile Include="Script\ScriptEnvironment.cs" />
+    <Compile Include="Setting\SettingProperty.cs" />
+    <Compile Include="Setting\SettingSystem.cs" />
     <Compile Include="State\GameState.cs" />
     <Compile Include="State\StateSwitchData.cs" />
     <Compile Include="State\IStateSystem.cs" />

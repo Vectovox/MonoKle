@@ -9,6 +9,7 @@
     using Logging;
     using Messaging;
     using Microsoft.Xna.Framework;
+    using Variable;
     using Resources;
     using Script;
     using State;
@@ -102,9 +103,12 @@
         }
 
         /// <summary>
-        /// Gets the message passing utility.
+        /// Gets the game variables, including settings.
         /// </summary>
-        public static MessagePasser MessagePasser
+        /// <value>
+        /// The variables.
+        /// </value>
+        public static VariableStorage Variables
         {
             get;
             private set;
@@ -161,6 +165,7 @@
 
             AppDomain.CurrentDomain.UnhandledException += UnhandledException;
             MBackend.Logger = Logger.Global;
+            MBackend.InitializeVariables();
 
             MBackend.GameInstance = new MGame();
             MBackend.GraphicsManager = new GraphicsManager(new GraphicsDeviceManager(MBackend.GameInstance));
@@ -174,16 +179,39 @@
             MBackend.InitializeTextureStorage();
             MBackend.InitializeFontStorage();
             MBackend.EffectStorage = new EffectStorage(GraphicsManager.GetGraphicsDevice());
-            MBackend.MessagePasser = new MessagePasser();
             MBackend.InitializeConsole();
+
+            MBackend.RegisterConsoleCommands();
+            MBackend.BindSettings();
 
             mouse.ScreenSize = GraphicsManager.ScreenSize;
 
             console.WriteLine("MonoKle Engine initialized!", Color.LightGreen);
-            console.WriteLine("Running version: " + Assembly.GetCallingAssembly().GetName().Version, Color.LightGreen);
+            console.WriteLine("Running version: " + Assembly.GetAssembly(typeof(MBackend)).GetName().Version, Color.LightGreen);
             MBackend.initializing = false;
 
             return MBackend.GameInstance;
+        }
+
+        private static void BindSettings()
+        {
+            MBackend.Variables.Variables.BindProperties(MBackend.Logger);
+        }
+
+        private static void RegisterConsoleCommands()
+        {
+            MBackend.Console.CommandBroker.Register("exit", CommandExit);
+            MBackend.Console.CommandBroker.Register("loglevel", 1, MBackend.CommandLogLevel);
+            MBackend.Console.CommandBroker.Register("version", 0, MBackend.CommandVersion);
+            MBackend.Console.CommandBroker.Register("vars", 0, MBackend.CommandListVariables);
+            MBackend.Console.CommandBroker.Register("get", 1, MBackend.CommandGet);
+            MBackend.Console.CommandBroker.Register("set", 2, MBackend.CommandSet);
+        }
+
+        private static void InitializeVariables()
+        {
+            MBackend.Variables = new VariableStorage(MBackend.Logger);
+            MBackend.Variables.LoadDefaultVariables();
         }
 
         internal static void Draw(GameTime time)
@@ -212,6 +240,36 @@
             }
         }
 
+        private static void CommandListVariables(string[] arguments)
+        {
+            MBackend.Console.WriteLine("## variables ##");
+            foreach (string s in MBackend.Variables.Variables.Identifiers)
+            {
+                MBackend.Console.WriteLine(s);
+            }
+        }
+
+        private static void CommandGet(string[] arguments)
+        {
+            object value = MBackend.Variables.Variables.GetValue(arguments[0]);
+            if(value != null)
+            {
+                Console.WriteLine(value.ToString());
+            }
+            else
+            {
+                Console.WriteLine("No such variable exist", Console.ErrorTextColour);
+            }
+        }
+
+        private static void CommandSet(string[] arguments)
+        {
+            if(MBackend.Variables.VariablePopulator.LoadItem(arguments[0], arguments[1]) == false)
+            {
+                Console.WriteLine("Variable assignment failed", Console.ErrorTextColour);
+            }
+        }
+
         private static void CommandExit(string[] arguments)
         {
             MBackend.GameInstance.Exit();
@@ -234,7 +292,7 @@
         private static void CommandVersion(string[] arguments)
         {
             MBackend.console.WriteLine("       MonoKle Version:\t" + Assembly.GetAssembly(typeof(MonoKle.Core.Timer)).GetName().Version);
-            MBackend.console.WriteLine("MonoKle Engine Version:\t" + Assembly.GetCallingAssembly().GetName().Version);
+            MBackend.console.WriteLine("MonoKle Engine Version:\t" + Assembly.GetAssembly(typeof(MBackend)).GetName().Version);
         }
 
         private static void InitializeConsole()
@@ -249,9 +307,6 @@
                 MBackend.keyboard,
                 MBackend.TextureStorage.White);    // TODO: Break out magic numbers into config file.
             MBackend.Console.ToggleKey = Microsoft.Xna.Framework.Input.Keys.F1;
-            MBackend.Console.CommandBroker.Register("exit", CommandExit);
-            MBackend.Console.CommandBroker.Register("loglevel", 1, MBackend.CommandLogLevel);
-            MBackend.Console.CommandBroker.Register("version", 0, MBackend.CommandVersion);
             MBackend.Console.TextFont = MBackend.FontStorage.GetAsset("console");
         }
 

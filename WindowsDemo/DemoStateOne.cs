@@ -170,11 +170,11 @@ namespace WindowsDemo
                     object o = null; o.Equals(o);
                 }
 
-                if (MBackend.Keyboard.IsKeyPressed(Keys.M))
-                {
-                    MBackend.MessagePasser.SendMessage("testChannel", new MessageEventArgs("I AM HELLO"));
-                    MBackend.MessagePasser.SendMessage("noChannel", new MessageEventArgs("I AM NOT HELLO"));
-                }
+                //if (MBackend.Keyboard.IsKeyPressed(Keys.M))
+                //{
+                //    MBackend.MessagePasser.SendMessage("testChannel", new MessageEventArgs("I AM HELLO"));
+                //    MBackend.MessagePasser.SendMessage("noChannel", new MessageEventArgs("I AM NOT HELLO"));
+                //}
 
                 if (MBackend.Keyboard.IsKeyPressed(Keys.N))
                 {
@@ -203,10 +203,10 @@ namespace WindowsDemo
 
         protected override void Activated(StateSwitchData data)
         {
-            MBackend.MessagePasser.Subscribe("testChannel", Test);
-            MBackend.MessagePasser.Subscribe("noChannel", Test);
-            MBackend.MessagePasser.Unsubscribe("noChannel", Test);
-            MBackend.MessagePasser.Subscribe("CONSOLE", ConsoleMessage);
+            //MBackend.MessagePasser.Subscribe("testChannel", Test);
+            //MBackend.MessagePasser.Subscribe("noChannel", Test);
+            //MBackend.MessagePasser.Unsubscribe("noChannel", Test);
+            //MBackend.MessagePasser.Subscribe("CONSOLE", ConsoleMessage);
             MBackend.Console.WriteLine("State one activated! Message: " + (string)data.Data);
             MBackend.Console.WriteLine(MBackend.TextureStorage.LoadFiles("Assets\\Textures", true).Successes + " textures loaded.");
             MBackend.Console.WriteLine(MBackend.FontStorage.LoadFiles("Assets\\Fonts", true).Successes + " fonts loaded.");

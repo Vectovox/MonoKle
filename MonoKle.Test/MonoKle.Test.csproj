@@ -84,6 +84,8 @@
     <Compile Include="Core\Geometry\MVector2Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\Geometry\GridTest.cs" />
+    <Compile Include="Variable\VariablePopulatorTest.cs" />
+    <Compile Include="Variable\VariableSystemTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MonoKle\MonoKle.csproj">

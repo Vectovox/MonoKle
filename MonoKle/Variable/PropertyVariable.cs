@@ -1,0 +1,98 @@
+﻿namespace MonoKle.Variable
+{
+    using System;
+    using System.Reflection;
+
+    /// <summary>
+    /// Class for a property-based variable.
+    /// </summary>
+    public class PropertyVariable : IVariable
+    {
+        private object owner;
+        private PropertyInfo property;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PropertyVariable"/> class.
+        /// </summary>
+        /// <param name="name">The name of the property.</param>
+        /// <param name="owner">The owner instance of the property.</param>
+        public PropertyVariable(string name, object owner) :
+            this(owner.GetType().GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic), owner)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PropertyVariable"/> class.
+        /// </summary>
+        /// <param name="name">The name of the property.</param>
+        /// <param name="staticType">The static type containing the property.</param>
+        public PropertyVariable(string name, Type staticType) :
+            this(staticType.GetProperty(name, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic), null)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PropertyVariable"/> class.
+        /// </summary>
+        /// <param name="property">The property to use.</param>
+        /// <param name="owner">The owner. Must be null for static properties.</param>
+        public PropertyVariable(PropertyInfo property, object owner)
+        {
+            if (property == null)
+            {
+                throw new ArgumentException("Not a valid property.");
+            }
+            if (property.GetGetMethod().IsStatic && owner != null)
+            {
+                throw new ArgumentException("Static properties must have null owner.");
+            }
+            if (property.GetGetMethod().IsStatic == false && owner == null)
+            {
+                throw new ArgumentNullException("Non-static properties must have non-null owner.");
+            }
+
+            this.property = property;
+            this.owner = owner;
+        }
+
+        /// <summary>
+        /// Gets the variable value.
+        /// </summary>
+        /// <returns></returns>
+        public object GetValue()
+        {
+            return this.property.GetValue(owner);
+        }
+
+        /// <summary>
+        /// Sets the variable to the provided value if possible.
+        /// </summary>
+        /// <param name="value">The value to set.</param>
+        /// <returns>True if value could be set; otherwise false.</returns>
+        public bool SetValue(object value)
+        {
+            if (this.property.SetMethod != null)
+            {
+                Type valueType = value.GetType();
+                if (this.property.PropertyType.IsAssignableFrom(valueType))
+                {
+                    this.property.SetValue(owner, value);
+                    return true;
+                }
+                else if(this.property.PropertyType.IsValueType && valueType.IsValueType)
+                {
+                    try
+                    {
+                        object newObj = Convert.ChangeType(value, this.property.PropertyType);
+                        this.property.SetValue(owner, newObj);
+                        return true;
+                    }
+                    catch(InvalidCastException e)
+                    {
+                    }
+                }
+            }
+            return false;
+        }
+    }
+}

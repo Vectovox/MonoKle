@@ -80,6 +80,7 @@
     <Compile Include="Graphics\GraphicsManager.cs" />
     <Compile Include="Graphics\Event\ScreenSizeChangedEventHandler.cs" />
     <Compile Include="Graphics\Primitives\PrimitiveBatch3D.cs" />
+    <Compile Include="ILoggable.cs" />
     <Compile Include="IMDrawable.cs" />
     <Compile Include="IMComponent.cs" />
     <Compile Include="Input\Enums.cs" />
@@ -106,9 +107,12 @@
     <Compile Include="Script\ChannelAttribute.cs" />
     <Compile Include="Script\CompilationResult.cs" />
     <Compile Include="Script\ScriptEnvironment.cs" />
-    <Compile Include="Setting\ISettingInstance.cs" />
-    <Compile Include="Setting\PropertySetting.cs" />
-    <Compile Include="Setting\SettingSystem.cs" />
+    <Compile Include="Variable\IVariable.cs" />
+    <Compile Include="Variable\PropertyVariable.cs" />
+    <Compile Include="Attributes\PropertyVariableAttribute.cs" />
+    <Compile Include="Variable\ValueVariable.cs" />
+    <Compile Include="Variable\VariableSystem.cs" />
+    <Compile Include="Variable\VariablePopulator.cs" />
     <Compile Include="State\GameState.cs" />
     <Compile Include="State\StateSwitchData.cs" />
     <Compile Include="State\IStateSystem.cs" />

@@ -220,6 +220,7 @@
         private static void BindSettings()
         {
             MBackend.Variables.Variables.BindProperties(MBackend.Logger);
+            MBackend.Variables.Variables.BindProperties(MBackend.Console);
         }
 
         private static void CommandExit(string[] arguments)

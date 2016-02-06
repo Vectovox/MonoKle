@@ -70,15 +70,6 @@
         }
 
         /// <summary>
-        /// Gets or sets the maximum amount of previous commands to keep in history.
-        /// </summary>
-        int HistorySize
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// Gets or sets wether the console is open.
         /// </summary>
         bool IsOpen

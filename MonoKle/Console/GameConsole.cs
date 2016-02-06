@@ -1,5 +1,6 @@
 ﻿namespace MonoKle.Console
 {
+    using Attributes;
     using Input;
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
@@ -131,17 +132,9 @@
         }
 
         /// <summary>
-        /// Gets or sets the maximum amount of previous commands to keep in history.
-        /// </summary>
-        public int HistorySize
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// Gets or sets wether the console is open.
         /// </summary>
+        [PropertyVariableAttribute("console_isopen")]
         public bool IsOpen
         {
             get;
@@ -151,6 +144,7 @@
         /// <summary>
         /// Gets or sets the maximum amount of entries to keep.
         /// </summary>
+        [PropertyVariableAttribute("console_size")]
         public int Size
         {
             get;
@@ -180,6 +174,7 @@
         /// <summary>
         /// Gets or sets the scale for the font.
         /// </summary>
+        [PropertyVariableAttribute("console_textscale")]
         public float TextScale
         {
             get;

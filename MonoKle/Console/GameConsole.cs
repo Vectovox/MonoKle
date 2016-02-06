@@ -49,6 +49,7 @@
             this.DefaultTextColour = Color.WhiteSmoke;
             this.WarningTextColour = Color.Yellow;
             this.ErrorTextColour = Color.Red;
+            this.CommandTextColour = Color.LightGreen;
             this.TextScale = 0.5f;
             this.TabLength = 4;
             Logger.Global.LogAddedEvent += LogAdded;
@@ -94,6 +95,18 @@
         {
             get;
             private set;
+        }
+
+        /// <summary>
+        /// Gets or sets the command text colour.
+        /// </summary>
+        /// <value>
+        /// The command text colour.
+        /// </value>
+        public Color CommandTextColour
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -221,7 +234,7 @@
                 LinkedListNode<Line> node = lines.Find(lines.ElementAtOrDefault(lines.Count - this.drawingOffset - 1));
                 StringWrapper wrapper = new StringWrapper();
 
-                font.DrawString(this.spriteBatch, drawnLine, textPos, this.DefaultTextColour, 0f, Vector2.Zero, this.TextScale, SpriteEffects.None, 0f);
+                font.DrawString(this.spriteBatch, drawnLine, textPos, this.CommandTextColour, 0f, Vector2.Zero, this.TextScale, SpriteEffects.None, 0f);
                 while (textPos.Y > 0 && node != null)
                 {
                     string toDraw = wrapper.WrapWidth(node.Value.Text, font, Area.Width, this.TextScale);
@@ -282,7 +295,7 @@
 
                 if (this.keyboard.IsKeyTyped(Keys.OemMinus, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
-                    if(this.keyboard.IsKeyDown(Keys.LeftShift) || this.keyboard.IsKeyDown(Keys.RightShift))
+                    if (this.keyboard.IsKeyDown(Keys.LeftShift) || this.keyboard.IsKeyDown(Keys.RightShift))
                     {
                         this.input.Type('_');
                     }
@@ -306,7 +319,7 @@
                 // Check for if command is given
                 if (this.keyboard.IsKeyTyped(Keys.Enter, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
-                    this.SendCommand();
+                    this.DoCommand();
                 }
 
                 // Autocomplete
@@ -454,6 +467,27 @@
             }
         }
 
+        private void DoCommand()
+        {
+            this.WriteLine(this.input.GetText(), this.CommandTextColour);
+
+            string[] split = this.input.GetInput().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            if (split.Length > 0)
+            {
+                string command = split[0];
+                string[] arguments = new string[split.Length - 1];
+                Array.Copy(split, 1, arguments, 0, arguments.Length);
+
+                if (this.CommandBroker.Call(command, arguments) == false)
+                {
+                    this.WriteLine("'" + command + "' is not a recognized command or has an invalid amount of arguments.", this.WarningTextColour);
+                }
+                this.input.Remember();
+            }
+
+            this.input.Clear();
+        }
+
         private void LogAdded(object sender, LogAddedEventArgs e)
         {
             Color c = this.DefaultTextColour;
@@ -497,27 +531,6 @@
             float height = this.TextFont.MeasureString("M", this.TextScale).Y;
             int maxRows = (int)(this.Area.Height / height);
             this.Scroll(maxRows / 2);
-        }
-
-        private void SendCommand()
-        {
-            this.WriteLine(this.input.GetText());
-
-            string[] split = this.input.GetInput().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            if (split.Length > 0)
-            {
-                string command = split[0];
-                string[] arguments = new string[split.Length - 1];
-                Array.Copy(split, 1, arguments, 0, arguments.Length);
-
-                if (this.CommandBroker.Call(command, arguments) == false)
-                {
-                    this.WriteLine("'" + command + "' is not a recognized command or has an invalid amount of arguments.");
-                }
-                this.input.Remember();
-            }
-
-            this.input.Clear();
         }
 
         private void SetupBroker()

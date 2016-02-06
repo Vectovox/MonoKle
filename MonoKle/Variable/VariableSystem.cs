@@ -1,7 +1,7 @@
 ﻿namespace MonoKle.Variable
 {
-    using Logging;
     using Attributes;
+    using Logging;
     using System;
     using System.Collections.Generic;
     using System.Reflection;
@@ -12,16 +12,6 @@
     public class VariableSystem : ILoggable
     {
         private Dictionary<string, IVariable> variables = new Dictionary<string, IVariable>();
-
-        /// <summary>
-        /// Gets the variable identifiers.
-        /// </summary>
-        /// <value>
-        /// The variable identifiers.
-        /// </value>
-        public ICollection<string> Identifiers {
-            get { return variables.Keys; }
-        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VariableSystem"/> class.
@@ -40,32 +30,23 @@
         }
 
         /// <summary>
+        /// Gets the variable identifiers.
+        /// </summary>
+        /// <value>
+        /// The variable identifiers.
+        /// </value>
+        public ICollection<string> Identifiers
+        {
+            get { return variables.Keys; }
+        }
+
+        /// <summary>
         /// Gets or sets the logger instance.
         /// </summary>
         /// <value>
         /// The logger.
         /// </value>
         public Logger Logger { get; set; }
-
-        /// <summary>
-        /// Binds the properties of the provided object to variables. Only properties declared with <see cref="PropertyVariableAttribute"/> are bound.
-        /// </summary>
-        /// <param name="o">The object.</param>
-        public void BindProperties(object o)
-        {
-            Type type = o.GetType();
-            foreach(PropertyInfo p in type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic))
-            {
-                foreach(object a in p.GetCustomAttributes(true))
-                {
-                    PropertyVariableAttribute attribute = a as PropertyVariableAttribute;
-                    if (attribute != null)
-                    {
-                        this.Bind(new PropertyVariable(p, o), attribute.Identifier);
-                    }
-                }
-            }
-        }
 
         /// <summary>
         /// Binds the specified instance to the specified variable identifier. Any existing values will be assigned the instance.
@@ -100,6 +81,26 @@
                 this.variables.Add(identifier, instance);
             }
             this.Log("Bound variable instance to identifier: " + identifier, LogLevel.Debug);
+        }
+
+        /// <summary>
+        /// Binds the properties of the provided object to variables. Only properties declared with <see cref="PropertyVariableAttribute"/> are bound.
+        /// </summary>
+        /// <param name="o">The object.</param>
+        public void BindProperties(object o)
+        {
+            Type type = o.GetType();
+            foreach (PropertyInfo p in type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic))
+            {
+                foreach (object a in p.GetCustomAttributes(true))
+                {
+                    PropertyVariableAttribute attribute = a as PropertyVariableAttribute;
+                    if (attribute != null)
+                    {
+                        this.Bind(new PropertyVariable(p, o), attribute.Identifier);
+                    }
+                }
+            }
         }
 
         /// <summary>

@@ -7,9 +7,7 @@
     using Graphics;
     using Input;
     using Logging;
-    using Messaging;
     using Microsoft.Xna.Framework;
-    using Variable;
     using Resources;
     using Script;
     using State;
@@ -103,18 +101,6 @@
         }
 
         /// <summary>
-        /// Gets the game variables, including settings.
-        /// </summary>
-        /// <value>
-        /// The variables.
-        /// </value>
-        public static VariableStorage Variables
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
         /// Gets the mouse input.
         /// </summary>
         public static IMouseInput Mouse
@@ -149,6 +135,18 @@
         /// Gets the total time spent in the game.
         /// </summary>
         public static TimeSpan TotalGameTime
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets the game variables, including settings.
+        /// </summary>
+        /// <value>
+        /// The variables.
+        /// </value>
+        public static VariableStorage Variables
         {
             get;
             private set;
@@ -193,27 +191,6 @@
             return MBackend.GameInstance;
         }
 
-        private static void BindSettings()
-        {
-            MBackend.Variables.Variables.BindProperties(MBackend.Logger);
-        }
-
-        private static void RegisterConsoleCommands()
-        {
-            MBackend.Console.CommandBroker.Register("exit", CommandExit);
-            MBackend.Console.CommandBroker.Register("loglevel", 1, MBackend.CommandLogLevel);
-            MBackend.Console.CommandBroker.Register("version", 0, MBackend.CommandVersion);
-            MBackend.Console.CommandBroker.Register("vars", 0, MBackend.CommandListVariables);
-            MBackend.Console.CommandBroker.Register("get", 1, MBackend.CommandGet);
-            MBackend.Console.CommandBroker.Register("set", 2, MBackend.CommandSet);
-        }
-
-        private static void InitializeVariables()
-        {
-            MBackend.Variables = new VariableStorage(MBackend.Logger);
-            MBackend.Variables.LoadDefaultVariables();
-        }
-
         internal static void Draw(GameTime time)
         {
             if (MBackend.initializing == false)
@@ -240,19 +217,20 @@
             }
         }
 
-        private static void CommandListVariables(string[] arguments)
+        private static void BindSettings()
         {
-            MBackend.Console.WriteLine("## variables ##");
-            foreach (string s in MBackend.Variables.Variables.Identifiers)
-            {
-                MBackend.Console.WriteLine(s);
-            }
+            MBackend.Variables.Variables.BindProperties(MBackend.Logger);
+        }
+
+        private static void CommandExit(string[] arguments)
+        {
+            MBackend.GameInstance.Exit();
         }
 
         private static void CommandGet(string[] arguments)
         {
             object value = MBackend.Variables.Variables.GetValue(arguments[0]);
-            if(value != null)
+            if (value != null)
             {
                 Console.WriteLine(value.ToString());
             }
@@ -262,19 +240,15 @@
             }
         }
 
-        private static void CommandSet(string[] arguments)
+        private static void CommandListVariables(string[] arguments)
         {
-            if(MBackend.Variables.VariablePopulator.LoadItem(arguments[0], arguments[1]) == false)
+            MBackend.Console.WriteLine("## variables ##");
+            foreach (string s in MBackend.Variables.Variables.Identifiers)
             {
-                Console.WriteLine("Variable assignment failed", Console.ErrorTextColour);
+                MBackend.Console.WriteLine(s);
             }
         }
 
-        private static void CommandExit(string[] arguments)
-        {
-            MBackend.GameInstance.Exit();
-        }
-        
         private static void CommandLogLevel(string[] arguments)
         {
             LogLevel level;
@@ -286,6 +260,14 @@
             else
             {
                 MBackend.Console.WriteLine("Incorrect logging level specified.");
+            }
+        }
+
+        private static void CommandSet(string[] arguments)
+        {
+            if (MBackend.Variables.VariablePopulator.LoadItem(arguments[0], arguments[1]) == false)
+            {
+                Console.WriteLine("Variable assignment failed", Console.ErrorTextColour);
             }
         }
 
@@ -326,6 +308,22 @@
                 GraphicsHelper.ImageToTexture2D(GraphicsManager.GetGraphicsDevice(), TextureResources.DefaultTexture),
                 GraphicsHelper.ImageToTexture2D(GraphicsManager.GetGraphicsDevice(), TextureResources.WhiteTexture)
                 );
+        }
+
+        private static void InitializeVariables()
+        {
+            MBackend.Variables = new VariableStorage(MBackend.Logger);
+            MBackend.Variables.LoadDefaultVariables();
+        }
+
+        private static void RegisterConsoleCommands()
+        {
+            MBackend.Console.CommandBroker.Register("exit", CommandExit);
+            MBackend.Console.CommandBroker.Register("loglevel", 1, MBackend.CommandLogLevel);
+            MBackend.Console.CommandBroker.Register("version", 0, MBackend.CommandVersion);
+            MBackend.Console.CommandBroker.Register("vars", 0, MBackend.CommandListVariables);
+            MBackend.Console.CommandBroker.Register("get", 1, MBackend.CommandGet);
+            MBackend.Console.CommandBroker.Register("set", 2, MBackend.CommandSet);
         }
 
         private static void UnhandledException(object sender, UnhandledExceptionEventArgs e)

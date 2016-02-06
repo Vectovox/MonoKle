@@ -34,15 +34,6 @@
         }
 
         /// <summary>
-        /// Loads variables from the given text.
-        /// </summary>
-        /// <param name="text">The text.</param>
-        public void LoadText(string text)
-        {
-            this.InterpretText(text);
-        }
-
-        /// <summary>
         /// Loads a variable from the given strings.
         /// </summary>
         /// <param name="identifier">The variable identifier.</param>
@@ -51,6 +42,15 @@
         public bool LoadItem(string identifier, string value)
         {
             return this.InterpretLine(identifier + VariablePopulator.VariableValueDivisor + value);
+        }
+
+        /// <summary>
+        /// Loads variables from the given text.
+        /// </summary>
+        /// <param name="text">The text.</param>
+        public void LoadText(string text)
+        {
+            this.InterpretText(text);
         }
 
         protected override bool OperateOnFile(Stream fileStream, string filePath)
@@ -92,7 +92,7 @@
                 {
                     value = Convert.ToSingle(valueText, NumberFormatInfo.InvariantInfo);
                 }
-                else if(boolMatch.Success)
+                else if (boolMatch.Success)
                 {
                     value = Convert.ToBoolean(valueText);
                 }

@@ -280,17 +280,12 @@
 
         private static void InitializeConsole()
         {
-            // Set up font
-            using (MemoryStream ms = new MemoryStream(FontResources.ConsoleFont))
-            {
-                MBackend.FontStorage.LoadStream(ms, "console");
-            }
             MBackend.console = new GameConsole(new Rectangle(0, 0, GraphicsManager.ScreenSize.X, GraphicsManager.ScreenSize.Y / 3),
                 MBackend.GraphicsManager.GetGraphicsDevice(),
                 MBackend.keyboard,
                 MBackend.TextureStorage.White);    // TODO: Break out magic numbers into config file.
             MBackend.Console.ToggleKey = Microsoft.Xna.Framework.Input.Keys.F1;
-            MBackend.Console.TextFont = MBackend.FontStorage.GetAsset("console");
+            MBackend.Console.TextFont = MBackend.FontStorage.DefaultValue;
         }
 
         private static void InitializeFontStorage()

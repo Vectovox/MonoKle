@@ -63,16 +63,6 @@ namespace MonoKle.Engine.Resources {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] ConsoleFont {
-            get {
-                object obj = ResourceManager.GetObject("ConsoleFont", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
         internal static byte[] DefaultFont {
             get {
                 object obj = ResourceManager.GetObject("DefaultFont", resourceCulture);

@@ -89,7 +89,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\ConsoleFont.mfnt" />
     <None Include="Resources\DefaultFont.mfnt" />
   </ItemGroup>
   <ItemGroup>

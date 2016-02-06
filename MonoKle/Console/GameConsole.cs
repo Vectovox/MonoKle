@@ -25,7 +25,7 @@
 
         private int drawingOffset = 0;
         private GraphicsDevice graphicsDevice;
-        private InputField input = new InputField("|", ">> ", 0.25, 10);
+        private InputField input = new InputField("_", ">> ", 0.25, 10);
         private KeyboardInput keyboard;
         private LinkedList<Line> lines = new LinkedList<Line>();
         private SpriteBatch spriteBatch;

@@ -3,23 +3,22 @@
     using Asset.Effect;
     using Asset.Font;
     using Asset.Texture;
+    using Attributes;
     using Console;
+    using Core.Geometry;
     using Graphics;
     using Input;
     using Logging;
     using Microsoft.Xna.Framework;
-    using Attributes;
     using Resources;
     using Script;
     using State;
     using System;
+    using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Reflection;
     using Variable;
-    using System.Linq;
-    using System.Collections;
-    using System.Collections.Generic;
-    using Core.Geometry;
 
     /// <summary>
     /// Backend for the MonoKle engine. Provides global access to all MonoKle systems.
@@ -214,19 +213,11 @@
 
             mouse.ScreenSize = GraphicsManager.Resolution;
 
-            console.WriteLine("MonoKle Engine initialized!", Color.LightGreen);
-            console.WriteLine("Running version: " + Assembly.GetAssembly(typeof(MBackend)).GetName().Version, Color.LightGreen);
+            console.WriteLine("MonoKle Engine initialized!", MBackend.Console.CommandTextColour);
+            console.WriteLine("Running version: " + Assembly.GetAssembly(typeof(MBackend)).GetName().Version, MBackend.Console.CommandTextColour);
             MBackend.initializing = false;
 
             return MBackend.GameInstance;
-        }
-
-        private static void ResolutionChanged(object sender, Graphics.Event.ResolutionChangedEventArgs e)
-        {
-            if(MBackend.Console != null)
-            {
-                MBackend.Console.Area = new Rectangle(0, 0, MBackend.GraphicsManager.ResolutionWidth, MBackend.GraphicsManager.ResolutionHeight / 3);
-            }
         }
 
         internal static void Draw(GameTime time)
@@ -237,7 +228,7 @@
 
                 MBackend.GraphicsManager.GraphicsDevice.Clear(Color.CornflowerBlue);
                 MBackend.stateSystem.Draw(seconds);
-                
+
                 if (MBackend.ConsoleEnabled)
                 {
                     MBackend.console.Draw(seconds);
@@ -276,7 +267,7 @@
             MBackend.Variables.Variables.Bind(new PropertyVariable(nameof(MBackend.ConsoleEnabled), typeof(MBackend)), "c_enabled");
         }
 
-        private static void CommandExit(string[] arguments)
+        private static void CommandExit()
         {
             MBackend.GameInstance.Exit();
         }
@@ -294,40 +285,29 @@
             }
         }
 
-        private static void CommandListVariables(string[] arguments)
+        private static void CommandListVariables()
         {
-            MBackend.Console.WriteLine("Listing variables:");
             List<string> identifiers = MBackend.Variables.Variables.Identifiers.ToList();
             identifiers.Sort();
             foreach (string s in identifiers)
             {
-                MBackend.Console.WriteLine("  " + s);
-            }
-        }
-
-        private static void CommandLogLevel(string[] arguments)
-        {
-            LogLevel level;
-            if (Enum.TryParse(arguments[0], out level))
-            {
-                MBackend.Logger.LoggingLevel = level;
-                MBackend.Console.WriteLine("Logging level set to: " + level);
-            }
-            else
-            {
-                MBackend.Console.WriteLine("Incorrect logging level specified.");
+                MBackend.Console.WriteLine("\t" + s, MBackend.Variables.Variables.CanSet(s) ? MBackend.Console.DefaultTextColour : MBackend.Console.DisabledTextColour);
             }
         }
 
         private static void CommandSet(string[] arguments)
         {
-            if (MBackend.Variables.VariablePopulator.LoadItem(arguments[0], arguments[1]) == false)
+            if (MBackend.Variables.Variables.Contains(arguments[0]) && MBackend.Variables.Variables.CanSet(arguments[0]) == false)
+            {
+                Console.WriteLine("Can not set variable since it is read-only", Console.ErrorTextColour);
+            }
+            else if (MBackend.Variables.VariablePopulator.LoadItem(arguments[0], arguments[1]) == false)
             {
                 Console.WriteLine("Variable assignment failed", Console.ErrorTextColour);
             }
         }
 
-        private static void CommandVersion(string[] arguments)
+        private static void CommandVersion()
         {
             MBackend.console.WriteLine("       MonoKle Version:\t" + Assembly.GetAssembly(typeof(MonoKle.Core.Timer)).GetName().Version);
             MBackend.console.WriteLine("MonoKle Engine Version:\t" + Assembly.GetAssembly(typeof(MBackend)).GetName().Version);
@@ -369,12 +349,20 @@
 
         private static void RegisterConsoleCommands()
         {
-            MBackend.Console.CommandBroker.Register("exit", CommandExit);
-            MBackend.Console.CommandBroker.Register("loglevel", 1, MBackend.CommandLogLevel);
-            MBackend.Console.CommandBroker.Register("version", 0, MBackend.CommandVersion);
-            MBackend.Console.CommandBroker.Register("vars", 0, MBackend.CommandListVariables);
-            MBackend.Console.CommandBroker.Register("get", 1, MBackend.CommandGet);
-            MBackend.Console.CommandBroker.Register("set", 2, MBackend.CommandSet);
+            MBackend.Console.CommandBroker.Register("exit", "Terminates the application.", CommandExit);
+            MBackend.Console.CommandBroker.Register("version", "Prints the current MonoKle version.", MBackend.CommandVersion);
+            MBackend.Console.CommandBroker.Register("vars", "Lists the currently active variables.", MBackend.CommandListVariables);
+            MBackend.Console.CommandBroker.Register("get", "Prints the value of the provided variable", new string[] { "variable" }, MBackend.CommandGet);
+            MBackend.Console.CommandBroker.Register("set", "Assigns the provided variable with the given value.",
+                new string[] { "variable", "value" }, MBackend.CommandSet);
+        }
+
+        private static void ResolutionChanged(object sender, Graphics.Event.ResolutionChangedEventArgs e)
+        {
+            if (MBackend.Console != null)
+            {
+                MBackend.Console.Area = new Rectangle(0, 0, MBackend.GraphicsManager.ResolutionWidth, MBackend.GraphicsManager.ResolutionHeight / 3);
+            }
         }
 
         private static void UnhandledException(object sender, UnhandledExceptionEventArgs e)

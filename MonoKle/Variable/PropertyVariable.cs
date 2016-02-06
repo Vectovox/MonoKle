@@ -56,6 +56,12 @@
         }
 
         /// <summary>
+        /// Determines whether this instance can set.
+        /// </summary>
+        /// <returns></returns>
+        public bool CanSet() => this.property.SetMethod != null;
+
+        /// <summary>
         /// Gets the variable value.
         /// </summary>
         /// <returns></returns>
@@ -71,7 +77,7 @@
         /// <returns>True if value could be set; otherwise false.</returns>
         public bool SetValue(object value)
         {
-            if (this.property.SetMethod != null)
+            if (this.CanSet())
             {
                 Type valueType = value.GetType();
                 if (this.property.PropertyType.IsAssignableFrom(valueType))
@@ -79,7 +85,7 @@
                     this.property.SetValue(owner, value);
                     return true;
                 }
-                else if(this.property.PropertyType.IsValueType && valueType.IsValueType)
+                else if (this.property.PropertyType.IsValueType && valueType.IsValueType)
                 {
                     try
                     {
@@ -87,7 +93,7 @@
                         this.property.SetValue(owner, newObj);
                         return true;
                     }
-                    catch(InvalidCastException e)
+                    catch (InvalidCastException e)
                     {
                     }
                 }

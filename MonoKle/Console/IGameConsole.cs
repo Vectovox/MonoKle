@@ -1,10 +1,9 @@
 ﻿namespace MonoKle.Console
 {
+    using Core.Geometry;
     using Microsoft.Xna.Framework;
-    using Microsoft.Xna.Framework.Graphics;
     using Microsoft.Xna.Framework.Input;
     using MonoKle.Asset.Font;
-    using Core.Geometry;
 
     /// <summary>
     /// Interface for a game console.
@@ -21,8 +20,11 @@
         }
 
         /// <summary>
-        /// Gets or sets the background color.
+        /// Gets or sets the color of the background.
         /// </summary>
+        /// <value>
+        /// The color of the background.
+        /// </value>
         Color BackgroundColor
         {
             get;
@@ -41,9 +43,33 @@
         }
 
         /// <summary>
+        /// Gets or sets the command text colour.
+        /// </summary>
+        /// <value>
+        /// The command text colour.
+        /// </value>
+        Color CommandTextColour
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Gets or sets the color that the text will be drawn with if no other colour is specified.
         /// </summary>
         Color DefaultTextColour
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the disabled text colour.
+        /// </summary>
+        /// <value>
+        /// The disabled text colour.
+        /// </value>
+        Color DisabledTextColour
         {
             get;
             set;

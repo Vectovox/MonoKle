@@ -1,13 +1,13 @@
 ﻿namespace MonoKle.Console
 {
     using Attributes;
+    using Core.Geometry;
     using Input;
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
     using Microsoft.Xna.Framework.Input;
     using MonoKle.Asset.Font;
     using MonoKle.Core;
-    using Core.Geometry;
     using MonoKle.Logging;
     using System;
     using System.Collections.Generic;
@@ -52,6 +52,7 @@
             this.WarningTextColour = Color.Yellow;
             this.ErrorTextColour = Color.Red;
             this.CommandTextColour = Color.LightGreen;
+            this.DisabledTextColour = Color.Gray;
             this.TextScale = 0.5f;
             this.TabLength = 4;
             Logger.Global.LogAddedEvent += LogAdded;
@@ -77,7 +78,6 @@
             get;
             set;
         }
-
 
         /// <summary>
         /// Gets the command broker. Used for executing console commands.
@@ -107,6 +107,18 @@
         /// Gets or sets the color that the text will be drawn with if no other colour is specified.
         /// </summary>
         public Color DefaultTextColour
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the disabled text colour.
+        /// </summary>
+        /// <value>
+        /// The disabled text colour.
+        /// </value>
+        public Color DisabledTextColour
         {
             get;
             set;
@@ -253,6 +265,159 @@
             }
         }
 
+        /// <summary>
+        /// Writes the provided text with the colour <see cref="GameConsole.DefaultTextColour"/>.
+        /// </summary>
+        /// <param name="text">The text to write.</param>
+        public void WriteLine(string text)
+        {
+            this.WriteLine(text, this.DefaultTextColour);
+        }
+
+        /// <summary>
+        /// Writes the provided text with the given color.
+        /// </summary>
+        /// <param name="text">The text to write.</param>
+        /// <param name="color">Color of the line.</param>
+        public void WriteLine(string text, Color color)
+        {
+            // Divide into separate rows for \n
+            string[] rows = text.Split('\n');
+
+            StringBuilder sb = new StringBuilder();
+            foreach (string r in rows)
+            {
+                // Add tabs
+                sb.Clear();
+                int column = 0;
+                for (int i = 0; i < r.Length; i++)
+                {
+                    if (r[i] == '\t')
+                    {
+                        int amnt = this.TabLength - (column % this.TabLength);
+                        for (int j = 0; j < amnt; j++)
+                        {
+                            sb.Append(' ');
+                            column++;
+                        }
+                    }
+                    else
+                    {
+                        sb.Append(r[i]);
+                        column++;
+                    }
+                }
+
+                this.lines.AddLast(new Line(sb.ToString(), color));
+            }
+
+            this.TrimLines();
+        }
+
+        private void AutoComplete()
+        {
+            string current = this.inputField.GetInput();
+
+            if (current.Length > 0)
+            {
+                IList<CommandBroker.Command> matches = this.CommandBroker.Commands.Where(o => o.Name.StartsWith(current)).ToList();
+                if (matches.Count == 1)
+                {
+                    this.inputField.Set(matches.First().Name);
+                }
+                else if (matches.Count > 1)
+                {
+                    this.WriteLine("Matches for: " + current);
+                    foreach (CommandBroker.Command c in matches)
+                    {
+                        this.WriteLine("\t" + c.Name);
+                    }
+                }
+            }
+        }
+
+        private void CommandClear()
+        {
+            this.Clear();
+        }
+
+        private void CommandEcho(string[] arguments)
+        {
+            this.WriteLine(arguments[0]);
+        }
+
+        private void CommandHelp(string[] args)
+        {
+            CommandBroker.Command command = this.CommandBroker.Get(args[0]);
+            if (command != null)
+            {
+                if (command.Description != null)
+                {
+                    this.WriteLine(command.Description + "\n");
+                }
+                StringBuilder usageBuilder = new StringBuilder("\tUsage: ");
+
+                if (command.DefaultHandler != null && command.Handler != null)
+                {
+                    usageBuilder.Append(command.Name.ToUpper());
+                    usageBuilder.Append("\n\t       ");
+                }
+
+                usageBuilder.Append(command.Name.ToUpper());
+                foreach (string a in command.Arguments)
+                {
+                    usageBuilder.Append(' ');
+                    if (a == null)
+                    {
+                        usageBuilder.Append("[arg]");
+                    }
+                    else
+                    {
+                        usageBuilder.Append('[');
+                        usageBuilder.Append(a);
+                        usageBuilder.Append(']');
+                    }
+                }
+                this.WriteLine(usageBuilder.ToString());
+            }
+            else
+            {
+                this.WriteLine("There is no such command to get help for.");
+            }
+        }
+
+        private void CommandHelpList()
+        {
+            this.WriteLine("Listing commands. For more information, type help [command].");
+            List<CommandBroker.Command> commands = this.CommandBroker.Commands.ToList();
+            commands.Sort((a, b) => a.Name.CompareTo(b.Name));
+            foreach (CommandBroker.Command c in commands)
+            {
+                this.WriteLine("\t" + c.Name);
+            }
+        }
+
+        private void DoCommand()
+        {
+            this.WriteLine(this.inputField.GetText(), this.CommandTextColour);
+
+            string[] split = this.inputField.GetInput().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            if (split.Length > 0)
+            {
+                string command = split[0];
+                string[] arguments = new string[split.Length - 1];
+                Array.Copy(split, 1, arguments, 0, arguments.Length);
+
+                if (this.CommandBroker.Call(command, arguments) == false)
+                {
+                    this.WriteLine("'" + command + "' is not a recognized command or has an invalid amount of arguments.", this.WarningTextColour);
+                }
+                this.inputField.Remember();
+            }
+
+            this.inputField.Clear();
+        }
+
         private void DoKeyboardInput()
         {
             // Check letters
@@ -368,119 +533,6 @@
             }
         }
 
-        /// <summary>
-        /// Writes the provided text with the colour <see cref="GameConsole.DefaultTextColour"/>.
-        /// </summary>
-        /// <param name="text">The text to write.</param>
-        public void WriteLine(string text)
-        {
-            this.WriteLine(text, this.DefaultTextColour);
-        }
-
-        /// <summary>
-        /// Writes the provided text with the given color.
-        /// </summary>
-        /// <param name="text">The text to write.</param>
-        /// <param name="color">Color of the line.</param>
-        public void WriteLine(string text, Color color)
-        {
-            // Divide into separate rows for \n
-            string[] rows = text.Split('\n');
-
-            StringBuilder sb = new StringBuilder();
-            foreach (string r in rows)
-            {
-                // Add tabs
-                sb.Clear();
-                int column = 0;
-                for (int i = 0; i < r.Length; i++)
-                {
-                    if (r[i] == '\t')
-                    {
-                        int amnt = this.TabLength - (column % this.TabLength);
-                        for (int j = 0; j < amnt; j++)
-                        {
-                            sb.Append(' ');
-                            column++;
-                        }
-                    }
-                    else
-                    {
-                        sb.Append(r[i]);
-                        column++;
-                    }
-                }
-
-                this.lines.AddLast(new Line(sb.ToString(), color));
-            }
-
-            this.TrimLines();
-        }
-
-        private void AutoComplete()
-        {
-            string current = this.inputField.GetInput();
-
-            if (current.Length > 0)
-            {
-                IList<CommandBroker.Command> matches = this.CommandBroker.Commands.Where(o => o.Name.StartsWith(current)).ToList();
-                if (matches.Count == 1)
-                {
-                    this.inputField.Set(matches.First().Name);
-                }
-                else if (matches.Count > 1)
-                {
-                    this.WriteLine("Matches for: " + current);
-                    foreach (CommandBroker.Command c in matches)
-                    {
-                        this.WriteLine("\t" + c.Name);
-                    }
-                }
-            }
-        }
-
-        private void CommandClear(string[] arguments)
-        {
-            this.Clear();
-        }
-
-        private void CommandEcho(string[] arguments)
-        {
-            this.WriteLine(arguments[0]);
-        }
-
-        private void CommandHelp(string[] arguments)
-        {
-            this.WriteLine("Listing availabe commands:");
-            this.WriteLine("\tCommand\t\tArguments");
-            this.WriteLine("============================");
-            foreach (CommandBroker.Command c in this.CommandBroker.Commands)
-            {
-                this.WriteLine("\t" + c.Name + "\t\t" + c.ArgumentLength);
-            }
-        }
-
-        private void DoCommand()
-        {
-            this.WriteLine(this.inputField.GetText(), this.CommandTextColour);
-
-            string[] split = this.inputField.GetInput().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            if (split.Length > 0)
-            {
-                string command = split[0];
-                string[] arguments = new string[split.Length - 1];
-                Array.Copy(split, 1, arguments, 0, arguments.Length);
-
-                if (this.CommandBroker.Call(command, arguments) == false)
-                {
-                    this.WriteLine("'" + command + "' is not a recognized command or has an invalid amount of arguments.", this.WarningTextColour);
-                }
-                this.inputField.Remember();
-            }
-
-            this.inputField.Clear();
-        }
-
         private void LogAdded(object sender, LogAddedEventArgs e)
         {
             Color c = this.DefaultTextColour;
@@ -519,9 +571,10 @@
         private void SetupBroker()
         {
             this.CommandBroker = new CommandBroker();
-            this.CommandBroker.Register("clear", this.CommandClear);
-            this.CommandBroker.Register("help", this.CommandHelp);
-            this.CommandBroker.Register("echo", 1, this.CommandEcho);
+            this.CommandBroker.Register("clear", "Clears the console.", this.CommandClear);
+            this.CommandBroker.Register("help", "Provides help about commands. If no argument is passed, a list of commands will be provided.",
+                new string[] { "command" }, this.CommandHelp, this.CommandHelpList);
+            this.CommandBroker.Register("echo", "Prints the provided argument.", new string[] { "echoed" }, this.CommandEcho);
         }
 
         private void TrimLines()

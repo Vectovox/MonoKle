@@ -55,7 +55,7 @@
         /// <summary>
         /// The maximum amount of logs to be stored.
         /// </summary>
-        [PropertyVariableAttribute("logger_size")]
+        [PropertyVariableAttribute("log_size")]
         public short Size
         {
             get { return this.size; }

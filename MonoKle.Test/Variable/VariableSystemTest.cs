@@ -2,6 +2,7 @@
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Attributes;
+    using System;
 
     [TestClass]
     public class VariableSystemTest
@@ -171,6 +172,11 @@
             public MockVariable(bool toReturnOnSet)
             {
                 this.toReturnOnSet = toReturnOnSet;
+            }
+
+            public bool CanSet()
+            {
+                return true;
             }
 
             public object GetValue()

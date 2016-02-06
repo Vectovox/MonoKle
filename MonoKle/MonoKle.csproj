@@ -57,6 +57,7 @@
     <Compile Include="Asset\Font\FontDataSerialization.cs" />
     <Compile Include="Asset\Texture\TextureStorage.cs" />
     <Compile Include="Console\CommandBroker.cs" />
+    <Compile Include="Console\DefaultConsoleCommandHandler.cs" />
     <Compile Include="Console\ConsoleCommandHandler.cs" />
     <Compile Include="Console\IGameConsole.cs" />
     <Compile Include="Console\GameConsole.cs" />

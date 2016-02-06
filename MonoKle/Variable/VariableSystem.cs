@@ -104,6 +104,21 @@
         }
 
         /// <summary>
+        /// Determines whether the specified variable can be set or is read-only.
+        /// </summary>
+        /// <param name="identifier">The identifier of the variable.</param>
+        /// <returns>True if it can be set; otherwise false.</returns>
+        public bool CanSet(string identifier)
+        {
+            IVariable variable = this.GetVariable(identifier);
+            if (variable != null)
+            {
+                return variable.CanSet();
+            }
+            return false;
+        }
+
+        /// <summary>
         /// Clears all variables.
         /// </summary>
         public void Clear()
@@ -113,18 +128,24 @@
         }
 
         /// <summary>
+        /// Determines whether this instance contains a variable with the specified identifier.
+        /// </summary>
+        /// <param name="identifier">The identifier.</param>
+        /// <returns>True if a variable with the specified identifier exists; otherwise false.</returns>
+        public bool Contains(string identifier) => this.GetVariable(identifier) != null;
+
+        /// <summary>
         /// Gets the specified variable.
         /// </summary>
         /// <param name="identifier">The identifier variable to get.</param>
         /// <returns>Setting value.</returns>
         public object GetValue(string identifier)
         {
-            if (variables.ContainsKey(identifier))
+            IVariable variable = this.GetVariable(identifier);
+            if (variable != null)
             {
-                return this.variables[identifier].GetValue();
+                return variable.GetValue();
             }
-
-            this.Log("Accessed variable does not exist: " + identifier, LogLevel.Warning);
             return null;
         }
 
@@ -174,6 +195,17 @@
             {
                 this.Logger.Log(message, level);
             }
+        }
+
+        private IVariable GetVariable(string identifier)
+        {
+            if (variables.ContainsKey(identifier))
+            {
+                return this.variables[identifier];
+            }
+
+            this.Log("Accessed variable does not exist: " + identifier, LogLevel.Warning);
+            return null;
         }
     }
 }

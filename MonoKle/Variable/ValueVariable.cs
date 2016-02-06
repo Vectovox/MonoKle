@@ -17,13 +17,16 @@
         }
 
         /// <summary>
+        /// Determines whether this instance can set.
+        /// </summary>
+        /// <returns></returns>
+        public bool CanSet() => true;
+
+        /// <summary>
         /// Gets the variable value.
         /// </summary>
         /// <returns></returns>
-        public object GetValue()
-        {
-            return this.value;
-        }
+        public object GetValue() => this.value;
 
         /// <summary>
         /// Sets the variable to the provided value if possible.

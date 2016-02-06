@@ -6,6 +6,12 @@
     public interface IVariable
     {
         /// <summary>
+        /// Determines whether this instance can be set.
+        /// </summary>
+        /// <returns>True if it can be set; otherwise false.</returns>
+        bool CanSet();
+
+        /// <summary>
         /// Gets the variable value.
         /// </summary>
         /// <returns></returns>

@@ -96,21 +96,37 @@
             }
         }
 
-        // TODO: Fullscreen does not work in current Mono?
-        //public void SetFullscreenEnabled(bool enabled)
-        //{
-        //    if (enabled && graphicsDeviceManager.IsFullScreen == false ||
-        //        enabled == false && graphicsDeviceManager.IsFullScreen)
-        //    {
-        //        // TODO: This does not work in the current MonoGame version.
-        //        graphicsDeviceManager.ToggleFullScreen();
-        //    }
-        //}
-        //public void ToggleFullscren()
-        //{
-        //    graphicsDeviceManager.ToggleFullScreen();
-        //    graphicsDeviceManager.ApplyChanges();
-        //}
+        /// <summary>
+        /// Gets or sets a value indicating whether full screen is enabled.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this instance is fullscreen; otherwise, <c>false</c>.
+        /// </value>
+        [PropertyVariableAttribute("g_fullscreen")]
+        public bool IsFullscreen
+        {
+            get { return graphicsDeviceManager.IsFullScreen; }
+            set { this.SetFullscreenEnabled(value); }
+        }
+
+        private void SetFullscreenEnabled(bool enabled)
+        {
+            if (enabled && this.IsFullscreen == false ||
+                enabled == false && this.IsFullscreen)
+            {
+                this.ToggleFullscren();
+            }
+        }
+
+        /// <summary>
+        /// Toggles fullscren.
+        /// </summary>
+        public void ToggleFullscren()
+        {
+            graphicsDeviceManager.ToggleFullScreen();
+            graphicsDeviceManager.ApplyChanges();
+        }
+        
         // TODO: PreparingDeviceSettings does only fire the first time applychanges is called (or maybe only before game started).
         private void PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
         {

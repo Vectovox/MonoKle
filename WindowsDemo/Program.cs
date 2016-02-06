@@ -15,12 +15,11 @@
         [STAThread]
         private static void Main()
         {
-            using (MGame game = MBackend.Initialize(true))
+            using (MGame game = MBackend.Initialize())
             {
                 MBackend.StateSystem.AddState(new DemoStateOne());
                 MBackend.StateSystem.AddState(new DemoStateTwo());
                 MBackend.StateSystem.SwitchState("stateOne", null);
-                MBackend.GraphicsManager.SetScreenSize(new MPoint2(800, 600));
                 game.Run();
             }
         }

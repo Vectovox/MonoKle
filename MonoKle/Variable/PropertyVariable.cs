@@ -12,27 +12,27 @@
         private PropertyInfo property;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PropertyVariable"/> class.
+        /// Initializes a new instance of the <see cref="PropertyVariable"/> class for instanced properties.
         /// </summary>
-        /// <param name="name">The name of the property.</param>
+        /// <param name="propertyName">The name of the property.</param>
         /// <param name="owner">The owner instance of the property.</param>
-        public PropertyVariable(string name, object owner) :
-            this(owner.GetType().GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic), owner)
+        public PropertyVariable(string propertyName, object owner) :
+            this(owner.GetType().GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic), owner)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PropertyVariable"/> class.
+        /// Initializes a new instance of the <see cref="PropertyVariable"/> class for static properties.
         /// </summary>
-        /// <param name="name">The name of the property.</param>
+        /// <param name="propertyName">The name of the property.</param>
         /// <param name="staticType">The static type containing the property.</param>
-        public PropertyVariable(string name, Type staticType) :
-            this(staticType.GetProperty(name, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic), null)
+        public PropertyVariable(string propertyName, Type staticType) :
+            this(staticType.GetProperty(propertyName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic), null)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PropertyVariable"/> class.
+        /// Initializes a new instance of the <see cref="PropertyVariable"/> class from a <see cref="PropertyInfo"/> and eventual owner.
         /// </summary>
         /// <param name="property">The property to use.</param>
         /// <param name="owner">The owner. Must be null for static properties.</param>

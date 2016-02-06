@@ -76,10 +76,10 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Core\Geometry\IntAreaTest.cs" />
+    <Compile Include="Core\Geometry\MRectangleIntTest.cs" />
     <Compile Include="Core\Geometry\MCircleTest.cs" />
     <Compile Include="Core\TimerTest.cs" />
-    <Compile Include="Core\Geometry\AreaTest.cs" />
+    <Compile Include="Core\Geometry\MRectangleTest.cs" />
     <Compile Include="Core\Geometry\MPoint2Test.cs" />
     <Compile Include="Core\Geometry\MVector2Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -8,12 +8,18 @@
     using Input;
     using Logging;
     using Microsoft.Xna.Framework;
+    using Attributes;
     using Resources;
     using Script;
     using State;
     using System;
     using System.IO;
     using System.Reflection;
+    using Variable;
+    using System.Linq;
+    using System.Collections;
+    using System.Collections.Generic;
+    using Core.Geometry;
 
     /// <summary>
     /// Backend for the MonoKle engine. Provides global access to all MonoKle systems.
@@ -33,9 +39,10 @@
         public static IGameConsole Console { get { return MBackend.console; } }
 
         /// <summary>
-        /// Gets a value indicating whether the console is enabled.
+        /// Gets or sets wether the console is enabled.
         /// </summary>
-        public static bool ConsoleEnabled { get; }
+        [PropertyVariableAttribute("console_enabled")]
+        public static bool ConsoleEnabled { get; set; }
 
         /// <summary>
         /// Gets the effect storage, loading and providing effects.
@@ -155,11 +162,32 @@
         /// <summary>
         /// Initializes the MonoKle backend, returning a runnable game instance.
         /// </summary>
+        /// <returns></returns>
+        public static MGame Initialize()
+        {
+            return MBackend.Initialize(new MPoint2(640, 400));
+        }
+
+        /// <summary>
+        /// Initializes the MonoKle backend, returning a runnable game instance.
+        /// </summary>
+        /// <param name="resolution">The resolution.</param>
+        /// <returns></returns>
+        public static MGame Initialize(MPoint2 resolution)
+        {
+            return MBackend.Initialize(resolution, false);
+        }
+
+        /// <summary>
+        /// Initializes the MonoKle backend, returning a runnable game instance.
+        /// </summary>
+        /// <param name="resolution">The initial display resolution.</param>
         /// <param name="enableConsole">Enables console.</param>
         /// <returns>Runnable <see cref="MGame"/>.</returns>
-        public static MGame Initialize(bool enableConsole)
+        public static MGame Initialize(MPoint2 resolution, bool enableConsole)
         {
             MBackend.initializing = true;
+            MBackend.ConsoleEnabled = enableConsole;
 
             AppDomain.CurrentDomain.UnhandledException += UnhandledException;
             MBackend.Logger = Logger.Global;
@@ -167,22 +195,24 @@
 
             MBackend.GameInstance = new MGame();
             MBackend.GraphicsManager = new GraphicsManager(new GraphicsDeviceManager(MBackend.GameInstance));
+            MBackend.GraphicsManager.ResolutionChanged += ResolutionChanged;
             MBackend.gamepad = new GamePadInput();
             MBackend.keyboard = new KeyboardInput();
             MBackend.mouse = new MouseInput();
             MBackend.stateSystem = new StateSystem();
 
             MBackend.GameInstance.RunOneFrame();
+            MBackend.GraphicsManager.Resolution = resolution;
 
             MBackend.InitializeTextureStorage();
             MBackend.InitializeFontStorage();
-            MBackend.EffectStorage = new EffectStorage(GraphicsManager.GetGraphicsDevice());
+            MBackend.EffectStorage = new EffectStorage(GraphicsManager.GraphicsDevice);
             MBackend.InitializeConsole();
 
             MBackend.RegisterConsoleCommands();
             MBackend.BindSettings();
 
-            mouse.ScreenSize = GraphicsManager.ScreenSize;
+            mouse.ScreenSize = GraphicsManager.Resolution;
 
             console.WriteLine("MonoKle Engine initialized!", Color.LightGreen);
             console.WriteLine("Running version: " + Assembly.GetAssembly(typeof(MBackend)).GetName().Version, Color.LightGreen);
@@ -191,14 +221,27 @@
             return MBackend.GameInstance;
         }
 
+        private static void ResolutionChanged(object sender, Graphics.Event.ResolutionChangedEventArgs e)
+        {
+            if(MBackend.Console != null)
+            {
+                MBackend.Console.Area = new Rectangle(0, 0, MBackend.GraphicsManager.ResolutionWidth, MBackend.GraphicsManager.ResolutionHeight / 3);
+            }
+        }
+
         internal static void Draw(GameTime time)
         {
             if (MBackend.initializing == false)
             {
                 double seconds = time.ElapsedGameTime.TotalSeconds;
-                MBackend.GraphicsManager.GetGraphicsDevice().Clear(Color.CornflowerBlue);
+
+                MBackend.GraphicsManager.GraphicsDevice.Clear(Color.CornflowerBlue);
                 MBackend.stateSystem.Draw(seconds);
-                MBackend.console.Draw(seconds);
+                
+                if (MBackend.ConsoleEnabled)
+                {
+                    MBackend.console.Draw(seconds);
+                }
             }
         }
 
@@ -209,18 +252,28 @@
                 double seconds = time.ElapsedGameTime.TotalSeconds;
                 MBackend.IsRunningSlowly = time.IsRunningSlowly;
                 MBackend.TotalGameTime = time.TotalGameTime;
-                MBackend.console.Update(seconds);
                 MBackend.gamepad.Update(seconds);
                 MBackend.keyboard.Update(seconds);
                 MBackend.mouse.Update(seconds);
-                MBackend.stateSystem.Update(seconds);
+
+                if (MBackend.ConsoleEnabled == false || MBackend.Console.IsOpen == false)
+                {
+                    MBackend.stateSystem.Update(seconds);
+                }
+
+                if (MBackend.ConsoleEnabled)
+                {
+                    MBackend.console.Update(seconds);
+                }
             }
         }
 
         private static void BindSettings()
         {
             MBackend.Variables.Variables.BindProperties(MBackend.Logger);
+            MBackend.Variables.Variables.BindProperties(MBackend.GraphicsManager);
             MBackend.Variables.Variables.BindProperties(MBackend.Console);
+            MBackend.Variables.Variables.Bind(new PropertyVariable(nameof(MBackend.ConsoleEnabled), typeof(MBackend)), "c_enabled");
         }
 
         private static void CommandExit(string[] arguments)
@@ -243,10 +296,12 @@
 
         private static void CommandListVariables(string[] arguments)
         {
-            MBackend.Console.WriteLine("## variables ##");
-            foreach (string s in MBackend.Variables.Variables.Identifiers)
+            MBackend.Console.WriteLine("Listing variables:");
+            List<string> identifiers = MBackend.Variables.Variables.Identifiers.ToList();
+            identifiers.Sort();
+            foreach (string s in identifiers)
             {
-                MBackend.Console.WriteLine(s);
+                MBackend.Console.WriteLine("  " + s);
             }
         }
 
@@ -280,17 +335,17 @@
 
         private static void InitializeConsole()
         {
-            MBackend.console = new GameConsole(new Rectangle(0, 0, GraphicsManager.ScreenSize.X, GraphicsManager.ScreenSize.Y / 3),
-                MBackend.GraphicsManager.GetGraphicsDevice(),
+            MBackend.console = new GameConsole(new Rectangle(0, 0, GraphicsManager.Resolution.X, GraphicsManager.Resolution.Y / 3),
+                MBackend.GraphicsManager.GraphicsDevice,
                 MBackend.keyboard,
-                MBackend.TextureStorage.White);    // TODO: Break out magic numbers into config file.
+                MBackend.TextureStorage.White);
             MBackend.Console.ToggleKey = Microsoft.Xna.Framework.Input.Keys.F1;
             MBackend.Console.TextFont = MBackend.FontStorage.DefaultValue;
         }
 
         private static void InitializeFontStorage()
         {
-            MBackend.FontStorage = new FontStorage(GraphicsManager.GetGraphicsDevice());
+            MBackend.FontStorage = new FontStorage(GraphicsManager.GraphicsDevice);
             using (MemoryStream ms = new MemoryStream(Resources.FontResources.DefaultFont))
             {
                 MBackend.FontStorage.LoadStream(ms, "default");
@@ -300,9 +355,9 @@
 
         private static void InitializeTextureStorage()
         {
-            MBackend.TextureStorage = new TextureStorage(GraphicsManager.GetGraphicsDevice(),
-                GraphicsHelper.ImageToTexture2D(GraphicsManager.GetGraphicsDevice(), TextureResources.DefaultTexture),
-                GraphicsHelper.ImageToTexture2D(GraphicsManager.GetGraphicsDevice(), TextureResources.WhiteTexture)
+            MBackend.TextureStorage = new TextureStorage(GraphicsManager.GraphicsDevice,
+                GraphicsHelper.ImageToTexture2D(GraphicsManager.GraphicsDevice, TextureResources.DefaultTexture),
+                GraphicsHelper.ImageToTexture2D(GraphicsManager.GraphicsDevice, TextureResources.WhiteTexture)
                 );
         }
 

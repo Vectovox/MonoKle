@@ -6,13 +6,13 @@
     /// <summary>
     /// Event arguments for changed screen size events.
     /// </summary>
-    public class ScreenSizeChangedEventArgs : EventArgs
+    public class ResolutionChangedEventArgs : EventArgs
     {
         /// <summary>
-        /// Creates a new instance of <see cref="ScreenSizeChangedEventArgs"/>.
+        /// Creates a new instance of <see cref="ResolutionChangedEventArgs"/>.
         /// </summary>
         /// <param name="newScreenSize">The new screen size.</param>
-        public ScreenSizeChangedEventArgs(MPoint2 newScreenSize)
+        public ResolutionChangedEventArgs(MPoint2 newScreenSize)
         {
             this.NewScreenSize = newScreenSize;
         }

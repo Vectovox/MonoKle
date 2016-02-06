@@ -7,6 +7,7 @@
     using Microsoft.Xna.Framework.Input;
     using MonoKle.Asset.Font;
     using MonoKle.Core;
+    using Core.Geometry;
     using MonoKle.Logging;
     using System;
     using System.Collections.Generic;
@@ -18,17 +19,17 @@
     /// </summary>
     public class GameConsole : IGameConsole, IMComponent
     {
-        // TODO: Break constants and things in class out into settings
         private const double KEY_TYPED_CYCLE_INTERVAL = 0.02;
 
         private const double KEY_TYPED_TIMEROFFSET = 0.5;
 
         private int drawingOffset = 0;
         private GraphicsDevice graphicsDevice;
-        private InputField input = new InputField("_", ">> ", 0.25, 10);
+        private InputField inputField = new InputField("_", ">> ", 0.25, 10);
         private KeyboardInput keyboard;
         private LinkedList<Line> lines = new LinkedList<Line>();
         private SpriteBatch spriteBatch;
+        private Texture2D whiteTexture;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameConsole"/> class.
@@ -36,8 +37,8 @@
         /// <param name="area">The area.</param>
         /// <param name="graphicsDevice">The graphics device.</param>
         /// <param name="keyboard">The keyboard.</param>
-        /// <param name="backgroundTexture">The background texture.</param>
-        public GameConsole(Rectangle area, GraphicsDevice graphicsDevice, KeyboardInput keyboard, Texture2D backgroundTexture)
+        /// <param name="whiteTexture">The background texture.</param>
+        public GameConsole(MRectangleInt area, GraphicsDevice graphicsDevice, KeyboardInput keyboard, Texture2D whiteTexture)
         {
             this.graphicsDevice = graphicsDevice;
             this.spriteBatch = new SpriteBatch(graphicsDevice);
@@ -45,7 +46,7 @@
 
             this.Area = area;
             this.Size = byte.MaxValue;
-            this.BackgroundTexture = backgroundTexture;
+            this.whiteTexture = whiteTexture;
             this.BackgroundColor = new Color(0, 0, 0, 0.7f);
             this.DefaultTextColour = Color.WhiteSmoke;
             this.WarningTextColour = Color.Yellow;
@@ -62,7 +63,7 @@
         /// <summary>
         /// Gets or sets the area in which the console will be drawn.
         /// </summary>
-        public Rectangle Area
+        public MRectangleInt Area
         {
             get;
             set;
@@ -77,14 +78,6 @@
             set;
         }
 
-        /// <summary>
-        /// Gets or sets the background texture.
-        /// </summary>
-        public Texture2D BackgroundTexture
-        {
-            get;
-            set;
-        }
 
         /// <summary>
         /// Gets the command broker. Used for executing console commands.
@@ -134,7 +127,7 @@
         /// <summary>
         /// Gets or sets wether the console is open.
         /// </summary>
-        [PropertyVariableAttribute("console_isopen")]
+        [PropertyVariableAttribute("c_isopen")]
         public bool IsOpen
         {
             get;
@@ -144,7 +137,7 @@
         /// <summary>
         /// Gets or sets the maximum amount of entries to keep.
         /// </summary>
-        [PropertyVariableAttribute("console_size")]
+        [PropertyVariableAttribute("c_size")]
         public int Size
         {
             get;
@@ -174,7 +167,7 @@
         /// <summary>
         /// Gets or sets the scale for the font.
         /// </summary>
-        [PropertyVariableAttribute("console_textscale")]
+        [PropertyVariableAttribute("c_textscale")]
         public float TextScale
         {
             get;
@@ -222,9 +215,9 @@
             {
                 Font font = this.TextFont;
                 spriteBatch.Begin();
-                spriteBatch.Draw(this.BackgroundTexture, this.Area, this.BackgroundColor);
+                spriteBatch.Draw(this.whiteTexture, this.Area, this.BackgroundColor);
 
-                string drawnLine = this.input.GetText(true);
+                string drawnLine = this.inputField.GetText(true);
                 Vector2 textPos = new Vector2(this.Area.Left, this.Area.Bottom - font.MeasureString(drawnLine, this.TextScale).Y);
                 LinkedListNode<Line> node = lines.Find(lines.ElementAtOrDefault(lines.Count - this.drawingOffset - 1));
                 StringWrapper wrapper = new StringWrapper();
@@ -254,119 +247,124 @@
 
             if (this.IsOpen)
             {
-                // Check letters
-                for (int i = 65; i <= 90; i++)
-                {
-                    if (this.keyboard.IsKeyTyped((Keys)i, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
-                    {
-                        bool upperCase = this.keyboard.IsKeyHeld(Keys.LeftShift) || this.keyboard.IsKeyHeld(Keys.RightShift);
-                        this.input.Type((char)(i + (upperCase ? +0 : 32)));
-                    }
-                }
+                DoKeyboardInput();
 
-                // Check numbers
-                for (int i = 48; i <= 58; i++)
-                {
-                    if (this.keyboard.IsKeyTyped((Keys)i, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
-                    {
-                        this.input.Type((char)i);
-                    }
-                }
+                this.inputField.Update(seconds);
+            }
+        }
 
-                if (this.keyboard.IsKeyTyped(Keys.Space, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+        private void DoKeyboardInput()
+        {
+            // Check letters
+            for (int i = 65; i <= 90; i++)
+            {
+                if (this.keyboard.IsKeyTyped((Keys)i, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
-                    this.input.Type(' ');
+                    bool upperCase = this.keyboard.IsKeyHeld(Keys.LeftShift) || this.keyboard.IsKeyHeld(Keys.RightShift);
+                    this.inputField.Type((char)(i + (upperCase ? +0 : 32)));
                 }
+            }
 
-                if (this.keyboard.IsKeyTyped(Keys.OemPeriod, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            // Check numbers
+            for (int i = 48; i <= 58; i++)
+            {
+                if (this.keyboard.IsKeyTyped((Keys)i, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
-                    this.input.Type('.');
+                    this.inputField.Type((char)i);
                 }
+            }
 
-                if (this.keyboard.IsKeyTyped(Keys.OemPlus, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            if (this.keyboard.IsKeyTyped(Keys.Space, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            {
+                this.inputField.Type(' ');
+            }
+
+            if (this.keyboard.IsKeyTyped(Keys.OemPeriod, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            {
+                this.inputField.Type('.');
+            }
+
+            if (this.keyboard.IsKeyTyped(Keys.OemPlus, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            {
+                this.inputField.Type('+');
+            }
+
+            if (this.keyboard.IsKeyTyped(Keys.OemMinus, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            {
+                if (this.keyboard.IsKeyDown(Keys.LeftShift) || this.keyboard.IsKeyDown(Keys.RightShift))
                 {
-                    this.input.Type('+');
+                    this.inputField.Type('_');
                 }
-
-                if (this.keyboard.IsKeyTyped(Keys.OemMinus, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+                else
                 {
-                    if (this.keyboard.IsKeyDown(Keys.LeftShift) || this.keyboard.IsKeyDown(Keys.RightShift))
-                    {
-                        this.input.Type('_');
-                    }
-                    else
-                    {
-                        this.input.Type('-');
-                    }
+                    this.inputField.Type('-');
                 }
+            }
 
-                // Check for eraser
-                if (this.keyboard.IsKeyTyped(Keys.Back, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
-                {
-                    this.input.Erase();
-                }
+            // Check for eraser
+            if (this.keyboard.IsKeyTyped(Keys.Back, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            {
+                this.inputField.Erase();
+            }
 
-                if (this.keyboard.IsKeyTyped(Keys.Delete, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
-                {
-                    this.input.Delete();
-                }
+            if (this.keyboard.IsKeyTyped(Keys.Delete, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            {
+                this.inputField.Delete();
+            }
 
-                // Check for if command is given
-                if (this.keyboard.IsKeyTyped(Keys.Enter, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
-                {
-                    this.DoCommand();
-                }
+            // Check for if command is given
+            if (this.keyboard.IsKeyTyped(Keys.Enter, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            {
+                this.DoCommand();
+            }
 
-                // Autocomplete
-                if (this.keyboard.IsKeyTyped(Keys.Tab, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
-                {
-                    this.AutoComplete();
-                }
+            // Autocomplete
+            if (this.keyboard.IsKeyTyped(Keys.Tab, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            {
+                this.AutoComplete();
+            }
 
-                // History
-                if (this.keyboard.IsKeyTyped(Keys.Up, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
-                {
-                    this.input.PreviousMemory();
-                }
+            // History
+            if (this.keyboard.IsKeyTyped(Keys.Up, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            {
+                this.inputField.PreviousMemory();
+            }
 
-                if (this.keyboard.IsKeyTyped(Keys.Down, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
-                {
-                    this.input.NextMemory();
-                }
+            if (this.keyboard.IsKeyTyped(Keys.Down, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            {
+                this.inputField.NextMemory();
+            }
 
-                // Cursor
-                if (this.keyboard.IsKeyTyped(Keys.Left, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
-                {
-                    this.input.CursorLeft();
-                }
+            // Cursor
+            if (this.keyboard.IsKeyTyped(Keys.Left, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            {
+                this.inputField.CursorLeft();
+            }
 
-                if (this.keyboard.IsKeyTyped(Keys.Right, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
-                {
-                    this.input.CursorRight();
-                }
+            if (this.keyboard.IsKeyTyped(Keys.Right, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            {
+                this.inputField.CursorRight();
+            }
 
-                // Scrolling
-                if (this.keyboard.IsKeyTyped(Keys.PageUp, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
-                {
-                    this.ScrollUp();
-                }
+            // Scrolling
+            if (this.keyboard.IsKeyTyped(Keys.PageUp, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            {
+                this.ScrollUp();
+            }
 
-                if (this.keyboard.IsKeyTyped(Keys.PageDown, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
-                {
-                    this.ScrollDown();
-                }
+            if (this.keyboard.IsKeyTyped(Keys.PageDown, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            {
+                this.ScrollDown();
+            }
 
-                if (this.keyboard.IsKeyTyped(Keys.Home, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
-                {
-                    this.ScrollTop();
-                }
+            if (this.keyboard.IsKeyTyped(Keys.Home, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            {
+                this.ScrollTop();
+            }
 
-                if (this.keyboard.IsKeyTyped(Keys.End, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
-                {
-                    this.ScrollBottom();
-                }
-
-                this.input.Update(seconds);
+            if (this.keyboard.IsKeyTyped(Keys.End, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            {
+                this.ScrollBottom();
             }
         }
 
@@ -421,14 +419,14 @@
 
         private void AutoComplete()
         {
-            string current = this.input.GetInput();
+            string current = this.inputField.GetInput();
 
             if (current.Length > 0)
             {
                 IList<CommandBroker.Command> matches = this.CommandBroker.Commands.Where(o => o.Name.StartsWith(current)).ToList();
                 if (matches.Count == 1)
                 {
-                    this.input.Set(matches.First().Name);
+                    this.inputField.Set(matches.First().Name);
                 }
                 else if (matches.Count > 1)
                 {
@@ -464,9 +462,9 @@
 
         private void DoCommand()
         {
-            this.WriteLine(this.input.GetText(), this.CommandTextColour);
+            this.WriteLine(this.inputField.GetText(), this.CommandTextColour);
 
-            string[] split = this.input.GetInput().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] split = this.inputField.GetInput().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             if (split.Length > 0)
             {
                 string command = split[0];
@@ -477,10 +475,10 @@
                 {
                     this.WriteLine("'" + command + "' is not a recognized command or has an invalid amount of arguments.", this.WarningTextColour);
                 }
-                this.input.Remember();
+                this.inputField.Remember();
             }
 
-            this.input.Clear();
+            this.inputField.Clear();
         }
 
         private void LogAdded(object sender, LogAddedEventArgs e)

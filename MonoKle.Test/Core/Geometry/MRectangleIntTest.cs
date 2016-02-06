@@ -5,7 +5,7 @@
     using System;
 
     [TestClass]
-    public class IntAreaTest
+    public class MRectangleIntTest
     {
         private const int RANDOM_TEST_AMOUNT = 100;
 
@@ -14,7 +14,7 @@
         [TestMethod]
         public void TestTranslate()
         {
-            for (int i = 0; i < IntAreaTest.RANDOM_TEST_AMOUNT; i++)
+            for (int i = 0; i < MRectangleIntTest.RANDOM_TEST_AMOUNT; i++)
             {
                 int x = random.Next(-100, 100);
                 int y = random.Next(-100, 100);
@@ -36,7 +36,7 @@
         [TestMethod]
         public void TestWidthHeight()
         {
-            for (int i = 0; i < IntAreaTest.RANDOM_TEST_AMOUNT; i++)
+            for (int i = 0; i < MRectangleIntTest.RANDOM_TEST_AMOUNT; i++)
             {
                 int x = random.Next(-100, 100);
                 int y = random.Next(-100, 100);
@@ -298,6 +298,24 @@
             Assert.IsFalse(new MRectangleInt(0, 1, 2, 3) != new MRectangleInt(0, 1, 2, 3));
             Assert.IsTrue(new MRectangleInt(0, 1, -2, 3) != new MRectangleInt(0, 1, 2, 3));
             Assert.IsTrue(new MRectangleInt(0, 1, 2, 3) != new MRectangleInt(1, 1, 2, 3));
+        }
+
+        [TestMethod]
+        public void TestImplicitConversion_ToRectangle()
+        {
+            Rectangle original = new Rectangle(-10, -20, 35, 37);
+            MRectangleInt conv = original;
+            Rectangle back = conv;
+            Assert.AreEqual(original, back);
+        }
+
+        [TestMethod]
+        public void TestImplicitConversion_FromRectangle()
+        {
+            MRectangleInt original = new MRectangleInt(-10, -20, 35, 37);
+            Rectangle conv = original;
+            MRectangleInt back = conv;
+            Assert.AreEqual(original, back);
         }
     }
 }

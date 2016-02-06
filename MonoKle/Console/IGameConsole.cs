@@ -4,6 +4,7 @@
     using Microsoft.Xna.Framework.Graphics;
     using Microsoft.Xna.Framework.Input;
     using MonoKle.Asset.Font;
+    using Core.Geometry;
 
     /// <summary>
     /// Interface for a game console.
@@ -13,7 +14,7 @@
         /// <summary>
         /// Gets or sets the area in which the console will be drawn.
         /// </summary>
-        Rectangle Area
+        MRectangleInt Area
         {
             get;
             set;
@@ -23,15 +24,6 @@
         /// Gets or sets the background color.
         /// </summary>
         Color BackgroundColor
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets or sets the background texture.
-        /// </summary>
-        Texture2D BackgroundTexture
         {
             get;
             set;

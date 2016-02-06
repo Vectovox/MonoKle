@@ -1,9 +1,9 @@
 ﻿namespace MonoKle.Graphics
 {
+    using Attributes;
+    using Core.Geometry;
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
-
-    using Core.Geometry;
     using MonoKle.Graphics.Event;
 
     /// <summary>
@@ -13,51 +13,86 @@
     {
         private GraphicsDeviceManager graphicsDeviceManager;
 
+        private MPoint2 resolution;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GraphicsManager"/> class.
+        /// </summary>
+        /// <param name="graphicsDeviceManager">The graphics device manager.</param>
         public GraphicsManager(GraphicsDeviceManager graphicsDeviceManager)
         {
             this.graphicsDeviceManager = graphicsDeviceManager;
             this.graphicsDeviceManager.PreparingDeviceSettings += PreparingDeviceSettings;
         }
 
-        public event ScreenSizeChangedEventHandler ScreenSizeChanged;
+        /// <summary>
+        /// Occurs when resolution is changed.
+        /// </summary>
+        public event ResolutionChangedEventHandler ResolutionChanged;
 
         /// <summary>
-        /// Gets the current screen center.
+        /// Gets the graphics device.
         /// </summary>
-        public MPoint2 ScreenCenter
+        /// <value>
+        /// The graphics device.
+        /// </value>
+        public GraphicsDevice GraphicsDevice { get { return graphicsDeviceManager.GraphicsDevice; } }
+
+        /// <summary>
+        /// Gets or sets the resolution.
+        /// </summary>
+        /// <value>
+        /// The resolution.
+        /// </value>
+        public MPoint2 Resolution
+        {
+            get { return this.resolution; }
+            set { this.SetResolution(value); }
+        }
+
+        /// <summary>
+        /// Gets the center point of the current resolution.
+        /// </summary>
+        /// <value>
+        /// The resolution center.
+        /// </value>
+        public MPoint2 ResolutionCenter
         {
             get; private set;
         }
 
         /// <summary>
-        /// Gets the current screen size.
+        /// Gets or sets the height of the resolution.
         /// </summary>
-        public MPoint2 ScreenSize
+        /// <value>
+        /// The height of the resolution.
+        /// </value>
+        [PropertyVariableAttribute("g_res_y")]
+        public int ResolutionHeight
         {
-            get; private set;
+            get { return this.Resolution.Y; }
+            set { this.Resolution = new MPoint2(this.Resolution.X, value); }
         }
 
-        public GraphicsDevice GetGraphicsDevice()
+        /// <summary>
+        /// Gets or sets the width of the resolution.
+        /// </summary>
+        /// <value>
+        /// The width of the resolution.
+        /// </value>
+        [PropertyVariableAttribute("g_res_x")]
+        public int ResolutionWidth
         {
-            return graphicsDeviceManager.GraphicsDevice;
+            get { return this.Resolution.X; }
+            set { this.Resolution = new MPoint2(value, this.Resolution.Y); }
         }
 
-        public void SetScreenSize(MPoint2 size)
+        private void OnResolutionChanged(MPoint2 newResolution)
         {
-            this.graphicsDeviceManager.PreferredBackBufferWidth = size.X;
-            this.graphicsDeviceManager.PreferredBackBufferHeight = size.Y;
-            this.ScreenSize = size;          // TODO: Remove when PreparingDeviceSettings is received
-            this.ScreenCenter = size / 2;    // TODO: Remove when PreparingDeviceSettings is received
-            this.graphicsDeviceManager.ApplyChanges();
-            this.OnScreenSizeChanged(size);
-        }
-
-        private void OnScreenSizeChanged(MPoint2 newScreenSize)
-        {
-            var v = this.ScreenSizeChanged;
-            if(v != null)
+            var v = this.ResolutionChanged;
+            if (v != null)
             {
-                v(this, new ScreenSizeChangedEventArgs(newScreenSize));
+                v(this, new ResolutionChangedEventArgs(newResolution));
             }
         }
 
@@ -79,13 +114,24 @@
         // TODO: PreparingDeviceSettings does only fire the first time applychanges is called (or maybe only before game started).
         private void PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
         {
-            this.SetScreenSize(new MPoint2(e.GraphicsDeviceInformation.PresentationParameters.BackBufferWidth, e.GraphicsDeviceInformation.PresentationParameters.BackBufferHeight));
+            this.SetResolution(new MPoint2(e.GraphicsDeviceInformation.PresentationParameters.BackBufferWidth,
+                e.GraphicsDeviceInformation.PresentationParameters.BackBufferHeight));
             //Vector2DInteger value = new Vector2DInteger(
             //        e.GraphicsDeviceInformation.PresentationParameters.BackBufferWidth,
             //        e.GraphicsDeviceInformation.PresentationParameters.BackBufferHeight
             //    );
             //ScreenSize = value;
             //ScreenCenter = value / 2;
+        }
+
+        private void SetResolution(MPoint2 resolution)
+        {
+            this.graphicsDeviceManager.PreferredBackBufferWidth = resolution.X;
+            this.graphicsDeviceManager.PreferredBackBufferHeight = resolution.Y;
+            this.resolution = resolution;          // TODO: Remove when PreparingDeviceSettings is received
+            this.ResolutionCenter = resolution / 2;    // TODO: Remove when PreparingDeviceSettings is received
+            this.graphicsDeviceManager.ApplyChanges();
+            this.OnResolutionChanged(resolution);
         }
     }
 }

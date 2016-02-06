@@ -5,7 +5,7 @@
     using System;
 
     [TestClass]
-    public class AreaTest
+    public class MRectangleTest
     {
         private const int RANDOM_TEST_AMOUNT = 100;
 
@@ -337,7 +337,7 @@
         [TestMethod]
         public void TestTranslate()
         {
-            for (int i = 0; i < AreaTest.RANDOM_TEST_AMOUNT; i++)
+            for (int i = 0; i < MRectangleTest.RANDOM_TEST_AMOUNT; i++)
             {
                 float x = random.Next(-100, 100);
                 float y = random.Next(-100, 100);
@@ -359,7 +359,7 @@
         [TestMethod]
         public void TestWidthHeight()
         {
-            for (int i = 0; i < AreaTest.RANDOM_TEST_AMOUNT; i++)
+            for (int i = 0; i < MRectangleTest.RANDOM_TEST_AMOUNT; i++)
             {
                 float x = random.Next(-100, 100);
                 float y = random.Next(-100, 100);

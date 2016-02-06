@@ -23,7 +23,7 @@ namespace WindowsDemo
             Matrix view = Matrix.CreateLookAt(camPos, camPos + new Vector3(0f, 0f, -1f), Vector3.Up);
             Matrix projection = Matrix.CreatePerspectiveFieldOfView(
                 MathHelper.ToRadians(45.0f),
-                MBackend.GraphicsManager.ScreenSize.X / MBackend.GraphicsManager.ScreenSize.Y,
+                MBackend.GraphicsManager.Resolution.X / MBackend.GraphicsManager.Resolution.Y,
                 1.0f, 10000.0f
                 );
 
@@ -66,7 +66,7 @@ namespace WindowsDemo
         protected override void Activated(StateSwitchData data)
         {
             Console.WriteLine("State two activated! Message: " + (string)data.Data);
-            this.primitive3D = new PrimitiveBatch3D(MBackend.GraphicsManager.GetGraphicsDevice());
+            this.primitive3D = new PrimitiveBatch3D(MBackend.GraphicsManager.GraphicsDevice);
         }
     }
 }

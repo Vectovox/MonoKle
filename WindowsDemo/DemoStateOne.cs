@@ -157,11 +157,11 @@ namespace WindowsDemo
 
                 if (MBackend.Keyboard.IsKeyPressed(Keys.F2))
                 {
-                    MBackend.GraphicsManager.SetScreenSize(new MPoint2(1280, 720));
+                    MBackend.GraphicsManager.Resolution = new MPoint2(1280, 720);
                 }
                 else if (MBackend.Keyboard.IsKeyPressed(Keys.F3))
                 {
-                    MBackend.GraphicsManager.SetScreenSize(new MPoint2(800, 600));
+                    MBackend.GraphicsManager.Resolution = new MPoint2(800, 600);
                 }
 
                 if (MBackend.Keyboard.IsKeyPressed(Keys.F12))
@@ -211,11 +211,11 @@ namespace WindowsDemo
             MBackend.Console.WriteLine(MBackend.TextureStorage.LoadFiles("Assets\\Textures", true).Successes + " textures loaded.");
             MBackend.Console.WriteLine(MBackend.FontStorage.LoadFiles("Assets\\Fonts", true).Successes + " fonts loaded.");
             MBackend.Console.WriteLine(MBackend.EffectStorage.LoadFiles("Assets\\Effects", true).Successes + " effects loaded.");
-            sb = new SpriteBatch(MBackend.GraphicsManager.GetGraphicsDevice());
+            sb = new SpriteBatch(MBackend.GraphicsManager.GraphicsDevice);
             timer.Reset();
             //MonoKleGame.ScriptInterface.AddScriptSources("TestScripts.ms", false);
             //MonoKleGame.ScriptInterface.CompileSources();
-            this.primitive2D = new PrimitiveBatch2D(MBackend.GraphicsManager.GetGraphicsDevice());
+            this.primitive2D = new PrimitiveBatch2D(MBackend.GraphicsManager.GraphicsDevice);
             //MonoKleGame.EffectStorage.LoadFiles("shader.fx");
         }
     }

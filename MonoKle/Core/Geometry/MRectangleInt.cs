@@ -1,5 +1,6 @@
 ﻿namespace MonoKle.Core.Geometry
 {
+    using Microsoft.Xna.Framework;
     using System;
     using System.Text;
 
@@ -167,6 +168,30 @@
         public static bool operator ==(MRectangleInt a, MRectangleInt b)
         {
             return a.TopLeft == b.TopLeft && a.BottomRight == b.BottomRight;
+        }
+
+        /// <summary>
+        /// Performs an implicit conversion from <see cref="MRectangleInt"/> to <see cref="Rectangle"/>.
+        /// </summary>
+        /// <param name="r">The r.</param>
+        /// <returns>
+        /// The result of the conversion.
+        /// </returns>
+        public static implicit operator Rectangle(MRectangleInt r)
+        {
+            return new Rectangle(r.TopLeft.X, r.TopLeft.Y, r.Width, r.Height);
+        }
+
+        /// <summary>
+        /// Performs an implicit conversion from <see cref="Rectangle"/> to <see cref="MRectangleInt"/>.
+        /// </summary>
+        /// <param name="r">The r.</param>
+        /// <returns>
+        /// The result of the conversion.
+        /// </returns>
+        public static implicit operator MRectangleInt(Rectangle r)
+        {
+            return new MRectangleInt(r.X, r.Y, r.Width, r.Height);
         }
 
         /// <summary>

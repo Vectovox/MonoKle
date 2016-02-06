@@ -282,7 +282,14 @@
 
                 if (this.keyboard.IsKeyTyped(Keys.OemMinus, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
                 {
-                    this.input.Type('-');
+                    if(this.keyboard.IsKeyDown(Keys.LeftShift) || this.keyboard.IsKeyDown(Keys.RightShift))
+                    {
+                        this.input.Type('_');
+                    }
+                    else
+                    {
+                        this.input.Type('-');
+                    }
                 }
 
                 // Check for eraser

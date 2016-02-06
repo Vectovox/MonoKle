@@ -359,12 +359,12 @@
 
             if (this.keyboard.IsKeyTyped(Keys.Home, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
             {
-                this.ScrollTop();
+                this.inputField.CursorHome();
             }
 
             if (this.keyboard.IsKeyTyped(Keys.End, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
             {
-                this.ScrollBottom();
+                this.inputField.CursorEnd();
             }
         }
 
@@ -502,21 +502,11 @@
             this.drawingOffset = Math.Max(this.drawingOffset, 0);
         }
 
-        private void ScrollBottom()
-        {
-            this.Scroll(-this.drawingOffset);
-        }
-
         private void ScrollDown()
         {
             float height = this.TextFont.MeasureString("M", this.TextScale).Y;
             int maxRows = (int)(this.Area.Height / height);
             this.Scroll(-maxRows / 2);
-        }
-
-        private void ScrollTop()
-        {
-            this.Scroll(this.lines.Count - this.drawingOffset);
         }
 
         private void ScrollUp()

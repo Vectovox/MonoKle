@@ -58,6 +58,16 @@
             this.CursorRight(1);
         }
 
+        public void CursorHome()
+        {
+            this.CursorLeft(this.cursorPos);
+        }
+
+        public void CursorEnd()
+        {
+            this.CursorRight(this.GetInput().Length - this.cursorPos);
+        }
+
         public void CursorRight(int amount)
         {
             this.cursorPos += amount;

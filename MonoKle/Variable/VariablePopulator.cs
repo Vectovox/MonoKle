@@ -1,8 +1,8 @@
 ﻿namespace MonoKle.Variable
 {
     using IO;
+    using Core;
     using System;
-    using System.ComponentModel;
     using System.Globalization;
     using System.IO;
     using System.Text.RegularExpressions;
@@ -68,41 +68,17 @@
             }
 
             string[] parts = line.Split(VariablePopulator.VariableValueDivisor);
-            StringConverter sc = new StringConverter();
 
             if (parts.Length == 2)
             {
                 object value = null;
+                string variableText = parts[0].Trim();
                 string valueText = parts[1].Trim();
 
-                Match stringMatch = Regex.Match(valueText, "^\".*\"$");
-                Match intMatch = Regex.Match(valueText, "^-?\\d+$");
-                Match floatMatch = Regex.Match(valueText, "^-?(\\d*[.])?\\d+$");
-                Match boolMatch = Regex.Match(valueText, "^true|false$", RegexOptions.IgnoreCase);
+                StringConverter sc = new StringConverter();
+                value = sc.ToAny(valueText);
 
-                if (stringMatch.Success)
-                {
-                    value = valueText.Substring(1, valueText.Length - 2);
-                }
-                else if (intMatch.Success)
-                {
-                    value = Convert.ToInt32(valueText, NumberFormatInfo.InvariantInfo);
-                }
-                else if (floatMatch.Success)
-                {
-                    value = Convert.ToSingle(valueText, NumberFormatInfo.InvariantInfo);
-                }
-                else if (boolMatch.Success)
-                {
-                    value = Convert.ToBoolean(valueText);
-                }
-                else
-                {
-                    return false;
-                }
-
-                this.system.SetValue(parts[0].Trim(), value);
-                return true;
+                return this.system.SetValue(variableText, value);
             }
 
             return false;

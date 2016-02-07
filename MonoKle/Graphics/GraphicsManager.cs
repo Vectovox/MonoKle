@@ -44,6 +44,7 @@
         /// <value>
         /// The resolution.
         /// </value>
+        [PropertyVariableAttribute("g_res")]
         public MPoint2 Resolution
         {
             get { return this.resolution; }

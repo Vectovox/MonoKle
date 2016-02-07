@@ -3,7 +3,9 @@
     using Microsoft.Xna.Framework;
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Text;
+    using System.Text.RegularExpressions;
 
     /// <summary>
     /// Two-dimensional, immutable, serializable, floating-point vector. Has implicit operator to <see cref="Microsoft.Xna.Framework.Vector2"/>.
@@ -23,6 +25,8 @@
 
         private const int HASH_CODE_INITIAL = 73;
         private const int HASH_CODE_MULTIPLIER = 101;
+
+        private const string RegexParse = "^" + nameof(MVector2) + "\\((-?[0-9]+(\\.[0-9]+)?),(-?[0-9]+(\\.[0-9]+)?)\\)$";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MVector2"/> struct.
@@ -199,6 +203,40 @@
         }
 
         /// <summary>
+        /// Parses the specified string.
+        /// </summary>
+        /// <param name="s">The string to parse.</param>
+        /// <returns></returns>
+        public static MVector2 Parse(string s)
+        {
+            MVector2 res;
+            if (MVector2.TryParse(s, out res) == false)
+            {
+                throw new FormatException("String format not correctly defined.");
+            }
+            return res;
+        }
+
+        /// <summary>
+        /// Tries to parse the specified string.
+        /// </summary>
+        /// <param name="s">The string to parse.</param>
+        /// <param name="result">The out parameter result of parsing.</param>
+        /// <returns>True if parsing was successful; otherwise false.</returns>
+        public static bool TryParse(string s, out MVector2 result)
+        {
+            Match match = Regex.Match(s.Replace(" ", ""), MVector2.RegexParse);
+            result = MVector2.Zero;
+            if (match.Success)
+            {
+                float x = float.Parse(match.Groups[1].Value, NumberFormatInfo.InvariantInfo);
+                float y = float.Parse(match.Groups[3].Value, NumberFormatInfo.InvariantInfo);
+                result = new MVector2(x, y);
+            }
+            return match.Success;
+        }
+
+        /// <summary>
         /// Interpreting <see cref="MVector2"/> as a point, calculates which <see cref="MVector2"/> in a collection that is the closest.
         /// </summary>
         /// <param name="compared">The compared points.</param>
@@ -308,11 +346,12 @@
         /// <returns>String representation.</returns>
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder("( ");
-            sb.Append(this.X);
-            sb.Append(", ");
-            sb.Append(this.Y);
-            sb.Append(" )");
+            StringBuilder sb = new StringBuilder(nameof(MVector2));
+            sb.Append('(');
+            sb.Append(this.X.ToString(NumberFormatInfo.InvariantInfo));
+            sb.Append(',');
+            sb.Append(this.Y.ToString(NumberFormatInfo.InvariantInfo));
+            sb.Append(')');
             return sb.ToString();
         }
 

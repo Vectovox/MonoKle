@@ -56,6 +56,17 @@
         }
 
         /// <summary>
+        /// Gets the type of the variable.
+        /// </summary>
+        /// <value>
+        /// The type.
+        /// </value>
+        public Type Type
+        {
+            get { return this.CanSet() ? this.property.PropertyType : null; }
+        }
+
+        /// <summary>
         /// Determines whether this instance can set.
         /// </summary>
         /// <returns></returns>

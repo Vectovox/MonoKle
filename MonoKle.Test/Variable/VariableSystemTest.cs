@@ -174,6 +174,14 @@
                 this.toReturnOnSet = toReturnOnSet;
             }
 
+            public Type Type
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
             public bool CanSet()
             {
                 return true;

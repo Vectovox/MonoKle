@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MonoKle.Core.Geometry;
 
 namespace MonoKle.Variable
 {
@@ -20,6 +21,22 @@ namespace MonoKle.Variable
         {
             this.LoadTextLine("test", "5", true);
             Assert.AreEqual(0, system.Identifiers.Count);
+        }
+
+        [TestMethod]
+        public void LoadText_MPoint2Line()
+        {
+            MPoint2 p = new MPoint2(-27, 89);
+            this.LoadTextLine("test", p.ToString(), false);
+            Assert.AreEqual(p, system.GetValue("test"));
+        }
+
+        [TestMethod]
+        public void LoadText_MVector2Line()
+        {
+            MVector2 p = new MVector2(-27.7f, 89.23f);
+            this.LoadTextLine("test", p.ToString(), false);
+            Assert.AreEqual(p, system.GetValue("test"));
         }
 
         [TestMethod]

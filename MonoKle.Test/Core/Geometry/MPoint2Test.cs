@@ -8,6 +8,32 @@
     public class MPoint2Test
     {
         [TestMethod]
+        public void Parse_TryParse_Equal()
+        {
+            string s = nameof(MPoint2) + "(-15, 0)";
+            MPoint2 v2 = MPoint2.Parse(s);
+            MPoint2 v3 = MPoint2.Zero;
+            MPoint2.TryParse(s, out v3);
+            Assert.AreEqual(v2, v3);
+        }
+
+        [TestMethod]
+        public void Parsing_Spaces_StillWorks()
+        {
+            string s = nameof(MPoint2) + "  (  -15  ,   0  )  ";
+            MPoint2 v = new MPoint2(-15, 0);
+            Assert.AreEqual(v, MPoint2.Parse(s));
+        }
+
+        [TestMethod]
+        public void Parsing_ToString_Parse_Equal()
+        {
+            MPoint2 v = new MPoint2(-5, 17);
+            MPoint2 v2 = MPoint2.Parse(v.ToString());
+            Assert.AreEqual(v, v2);
+        }
+
+        [TestMethod]
         public void TestConstructors()
         {
             int x = 27, y = -39;
@@ -109,17 +135,17 @@
         }
 
         [TestMethod]
-        public void TestZero()
-        {
-            Assert.AreEqual(MPoint2.Zero, new MPoint2(0, 0));
-        }
-
-        [TestMethod]
         public void TestTranslate()
         {
             MPoint2 orig = new MPoint2(-2, -3);
             Assert.AreEqual(orig, new MPoint2(2, 3).Translate(-4, -6));
             Assert.AreEqual(orig.Translate(new MPoint2(1, -2)), orig.Translate(1, -2));
+        }
+
+        [TestMethod]
+        public void TestZero()
+        {
+            Assert.AreEqual(MPoint2.Zero, new MPoint2(0, 0));
         }
     }
 }

@@ -1,8 +1,11 @@
 ﻿namespace MonoKle.Core.Geometry
 {
     using Microsoft.Xna.Framework;
+    using Attributes;
     using System;
+    using System.Globalization;
     using System.Text;
+    using System.Text.RegularExpressions;
 
     /// <summary>
     /// Two-dimensional, immutable, serializable, integer-based point.
@@ -22,6 +25,8 @@
 
         private const int HASH_CODE_INITIAL = 73;
         private const int HASH_CODE_MULTIPLIER = 101;
+
+        private const string RegexParse = "^" + nameof(MPoint2) + "\\((-?[0-9]+),(-?[0-9]+)\\)$";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MPoint2"/> struct.
@@ -170,6 +175,40 @@
         }
 
         /// <summary>
+        /// Parses the specified string.
+        /// </summary>
+        /// <param name="s">The string to parse.</param>
+        /// <returns></returns>
+        public static MPoint2 Parse(string s)
+        {
+            MPoint2 res;
+            if (MPoint2.TryParse(s, out res) == false)
+            {
+                throw new FormatException("String format not correctly defined.");
+            }
+            return res;
+        }
+
+        /// <summary>
+        /// Tries to parse the specified string.
+        /// </summary>
+        /// <param name="s">The string to parse.</param>
+        /// <param name="result">The out parameter result of parsing.</param>
+        /// <returns>True if parsing was successful; otherwise false.</returns>
+        public static bool TryParse(string s, out MPoint2 result)
+        {
+            Match match = Regex.Match(s.Replace(" ", ""), MPoint2.RegexParse);
+            result = MPoint2.Zero;
+            if (match.Success)
+            {
+                int x = int.Parse(match.Groups[1].Value, NumberFormatInfo.InvariantInfo);
+                int y = int.Parse(match.Groups[2].Value, NumberFormatInfo.InvariantInfo);
+                result = new MPoint2(x, y);
+            }
+            return match.Success;
+        }
+
+        /// <summary>
         /// Returns whether the <see cref="MPoint2"/> is equal to the provided object.
         /// </summary>
         /// <param name="obj">The object to compare with.</param>
@@ -241,11 +280,12 @@
         /// <returns>String representation.</returns>
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder("( ");
+            StringBuilder sb = new StringBuilder(nameof(MPoint2));
+            sb.Append('(');
             sb.Append(this.X);
-            sb.Append(", ");
+            sb.Append(',');
             sb.Append(this.Y);
-            sb.Append(" )");
+            sb.Append(')');
             return sb.ToString();
         }
 

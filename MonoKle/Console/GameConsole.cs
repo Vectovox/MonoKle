@@ -492,14 +492,63 @@
             }
 
             // Check numbers
-            for (int i = 48; i <= 58; i++)
+            if (this.keyboard.IsKeyTyped(Keys.D0, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
             {
-                if (this.keyboard.IsKeyTyped((Keys)i, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+                this.inputField.Type('0');
+            }
+            if (this.keyboard.IsKeyTyped(Keys.D1, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            {
+                this.inputField.Type('1');
+            }
+            if (this.keyboard.IsKeyTyped(Keys.D2, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            {
+                this.inputField.Type('2');
+            }
+            if (this.keyboard.IsKeyTyped(Keys.D3, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            {
+                this.inputField.Type('3');
+            }
+            if (this.keyboard.IsKeyTyped(Keys.D4, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            {
+                this.inputField.Type('4');
+            }
+            if (this.keyboard.IsKeyTyped(Keys.D5, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            {
+                this.inputField.Type('5');
+            }
+            if (this.keyboard.IsKeyTyped(Keys.D6, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            {
+                this.inputField.Type('6');
+            }
+            if (this.keyboard.IsKeyTyped(Keys.D7, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            {
+                this.inputField.Type('7');
+            }
+            if (this.keyboard.IsKeyTyped(Keys.D8, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            {
+                if(this.keyboard.IsKeyDown(Keys.LeftShift) || this.keyboard.IsKeyDown(Keys.RightShift))
                 {
-                    this.inputField.Type((char)i);
+                    this.inputField.Type('(');
+                }
+                else
+                {
+                    this.inputField.Type('8');
+                }
+            }
+            if (this.keyboard.IsKeyTyped(Keys.D9, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            {
+                if (this.keyboard.IsKeyDown(Keys.LeftShift) || this.keyboard.IsKeyDown(Keys.RightShift))
+                {
+                    this.inputField.Type(')');
+                }
+                else
+                {
+                    this.inputField.Type('9');
                 }
             }
 
+
+            // Check special characters
             if (this.keyboard.IsKeyTyped(Keys.Space, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
             {
                 this.inputField.Type(' ');
@@ -508,6 +557,11 @@
             if (this.keyboard.IsKeyTyped(Keys.OemPeriod, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
             {
                 this.inputField.Type('.');
+            }
+
+            if (this.keyboard.IsKeyTyped(Keys.OemComma, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            {
+                this.inputField.Type(',');
             }
 
             if (this.keyboard.IsKeyTyped(Keys.OemPlus, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))

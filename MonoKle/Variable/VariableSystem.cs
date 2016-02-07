@@ -91,7 +91,7 @@
         public void BindProperties(object o)
         {
             Type type = o.GetType();
-            foreach (PropertyInfo p in type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic))
+            foreach (PropertyInfo p in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
                 foreach (object a in p.GetCustomAttributes(true))
                 {
@@ -200,7 +200,12 @@
             }
         }
 
-        private IVariable GetVariable(string identifier) => this.GetVariable(identifier, true);
+        /// <summary>
+        /// Gets the variable with the specified identifier.
+        /// </summary>
+        /// <param name="identifier">The identifier.</param>
+        /// <returns></returns>
+        public IVariable GetVariable(string identifier) => this.GetVariable(identifier, true);
 
         private IVariable GetVariable(string identifier, bool generateWarning)
         {

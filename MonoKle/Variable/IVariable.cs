@@ -1,10 +1,20 @@
 ﻿namespace MonoKle.Variable
 {
+    using System;
+
     /// <summary>
     /// Interface for an assignable variable.
     /// </summary>
     public interface IVariable
     {
+        /// <summary>
+        /// Gets the type of the variable.
+        /// </summary>
+        /// <value>
+        /// The type.
+        /// </value>
+        Type Type { get; }
+
         /// <summary>
         /// Determines whether this instance can be set.
         /// </summary>

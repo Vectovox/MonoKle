@@ -1,4 +1,6 @@
-﻿namespace MonoKle.Variable
+﻿using System;
+
+namespace MonoKle.Variable
 {
     /// <summary>
     /// Class for variable containing its own value.
@@ -15,6 +17,14 @@
         {
             this.value = value;
         }
+
+        /// <summary>
+        /// Gets the type of the variable.
+        /// </summary>
+        /// <value>
+        /// The type.
+        /// </value>
+        public Type Type => typeof(object);
 
         /// <summary>
         /// Determines whether this instance can set.

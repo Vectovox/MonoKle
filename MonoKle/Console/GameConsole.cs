@@ -319,14 +319,14 @@
         {
             string current = this.inputField.GetInput().Trim();
 
-            if(current.Length > 0)
+            if (current.Length > 0)
             {
                 string[] split = current.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 string commandString = split[0];
                 string matchingOn = split[split.Length - 1];
                 string completedPart = current.Substring(0, current.Length - matchingOn.Length);
                 ICollection<string> matches = null;
-                
+
                 if (split.Length == 1)
                 {
                     matches = this.MatchInput(matchingOn, this.CommandBroker.Commands.Select(o => o.Name).ToArray());
@@ -334,7 +334,7 @@
                 else
                 {
                     IConsoleCommand command = this.CommandBroker.GetCommand(commandString);
-                    if(command != null)
+                    if (command != null)
                     {
                         matches = this.MatchInput(matchingOn, command.GetInputSuggestions(split.Length - 2));
                     }
@@ -348,40 +348,16 @@
                     }
                     else if (matches.Count > 1)
                     {
-                        this.WriteLine("Matches for: " + matchingOn, this.CommandTextColour);
+                        this.WriteLine(this.inputField.GetText(false), this.CommandTextColour);
                         foreach (string m in matches)
                         {
                             this.WriteLine("\t" + m);
                         }
                         this.WriteLine("");
+                        this.inputField.Set(completedPart + this.LongestCommonStartString(matches));
                     }
                 }
             }
-            
-            
-            //this.WriteLine("Len: " + );
-
-            //if (current.Length > 0)
-            //{
-            //    IList<IConsoleCommand> matches = this.CommandBroker.Commands.Where(o => o.Name.StartsWith(current)).ToList();
-            //    if (matches.Count == 1)
-            //    {
-            //        this.inputField.Set(matches.First().Name);
-            //    }
-            //    else if (matches.Count > 1)
-            //    {
-            //        this.WriteLine("Matches for: " + current);
-            //        foreach (IConsoleCommand c in matches)
-            //        {
-            //            this.WriteLine("\t" + c.Name);
-            //        }
-            //    }
-            //}
-        }
-
-        private string[] MatchInput(string input, ICollection<string> options)
-        {
-            return options.Where(o => o.StartsWith(input)).ToArray();
         }
 
         private void CommandClear()
@@ -475,6 +451,11 @@
                 this.WriteLine(sb.ToString());
             }
             this.WriteLine("");
+        }
+
+        private ICollection<string> CommandHelpSuggestions(int index)
+        {
+            return this.CommandBroker.Commands.Select(o => o.Name).ToArray();
         }
 
         private void DoCommand()
@@ -627,6 +608,45 @@
             this.WriteLine(e.Log.ToString(), c);
         }
 
+        private string LongestCommonStartString(ICollection<string> strings)
+        {
+            if (strings.Count > 0)
+            {
+                string longest = strings.OrderByDescending(s => s.Length).First();
+                foreach (string s in strings)
+                {
+                    longest = this.LongestCommonStartString(longest, s);
+                }
+                return longest;
+            }
+            return "";
+        }
+
+        private string LongestCommonStartString(string a, string b)
+        {
+            StringBuilder result = new StringBuilder();
+
+            string shortest = a.Length > b.Length ? b : a;
+            for (int i = 0; i < shortest.Length; i++)
+            {
+                if (a[i] == b[i])
+                {
+                    result.Append(a[i]);
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return result.ToString();
+        }
+
+        private string[] MatchInput(string input, ICollection<string> options)
+        {
+            return options.Where(o => o.StartsWith(input)).ToArray();
+        }
+
         private void Scroll(int delta)
         {
             this.drawingOffset += delta;
@@ -662,11 +682,6 @@
                 new ConsoleCommand("echo", "Prints the provided argument.",
                 new CommandArguments(new string[] { "print" }, new string[] { "The argument to print" }),
                 this.CommandEcho));
-        }
-
-        private ICollection<string> CommandHelpSuggestions(int index)
-        {
-            return this.CommandBroker.Commands.Select(o => o.Name).ToArray();
         }
 
         private void TrimLines()

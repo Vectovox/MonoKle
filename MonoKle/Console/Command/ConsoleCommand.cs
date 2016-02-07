@@ -106,7 +106,7 @@
         {
             if (arguments != null && arguments.Length > 0)
             {
-                if(arguments.Length <= this.Arguments.Length)
+                if(arguments.Length == this.Arguments.Length)
                 {
                     this.Handler(arguments);
                     return true;

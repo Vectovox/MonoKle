@@ -355,6 +355,15 @@
             MBackend.Console.CommandBroker.Register("get", "Prints the value of the provided variable", new string[] { "variable" }, MBackend.CommandGet);
             MBackend.Console.CommandBroker.Register("set", "Assigns the provided variable with the given value.",
                 new string[] { "variable", "value" }, MBackend.CommandSet);
+            MBackend.Console.CommandBroker.Register("rem", "Removes the provided variable.", new string[] { "variable" }, MBackend.CommandRemove);
+        }
+
+        private static void CommandRemove(string[] args)
+        {
+            if(MBackend.Variables.Variables.Remove(args[0]) == false)
+            {
+                MBackend.Console.WriteLine("Could not remove variable since it does not exist.", MBackend.Console.ErrorTextColour);
+            }
         }
 
         private static void ResolutionChanged(object sender, Graphics.Event.ResolutionChangedEventArgs e)

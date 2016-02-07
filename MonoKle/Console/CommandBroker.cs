@@ -25,16 +25,7 @@
         /// <returns>True if command is registered and correct argument length was provided; otherwise false.</returns>
         public bool Call(string command)
         {
-            if (this.dictionary.ContainsKey(command))
-            {
-                Command c = this.dictionary[command];
-                if (c.ArgumentLength == 0)
-                {
-                    c.Handler(new string[0]);
-                    return true;
-                }
-            }
-            return false;
+            return this.Call(command, new string[0]);
         }
 
         /// <summary>
@@ -45,6 +36,7 @@
         /// <returns>True if command is registered and correct argument length was provided; otherwise false.</returns>
         public bool Call(string command, string[] arguments)
         {
+            command = command.ToLower();
             if (this.dictionary.ContainsKey(command))
             {
                 Command c = this.dictionary[command];
@@ -77,6 +69,7 @@
         /// <returns></returns>
         public CommandBroker.Command Get(string command)
         {
+            command = command.ToLower();
             if (this.dictionary.ContainsKey(command))
             {
                 return this.dictionary[command];
@@ -92,7 +85,7 @@
         /// <returns>True if command was registered; otherwise false.</returns>
         public bool Register(string command, DefaultConsoleCommandHandler handler)
         {
-            return this.Register(command, 0, null, handler);
+            return this.Register(command.ToLower(), 0, null, handler);
         }
 
         /// <summary>
@@ -104,7 +97,7 @@
         /// <returns>True if command was registered; otherwise false.</returns>
         public bool Register(string command, string description, DefaultConsoleCommandHandler handler)
         {
-            return this.Register(command, description, new string[0], null, handler);
+            return this.Register(command.ToLower(), description, new string[0], null, handler);
         }
 
         /// <summary>
@@ -117,7 +110,7 @@
         /// <returns>True if command was registered; otherwise false.</returns>
         public bool Register(string command, int arguments, ConsoleCommandHandler handler, DefaultConsoleCommandHandler defaultHandler)
         {
-            return this.Register(command, null, arguments, handler, defaultHandler);
+            return this.Register(command.ToLower(), null, arguments, handler, defaultHandler);
         }
 
         /// <summary>
@@ -129,7 +122,7 @@
         /// <returns>True if command was registered; otherwise false.</returns>
         public bool Register(string command, int arguments, ConsoleCommandHandler handler)
         {
-            return this.Register(command, null, arguments, handler, null);
+            return this.Register(command.ToLower(), null, arguments, handler, null);
         }
 
         /// <summary>
@@ -142,7 +135,7 @@
         /// <returns>True if command was registered; otherwise false.</returns>
         public bool Register(string command, string description, int arguments, ConsoleCommandHandler handler)
         {
-            return this.Register(command, description, arguments, handler, null);
+            return this.Register(command.ToLower(), description, arguments, handler, null);
         }
 
         /// <summary>
@@ -156,7 +149,7 @@
         /// <returns>True if command was registered; otherwise false.</returns>
         public bool Register(string command, string description, int arguments, ConsoleCommandHandler handler, DefaultConsoleCommandHandler defaultHandler)
         {
-            return this.Register(command, description, new string[arguments], handler, defaultHandler);
+            return this.Register(command.ToLower(), description, new string[arguments], handler, defaultHandler);
         }
 
         /// <summary>
@@ -170,7 +163,7 @@
         public bool Register(string command, string description, ICollection<string> arguments,
             ConsoleCommandHandler handler)
         {
-            return this.Register(command, description, arguments, handler, null);
+            return this.Register(command.ToLower(), description, arguments, handler, null);
         }
 
         /// <summary>
@@ -185,6 +178,7 @@
         public bool Register(string command, string description, ICollection<string> arguments,
             ConsoleCommandHandler handler, DefaultConsoleCommandHandler defaultHandler)
         {
+            command = command.ToLower();
             if (this.dictionary.ContainsKey(command) == false)
             {
                 this.dictionary.Add(command, new Command(command, description, arguments, handler, defaultHandler));
@@ -201,7 +195,7 @@
         /// <returns>True if command was unregistered; otherwise false.</returns>
         public bool Unregister(string command)
         {
-            return this.dictionary.Remove(command);
+            return this.dictionary.Remove(command.ToLower());
         }
 
         /// <summary>

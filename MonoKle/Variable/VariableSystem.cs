@@ -66,6 +66,7 @@
         /// <param name="assignOld">If set to true, assigns any existing value to the bound instance.</param>
         public void Bind(IVariable instance, string identifier, bool assignOld)
         {
+            identifier = identifier.ToLower();
             if (variables.ContainsKey(identifier))
             {
                 object oldValue = this.GetValue(identifier);
@@ -110,7 +111,7 @@
         /// <returns>True if it can be set; otherwise false.</returns>
         public bool CanSet(string identifier)
         {
-            IVariable variable = this.GetVariable(identifier);
+            IVariable variable = this.GetVariable(identifier, false);
             if (variable != null)
             {
                 return variable.CanSet();
@@ -132,7 +133,7 @@
         /// </summary>
         /// <param name="identifier">The identifier.</param>
         /// <returns>True if a variable with the specified identifier exists; otherwise false.</returns>
-        public bool Contains(string identifier) => this.GetVariable(identifier) != null;
+        public bool Contains(string identifier) => this.GetVariable(identifier, false) != null;
 
         /// <summary>
         /// Gets the specified variable.
@@ -156,6 +157,7 @@
         /// <returns>True if a variable was removed; otherwise false.</returns>
         public bool Remove(string identifier)
         {
+            identifier = identifier.ToLower();
             this.Log("Removed occurences of variable: " + identifier, LogLevel.Debug);
             return this.variables.Remove(identifier);
         }
@@ -167,6 +169,7 @@
         /// <param name="value">The value to assign.</param>
         public bool SetValue(string identifier, object value)
         {
+            identifier = identifier.ToLower();
             if (variables.ContainsKey(identifier))
             {
                 if (this.variables[identifier].SetValue(value) == false)
@@ -197,14 +200,19 @@
             }
         }
 
-        private IVariable GetVariable(string identifier)
+        private IVariable GetVariable(string identifier) => this.GetVariable(identifier, true);
+
+        private IVariable GetVariable(string identifier, bool generateWarning)
         {
+            identifier = identifier.ToLower();
             if (variables.ContainsKey(identifier))
             {
                 return this.variables[identifier];
             }
-
-            this.Log("Accessed variable does not exist: " + identifier, LogLevel.Warning);
+            else if(generateWarning)
+            {
+                this.Log("Accessed variable does not exist: " + identifier, LogLevel.Warning);
+            }
             return null;
         }
     }

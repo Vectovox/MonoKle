@@ -4,6 +4,7 @@
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Input;
     using MonoKle.Asset.Font;
+    using Command;
 
     /// <summary>
     /// Interface for a game console.

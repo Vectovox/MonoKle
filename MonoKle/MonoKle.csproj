@@ -56,9 +56,14 @@
     <Compile Include="Asset\Font\FontStorage.cs" />
     <Compile Include="Asset\Font\FontDataSerialization.cs" />
     <Compile Include="Asset\Texture\TextureStorage.cs" />
-    <Compile Include="Console\CommandBroker.cs" />
-    <Compile Include="Console\DefaultConsoleCommandHandler.cs" />
-    <Compile Include="Console\ConsoleCommandHandler.cs" />
+    <Compile Include="Console\Command\ConsoleCommand.cs" />
+    <Compile Include="Console\Command\CommandArguments.cs" />
+    <Compile Include="Console\Command\CommandBroker.cs" />
+    <Compile Include="Console\Command\AbstractConsoleCommand.cs" />
+    <Compile Include="Console\Command\DefaultConsoleCommandHandler.cs" />
+    <Compile Include="Console\Command\ConsoleCommandHandler.cs" />
+    <Compile Include="Console\Command\ArgumentlessConsoleCommand.cs" />
+    <Compile Include="Console\Command\IConsoleCommand.cs" />
     <Compile Include="Console\IGameConsole.cs" />
     <Compile Include="Console\GameConsole.cs" />
     <Compile Include="Console\InputField.cs" />

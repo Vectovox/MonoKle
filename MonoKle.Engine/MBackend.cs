@@ -10,6 +10,7 @@
     using Input;
     using Logging;
     using Microsoft.Xna.Framework;
+    using Console.Command;
     using Resources;
     using Script;
     using State;
@@ -349,13 +350,15 @@
 
         private static void RegisterConsoleCommands()
         {
-            MBackend.Console.CommandBroker.Register("exit", "Terminates the application.", CommandExit);
-            MBackend.Console.CommandBroker.Register("version", "Prints the current MonoKle version.", MBackend.CommandVersion);
-            MBackend.Console.CommandBroker.Register("vars", "Lists the currently active variables.", MBackend.CommandListVariables);
-            MBackend.Console.CommandBroker.Register("get", "Prints the value of the provided variable", new string[] { "variable" }, MBackend.CommandGet);
-            MBackend.Console.CommandBroker.Register("set", "Assigns the provided variable with the given value.",
-                new string[] { "variable", "value" }, MBackend.CommandSet);
-            MBackend.Console.CommandBroker.Register("rem", "Removes the provided variable.", new string[] { "variable" }, MBackend.CommandRemove);
+            MBackend.Console.CommandBroker.Register(new ArgumentlessConsoleCommand("exit", "Terminates the application.", MBackend.CommandExit));
+            MBackend.Console.CommandBroker.Register(new ArgumentlessConsoleCommand("version", "Prints the current MonoKle version.", MBackend.CommandVersion));
+            MBackend.Console.CommandBroker.Register(new ArgumentlessConsoleCommand("vars", "Lists the currently active variables.", MBackend.CommandListVariables));
+            MBackend.Console.CommandBroker.Register(new ConsoleCommand("get", "Prints the value of the provided variable.",
+                new CommandArguments(new string[] {"variable" }, new string[] {"The variable to print" }), MBackend.CommandGet));
+            MBackend.Console.CommandBroker.Register(new ConsoleCommand("set", "Assigns the provided variable with the given value.",
+                new CommandArguments(new string[] { "variable", "value" }, new string[] { "The variable to print", "The value to assign" }), MBackend.CommandSet));
+            MBackend.Console.CommandBroker.Register(new ConsoleCommand("rem", "Removes the provided variable.",
+                new CommandArguments(new string[] { "variable" }, new string[] { "The variable to remove" }), MBackend.CommandRemove));
         }
 
         private static void CommandRemove(string[] args)

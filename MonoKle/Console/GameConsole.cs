@@ -1,6 +1,7 @@
 ﻿namespace MonoKle.Console
 {
     using Attributes;
+    using Command;
     using Core.Geometry;
     using Input;
     using Microsoft.Xna.Framework;
@@ -320,7 +321,7 @@
 
             if (current.Length > 0)
             {
-                IList<CommandBroker.Command> matches = this.CommandBroker.Commands.Where(o => o.Name.StartsWith(current)).ToList();
+                IList<IConsoleCommand> matches = this.CommandBroker.Commands.Where(o => o.Name.StartsWith(current)).ToList();
                 if (matches.Count == 1)
                 {
                     this.inputField.Set(matches.First().Name);
@@ -328,7 +329,7 @@
                 else if (matches.Count > 1)
                 {
                     this.WriteLine("Matches for: " + current);
-                    foreach (CommandBroker.Command c in matches)
+                    foreach (IConsoleCommand c in matches)
                     {
                         this.WriteLine("\t" + c.Name);
                     }
@@ -348,37 +349,53 @@
 
         private void CommandHelp(string[] args)
         {
-            CommandBroker.Command command = this.CommandBroker.Get(args[0]);
+            IConsoleCommand command = this.CommandBroker.GetCommand(args[0]);
             if (command != null)
             {
                 if (command.Description != null)
                 {
                     this.WriteLine(command.Description + "\n");
                 }
-                StringBuilder usageBuilder = new StringBuilder("\tUsage: ");
 
-                if (command.DefaultHandler != null && command.Handler != null)
+                StringBuilder usageBuilder = new StringBuilder("Usage: ");
+                if (command.AcceptsArguments && command.AllowsZeroArguments)
                 {
                     usageBuilder.Append(command.Name.ToUpper());
-                    usageBuilder.Append("\n\t       ");
+                    usageBuilder.Append("\n       ");
                 }
-
                 usageBuilder.Append(command.Name.ToUpper());
-                foreach (string a in command.Arguments)
+                foreach (string a in command.Arguments.Arguments)
                 {
-                    usageBuilder.Append(' ');
-                    if (a == null)
-                    {
-                        usageBuilder.Append("[arg]");
-                    }
-                    else
-                    {
-                        usageBuilder.Append('[');
-                        usageBuilder.Append(a);
-                        usageBuilder.Append(']');
-                    }
+                    usageBuilder.Append(" [");
+                    usageBuilder.Append(a);
+                    usageBuilder.Append(']');
                 }
                 this.WriteLine(usageBuilder.ToString());
+
+                if (command.Arguments.Length > 0)
+                {
+                    usageBuilder.Clear();
+                    usageBuilder.Append("\n");
+
+                    int maxLength = command.Arguments.ArgumentDescriptionMap.Keys.Max(o => o.Length);
+                    foreach (string a in command.Arguments.ArgumentDescriptionMap.Keys)
+                    {
+                        usageBuilder.Append("\t");
+                        usageBuilder.Append(a);
+                        for (int i = 0; i < maxLength - a.Length; i++)
+                        {
+                            usageBuilder.Append(' ');
+                        }
+                        usageBuilder.Append(" - ");
+                        usageBuilder.AppendLine(command.Arguments.GetArgumentDescription(a));
+                    }
+
+                    this.WriteLine(usageBuilder.ToString());
+                }
+                else
+                {
+                    this.WriteLine("");
+                }
             }
             else
             {
@@ -388,13 +405,29 @@
 
         private void CommandHelpList()
         {
-            this.WriteLine("Listing commands. For more information, type help [command].");
-            List<CommandBroker.Command> commands = this.CommandBroker.Commands.ToList();
+            this.WriteLine("For more information on a specific command, type HELP [command].");
+            List<IConsoleCommand> commands = this.CommandBroker.Commands.ToList();
             commands.Sort((a, b) => a.Name.CompareTo(b.Name));
-            foreach (CommandBroker.Command c in commands)
+            int maxLength = commands.Max(o => o.Name.Length);
+
+            StringBuilder sb = new StringBuilder();
+            foreach (IConsoleCommand c in commands)
             {
-                this.WriteLine("\t" + c.Name);
+                sb.Clear();
+                sb.Append("\t");
+                sb.Append(c.Name);
+                if (c.Description != null)
+                {
+                    for (int i = 0; i < maxLength - c.Name.Length; i++)
+                    {
+                        sb.Append(' ');
+                    }
+                    sb.Append(" \t");
+                    sb.Append(c.Description);
+                }
+                this.WriteLine(sb.ToString());
             }
+            this.WriteLine("");
         }
 
         private void DoCommand()
@@ -571,10 +604,16 @@
         private void SetupBroker()
         {
             this.CommandBroker = new CommandBroker();
-            this.CommandBroker.Register("clear", "Clears the console.", this.CommandClear);
-            this.CommandBroker.Register("help", "Provides help about commands. If no argument is passed, a list of commands will be provided.",
-                new string[] { "command" }, this.CommandHelp, this.CommandHelpList);
-            this.CommandBroker.Register("echo", "Prints the provided argument.", new string[] { "echoed" }, this.CommandEcho);
+            this.CommandBroker.Register(new ArgumentlessConsoleCommand("clear", "Clears the console output.", this.CommandClear));
+            this.CommandBroker.Register(new ConsoleCommand("help",
+                "Provides help about commands. If no argument is passed, a list of commands will be provided.",
+                new CommandArguments(new string[] { "command" }, new string[] { "The command to get help for" }),
+                this.CommandHelp,
+                this.CommandHelpList));
+            this.CommandBroker.Register(new ConsoleCommand("echo",
+                "Prints the provided argument.",
+                new CommandArguments(new string[] { "print" }, new string[] { "The argument to print" }),
+                this.CommandEcho));
         }
 
         private void TrimLines()

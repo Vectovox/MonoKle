@@ -317,24 +317,71 @@
 
         private void AutoComplete()
         {
-            string current = this.inputField.GetInput();
+            string current = this.inputField.GetInput().Trim();
 
-            if (current.Length > 0)
+            if(current.Length > 0)
             {
-                IList<IConsoleCommand> matches = this.CommandBroker.Commands.Where(o => o.Name.StartsWith(current)).ToList();
-                if (matches.Count == 1)
+                string[] split = current.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                string commandString = split[0];
+                string matchingOn = split[split.Length - 1];
+                string completedPart = current.Substring(0, current.Length - matchingOn.Length);
+                ICollection<string> matches = null;
+                
+                if (split.Length == 1)
                 {
-                    this.inputField.Set(matches.First().Name);
+                    matches = this.MatchInput(matchingOn, this.CommandBroker.Commands.Select(o => o.Name).ToArray());
                 }
-                else if (matches.Count > 1)
+                else
                 {
-                    this.WriteLine("Matches for: " + current);
-                    foreach (IConsoleCommand c in matches)
+                    IConsoleCommand command = this.CommandBroker.GetCommand(commandString);
+                    if(command != null)
                     {
-                        this.WriteLine("\t" + c.Name);
+                        matches = this.MatchInput(matchingOn, command.GetInputSuggestions(split.Length - 2));
+                    }
+                }
+
+                if (matches != null)
+                {
+                    if (matches.Count == 1)
+                    {
+                        this.inputField.Set(completedPart + matches.First());
+                    }
+                    else if (matches.Count > 1)
+                    {
+                        this.WriteLine("Matches for: " + matchingOn, this.CommandTextColour);
+                        foreach (string m in matches)
+                        {
+                            this.WriteLine("\t" + m);
+                        }
+                        this.WriteLine("");
                     }
                 }
             }
+            
+            
+            //this.WriteLine("Len: " + );
+
+            //if (current.Length > 0)
+            //{
+            //    IList<IConsoleCommand> matches = this.CommandBroker.Commands.Where(o => o.Name.StartsWith(current)).ToList();
+            //    if (matches.Count == 1)
+            //    {
+            //        this.inputField.Set(matches.First().Name);
+            //    }
+            //    else if (matches.Count > 1)
+            //    {
+            //        this.WriteLine("Matches for: " + current);
+            //        foreach (IConsoleCommand c in matches)
+            //        {
+            //            this.WriteLine("\t" + c.Name);
+            //        }
+            //    }
+            //}
+        }
+
+        private string[] MatchInput(string input, ICollection<string> options)
+        {
+            return options.Where(o => o.StartsWith(input)).ToArray();
         }
 
         private void CommandClear()
@@ -605,15 +652,21 @@
         {
             this.CommandBroker = new CommandBroker();
             this.CommandBroker.Register(new ArgumentlessConsoleCommand("clear", "Clears the console output.", this.CommandClear));
-            this.CommandBroker.Register(new ConsoleCommand("help",
-                "Provides help about commands. If no argument is passed, a list of commands will be provided.",
+            this.CommandBroker.Register(
+                new ConsoleCommand("help", "Provides help about commands. If no argument is passed, a list of commands will be provided.",
                 new CommandArguments(new string[] { "command" }, new string[] { "The command to get help for" }),
                 this.CommandHelp,
-                this.CommandHelpList));
-            this.CommandBroker.Register(new ConsoleCommand("echo",
-                "Prints the provided argument.",
+                this.CommandHelpList,
+                this.CommandHelpSuggestions));
+            this.CommandBroker.Register(
+                new ConsoleCommand("echo", "Prints the provided argument.",
                 new CommandArguments(new string[] { "print" }, new string[] { "The argument to print" }),
                 this.CommandEcho));
+        }
+
+        private ICollection<string> CommandHelpSuggestions(int index)
+        {
+            return this.CommandBroker.Commands.Select(o => o.Name).ToArray();
         }
 
         private void TrimLines()

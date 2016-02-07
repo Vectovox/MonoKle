@@ -60,8 +60,9 @@
     <Compile Include="Console\Command\CommandArguments.cs" />
     <Compile Include="Console\Command\CommandBroker.cs" />
     <Compile Include="Console\Command\AbstractConsoleCommand.cs" />
-    <Compile Include="Console\Command\DefaultConsoleCommandHandler.cs" />
-    <Compile Include="Console\Command\ConsoleCommandHandler.cs" />
+    <Compile Include="Console\Command\Handlers\ConsoleCommandSuggestionHandler.cs" />
+    <Compile Include="Console\Command\Handlers\DefaultConsoleCommandHandler.cs" />
+    <Compile Include="Console\Command\Handlers\ConsoleCommandHandler.cs" />
     <Compile Include="Console\Command\ArgumentlessConsoleCommand.cs" />
     <Compile Include="Console\Command\IConsoleCommand.cs" />
     <Compile Include="Console\IGameConsole.cs" />

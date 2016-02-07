@@ -1,5 +1,7 @@
 ﻿namespace MonoKle.Console.Command
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// Interface for a console command.
     /// </summary>
@@ -57,5 +59,12 @@
         /// <param name="arguments">The arguments. Passing null counts as passing zero arguments.</param>
         /// <returns></returns>
         bool Call(string[] arguments);
+
+        /// <summary>
+        /// Gets input suggestions for arguments at the specified index.
+        /// </summary>
+        /// <param name="index">The index.</param>
+        /// <returns></returns>
+        ICollection<string> GetInputSuggestions(int index);
     }
 }

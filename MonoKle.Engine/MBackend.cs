@@ -5,12 +5,12 @@
     using Asset.Texture;
     using Attributes;
     using Console;
+    using Console.Command;
     using Core.Geometry;
     using Graphics;
     using Input;
     using Logging;
     using Microsoft.Xna.Framework;
-    using Console.Command;
     using Resources;
     using Script;
     using State;
@@ -286,6 +286,11 @@
             }
         }
 
+        private static ICollection<string> CommandGetRemSuggestion(int index)
+        {
+            return MBackend.Variables.Variables.Identifiers;
+        }
+
         private static void CommandListVariables()
         {
             List<string> identifiers = MBackend.Variables.Variables.Identifiers.ToList();
@@ -293,6 +298,14 @@
             foreach (string s in identifiers)
             {
                 MBackend.Console.WriteLine("\t" + s, MBackend.Variables.Variables.CanSet(s) ? MBackend.Console.DefaultTextColour : MBackend.Console.DisabledTextColour);
+            }
+        }
+
+        private static void CommandRemove(string[] args)
+        {
+            if (MBackend.Variables.Variables.Remove(args[0]) == false)
+            {
+                MBackend.Console.WriteLine("Could not remove variable since it does not exist.", MBackend.Console.ErrorTextColour);
             }
         }
 
@@ -306,6 +319,15 @@
             {
                 Console.WriteLine("Variable assignment failed", Console.ErrorTextColour);
             }
+        }
+
+        private static ICollection<string> CommandSetSuggestion(int index)
+        {
+            if (index == 0)
+            {
+                return MBackend.Variables.Variables.Identifiers;
+            }
+            return new string[0];
         }
 
         private static void CommandVersion()
@@ -353,20 +375,21 @@
             MBackend.Console.CommandBroker.Register(new ArgumentlessConsoleCommand("exit", "Terminates the application.", MBackend.CommandExit));
             MBackend.Console.CommandBroker.Register(new ArgumentlessConsoleCommand("version", "Prints the current MonoKle version.", MBackend.CommandVersion));
             MBackend.Console.CommandBroker.Register(new ArgumentlessConsoleCommand("vars", "Lists the currently active variables.", MBackend.CommandListVariables));
-            MBackend.Console.CommandBroker.Register(new ConsoleCommand("get", "Prints the value of the provided variable.",
-                new CommandArguments(new string[] {"variable" }, new string[] {"The variable to print" }), MBackend.CommandGet));
-            MBackend.Console.CommandBroker.Register(new ConsoleCommand("set", "Assigns the provided variable with the given value.",
-                new CommandArguments(new string[] { "variable", "value" }, new string[] { "The variable to print", "The value to assign" }), MBackend.CommandSet));
-            MBackend.Console.CommandBroker.Register(new ConsoleCommand("rem", "Removes the provided variable.",
-                new CommandArguments(new string[] { "variable" }, new string[] { "The variable to remove" }), MBackend.CommandRemove));
-        }
-
-        private static void CommandRemove(string[] args)
-        {
-            if(MBackend.Variables.Variables.Remove(args[0]) == false)
-            {
-                MBackend.Console.WriteLine("Could not remove variable since it does not exist.", MBackend.Console.ErrorTextColour);
-            }
+            MBackend.Console.CommandBroker.Register(
+                new ConsoleCommand("get", "Prints the value of the provided variable.",
+                    new CommandArguments(new string[] { "variable" }, new string[] { "The variable to print" }),
+                    MBackend.CommandGet, null, MBackend.CommandGetRemSuggestion)
+                );
+            MBackend.Console.CommandBroker.Register(
+                new ConsoleCommand("set", "Assigns the provided variable with the given value.",
+                    new CommandArguments(new string[] { "variable", "value" }, new string[] { "The variable to print", "The value to assign" }),
+                    MBackend.CommandSet, null, MBackend.CommandSetSuggestion)
+                );
+            MBackend.Console.CommandBroker.Register(
+                new ConsoleCommand("rem", "Removes the provided variable.",
+                    new CommandArguments(new string[] { "variable" }, new string[] { "The variable to remove" }),
+                    MBackend.CommandRemove, null, MBackend.CommandGetRemSuggestion)
+                );
         }
 
         private static void ResolutionChanged(object sender, Graphics.Event.ResolutionChangedEventArgs e)

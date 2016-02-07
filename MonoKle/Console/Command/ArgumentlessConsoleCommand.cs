@@ -1,5 +1,6 @@
 ﻿namespace MonoKle.Console.Command
 {
+    using Handlers;
     using System;
 
     /// <summary>
@@ -56,13 +57,13 @@
         /// <returns></returns>
         public override bool Call(string[] arguments)
         {
-            if (arguments != null && arguments.Length > 0)
+            if (arguments == null || arguments.Length == 0)
             {
-                return false;
+                this.Handler();
+                return true;
             }
 
-            this.Handler();
-            return true;
+            return false;
         }
     }
 }

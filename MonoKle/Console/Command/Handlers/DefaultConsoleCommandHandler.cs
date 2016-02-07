@@ -1,4 +1,4 @@
-﻿namespace MonoKle.Console.Command
+﻿namespace MonoKle.Console.Command.Handlers
 {
     /// <summary>
     /// Handler for console commands without arguments.

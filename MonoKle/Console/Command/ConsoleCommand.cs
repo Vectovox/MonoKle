@@ -1,6 +1,8 @@
 ﻿namespace MonoKle.Console.Command
 {
+    using Handlers;
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Class for console command with arguments.
@@ -28,7 +30,23 @@
         /// <param name="handler">The handler for the command.</param>
         /// <param name="defaultHandler">The default handler for the command if no argument is passed. May be null.</param>
         public ConsoleCommand(string name, string description,
-            CommandArguments arguments, ConsoleCommandHandler handler, DefaultConsoleCommandHandler defaultHandler) : base(name, description, arguments)
+            CommandArguments arguments, ConsoleCommandHandler handler, DefaultConsoleCommandHandler defaultHandler)
+            : this(name, description, arguments, handler, defaultHandler, null)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ArgumentlessConsoleCommand"/> class.
+        /// </summary>
+        /// <param name="name">The name of the command.</param>
+        /// <param name="description">The description of the command.</param>
+        /// <param name="arguments">The arguments for the command.</param>
+        /// <param name="handler">The handler for the command.</param>
+        /// <param name="defaultHandler">The default handler for the command if no argument is passed. May be null.</param>
+        /// <param name="suggestionHandler">Handler for providing input suggestions to arguments at a specified index.</param>
+        public ConsoleCommand(string name, string description,
+            CommandArguments arguments, ConsoleCommandHandler handler, DefaultConsoleCommandHandler defaultHandler,
+            ConsoleCommandSuggestionHandler suggestionHandler) : base(name, description, arguments)
         {
             if (handler == null)
             {
@@ -36,6 +54,7 @@
             }
             this.Handler = handler;
             this.DefaultHandler = defaultHandler;
+            this.SuggestionHandler = suggestionHandler;
         }
 
         /// <summary>
@@ -71,6 +90,14 @@
         public ConsoleCommandHandler Handler { get; private set; }
 
         /// <summary>
+        /// Gets the suggestion handler.
+        /// </summary>
+        /// <value>
+        /// The suggestion handler.
+        /// </value>
+        public ConsoleCommandSuggestionHandler SuggestionHandler { get; private set; }
+
+        /// <summary>
         /// Calls the command with the specified arguments.
         /// </summary>
         /// <param name="arguments">The arguments. Passing null counts as passing zero arguments.</param>
@@ -79,8 +106,11 @@
         {
             if (arguments != null && arguments.Length > 0)
             {
-                this.Handler(arguments);
-                return true;
+                if(arguments.Length <= this.Arguments.Length)
+                {
+                    this.Handler(arguments);
+                    return true;
+                }
             }
             else if (this.DefaultHandler != null)
             {
@@ -89,6 +119,20 @@
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Does the get input suggestions.
+        /// </summary>
+        /// <param name="index">The index.</param>
+        /// <returns></returns>
+        protected override ICollection<string> DoGetInputSuggestions(int index)
+        {
+            if (this.SuggestionHandler != null)
+            {
+                return this.SuggestionHandler(index);
+            }
+            return new string[0];
         }
     }
 }

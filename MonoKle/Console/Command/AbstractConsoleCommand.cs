@@ -1,6 +1,7 @@
 ﻿namespace MonoKle.Console.Command
 {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Abstract console command class.
@@ -87,6 +88,30 @@
         public bool Call()
         {
             return this.Call(null);
+        }
+
+        /// <summary>
+        /// Gets input suggestions for arguments at the specified index.
+        /// </summary>
+        /// <param name="index">The index.</param>
+        /// <returns></returns>
+        public ICollection<string> GetInputSuggestions(int index)
+        {
+            if (index >= 0 && index < this.Arguments.Length)
+            {
+                return this.DoGetInputSuggestions(index);
+            }
+            return new string[0];
+        }
+
+        /// <summary>
+        /// Does the get input suggestions.
+        /// </summary>
+        /// <param name="index">The index.</param>
+        /// <returns></returns>
+        protected virtual ICollection<string> DoGetInputSuggestions(int index)
+        {
+            return new string[0];
         }
     }
 }

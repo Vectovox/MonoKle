@@ -122,6 +122,16 @@ namespace WindowsDemo
                     MBackend.StateSystem.SwitchState("stateTwo", null);
                 }
 
+                if(MBackend.Keyboard.AreKeysHeld(new Keys[] { Keys.R, Keys.T }, MonoKle.Input.CollectionQueryBehavior.All))
+                {
+                    MBackend.Console.WriteLine("R + T held.");
+                }
+
+                if (MBackend.Keyboard.AreKeysHeld(new Keys[] { Keys.LeftShift, Keys.RightShift }, MonoKle.Input.CollectionQueryBehavior.Any))
+                {
+                    MBackend.Console.WriteLine("Any shift held.");
+                }
+
                 if (MBackend.Keyboard.IsKeyHeld(Keys.I))
                 {
                     camera.SetPosition(camera.GetPosition() + new Vector2(0, -3));

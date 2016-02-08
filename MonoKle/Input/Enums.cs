@@ -1,10 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace MonoKle.Input
+﻿namespace MonoKle.Input
 {
+    /// <summary>
+    /// Enumeration for specifying how input collections should be addressed.
+    /// </summary>
+    public enum CollectionQueryBehavior
+    {
+        /// <summary>
+        /// Any of the specified inputs.
+        /// </summary>
+        Any,
+
+        /// <summary>
+        /// All of the specified inputs.
+        /// </summary>
+        All
+    }
+
     /// <summary>
     /// Enumeration for mouse buttons.
     /// </summary>
@@ -14,12 +25,12 @@ namespace MonoKle.Input
         /// The left mouse button.
         /// </summary>
         Left,
-        
+
         /// <summary>
         /// The middle mouse button.
         /// </summary>
         Middle,
-        
+
         /// <summary>
         /// The right mouse button.
         /// </summary>

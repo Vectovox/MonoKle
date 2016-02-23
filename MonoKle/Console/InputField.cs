@@ -1,147 +1,46 @@
 ﻿namespace MonoKle.Console
 {
     using Core;
-    using System;
+    using Input;
+    using Microsoft.Xna.Framework;
+    using Microsoft.Xna.Framework.Input;
     using System.Collections.Generic;
-    using System.Text;
 
-    internal class InputField
+    internal class InputField : KeyboardTextInput
     {
-        private string command;
         private string commandToken;
-        private int cursorPos = 0;
-        private string cursorText;
         private Timer cursorTimer;
         private string cursorToken;
+        private string displayText;
+        private string displayTextCursor;
+        private string displayTextCursorNoToken;
         private List<string> history = new List<string>();
         private int historyCapacity;
         private int historyIndex = -1;
         private bool showCursor;
-        private string text;
 
-        private StringBuilder textBuilder = new StringBuilder();
-
-        public InputField(string cursorToken, string commandToken, double cursorBlinkRate, int historyCapacity)
+        public InputField(string cursorToken, string commandToken, double cursorBlinkRate, int historyCapacity, KeyboardCharacterInput characterInput)
+            : base(characterInput)
         {
             this.cursorToken = cursorToken;
             this.commandToken = commandToken;
             this.cursorTimer = new Timer(cursorBlinkRate);
+            this.NextMemoryKey = Keys.Down;
+            this.PreviousMemoryKey = Keys.Up;
             this.historyCapacity = historyCapacity;
-            this.UpdateCommand();
-            this.UpdateText();
+            this.OnTextChange();
         }
 
-        public void Clear()
-        {
-            this.textBuilder.Clear();
-            this.UpdateCommand();
-            this.cursorPos = 0;
-            this.UpdateText();
-        }
+        public string DisplayText => this.displayText;
 
-        public void CursorLeft()
-        {
-            this.CursorLeft(1);
-        }
+        public string DisplayTextCursor => this.showCursor ? this.displayTextCursor : this.displayTextCursorNoToken;
 
-        public void CursorLeft(int amount)
-        {
-            this.cursorPos -= amount;
-            this.cursorPos = Math.Max(this.cursorPos, 0);
-            this.UpdateText();
-            this.showCursor = true;
-            this.cursorTimer.Reset();
-        }
-
-        public void CursorRight()
-        {
-            this.CursorRight(1);
-        }
-
-        public void CursorHome()
-        {
-            this.CursorLeft(this.cursorPos);
-        }
-
-        public void CursorEnd()
-        {
-            this.CursorRight(this.GetInput().Length - this.cursorPos);
-        }
-
-        public void CursorRight(int amount)
-        {
-            this.cursorPos += amount;
-            this.cursorPos = Math.Min(this.cursorPos, this.GetInput().Length);
-            this.UpdateText();
-            this.showCursor = true;
-            this.cursorTimer.Reset();
-        }
-
-        public void Delete()
-        {
-            if (this.GetInput().Length > 0 && this.cursorPos < this.GetInput().Length)
-            {
-                this.textBuilder.Remove(this.cursorPos, 1);
-                this.UpdateCommand();
-                this.UpdateText();
-            }
-        }
-
-        public void Erase()
-        {
-            if (this.GetInput().Length > 0 && this.cursorPos > 0)
-            {
-                this.textBuilder.Remove(this.cursorPos - 1, 1);
-                this.UpdateCommand();
-                this.CursorLeft();
-                this.UpdateText();
-            }
-        }
-
-        public string GetInput()
-        {
-            return this.command;
-        }
-
-        public string GetText(bool useCursor)
-        {
-            if (useCursor && this.showCursor)
-            {
-                return this.cursorText;
-            }
-            return this.text;
-        }
-
-        public string GetText()
-        {
-            return this.GetText(false);
-        }
-
-        public void NextMemory()
-        {
-            if (this.history.Count > 0)
-            {
-                int newIndex = this.historyIndex + 1;
-                newIndex = Math.Min(newIndex, this.history.Count - 1);
-                this.Set(history[newIndex]);
-                this.historyIndex = newIndex;
-            }
-        }
-
-        public void PreviousMemory()
-        {
-            if (this.history.Count > 0)
-            {
-                int newIndex = this.historyIndex - 1;
-                newIndex = Math.Max(newIndex, 0);
-                this.Set(history[newIndex]);
-                this.historyIndex = newIndex;
-            }
-        }
+        public Keys NextMemoryKey { get; set; }
+        public Keys PreviousMemoryKey { get; set; }
 
         public void Remember()
         {
-            this.Remember(this.GetInput());
+            this.Remember(base.Text);
         }
 
         public void Remember(string input)
@@ -153,60 +52,67 @@
             }
         }
 
-        public void Set(string text)
-        {
-            this.textBuilder.Clear();
-            this.textBuilder.Append(text);
-            this.UpdateCommand();
-            this.cursorPos = text.Length;
-            this.UpdateText();
-        }
-
-        public void Type(char character)
-        {
-            this.Type(character.ToString());
-        }
-
-        public void Type(string text)
-        {
-            this.textBuilder.Insert(this.cursorPos, text);
-            this.UpdateCommand();
-            this.CursorRight(text.Length);
-            this.UpdateText();
-        }
-
         public void Update(double seconds)
         {
+            this.Update();
+
             if (this.cursorTimer.Update(seconds))
             {
                 this.showCursor = !this.showCursor;
                 this.cursorTimer.Reset();
             }
+
+            if (this.CharacterInput.Input.IsKeyTyped(this.NextMemoryKey, this.CharacterInput.TypingStartTime, this.CharacterInput.TypingCycleInterval))
+            {
+                this.ChangeMemory(1);
+            }
+
+            if (this.CharacterInput.Input.IsKeyTyped(this.PreviousMemoryKey, this.CharacterInput.TypingStartTime, this.CharacterInput.TypingCycleInterval))
+            {
+                this.ChangeMemory(-1);
+            }
         }
 
-        private void UpdateCommand()
+        protected override void OnCursorChange()
         {
-            this.command = this.textBuilder.ToString();
+            this.UpdateDisplayText();
         }
 
-        private void UpdateText()
+        protected override void OnTextChange()
+        {
+            this.historyIndex = this.history.Count;
+            this.UpdateDisplayText();
+        }
+
+        private void ChangeMemory(int delta)
+        {
+            if (this.history.Count > 0)
+            {
+                int newIndex = this.historyIndex + delta;
+                newIndex = MathHelper.Clamp(newIndex, 0, this.history.Count - 1);
+                base.Text = history[newIndex];
+                this.historyIndex = newIndex;
+            }
+        }
+
+        private void UpdateDisplayText()
         {
             string left, right;
 
-            if (this.command.Length == 0)
+            if (base.Text.Length == 0)
             {
-                left = this.commandToken + this.command;
+                left = this.commandToken + base.Text;
                 right = "";
             }
             else
             {
-                left = this.commandToken + this.command.Substring(0, this.cursorPos);
-                right = this.command.Substring(this.cursorPos, this.command.Length - this.cursorPos);
+                left = this.commandToken + base.Text.Substring(0, base.CursorPosition);
+                right = base.Text.Substring(base.CursorPosition, base.Text.Length - base.CursorPosition);
             }
 
-            this.text = left + " " + right;
-            this.cursorText = left + cursorToken + right;
-            this.historyIndex = this.history.Count;
+            this.displayText = left + right;
+            this.displayTextCursor = left + cursorToken + right;
+            this.displayTextCursorNoToken = left + " " + right;
         }
     }
 }

@@ -75,6 +75,12 @@
         double GetKeyHeldTime(Keys key);
 
         /// <summary>
+        /// Gets the keys that are down.
+        /// </summary>
+        /// <returns>Collection of keys down.</returns>
+        ICollection<Keys> GetKeysDown();
+
+        /// <summary>
         /// Queries whether the specified key is down.
         /// </summary>
         /// <param name="key">Key to query.</param>

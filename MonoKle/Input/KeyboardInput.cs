@@ -4,6 +4,7 @@
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
+    using System;
 
     /// <summary>
     /// Class providing polling-based keyboard input.
@@ -179,6 +180,17 @@
             double ret = 0;
             this.heldTimerByKey.TryGetValue(key, out ret);
             return ret;
+        }
+
+        /// <summary>
+        /// Gets the keys that are down.
+        /// </summary>
+        /// <returns>
+        /// Collection of keys down.
+        /// </returns>
+        public ICollection<Keys> GetKeysDown()
+        {
+            return new List<Keys>(this.currentKeys);
         }
 
         /// <summary>

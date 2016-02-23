@@ -33,6 +33,7 @@ namespace WindowsDemo
             this.primitive3D.End();
         }
 
+
         public override void Update(double seconds)
         {
             if (MBackend.Keyboard.IsKeyHeld(Keys.Escape, 1))

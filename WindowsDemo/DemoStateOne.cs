@@ -6,6 +6,8 @@ using MonoKle.Core;
 using MonoKle.Core.Geometry;
 using MonoKle.Engine;
 using MonoKle.Graphics.Primitives;
+using MonoKle.Input;
+using MonoKle.Input.Conversion;
 using MonoKle.Logging;
 using MonoKle.Messaging;
 using MonoKle.State;
@@ -70,8 +72,8 @@ namespace WindowsDemo
                 new Vector2(550, 150), Color.Green, (float)MBackend.TotalGameTime.TotalSeconds, orig, 2f, SpriteEffects.None, 0f);
 
             // XXX
-            Vector2 o =font.MeasureString("<=+=>") * 0.5f;
-           font.DrawString(sb, "<=+=>",
+            Vector2 o =font.MeasureString(this.ti.Text) * 0.5f;
+           font.DrawString(sb, this.ti.Text,
                 new Vector2(400, 300), Color.Green, (float)MBackend.TotalGameTime.TotalSeconds, o, 1f, SpriteEffects.None, 0f);
 
             string s = "Testin size";
@@ -190,11 +192,17 @@ namespace WindowsDemo
                 {
                     Logger.Global.Log("I am logging");
                 }
+
+
+                ti.Update();
+
             }
 
             camera.Update(seconds);
             timer.Update(seconds);
         }
+
+        KeyboardTextInput ti = new KeyboardTextInput(new KeyboardCharacterInput(MBackend.Keyboard));
 
         public void Test(object sender, MessageEventArgs args)
         {

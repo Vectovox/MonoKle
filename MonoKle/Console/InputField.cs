@@ -62,12 +62,12 @@
                 this.cursorTimer.Reset();
             }
 
-            if (this.CharacterInput.Input.IsKeyTyped(this.NextMemoryKey, this.CharacterInput.TypingStartTime, this.CharacterInput.TypingCycleInterval))
+            if (this.CharacterInput.KeyboardTyper.IsTyped(this.NextMemoryKey))
             {
                 this.ChangeMemory(1);
             }
 
-            if (this.CharacterInput.Input.IsKeyTyped(this.PreviousMemoryKey, this.CharacterInput.TypingStartTime, this.CharacterInput.TypingCycleInterval))
+            if (this.CharacterInput.KeyboardTyper.IsTyped(this.PreviousMemoryKey))
             {
                 this.ChangeMemory(-1);
             }

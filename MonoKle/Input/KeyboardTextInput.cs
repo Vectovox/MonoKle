@@ -28,7 +28,7 @@
         /// <value>
         /// The character input.
         /// </value>
-        public KeyboardCharacterInput CharacterInput { get; set; }
+        public KeyboardCharacterInput CharacterInput { get; private set; }
 
         /// <summary>
         /// Gets or sets the cursor beginning key.
@@ -88,27 +88,27 @@
             {
                 base.Type(typedCharacter);
             }
-            if (this.CharacterInput.Input.IsKeyTyped(this.EraseKey, this.CharacterInput.TypingStartTime, this.CharacterInput.TypingCycleInterval))
+            if (this.CharacterInput.KeyboardTyper.IsTyped(this.EraseKey))
             {
                 base.Erase();
             }
-            if (this.CharacterInput.Input.IsKeyTyped(this.DeleteKey, this.CharacterInput.TypingStartTime, this.CharacterInput.TypingCycleInterval))
+            if (this.CharacterInput.KeyboardTyper.IsTyped(this.DeleteKey))
             {
                 base.Delete();
             }
-            if (this.CharacterInput.Input.IsKeyTyped(this.CursorBeginningKey, this.CharacterInput.TypingStartTime, this.CharacterInput.TypingCycleInterval))
+            if (this.CharacterInput.KeyboardTyper.IsTyped(this.CursorBeginningKey))
             {
                 base.CursorBeginning();
             }
-            if (this.CharacterInput.Input.IsKeyTyped(this.CursorEndKey, this.CharacterInput.TypingStartTime, this.CharacterInput.TypingCycleInterval))
+            if (this.CharacterInput.KeyboardTyper.IsTyped(this.CursorEndKey))
             {
                 base.CursorEnd();
             }
-            if (this.CharacterInput.Input.IsKeyTyped(this.CursorLeftKey, this.CharacterInput.TypingStartTime, this.CharacterInput.TypingCycleInterval))
+            if (this.CharacterInput.KeyboardTyper.IsTyped(this.CursorLeftKey))
             {
                 base.CursorLeft();
             }
-            if (this.CharacterInput.Input.IsKeyTyped(this.CursorRightKey, this.CharacterInput.TypingStartTime, this.CharacterInput.TypingCycleInterval))
+            if (this.CharacterInput.KeyboardTyper.IsTyped(this.CursorRightKey))
             {
                 base.CursorRight();
             }

@@ -107,6 +107,7 @@
     <Compile Include="Input\KeyboardTextInput.cs" />
     <Compile Include="Input\MouseInput.cs" />
     <Compile Include="Input\KeyboardCharacterInput.cs" />
+    <Compile Include="Input\KeyboardTyper.cs" />
     <Compile Include="IO\AbstractFileLoader.cs" />
     <Compile Include="IO\DelegateFileLoader.cs" />
     <Compile Include="IO\FileLoadingDelegate.cs" />

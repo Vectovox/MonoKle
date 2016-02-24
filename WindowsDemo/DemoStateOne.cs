@@ -202,7 +202,7 @@ namespace WindowsDemo
             timer.Update(seconds);
         }
 
-        KeyboardTextInput ti = new KeyboardTextInput(new KeyboardCharacterInput(MBackend.Keyboard));
+        KeyboardTextInput ti = new KeyboardTextInput(new KeyboardCharacterInput(new KeyboardTyper(MBackend.Keyboard, 0.5, 0.05)));
 
         public void Test(object sender, MessageEventArgs args)
         {

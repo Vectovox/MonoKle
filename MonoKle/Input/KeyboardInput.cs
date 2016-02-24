@@ -1,7 +1,7 @@
 ﻿namespace MonoKle.Input
 {
     using Microsoft.Xna.Framework.Input;
-    using System.Collections;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -10,18 +10,19 @@
     /// </summary>
     public class KeyboardInput : IKeyboardInput, IMUpdateable
     {
-        private HashSet<Keys> currentKeys;
-        private Dictionary<Keys, double> heldTimerByKey;
-        private HashSet<Keys> previousKeys;
+        private KeyStatus[] keyArray;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="KeyboardInput"/> class.
         /// </summary>
         public KeyboardInput()
         {
-            currentKeys = new HashSet<Keys>();
-            previousKeys = new HashSet<Keys>();
-            heldTimerByKey = new Dictionary<Keys, double>();
+            var values = Enum.GetValues(typeof(Keys));
+            this.keyArray = new KeyStatus[(int)values.GetValue(values.GetUpperBound(0)) + 1];
+            foreach (Keys k in values)
+            {
+                this.keyArray[(int)k] = new KeyStatus(k);
+            }
         }
 
         /// <summary>
@@ -32,7 +33,7 @@
         /// <returns>
         /// True if the keys are down; otherwise false.
         /// </returns>
-        public bool AreKeysDown(ICollection<Keys> keys, CollectionQueryBehavior behavior)
+        public bool AreKeysDown(IEnumerable<Keys> keys, CollectionQueryBehavior behavior)
         {
             if (behavior == CollectionQueryBehavior.All)
             {
@@ -52,7 +53,7 @@
         /// <returns>
         /// True if the keys are held; otherwise false.
         /// </returns>
-        public bool AreKeysHeld(ICollection<Keys> keys, CollectionQueryBehavior behavior)
+        public bool AreKeysHeld(IEnumerable<Keys> keys, CollectionQueryBehavior behavior)
         {
             if (behavior == CollectionQueryBehavior.All)
             {
@@ -73,7 +74,7 @@
         /// <returns>
         /// True if the keys are held; otherwise false.
         /// </returns>
-        public bool AreKeysHeld(ICollection<Keys> keys, double timeHeld, CollectionQueryBehavior behavior)
+        public bool AreKeysHeld(IEnumerable<Keys> keys, double timeHeld, CollectionQueryBehavior behavior)
         {
             if (behavior == CollectionQueryBehavior.All)
             {
@@ -86,28 +87,6 @@
         }
 
         /// <summary>
-        /// Cyclically queries whether the specified keys are held, starting the cycle at the given time.
-        /// </summary>
-        /// <param name="keys">Keys to query.</param>
-        /// <param name="startTime">The amount of time before query cycles. Zero is instantaneous.</param>
-        /// <param name="cycleInterval">The cycle interval.</param>
-        /// <param name="behavior">The query behavior.</param>
-        /// <returns>
-        /// True if keys are held; otherwise false.
-        /// </returns>
-        public bool AreKeysHeld(ICollection<Keys> keys, double startTime, double cycleInterval, CollectionQueryBehavior behavior)
-        {
-            if (behavior == CollectionQueryBehavior.All)
-            {
-                return keys.All(o => this.IsKeyHeld(o, startTime, cycleInterval));
-            }
-            else
-            {
-                return keys.Any(o => this.IsKeyHeld(o, startTime, cycleInterval));
-            }
-        }
-
-        /// <summary>
         /// Queries whether the specified keys are pressed.
         /// </summary>
         /// <param name="keys">The keys to query.</param>
@@ -115,7 +94,7 @@
         /// <returns>
         /// True if keys are pressed; otherwise false.
         /// </returns>
-        public bool AreKeysPressed(ICollection<Keys> keys, CollectionQueryBehavior behavior)
+        public bool AreKeysPressed(IEnumerable<Keys> keys, CollectionQueryBehavior behavior)
         {
             if (behavior == CollectionQueryBehavior.All)
             {
@@ -135,7 +114,7 @@
         /// <returns>
         /// True if keys are released; otherwise false.
         /// </returns>
-        public bool AreKeysReleased(ICollection<Keys> keys, CollectionQueryBehavior behavior)
+        public bool AreKeysReleased(IEnumerable<Keys> keys, CollectionQueryBehavior behavior)
         {
             if (behavior == CollectionQueryBehavior.All)
             {
@@ -155,7 +134,7 @@
         /// <returns>
         /// True if the keys are up; otherwise false.
         /// </returns>
-        public bool AreKeysUp(ICollection<Keys> keys, CollectionQueryBehavior behavior)
+        public bool AreKeysUp(IEnumerable<Keys> keys, CollectionQueryBehavior behavior)
         {
             if (behavior == CollectionQueryBehavior.All)
             {
@@ -176,9 +155,7 @@
         /// </returns>
         public double GetKeyHeldTime(Keys key)
         {
-            double ret = 0;
-            this.heldTimerByKey.TryGetValue(key, out ret);
-            return ret;
+            return this.GetStatus(key).HeldTime;
         }
 
         /// <summary>
@@ -187,9 +164,9 @@
         /// <returns>
         /// Collection of keys down.
         /// </returns>
-        public ICollection<Keys> GetKeysDown()
+        public IEnumerable<Keys> GetKeysDown()
         {
-            return new List<Keys>(this.currentKeys);
+            return this.keyArray.Where(o => o != null && o.IsDown).Select(o => o.Key);
         }
 
         /// <summary>
@@ -201,7 +178,7 @@
         /// </returns>
         public bool IsKeyDown(Keys key)
         {
-            return this.currentKeys.Contains(key);
+            return this.GetStatus(key).IsDown;
         }
 
         /// <summary>
@@ -213,7 +190,7 @@
         /// </returns>
         public bool IsKeyHeld(Keys key)
         {
-            return this.IsKeyDown(key) && this.previousKeys.Contains(key);
+            return this.GetStatus(key).IsHeld;
         }
 
         /// <summary>
@@ -226,26 +203,7 @@
         /// </returns>
         public bool IsKeyHeld(Keys key, double timeHeld)
         {
-            return this.IsKeyHeld(key) && this.GetKeyHeldTime(key) >= timeHeld;
-        }
-
-        /// <summary>
-        /// Cyclically queries whether the specified key is held, starting the cycle at the given time.
-        /// </summary>
-        /// <param name="key">Key to query.</param>
-        /// <param name="startTime">The amount of time before query cycles. Zero is instantaneous.</param>
-        /// <param name="cycleInterval">The query interval.</param>
-        /// <returns>
-        /// True if key is held; otherwise false.
-        /// </returns>
-        public bool IsKeyHeld(Keys key, double startTime, double cycleInterval)
-        {
-            if (this.IsKeyHeld(key, startTime) && this.GetKeyHeldTime(key) >= startTime + cycleInterval)
-            {
-                this.heldTimerByKey[key] = startTime;
-                return true;
-            }
-            return false;
+            return this.GetStatus(key).HeldFor(timeHeld);
         }
 
         /// <summary>
@@ -257,7 +215,7 @@
         /// </returns>
         public bool IsKeyPressed(Keys key)
         {
-            return this.IsKeyDown(key) && this.previousKeys.Contains(key) == false;
+            return this.GetStatus(key).IsPressed;
         }
 
         /// <summary>
@@ -269,22 +227,7 @@
         /// </returns>
         public bool IsKeyReleased(Keys key)
         {
-            return this.IsKeyUp(key) && this.previousKeys.Contains(key);
-        }
-
-        /// <summary>
-        /// Determines whether the specified key is typed, following standard text editing behaviour. Initial key press is typed,
-        /// then every cycle that the key is held after a given offset.
-        /// </summary>
-        /// <param name="key">The key to query.</param>
-        /// <param name="startTime">The amount of time before query cycles. Zero is instantaneous.</param>
-        /// <param name="cycleInterval">The query interval.</param>
-        /// <returns>
-        /// True if key is typed; otherwise false.
-        /// </returns>
-        public bool IsKeyTyped(Keys key, double startTime, double cycleInterval)
-        {
-            return this.IsKeyPressed(key) || this.IsKeyHeld(key, startTime, cycleInterval);
+            return this.GetStatus(key).IsReleased;
         }
 
         /// <summary>
@@ -296,7 +239,7 @@
         /// </returns>
         public bool IsKeyUp(Keys key)
         {
-            return this.currentKeys.Contains(key) == false;
+            return this.GetStatus(key).IsUp;
         }
 
         /// <summary>
@@ -305,30 +248,55 @@
         /// <param name="seconds">The amount of seconds since last update.</param>
         public void Update(double seconds)
         {
-            this.previousKeys = this.currentKeys;
-            this.currentKeys = new HashSet<Keys>(Keyboard.GetState().GetPressedKeys());
-
-            // Remove and update old held keys
-            ICollection c = new LinkedList<Keys>(this.heldTimerByKey.Keys);
-            foreach (Keys k in c)
+            var keyboardState = Keyboard.GetState();
+            foreach (KeyStatus s in this.keyArray)
             {
-                if (this.currentKeys.Contains(k))
-                {
-                    this.heldTimerByKey[k] += seconds;
-                }
-                else
-                {
-                    this.heldTimerByKey.Remove(k);
-                }
+                s?.SetDown(keyboardState.IsKeyDown(s.Key), seconds);
+            }
+        }
+
+        private KeyStatus GetStatus(Keys key)
+        {
+            return this.keyArray[(int)key];
+        }
+
+        /// <summary>
+        /// Class containing the status of a key. Used to avoid boxing.
+        /// </summary>
+        private class KeyStatus
+        {
+            public readonly Keys Key;
+
+            private bool isDown;
+
+            private bool wasDown;
+
+            private double heldTime;
+
+            public bool IsHeld => this.isDown && this.wasDown;
+
+            public bool IsPressed => this.isDown && !this.wasDown;
+
+            public bool IsReleased => !this.isDown && this.wasDown;
+
+            public bool IsDown => this.isDown;
+
+            public bool IsUp => !this.isDown;
+
+            public double HeldTime => this.heldTime;
+
+            public bool HeldFor(double seconds) => this.heldTime >= seconds;
+
+            public KeyStatus(Keys key)
+            {
+                this.Key = key;
             }
 
-            // Add new held keys
-            foreach (Keys k in this.currentKeys)
+            public void SetDown(bool down, double deltaTime)
             {
-                if (this.heldTimerByKey.ContainsKey(k) == false)
-                {
-                    this.heldTimerByKey.Add(k, 0);
-                }
+                this.wasDown = this.isDown;
+                this.isDown = down;
+                this.heldTime = down ? this.heldTime + deltaTime : 0;
             }
         }
     }

@@ -20,14 +20,14 @@
     /// </summary>
     public class GameConsole : IGameConsole, IMComponent
     {
-        private const double KEY_TYPED_CYCLE_INTERVAL = 0.02;
+        private const double TypingActivationDelay = 0.4;
 
-        private const double KEY_TYPED_TIMEROFFSET = 0.5;
+        private const double TypingCycleDelay = 0.02;
 
         private int scrollOffset = 0;
         private GraphicsDevice graphicsDevice;
         private InputField inputField;
-        private IKeyboardInput keyboard;
+        private KeyboardTyper keyboard;
         private LinkedList<Line> lines = new LinkedList<Line>();
         private SpriteBatch spriteBatch;
         private Texture2D whiteTexture;
@@ -44,9 +44,9 @@
         {
             this.graphicsDevice = graphicsDevice;
             this.spriteBatch = new SpriteBatch(graphicsDevice);
-            this.keyboard = keyboardInput;
-            this.inputField = new InputField("_", ">> ", 0.25, 10,
-                new KeyboardCharacterInput(this.keyboard, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL));
+            this.keyboard = new KeyboardTyper(keyboardInput, GameConsole.TypingActivationDelay, GameConsole.TypingCycleDelay);
+
+            this.inputField = new InputField("_", ">> ", 0.25, 10, new KeyboardCharacterInput(this.keyboard));
 
             this.Area = area;
             this.Size = byte.MaxValue;
@@ -256,9 +256,9 @@
         /// <param name="seconds">The seconds elapsed.</param>
         public void Update(double seconds)
         {
-            if (this.keyboard.IsKeyPressed(this.ToggleKey))
+            if (this.keyboard.KeyboardInput.IsKeyPressed(this.ToggleKey))
             {
-                this.IsOpen = !this.IsOpen; ;
+                this.IsOpen = !this.IsOpen;
             }
 
             if (this.IsOpen)
@@ -485,24 +485,24 @@
         private void DoKeyboardInput()
         {
             // Check for if command is given
-            if (this.keyboard.IsKeyTyped(Keys.Enter, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            if (this.keyboard.IsTyped(Keys.Enter))
             {
                 this.DoCommand();
             }
 
             // Autocomplete
-            if (this.keyboard.IsKeyTyped(Keys.Tab, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            if (this.keyboard.IsTyped(Keys.Tab))
             {
                 this.AutoComplete();
             }
 
             // Scrolling
-            if (this.keyboard.IsKeyTyped(Keys.PageUp, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            if (this.keyboard.IsTyped(Keys.PageUp))
             {
                 this.ScrollUp();
             }
 
-            if (this.keyboard.IsKeyTyped(Keys.PageDown, GameConsole.KEY_TYPED_TIMEROFFSET, GameConsole.KEY_TYPED_CYCLE_INTERVAL))
+            if (this.keyboard.IsTyped(Keys.PageDown))
             {
                 this.ScrollDown();
             }

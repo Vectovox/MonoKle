@@ -341,7 +341,8 @@
             MBackend.console = new GameConsole(new Rectangle(0, 0, GraphicsManager.Resolution.X, GraphicsManager.Resolution.Y / 3),
                 MBackend.GraphicsManager.GraphicsDevice,
                 MBackend.keyboard,
-                MBackend.TextureStorage.White);
+                MBackend.TextureStorage.White,
+                MBackend.Logger);
             MBackend.Console.ToggleKey = Microsoft.Xna.Framework.Input.Keys.F1;
             MBackend.Console.TextFont = MBackend.FontStorage.DefaultValue;
         }

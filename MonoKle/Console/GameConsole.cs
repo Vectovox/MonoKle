@@ -24,7 +24,7 @@
 
         private const double KEY_TYPED_TIMEROFFSET = 0.5;
 
-        private int drawingOffset = 0;
+        private int scrollOffset = 0;
         private GraphicsDevice graphicsDevice;
         private InputField inputField;
         private IKeyboardInput keyboard;
@@ -39,7 +39,8 @@
         /// <param name="graphicsDevice">The graphics device.</param>
         /// <param name="keyboardInput">The keyboard input.</param>
         /// <param name="whiteTexture">The background texture.</param>
-        public GameConsole(MRectangleInt area, GraphicsDevice graphicsDevice, IKeyboardInput keyboardInput, Texture2D whiteTexture)
+        /// <param name="logger">The logger to use.</param>
+        public GameConsole(MRectangleInt area, GraphicsDevice graphicsDevice, IKeyboardInput keyboardInput, Texture2D whiteTexture, Logger logger)
         {
             this.graphicsDevice = graphicsDevice;
             this.spriteBatch = new SpriteBatch(graphicsDevice);
@@ -58,8 +59,8 @@
             this.DisabledTextColour = Color.Gray;
             this.TextScale = 0.5f;
             this.TabLength = 4;
-            Logger.Global.LogAddedEvent += LogAdded;
-            Logger.Global.Log("GameConsole activated.", LogLevel.Debug);
+            logger.LogAddedEvent += LogAdded;
+            logger.Log("GameConsole activated.", LogLevel.Debug);
 
             this.SetupBroker();
         }
@@ -234,7 +235,7 @@
 
                 string drawnLine = this.inputField.DisplayTextCursor;
                 Vector2 textPos = new Vector2(this.Area.Left, this.Area.Bottom - font.MeasureString(drawnLine, this.TextScale).Y);
-                LinkedListNode<Line> node = lines.Find(lines.ElementAtOrDefault(lines.Count - this.drawingOffset - 1));
+                LinkedListNode<Line> node = lines.Find(lines.ElementAtOrDefault(lines.Count - this.scrollOffset - 1));
                 StringWrapper wrapper = new StringWrapper();
 
                 font.DrawString(this.spriteBatch, drawnLine, textPos, this.CommandTextColour, 0f, Vector2.Zero, this.TextScale, SpriteEffects.None, 0f);
@@ -562,9 +563,9 @@
 
         private void Scroll(int delta)
         {
-            this.drawingOffset += delta;
-            this.drawingOffset = Math.Min(this.drawingOffset, this.lines.Count - 1);
-            this.drawingOffset = Math.Max(this.drawingOffset, 0);
+            this.scrollOffset += delta;
+            this.scrollOffset = Math.Min(this.scrollOffset, this.lines.Count - 1);
+            this.scrollOffset = Math.Max(this.scrollOffset, 0);
         }
 
         private void ScrollDown()

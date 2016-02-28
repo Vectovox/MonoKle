@@ -171,11 +171,11 @@
             // Buttons
             this.previousButtons.Clear();
             this.previousButtons.UnionWith(heldTimeByButton.Keys);
-            this.UpdateButton(MouseButton.Left, currentState.LeftButton == ButtonState.Pressed, seconds);
-            this.UpdateButton(MouseButton.Middle, currentState.MiddleButton == ButtonState.Pressed, seconds);
-            this.UpdateButton(MouseButton.Right, currentState.RightButton == ButtonState.Pressed, seconds);
-            this.UpdateButton(MouseButton.XButton1, currentState.XButton1 == ButtonState.Pressed, seconds);
-            this.UpdateButton(MouseButton.XButton2, currentState.XButton2 == ButtonState.Pressed, seconds);
+            this.UpdateButton(MouseButton.Left, currentState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed, seconds);
+            this.UpdateButton(MouseButton.Middle, currentState.MiddleButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed, seconds);
+            this.UpdateButton(MouseButton.Right, currentState.RightButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed, seconds);
+            this.UpdateButton(MouseButton.XButton1, currentState.XButton1 == Microsoft.Xna.Framework.Input.ButtonState.Pressed, seconds);
+            this.UpdateButton(MouseButton.XButton2, currentState.XButton2 == Microsoft.Xna.Framework.Input.ButtonState.Pressed, seconds);
 
             // Scroll wheel
             if (currentState.ScrollWheelValue > previousScrollValue)

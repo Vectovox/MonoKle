@@ -56,52 +56,54 @@
     <Compile Include="Asset\Font\FontStorage.cs" />
     <Compile Include="Asset\Font\FontDataSerialization.cs" />
     <Compile Include="Asset\Texture\TextureStorage.cs" />
-    <Compile Include="Console\Command\ConsoleCommand.cs" />
-    <Compile Include="Console\Command\CommandArguments.cs" />
-    <Compile Include="Console\Command\CommandBroker.cs" />
-    <Compile Include="Console\Command\AbstractConsoleCommand.cs" />
-    <Compile Include="Console\Command\Handlers\ConsoleCommandSuggestionHandler.cs" />
-    <Compile Include="Console\Command\Handlers\DefaultConsoleCommandHandler.cs" />
-    <Compile Include="Console\Command\Handlers\ConsoleCommandHandler.cs" />
-    <Compile Include="Console\Command\ArgumentlessConsoleCommand.cs" />
-    <Compile Include="Console\Command\IConsoleCommand.cs" />
+    <Compile Include="Console\ConsoleCommand.cs" />
+    <Compile Include="Console\CommandArguments.cs" />
+    <Compile Include="Console\CommandBroker.cs" />
+    <Compile Include="Console\AbstractConsoleCommand.cs" />
+    <Compile Include="Console\ConsoleCommandSuggestionHandler.cs" />
+    <Compile Include="Console\DefaultConsoleCommandHandler.cs" />
+    <Compile Include="Console\ConsoleCommandHandler.cs" />
+    <Compile Include="Console\ArgumentlessConsoleCommand.cs" />
+    <Compile Include="Console\IConsoleCommand.cs" />
     <Compile Include="Console\IGameConsole.cs" />
     <Compile Include="Console\GameConsole.cs" />
     <Compile Include="Console\InputField.cs" />
     <Compile Include="Console\Line.cs" />
-    <Compile Include="Core\StringConverter.cs" />
-    <Compile Include="Core\Geometry\MCircle.cs" />
-    <Compile Include="Core\Geometry\MVector2.cs" />
-    <Compile Include="Core\Geometry\MRectangleInt.cs" />
-    <Compile Include="Core\Camera2D.cs" />
-    <Compile Include="Core\Geometry\MRectangle.cs" />
-    <Compile Include="Core\Geometry\MVector3.cs" />
-    <Compile Include="Core\Timer.cs" />
-    <Compile Include="Core\Geometry\MPoint2.cs" />
-    <Compile Include="Graphics\Primitives\AbstractPrimitiveBatch.cs" />
-    <Compile Include="Graphics\Event\ScreenSizeChangedEventArgs.cs" />
-    <Compile Include="Graphics\Primitives\IPrimitiveBatch.cs" />
-    <Compile Include="Graphics\Primitives\IPrimitiveBatch2D.cs" />
-    <Compile Include="Graphics\Primitives\IPrimitiveBatch3D.cs" />
-    <Compile Include="Graphics\Primitives\PrimitiveBatch2D.cs" />
+    <Compile Include="Input\ButtonState.cs" />
+    <Compile Include="Input\IButtonState.cs" />
+    <Compile Include="StringConverter.cs" />
+    <Compile Include="MCircle.cs" />
+    <Compile Include="MVector2.cs" />
+    <Compile Include="MRectangleInt.cs" />
+    <Compile Include="Camera2D.cs" />
+    <Compile Include="MRectangle.cs" />
+    <Compile Include="MVector3.cs" />
+    <Compile Include="Timer.cs" />
+    <Compile Include="MPoint2.cs" />
+    <Compile Include="Graphics\AbstractPrimitiveBatch.cs" />
+    <Compile Include="Graphics\ResolutionChangedEventArgs.cs" />
+    <Compile Include="Graphics\IPrimitiveBatch.cs" />
+    <Compile Include="Graphics\IPrimitiveBatch2D.cs" />
+    <Compile Include="Graphics\IPrimitiveBatch3D.cs" />
+    <Compile Include="Graphics\PrimitiveBatch2D.cs" />
     <Compile Include="Graphics\GraphicsHelper.cs" />
     <Compile Include="Graphics\GraphicsManager.cs" />
-    <Compile Include="Graphics\Event\ScreenSizeChangedEventHandler.cs" />
-    <Compile Include="Graphics\Primitives\PrimitiveBatch3D.cs" />
+    <Compile Include="Graphics\ResolutionChangedEventHandler.cs" />
+    <Compile Include="Graphics\PrimitiveBatch3D.cs" />
     <Compile Include="ILoggable.cs" />
-    <Compile Include="IMDrawable.cs" />
-    <Compile Include="IMComponent.cs" />
+    <Compile Include="IDrawable.cs" />
+    <Compile Include="IMonoKleComponent.cs" />
     <Compile Include="Input\AbstractCharacterInput.cs" />
     <Compile Include="Input\AbstractTextInput.cs" />
-    <Compile Include="Input\Conversion\AbstractKeyConverter.cs" />
-    <Compile Include="Input\Conversion\EnglishKeyConverter.cs" />
+    <Compile Include="Input\AbstractKeyConverter.cs" />
+    <Compile Include="Input\EnglishKeyConverter.cs" />
     <Compile Include="Input\Enums.cs" />
     <Compile Include="Input\ICharacterInput.cs" />
     <Compile Include="Input\IGamePadInput.cs" />
     <Compile Include="Input\GamePadInput.cs" />
     <Compile Include="Input\IMouseInput.cs" />
     <Compile Include="Input\IKeyboardInput.cs" />
-    <Compile Include="Input\Conversion\IKeyConverter.cs" />
+    <Compile Include="Input\IKeyConverter.cs" />
     <Compile Include="Input\ITextInput.cs" />
     <Compile Include="Input\KeyboardInput.cs" />
     <Compile Include="Input\KeyboardTextInput.cs" />
@@ -113,7 +115,7 @@
     <Compile Include="IO\FileLoadingDelegate.cs" />
     <Compile Include="IO\FileLoadingResult.cs" />
     <Compile Include="IO\IFileLoader.cs" />
-    <Compile Include="IMUpdateable.cs" />
+    <Compile Include="IUpdateable.cs" />
     <Compile Include="Logging\Log.cs" />
     <Compile Include="Logging\LogAddedEventArgs.cs" />
     <Compile Include="Logging\LogAddedEventHandler.cs" />
@@ -135,8 +137,8 @@
     <Compile Include="State\StateSwitchData.cs" />
     <Compile Include="State\IStateSystem.cs" />
     <Compile Include="State\StateSystem.cs" />
-    <Compile Include="Core\Geometry\MGrid.cs" />
-    <Compile Include="Core\StringWrapper.cs" />
+    <Compile Include="MGrid.cs" />
+    <Compile Include="StringWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="OpenTK">
@@ -161,6 +163,7 @@
       <Name>MonoKle.Utilities</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

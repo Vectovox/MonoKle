@@ -1,13 +1,12 @@
 ﻿namespace MonoKle.Input
 {
-    using Core.Geometry;
     using Microsoft.Xna.Framework.Input;
     using System.Collections.Generic;
 
     /// <summary>
     /// Class providing polling functionality for keyboard input.
     /// </summary>
-    public class MouseInput : IMouseInput, IMUpdateable
+    public class MouseInput : IMouseInput, IUpdateable
     {
         private MouseScrollDirection currentScrollDirection;
         private MPoint2 deltaPosition;

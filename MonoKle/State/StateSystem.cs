@@ -7,7 +7,7 @@
     /// <summary>
     /// Class maintaining game states.
     /// </summary>
-    public class StateSystem : IStateSystem, IMComponent
+    public class StateSystem : IStateSystem, IMonoKleComponent
     {
         private GameState currentState;
         private Dictionary<string, GameState> stateByString;

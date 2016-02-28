@@ -1,7 +1,5 @@
 ﻿namespace MonoKle.Input
 {
-    using Core.Geometry;
-
     /// <summary>
     /// Interface providing polling functionality for mouse input.
     /// </summary>

@@ -2,16 +2,14 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoKle.Asset.Font;
-using MonoKle.Core;
-using MonoKle.Core.Geometry;
+using MonoKle;
 using MonoKle.Engine;
-using MonoKle.Graphics.Primitives;
 using MonoKle.Input;
-using MonoKle.Input.Conversion;
 using MonoKle.Logging;
 using MonoKle.Messaging;
 using MonoKle.State;
 using System;
+using MonoKle.Graphics;
 
 namespace WindowsDemo
 {

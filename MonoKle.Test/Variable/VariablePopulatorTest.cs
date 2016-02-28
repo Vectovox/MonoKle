@@ -1,8 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MonoKle.Core.Geometry;
-
-namespace MonoKle.Variable
+﻿namespace MonoKle.Variable
 {
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
     [TestClass]
     public class VariablePopulatorTest
     {

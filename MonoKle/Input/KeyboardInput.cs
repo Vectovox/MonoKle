@@ -8,9 +8,9 @@
     /// <summary>
     /// Class providing polling-based keyboard input.
     /// </summary>
-    public class KeyboardInput : IKeyboardInput, IMUpdateable
+    public class KeyboardInput : IKeyboardInput, IUpdateable
     {
-        private KeyStatus[] keyArray;
+        private KeyState[] keyArray;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="KeyboardInput"/> class.
@@ -18,10 +18,10 @@
         public KeyboardInput()
         {
             var values = Enum.GetValues(typeof(Keys));
-            this.keyArray = new KeyStatus[(int)values.GetValue(values.GetUpperBound(0)) + 1];
+            this.keyArray = new KeyState[(int)values.GetValue(values.GetUpperBound(0)) + 1];
             foreach (Keys k in values)
             {
-                this.keyArray[(int)k] = new KeyStatus(k);
+                this.keyArray[(int)k] = new KeyState(k);
             }
         }
 
@@ -155,7 +155,7 @@
         /// </returns>
         public double GetKeyHeldTime(Keys key)
         {
-            return this.GetStatus(key).HeldTime;
+            return this.GetKeyState(key).HeldTime;
         }
 
         /// <summary>
@@ -170,6 +170,18 @@
         }
 
         /// <summary>
+        /// Gets the state of the provided key.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns>
+        /// State of the key.
+        /// </returns>
+        public IButtonState GetKeyState(Keys key)
+        {
+            return this.keyArray[(int)key];
+        }
+
+        /// <summary>
         /// Queries whether the specified key is down.
         /// </summary>
         /// <param name="key">Key to query.</param>
@@ -178,7 +190,7 @@
         /// </returns>
         public bool IsKeyDown(Keys key)
         {
-            return this.GetStatus(key).IsDown;
+            return this.GetKeyState(key).IsDown;
         }
 
         /// <summary>
@@ -190,7 +202,7 @@
         /// </returns>
         public bool IsKeyHeld(Keys key)
         {
-            return this.GetStatus(key).IsHeld;
+            return this.GetKeyState(key).IsHeld;
         }
 
         /// <summary>
@@ -203,7 +215,7 @@
         /// </returns>
         public bool IsKeyHeld(Keys key, double timeHeld)
         {
-            return this.GetStatus(key).HeldFor(timeHeld);
+            return this.GetKeyState(key).IsHeldFor(timeHeld);
         }
 
         /// <summary>
@@ -215,7 +227,7 @@
         /// </returns>
         public bool IsKeyPressed(Keys key)
         {
-            return this.GetStatus(key).IsPressed;
+            return this.GetKeyState(key).IsPressed;
         }
 
         /// <summary>
@@ -227,7 +239,7 @@
         /// </returns>
         public bool IsKeyReleased(Keys key)
         {
-            return this.GetStatus(key).IsReleased;
+            return this.GetKeyState(key).IsReleased;
         }
 
         /// <summary>
@@ -239,7 +251,7 @@
         /// </returns>
         public bool IsKeyUp(Keys key)
         {
-            return this.GetStatus(key).IsUp;
+            return this.GetKeyState(key).IsUp;
         }
 
         /// <summary>
@@ -249,54 +261,22 @@
         public void Update(double seconds)
         {
             var keyboardState = Keyboard.GetState();
-            foreach (KeyStatus s in this.keyArray)
+            foreach (KeyState s in this.keyArray)
             {
-                s?.SetDown(keyboardState.IsKeyDown(s.Key), seconds);
+                s?.SetIsDown(keyboardState.IsKeyDown(s.Key), seconds);
             }
-        }
-
-        private KeyStatus GetStatus(Keys key)
-        {
-            return this.keyArray[(int)key];
         }
 
         /// <summary>
         /// Class containing the status of a key. Used to avoid boxing.
         /// </summary>
-        private class KeyStatus
+        private class KeyState : ButtonState
         {
             public readonly Keys Key;
 
-            private bool isDown;
-
-            private bool wasDown;
-
-            private double heldTime;
-
-            public bool IsHeld => this.isDown && this.wasDown;
-
-            public bool IsPressed => this.isDown && !this.wasDown;
-
-            public bool IsReleased => !this.isDown && this.wasDown;
-
-            public bool IsDown => this.isDown;
-
-            public bool IsUp => !this.isDown;
-
-            public double HeldTime => this.heldTime;
-
-            public bool HeldFor(double seconds) => this.heldTime >= seconds;
-
-            public KeyStatus(Keys key)
+            public KeyState(Keys key)
             {
                 this.Key = key;
-            }
-
-            public void SetDown(bool down, double deltaTime)
-            {
-                this.wasDown = this.isDown;
-                this.isDown = down;
-                this.heldTime = down ? this.heldTime + deltaTime : 0;
             }
         }
     }

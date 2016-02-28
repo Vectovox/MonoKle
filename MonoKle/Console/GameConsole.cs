@@ -1,15 +1,13 @@
 ﻿namespace MonoKle.Console
 {
     using Attributes;
-    using Command;
-    using Core.Geometry;
+    using Core;
     using Input;
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
     using Microsoft.Xna.Framework.Input;
-    using MonoKle.Asset.Font;
-    using MonoKle.Core;
-    using MonoKle.Logging;
+    using Asset.Font;
+    using Logging;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -18,7 +16,7 @@
     /// <summary>
     /// Class that maintains and displays a console.
     /// </summary>
-    public class GameConsole : IGameConsole, IMComponent
+    public class GameConsole : IGameConsole, IMonoKleComponent
     {
         private const double TypingActivationDelay = 0.4;
 

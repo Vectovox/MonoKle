@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonoKle.Engine;
-using MonoKle.Graphics.Primitives;
+using MonoKle.Graphics;
 using MonoKle.State;
 using System;
 

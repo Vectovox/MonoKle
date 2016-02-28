@@ -5,8 +5,6 @@
     using Asset.Texture;
     using Attributes;
     using Console;
-    using Console.Command;
-    using Core.Geometry;
     using Graphics;
     using Input;
     using Logging;
@@ -332,7 +330,7 @@
 
         private static void CommandVersion()
         {
-            MBackend.console.WriteLine("       MonoKle Version:\t" + Assembly.GetAssembly(typeof(MonoKle.Core.Timer)).GetName().Version);
+            MBackend.console.WriteLine("       MonoKle Version:\t" + Assembly.GetAssembly(typeof(Timer)).GetName().Version);
             MBackend.console.WriteLine("MonoKle Engine Version:\t" + Assembly.GetAssembly(typeof(MBackend)).GetName().Version);
         }
 
@@ -393,7 +391,7 @@
                 );
         }
 
-        private static void ResolutionChanged(object sender, Graphics.Event.ResolutionChangedEventArgs e)
+        private static void ResolutionChanged(object sender, ResolutionChangedEventArgs e)
         {
             if (MBackend.Console != null)
             {

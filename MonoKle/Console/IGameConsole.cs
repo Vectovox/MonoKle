@@ -1,10 +1,9 @@
 ﻿namespace MonoKle.Console
 {
-    using Core.Geometry;
+    using Core;
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Input;
-    using MonoKle.Asset.Font;
-    using Command;
+    using Asset.Font;
 
     /// <summary>
     /// Interface for a game console.

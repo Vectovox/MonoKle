@@ -71,6 +71,13 @@
         IEnumerable<Keys> GetKeysDown();
 
         /// <summary>
+        /// Gets the state of the provided key.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns>State of the key.</returns>
+        IButtonState GetKeyState(Keys key);
+
+        /// <summary>
         /// Queries whether the specified key is down.
         /// </summary>
         /// <param name="key">Key to query.</param>

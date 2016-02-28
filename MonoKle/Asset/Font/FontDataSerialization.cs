@@ -8,7 +8,7 @@
 // The code has however been modified to fit MonoKle, and it thus contains changes to the original work.
 
 using Microsoft.Xna.Framework;
-using MonoKle.Core.Geometry;
+using MonoKle.Core;
 using System;
 using System.Collections.Generic;
 using System.IO;

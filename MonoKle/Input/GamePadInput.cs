@@ -8,7 +8,7 @@
     /// <summary>
     /// Class providing polling functionality for keyboard input.
     /// </summary>
-    public class GamePadInput : IGamePadInput, IMUpdateable
+    public class GamePadInput : IGamePadInput, MonoKle.IUpdateable
     {
         private HashSet<Buttons>[] currentButtons;
 

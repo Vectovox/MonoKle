@@ -1,10 +1,9 @@
 ﻿namespace MonoKle.Graphics
 {
     using Attributes;
-    using Core.Geometry;
+    using Core;
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
-    using MonoKle.Graphics.Event;
 
     /// <summary>
     /// Manages graphics.

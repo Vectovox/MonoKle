@@ -1,6 +1,5 @@
 ﻿namespace WindowsDemo
 {
-    using MonoKle.Core.Geometry;
     using MonoKle.Engine;
     using System;
 

@@ -1,6 +1,5 @@
 ﻿namespace MonoKle.Input
 {
-    using Conversion;
     using Microsoft.Xna.Framework.Input;
     using System;
 

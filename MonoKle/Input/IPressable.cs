@@ -1,9 +1,9 @@
 ﻿namespace MonoKle.Input
 {
     /// <summary>
-    /// Provides an interface for a button state.
+    /// Provides an interface for a pressable button with two discrete states.
     /// </summary>
-    public interface IButtonState
+    public interface IPressable
     {
         /// <summary>
         /// Gets the held time.

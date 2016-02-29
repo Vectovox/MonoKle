@@ -176,7 +176,7 @@
         /// <returns>
         /// State of the key.
         /// </returns>
-        public IButtonState GetKeyState(Keys key)
+        public IPressable GetKeyState(Keys key)
         {
             return this.keyArray[(int)key];
         }
@@ -263,14 +263,14 @@
             var keyboardState = Keyboard.GetState();
             foreach (KeyState s in this.keyArray)
             {
-                s?.SetIsDown(keyboardState.IsKeyDown(s.Key), seconds);
+                s?.Update(keyboardState.IsKeyDown(s.Key), seconds);
             }
         }
 
         /// <summary>
         /// Class containing the status of a key. Used to avoid boxing.
         /// </summary>
-        private class KeyState : ButtonState
+        private class KeyState : Button
         {
             public readonly Keys Key;
 

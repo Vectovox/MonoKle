@@ -75,7 +75,7 @@
         /// </summary>
         /// <param name="key">The key.</param>
         /// <returns>State of the key.</returns>
-        IButtonState GetKeyState(Keys key);
+        IPressable GetKeyState(Keys key);
 
         /// <summary>
         /// Queries whether the specified key is down.

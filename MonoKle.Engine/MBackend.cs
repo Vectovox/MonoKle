@@ -25,7 +25,7 @@
     public static class MBackend
     {
         private static GameConsole console;
-        private static GamePadInput gamepad;
+        private static GamePadHub gamepad;
         private static bool initializing;
         private static KeyboardInput keyboard;
         private static MouseInput mouse;
@@ -37,10 +37,14 @@
         public static IGameConsole Console { get { return MBackend.console; } }
 
         /// <summary>
-        /// Gets or sets wether the console is enabled.
+        /// Gets or sets the settings.
         /// </summary>
-        [PropertyVariableAttribute("console_enabled")]
-        public static bool ConsoleEnabled { get; set; }
+        /// <value>
+        /// The settings.
+        /// </value>
+        public static MonoKleSettings Settings => MBackend.settings;
+
+        private static MonoKleSettings settings = new MonoKleSettings();
 
         /// <summary>
         /// Gets the effect storage, loading and providing effects.
@@ -69,9 +73,9 @@
         public static MGame GameInstance { get; private set; }
 
         /// <summary>
-        /// Gets the gamepad input.
+        /// Gets the hub for gamepads.
         /// </summary>
-        public static IGamePadInput GamePad { get { return MBackend.gamepad; } }
+        public static IGamePadHub GamePad { get { return MBackend.gamepad; } }
 
         /// <summary>
         /// Gets the graphics manager. This is in charge of screen settings (resolution, full-screen, etc.) and provides the <see cref="GraphicsDevice"/>.
@@ -185,7 +189,11 @@
         public static MGame Initialize(MPoint2 resolution, bool enableConsole)
         {
             MBackend.initializing = true;
-            MBackend.ConsoleEnabled = enableConsole;
+            
+            MBackend.settings.GamePadEnabled = true;
+            MBackend.settings.KeyboardEnabled = true;
+            MBackend.settings.MouseEnabled = true;
+            MBackend.settings.ConsoleEnabled = enableConsole;
 
             AppDomain.CurrentDomain.UnhandledException += UnhandledException;
             MBackend.Logger = Logger.Global;
@@ -194,7 +202,7 @@
             MBackend.GameInstance = new MGame();
             MBackend.GraphicsManager = new GraphicsManager(new GraphicsDeviceManager(MBackend.GameInstance));
             MBackend.GraphicsManager.ResolutionChanged += ResolutionChanged;
-            MBackend.gamepad = new GamePadInput();
+            MBackend.gamepad = new GamePadHub();
             MBackend.keyboard = new KeyboardInput();
             MBackend.mouse = new MouseInput();
             MBackend.stateSystem = new StateSystem();
@@ -228,7 +236,7 @@
                 MBackend.GraphicsManager.GraphicsDevice.Clear(Color.CornflowerBlue);
                 MBackend.stateSystem.Draw(seconds);
 
-                if (MBackend.ConsoleEnabled)
+                if (MBackend.settings.ConsoleEnabled)
                 {
                     MBackend.console.Draw(seconds);
                 }
@@ -242,16 +250,28 @@
                 double seconds = time.ElapsedGameTime.TotalSeconds;
                 MBackend.IsRunningSlowly = time.IsRunningSlowly;
                 MBackend.TotalGameTime = time.TotalGameTime;
-                MBackend.gamepad.Update(seconds);
-                MBackend.keyboard.Update(seconds);
-                MBackend.mouse.Update(seconds);
 
-                if (MBackend.ConsoleEnabled == false || MBackend.Console.IsOpen == false)
+                if(MBackend.settings.GamePadEnabled)
+                {
+                    MBackend.gamepad.Update(seconds);
+                }
+
+                if (MBackend.settings.KeyboardEnabled)
+                {
+                    MBackend.keyboard.Update(seconds);
+                }
+
+                if (MBackend.settings.MouseEnabled)
+                {
+                    MBackend.mouse.Update(seconds);
+                }
+
+                if (MBackend.settings.ConsoleEnabled == false || MBackend.Console.IsOpen == false)
                 {
                     MBackend.stateSystem.Update(seconds);
                 }
 
-                if (MBackend.ConsoleEnabled)
+                if (MBackend.settings.ConsoleEnabled)
                 {
                     MBackend.console.Update(seconds);
                 }
@@ -263,7 +283,7 @@
             MBackend.Variables.Variables.BindProperties(MBackend.Logger);
             MBackend.Variables.Variables.BindProperties(MBackend.GraphicsManager);
             MBackend.Variables.Variables.BindProperties(MBackend.Console);
-            MBackend.Variables.Variables.Bind(new PropertyVariable(nameof(MBackend.ConsoleEnabled), typeof(MBackend)), "c_enabled");
+            MBackend.Variables.Variables.BindProperties(MBackend.Settings);
         }
 
         private static void CommandExit()

@@ -69,6 +69,7 @@
   <ItemGroup>
     <Compile Include="MBackend.cs" />
     <Compile Include="MGame.cs" />
+    <Compile Include="MonoKleSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\FontResources.Designer.cs">
       <DependentUpon>FontResources.resx</DependentUpon>

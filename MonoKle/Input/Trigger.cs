@@ -1,15 +1,14 @@
 ﻿namespace MonoKle.Input
 {
     /// <summary>
-    /// Class providing the state of a button.
+    /// Class providing the state of a trigger.
     /// </summary>
-    /// <seealso cref="MonoKle.Input.IButtonState" />
-    public class ButtonState : IButtonState
+    /// <seealso cref="ITrigger" />
+    public class Trigger : ITrigger
     {
-        private double heldTime;
-        private bool isDown;
+        private Button buttonState = new Button();
 
-        private bool wasDown;
+        private float triggerState;
 
         /// <summary>
         /// Gets the held time.
@@ -17,7 +16,7 @@
         /// <value>
         /// The held time.
         /// </value>
-        public double HeldTime => this.heldTime;
+        public double HeldTime => this.buttonState.HeldTime;
 
         /// <summary>
         /// Gets a value indicating whether this instance is down.
@@ -25,7 +24,7 @@
         /// <value>
         ///   <c>true</c> if this instance is down; otherwise, <c>false</c>.
         /// </value>
-        public bool IsDown => this.isDown;
+        public bool IsDown => this.buttonState.IsDown;
 
         /// <summary>
         /// Gets a value indicating whether this instance is held.
@@ -33,7 +32,7 @@
         /// <value>
         ///   <c>true</c> if this instance is held; otherwise, <c>false</c>.
         /// </value>
-        public bool IsHeld => this.isDown && this.wasDown;
+        public bool IsHeld => this.buttonState.IsHeld;
 
         /// <summary>
         /// Gets a value indicating whether this instance is pressed.
@@ -41,7 +40,7 @@
         /// <value>
         /// <c>true</c> if this instance is pressed; otherwise, <c>false</c>.
         /// </value>
-        public bool IsPressed => this.isDown && !this.wasDown;
+        public bool IsPressed => this.buttonState.IsPressed;
 
         /// <summary>
         /// Gets a value indicating whether this instance is released.
@@ -49,7 +48,7 @@
         /// <value>
         /// <c>true</c> if this instance is released; otherwise, <c>false</c>.
         /// </value>
-        public bool IsReleased => !this.isDown && this.wasDown;
+        public bool IsReleased => this.buttonState.IsReleased;
 
         /// <summary>
         /// Gets a value indicating whether this instance is up.
@@ -57,7 +56,15 @@
         /// <value>
         ///   <c>true</c> if this instance is up; otherwise, <c>false</c>.
         /// </value>
-        public bool IsUp => !this.isDown;
+        public bool IsUp => this.buttonState.IsUp;
+
+        /// <summary>
+        /// Gets the continuous state.
+        /// </summary>
+        /// <value>
+        /// The state.
+        /// </value>
+        public float State => this.triggerState;
 
         /// <summary>
         /// Gets a value indicating whether this instance has been held for at least the provided amount of seconds.
@@ -66,18 +73,17 @@
         /// <returns>
         /// True if held for at least the provided amount of seconds; otherwise false.
         /// </returns>
-        public bool IsHeldFor(double seconds) => this.heldTime >= seconds;
+        public bool IsHeldFor(double seconds) => this.buttonState.IsHeldFor(seconds);
 
         /// <summary>
-        /// Updates the state.
+        /// Updates the state of the <see cref="Trigger"/>.
         /// </summary>
-        /// <param name="down">True if button is down.</param>
+        /// <param name="state">Continuous state.</param>
         /// <param name="deltaTime">Time in seconds since last update.</param>
-        public void SetIsDown(bool down, double deltaTime)
+        public virtual void Update(float state, double deltaTime)
         {
-            this.wasDown = this.isDown;
-            this.isDown = down;
-            this.heldTime = down ? this.heldTime + deltaTime : 0;
+            this.triggerState = state;
+            this.buttonState.Update(state != 0, deltaTime);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace MonoKle.Input
+﻿namespace MonoKle.Input.Keyboard
 {
     using Microsoft.Xna.Framework.Input;
 

@@ -3,12 +3,12 @@
     using Asset.Effect;
     using Asset.Font;
     using Asset.Texture;
-    using Attributes;
     using Console;
     using Graphics;
-    using Input;
+    using Input.Mouse;
     using Logging;
     using Microsoft.Xna.Framework;
+    using Input.Gamepad;
     using Resources;
     using Script;
     using State;
@@ -17,7 +17,7 @@
     using System.IO;
     using System.Linq;
     using System.Reflection;
-    using Variable;
+    using Input.Keyboard;
 
     /// <summary>
     /// Backend for the MonoKle engine. Provides global access to all MonoKle systems.
@@ -27,24 +27,15 @@
         private static GameConsole console;
         private static GamePadHub gamepad;
         private static bool initializing;
-        private static KeyboardInput keyboard;
-        private static MouseInput mouse;
+        private static Keyboard keyboard;
+        private static Mouse mouse;
+        private static MonoKleSettings settings = new MonoKleSettings();
         private static StateSystem stateSystem;
 
         /// <summary>
         /// Gets the game console, printing logs and accepting input.
         /// </summary>
         public static IGameConsole Console { get { return MBackend.console; } }
-
-        /// <summary>
-        /// Gets or sets the settings.
-        /// </summary>
-        /// <value>
-        /// The settings.
-        /// </value>
-        public static MonoKleSettings Settings => MBackend.settings;
-
-        private static MonoKleSettings settings = new MonoKleSettings();
 
         /// <summary>
         /// Gets the effect storage, loading and providing effects.
@@ -98,7 +89,7 @@
         /// <summary>
         /// Gets the keyboard input.
         /// </summary>
-        public static IKeyboardInput Keyboard { get { return MBackend.keyboard; } }
+        public static IKeyboard Keyboard { get { return MBackend.keyboard; } }
 
         /// <summary>
         /// Gets the logging utility, same as <see cref="Logger.Global"/>.
@@ -110,9 +101,9 @@
         }
 
         /// <summary>
-        /// Gets the mouse input.
+        /// Gets the current mouse.
         /// </summary>
-        public static IMouseInput Mouse
+        public static IMouse Mouse
         {
             get { return MBackend.mouse; }
         }
@@ -162,6 +153,14 @@
         }
 
         /// <summary>
+        /// Gets or sets the settings.
+        /// </summary>
+        /// <value>
+        /// The settings.
+        /// </value>
+        public static MonoKleSettings Settings => MBackend.settings;
+
+        /// <summary>
         /// Initializes the MonoKle backend, returning a runnable game instance.
         /// </summary>
         /// <returns></returns>
@@ -189,7 +188,7 @@
         public static MGame Initialize(MPoint2 resolution, bool enableConsole)
         {
             MBackend.initializing = true;
-            
+
             MBackend.settings.GamePadEnabled = true;
             MBackend.settings.KeyboardEnabled = true;
             MBackend.settings.MouseEnabled = true;
@@ -203,8 +202,8 @@
             MBackend.GraphicsManager = new GraphicsManager(new GraphicsDeviceManager(MBackend.GameInstance));
             MBackend.GraphicsManager.ResolutionChanged += ResolutionChanged;
             MBackend.gamepad = new GamePadHub();
-            MBackend.keyboard = new KeyboardInput();
-            MBackend.mouse = new MouseInput();
+            MBackend.keyboard = new Keyboard();
+            MBackend.mouse = new Mouse();
             MBackend.stateSystem = new StateSystem();
 
             MBackend.GameInstance.RunOneFrame();
@@ -218,7 +217,7 @@
             MBackend.RegisterConsoleCommands();
             MBackend.BindSettings();
 
-            mouse.ScreenSize = GraphicsManager.Resolution;
+            mouse.VirtualRegion = new MRectangleInt(GraphicsManager.Resolution);
 
             console.WriteLine("MonoKle Engine initialized!", MBackend.Console.CommandTextColour);
             console.WriteLine("Running version: " + Assembly.GetAssembly(typeof(MBackend)).GetName().Version, MBackend.Console.CommandTextColour);
@@ -251,7 +250,7 @@
                 MBackend.IsRunningSlowly = time.IsRunningSlowly;
                 MBackend.TotalGameTime = time.TotalGameTime;
 
-                if(MBackend.settings.GamePadEnabled)
+                if (MBackend.settings.GamePadEnabled)
                 {
                     MBackend.gamepad.Update(seconds);
                 }
@@ -284,6 +283,7 @@
             MBackend.Variables.Variables.BindProperties(MBackend.GraphicsManager);
             MBackend.Variables.Variables.BindProperties(MBackend.Console);
             MBackend.Variables.Variables.BindProperties(MBackend.Settings);
+            MBackend.Variables.Variables.BindProperties(MBackend.Mouse);
         }
 
         private static void CommandExit()

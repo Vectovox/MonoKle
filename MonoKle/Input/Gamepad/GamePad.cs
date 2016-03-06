@@ -1,9 +1,9 @@
-﻿namespace MonoKle.Input
+﻿namespace MonoKle.Input.Gamepad
 {
     using Microsoft.Xna.Framework.Input;
 
     /// <summary>
-    /// Class for polling gamepad input.
+    /// Class representing the current state of a gamepad.
     /// </summary>
     /// <seealso cref="IGamePad" />
     /// <seealso cref="IUpdateable" />

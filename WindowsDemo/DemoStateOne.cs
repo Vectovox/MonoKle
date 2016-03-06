@@ -10,6 +10,7 @@ using MonoKle.Messaging;
 using MonoKle.State;
 using System;
 using MonoKle.Graphics;
+using MonoKle.Input.Keyboard;
 
 namespace WindowsDemo
 {
@@ -35,9 +36,11 @@ namespace WindowsDemo
 
             sb.Draw(MBackend.TextureStorage.DefaultValue, new Vector2(50, 50), Color.White);
             sb.Draw(MBackend.TextureStorage.White, new Vector2(150, 50), Color.Red);
-
-            sb.Draw(MBackend.TextureStorage.GetAsset("assets\\textures\\testbox.png"), new Vector2(250, 250), Color.White);
-
+            
+            var testBoxRect = new MRectangleInt(250, 250, 64, 64);
+            bool testBoxMouseWithin = testBoxRect.Contains(camera.TransformInv(MBackend.Mouse.Position.Value.ToMVector2()).ToMPoint2());
+            sb.Draw(MBackend.TextureStorage.GetAsset("assets\\textures\\testbox.png"), testBoxRect, testBoxMouseWithin ? Color.Red : Color.White);
+            
             Font font = MBackend.FontStorage.GetAsset("Assets\\Fonts\\testfont.mfnt");
 
             // Test timer
@@ -106,6 +109,10 @@ namespace WindowsDemo
                 pos, Color.Black);
 
             sb.End();
+
+            sb.Begin();
+            sb.Draw(MBackend.TextureStorage.White, new Rectangle(MBackend.Mouse.Position.Value.X, MBackend.Mouse.Position.Value.Y, 3, 3), Color.Black);
+            sb.End();
         }
 
         public override void Update(double seconds)
@@ -134,19 +141,19 @@ namespace WindowsDemo
 
                 if (MBackend.Keyboard.IsKeyHeld(Keys.I))
                 {
-                    camera.SetPosition(camera.GetPosition() + new Vector2(0, -3));
+                    camera.SetPosition(camera.GetPosition() + new MVector2(0, -3));
                 }
                 if (MBackend.Keyboard.IsKeyHeld(Keys.K))
                 {
-                    camera.SetPosition(camera.GetPosition() + new Vector2(0, 3));
+                    camera.SetPosition(camera.GetPosition() + new MVector2(0, 3));
                 }
                 if (MBackend.Keyboard.IsKeyHeld(Keys.J))
                 {
-                    camera.SetPosition(camera.GetPosition() + new Vector2(-3, 0));
+                    camera.SetPosition(camera.GetPosition() + new MVector2(-3, 0));
                 }
                 if (MBackend.Keyboard.IsKeyHeld(Keys.L))
                 {
-                    camera.SetPosition(camera.GetPosition() + new Vector2(3, 0));
+                    camera.SetPosition(camera.GetPosition() + new MVector2(3, 0));
                 }
                 if (MBackend.Keyboard.IsKeyHeld(Keys.U))
                 {

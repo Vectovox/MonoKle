@@ -1,4 +1,4 @@
-﻿namespace MonoKle.Input
+﻿namespace MonoKle.Input.Keyboard
 {
     using Microsoft.Xna.Framework.Input;
     using System;
@@ -6,16 +6,16 @@
     using System.Linq;
 
     /// <summary>
-    /// Class providing polling-based keyboard input.
+    /// Class providing polling-based keyboard.
     /// </summary>
-    public class KeyboardInput : IKeyboardInput, IUpdateable
+    public class Keyboard : IKeyboard, IUpdateable
     {
         private KeyState[] keyArray;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="KeyboardInput"/> class.
+        /// Initializes a new instance of the <see cref="Keyboard"/> class.
         /// </summary>
-        public KeyboardInput()
+        public Keyboard()
         {
             var values = Enum.GetValues(typeof(Keys));
             this.keyArray = new KeyState[(int)values.GetValue(values.GetUpperBound(0)) + 1];
@@ -260,7 +260,7 @@
         /// <param name="seconds">The amount of seconds since last update.</param>
         public void Update(double seconds)
         {
-            var keyboardState = Keyboard.GetState();
+            var keyboardState = Microsoft.Xna.Framework.Input.Keyboard.GetState();
             foreach (KeyState s in this.keyArray)
             {
                 s?.Update(keyboardState.IsKeyDown(s.Key), seconds);

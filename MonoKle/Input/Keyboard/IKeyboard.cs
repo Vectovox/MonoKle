@@ -1,4 +1,4 @@
-﻿namespace MonoKle.Input
+﻿namespace MonoKle.Input.Keyboard
 {
     using Microsoft.Xna.Framework.Input;
     using System.Collections.Generic;
@@ -6,7 +6,7 @@
     /// <summary>
     /// Interface providing polling-based keyboard input.
     /// </summary>
-    public interface IKeyboardInput
+    public interface IKeyboard
     {
         /// <summary>
         /// Queries whether the specified keys are down.

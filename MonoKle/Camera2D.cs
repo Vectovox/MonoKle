@@ -45,7 +45,7 @@
         /// Returns the current camera center position.
         /// </summary>
         /// <returns>Vector2 representation of the position.</returns>
-        public Vector2 GetPosition()
+        public MVector2 GetPosition()
         {
             return this.position;
         }
@@ -90,7 +90,7 @@
         /// Sets the current camera center position to the given coordinate.
         /// </summary>
         /// <param name="position">The Vector2 coordinate to set to.</param>
-        public void SetPosition(Vector2 position)
+        public void SetPosition(MVector2 position)
         {
             this.position = position;
             this.matrixNeedsUpdate = true;
@@ -152,7 +152,7 @@
         /// </summary>
         /// <param name="coordinate">The coordinate to transform.</param>
         /// <returns>Transformed coordinate.</returns>
-        public Vector2 Transform(Vector2 coordinate)
+        public MVector2 Transform(MVector2 coordinate)
         {
             return Vector2.Transform(coordinate, this.transformMatrix);
         }
@@ -162,7 +162,7 @@
         /// </summary>
         /// <param name="coordinate">The coordinate to transform.</param>
         /// <returns>Transformed coordinate.</returns>
-        public Vector2 TransformInv(MVector2 coordinate)
+        public MVector2 TransformInv(MVector2 coordinate)
         {
             return Vector2.Transform(coordinate, transformMatrixInv);
         }

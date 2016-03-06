@@ -1,4 +1,4 @@
-﻿namespace MonoKle.Input
+﻿namespace MonoKle.Input.Gamepad
 {
     using Microsoft.Xna.Framework;
 

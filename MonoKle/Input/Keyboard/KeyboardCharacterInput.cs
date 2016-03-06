@@ -1,4 +1,4 @@
-﻿namespace MonoKle.Input
+﻿namespace MonoKle.Input.Keyboard
 {
     using Microsoft.Xna.Framework.Input;
     using System;
@@ -70,11 +70,11 @@
         /// </returns>
         public override char GetChar()
         {
-            bool shift = this.keyboardTyper.KeyboardInput.IsKeyDown(Keys.LeftShift) || this.keyboardTyper.KeyboardInput.IsKeyDown(Keys.RightShift);
-            bool altgr = this.keyboardTyper.KeyboardInput.IsKeyDown(Keys.RightAlt);
+            bool shift = this.keyboardTyper.Keyboard.IsKeyDown(Keys.LeftShift) || this.keyboardTyper.Keyboard.IsKeyDown(Keys.RightShift);
+            bool altgr = this.keyboardTyper.Keyboard.IsKeyDown(Keys.RightAlt);
 
             char c;
-            foreach (Keys k in this.keyboardTyper.KeyboardInput.GetKeysDown())
+            foreach (Keys k in this.keyboardTyper.Keyboard.GetKeysDown())
             {
                 if (this.converter.Convert(k, shift, altgr, out c)
                     && this.keyboardTyper.IsTyped(k))

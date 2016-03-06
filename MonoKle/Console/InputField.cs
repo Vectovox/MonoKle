@@ -1,9 +1,8 @@
 ﻿namespace MonoKle.Console
 {
-    using Core;
-    using Input;
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Input;
+    using Input.Keyboard;
     using System.Collections.Generic;
 
     internal class InputField : KeyboardTextInput

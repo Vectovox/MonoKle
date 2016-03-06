@@ -1,4 +1,4 @@
-﻿namespace MonoKle.Input
+﻿namespace MonoKle.Input.Keyboard
 {
     using Microsoft.Xna.Framework.Input;
     using System;
@@ -9,12 +9,12 @@
     public class KeyboardTyper
     {
         /// <summary>
-        /// Gets the keyboard input.
+        /// Gets the keyboard.
         /// </summary>
         /// <value>
-        /// The keyboard input.
+        /// The keyboard.
         /// </value>
-        public IKeyboardInput KeyboardInput { get; private set; }
+        public IKeyboard Keyboard { get; private set; }
 
         /// <summary>
         /// Gets or sets the activation delay.
@@ -37,17 +37,17 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="KeyboardTyper"/> class.
         /// </summary>
-        /// <param name="keyboardInput">The keyboard input.</param>
+        /// <param name="keyboard">The keyboard.</param>
         /// <param name="activationDelay">The activation delay.</param>
         /// <param name="repeatDelay">The repeat delay.</param>
         /// <exception cref="System.ArgumentNullException">Input must not be null.</exception>
-        public KeyboardTyper(IKeyboardInput keyboardInput, double activationDelay, double repeatDelay)
+        public KeyboardTyper(IKeyboard keyboard, double activationDelay, double repeatDelay)
         {
-            if (keyboardInput == null)
+            if (keyboard == null)
             {
                 throw new ArgumentNullException("Input must not be null.");
             }
-            this.KeyboardInput = keyboardInput;
+            this.Keyboard = keyboard;
             this.ActivationDelay = activationDelay;
             this.RepeatDelay = repeatDelay;
             var values = Enum.GetValues(typeof(Keys));
@@ -61,9 +61,9 @@
         /// <returns></returns>
         public bool IsTyped(Keys key)
         {
-            if(this.KeyboardInput.IsKeyDown(key))
+            if(this.Keyboard.IsKeyDown(key))
             {
-                double timeHeld = this.KeyboardInput.GetKeyHeldTime(key);
+                double timeHeld = this.Keyboard.GetKeyHeldTime(key);
 
                 if (timeHeld >= this.ActivationDelay)
                 {
@@ -78,7 +78,7 @@
                 }
                 else
                 {
-                    return this.KeyboardInput.IsKeyPressed(key);
+                    return this.Keyboard.IsKeyPressed(key);
                 }
             }
             else

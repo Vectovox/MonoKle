@@ -12,6 +12,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using Input.Keyboard;
 
     /// <summary>
     /// Class that maintains and displays a console.
@@ -38,7 +39,7 @@
         /// <param name="keyboardInput">The keyboard input.</param>
         /// <param name="whiteTexture">The background texture.</param>
         /// <param name="logger">The logger to use.</param>
-        public GameConsole(MRectangleInt area, GraphicsDevice graphicsDevice, IKeyboardInput keyboardInput, Texture2D whiteTexture, Logger logger)
+        public GameConsole(MRectangleInt area, GraphicsDevice graphicsDevice, IKeyboard keyboardInput, Texture2D whiteTexture, Logger logger)
         {
             this.graphicsDevice = graphicsDevice;
             this.spriteBatch = new SpriteBatch(graphicsDevice);
@@ -254,7 +255,7 @@
         /// <param name="seconds">The seconds elapsed.</param>
         public void Update(double seconds)
         {
-            if (this.keyboard.KeyboardInput.IsKeyPressed(this.ToggleKey))
+            if (this.keyboard.Keyboard.IsKeyPressed(this.ToggleKey))
             {
                 this.IsOpen = !this.IsOpen;
             }

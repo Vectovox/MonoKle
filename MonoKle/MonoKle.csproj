@@ -84,7 +84,6 @@
     <Compile Include="Input\IDirectable.cs" />
     <Compile Include="Scripting\Script.cs" />
     <Compile Include="Scripting\ScriptCompilationError.cs" />
-    <Compile Include="Scripting\ScriptCompilationResult.cs" />
     <Compile Include="Scripting\ScriptCompiler.cs" />
     <Compile Include="Scripting\IScriptSource.cs" />
     <Compile Include="Scripting\ExecutableScript.cs" />

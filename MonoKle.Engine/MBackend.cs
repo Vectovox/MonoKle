@@ -10,7 +10,6 @@
     using Microsoft.Xna.Framework;
     using Input.Gamepad;
     using Resources;
-    using Script;
     using State;
     using System;
     using System.Collections.Generic;
@@ -18,6 +17,7 @@
     using System.Linq;
     using System.Reflection;
     using Input.Keyboard;
+    using Scripting;
 
     /// <summary>
     /// Backend for the MonoKle engine. Provides global access to all MonoKle systems.
@@ -198,6 +198,8 @@
             MBackend.Logger = Logger.Global;
             MBackend.InitializeVariables();
 
+            MBackend.ScriptEnvironment = new ScriptEnvironment();
+            MBackend.ScriptEnvironment.ReferencedAssemblies.Add(typeof(MBackend).Assembly);
             MBackend.GameInstance = new MGame();
             MBackend.GraphicsManager = new GraphicsManager(new GraphicsDeviceManager(MBackend.GameInstance));
             MBackend.GraphicsManager.ResolutionChanged += ResolutionChanged;

@@ -82,6 +82,14 @@
     <Compile Include="Input\IPressable.cs" />
     <Compile Include="Input\Gamepad\IGamePad.cs" />
     <Compile Include="Input\IDirectable.cs" />
+    <Compile Include="Scripting\Script.cs" />
+    <Compile Include="Scripting\ScriptCompilationError.cs" />
+    <Compile Include="Scripting\ScriptCompilationResult.cs" />
+    <Compile Include="Scripting\ScriptCompiler.cs" />
+    <Compile Include="Scripting\IScriptSource.cs" />
+    <Compile Include="Scripting\ExecutableScript.cs" />
+    <Compile Include="Scripting\ScriptEnvironment.cs" />
+    <Compile Include="Scripting\ScriptExecution.cs" />
     <Compile Include="StringConverter.cs" />
     <Compile Include="MCircle.cs" />
     <Compile Include="MVector2.cs" />
@@ -135,9 +143,6 @@
     <Compile Include="Messaging\MessageEventArgs.cs" />
     <Compile Include="Messaging\MessagePasser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Script\ChannelAttribute.cs" />
-    <Compile Include="Script\CompilationResult.cs" />
-    <Compile Include="Script\ScriptEnvironment.cs" />
     <Compile Include="Variable\IVariable.cs" />
     <Compile Include="Variable\PropertyVariable.cs" />
     <Compile Include="Attributes\PropertyVariableAttribute.cs" />

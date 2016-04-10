@@ -65,6 +65,7 @@
         /// <returns></returns>
         public string GetAssetGroup(string asset)
         {
+            asset = asset.ToLower();
             if (this.groupFromAsset.ContainsKey(asset))
             {
                 return this.groupFromAsset[asset];
@@ -87,6 +88,7 @@
         /// <returns></returns>
         public IEnumerable<string> GetAssetIdentifiers(string group)
         {
+            group = group.ToLower();
             if (this.groupDictionary.ContainsKey(group))
             {
                 return new List<string>(this.groupDictionary[group]);
@@ -110,25 +112,50 @@
         /// <param name="id">The identifier to use for the file.</param>
         /// <param name="group">The optinal group to use. May be null.</param>
         /// <returns></returns>
-        public FileLoadingResult LoadFileID(string path, string id, string group = null)
+        public FileLoadingResult LoadFileId(string path, string id, string group = null)
+        {
+            path = path.ToLower();
+            id = id.ToLower();
+            
+            // If asset already exists, create an alias for it
+            if (this.assetStorage.ContainsKey(path))
+            {
+                if (this.AddAsset(this.assetStorage[path], id, group))
+                {
+                    return new FileLoadingResult(new List<string> { path }, 0);
+                }
+                return new FileLoadingResult(new List<string>(), 1);
+            }
+            else
+            {
+                // Otherwise add new item and modify it
+                this.currentGroup = group;
+                FileLoadingResult result = base.LoadFile(path);
+                this.currentGroup = null;
+
+                if (result.Successes > 0)
+                {
+                    T value = this.assetStorage[path];
+
+                    if (this.UnloadAsset(path) != 0)
+                    {
+                        this.AddAsset(value, id, group);
+                    }
+                }
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Loads the file in the given path, adding it to the provided group.
+        /// </summary>
+        /// <param name="path">The path to load files from.</param>
+        /// <param name="group">The group to add the files to.</param>
+        public FileLoadingResult LoadFileGroup(string path, string group)
         {
             this.currentGroup = group;
             FileLoadingResult result = base.LoadFile(path);
             this.currentGroup = null;
-            if (result.Successes > 0)
-            {
-                T value = this.assetStorage[path];
-                this.assetStorage.Remove(path);
-                this.assetStorage.Add(id, value);
-
-                if (group != null)
-                {
-                    this.groupDictionary[group].Remove(path);
-                    this.groupDictionary[group].Add(id);
-                    this.groupFromAsset.Remove(path);
-                    this.groupFromAsset.Add(id, group);
-                }
-            }
             return result;
         }
 
@@ -139,7 +166,6 @@
         /// <param name="recurse">Specifiec whether to recursively find files.</param>
         /// <param name="group">The group to add the files to.</param>
         /// <param name="pattern">Pattern to use when finding files.</param>
-        /// <returns></returns>
         public FileLoadingResult LoadFilesGroup(string path, bool recurse, string group, string pattern = "*.*")
         {
             this.currentGroup = group;
@@ -160,11 +186,7 @@
             if (this.assetStorage.ContainsKey(id) == false)
             {
                 T value = this.DoLoadStream(stream);
-                if (value != null)
-                {
-                    this.assetStorage.Add(id, value);
-                    return true;
-                }
+                return this.AddAsset(value, id);
             }
             return false;
         }
@@ -178,17 +200,13 @@
         /// <returns>True if successful; otherwise false.</returns>
         public bool LoadStream(Stream stream, string id, string group)
         {
-            bool result = this.LoadStream(stream, id);
-            if (result)
+            id = id.ToLower();
+            if (this.assetStorage.ContainsKey(id) == false)
             {
-                if (this.groupDictionary.ContainsKey(group) == false)
-                {
-                    this.groupDictionary.Add(group, new HashSet<string>());
-                }
-                this.groupDictionary[group].Add(id);
-                this.groupFromAsset.Add(id, group);
+                T value = this.DoLoadStream(stream);
+                return this.AddAsset(value, id, group);
             }
-            return result;
+            return false;
         }
 
         /// <summary>
@@ -212,6 +230,7 @@
         /// <returns>Integer representing the amount of unloaded entries.</returns>
         public int UnloadAsset(string id)
         {
+            id = id.ToLower();
             if (this.assetStorage.Remove(id))
             {
                 if (this.groupFromAsset.ContainsKey(id))
@@ -236,6 +255,7 @@
         /// <returns>Amount of assets removed.</returns>
         public int UnloadGroup(string group)
         {
+            group = group.ToLower();
             int n = 0;
             if (this.groupDictionary.ContainsKey(group))
             {
@@ -259,6 +279,25 @@
             {
                 return this.LoadStream(fileStream, file.OriginalPath, this.currentGroup);
             }
+        }
+
+        private bool AddAsset(T value, string id, string group = null)
+        {
+            if (id != null && !this.assetStorage.ContainsKey(id) && value != null)
+            {
+                this.assetStorage.Add(id, value);
+                if (group != null)
+                {
+                    if (this.groupDictionary.ContainsKey(group) == false)
+                    {
+                        this.groupDictionary.Add(group, new HashSet<string>());
+                    }
+                    this.groupDictionary[group].Add(id);
+                    this.groupFromAsset.Add(id, group);
+                }
+                return true;
+            }
+            return false;
         }
     }
 }

@@ -20,14 +20,10 @@
                 {
                     using (Stream stream = file.OpenRead())
                     {
-                        this.ReadFile(stream, file);
-                        return true;
+                        return this.ReadFile(stream, file);
                     }
                 }
-                catch (IOException e)
-                {
-
-                }
+                catch (IOException e) { }
             }
             return false;
         }

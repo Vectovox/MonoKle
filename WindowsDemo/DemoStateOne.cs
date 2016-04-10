@@ -231,7 +231,8 @@ namespace WindowsDemo
             //MBackend.MessagePasser.Unsubscribe("noChannel", Test);
             //MBackend.MessagePasser.Subscribe("CONSOLE", ConsoleMessage);
             MBackend.Console.WriteLine("State one activated! Message: " + (string)data.Data);
-            MBackend.Console.WriteLine(MBackend.TextureStorage.LoadFiles("Assets\\Textures", true).Successes + " textures loaded.");
+            MBackend.Console.WriteLine(MBackend.TextureStorage.LoadFilesGroup("Assets\\Textures", true, "agroup").Successes + " textures loaded.");
+            MBackend.TextureStorage.LoadFileId("Assets\\Textures\\TestBox.png", "testbox", "mygroup");
             MBackend.Console.WriteLine(MBackend.FontStorage.LoadFiles("Assets\\Fonts", true).Successes + " fonts loaded.");
             MBackend.Console.WriteLine(MBackend.EffectStorage.LoadFiles("Assets\\Effects", true).Successes + " effects loaded.");
             MBackend.Console.WriteLine(MBackend.ScriptEnvironment.LoadFiles("Scripts", true).Successes + " scripts loaded.");

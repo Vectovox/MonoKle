@@ -76,7 +76,7 @@
     <None Include="Assets\Fonts\testfont.mfnt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Scripts\Sum.mcs">
+    <None Include="Scripts\Sum.ms">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="settings.ini">

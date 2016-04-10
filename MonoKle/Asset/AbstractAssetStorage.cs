@@ -3,6 +3,7 @@
     using MonoKle.IO;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
 
     /// <summary>
     /// Abstract class for loading, storing, and retrieving MonoKle assets.
@@ -259,7 +260,7 @@
             int n = 0;
             if (this.groupDictionary.ContainsKey(group))
             {
-                foreach (string s in this.groupDictionary[group])
+                foreach (string s in this.groupDictionary[group].ToList())
                 {
                     n += this.UnloadAsset(s);
                 }

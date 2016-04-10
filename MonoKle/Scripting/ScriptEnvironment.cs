@@ -101,13 +101,24 @@
         public bool Contains(string scriptName) => scriptById.ContainsKey(scriptName);
 
         /// <summary>
+        /// Clears this instance of all scripts.
+        /// </summary>
+        public void Clear() => this.scriptById.Clear();
+
+        /// <summary>
+        /// Removes the specified script.
+        /// </summary>
+        /// <param name="name">The script identifying name.</param>
+        public bool Remove(string name) => this.scriptById.Remove(name);
+
+        /// <summary>
         /// Checks if the file is valid.
         /// </summary>
         /// <param name="file">The file.</param>
         /// <returns></returns>
         protected override bool CheckFile(MFileInfo file)
         {
-            return !this.Contains(file.OriginalPath) && file.Extension.Equals(".mcs", StringComparison.InvariantCultureIgnoreCase);
+            return !this.Contains(file.OriginalPath) && file.Extension.Equals(".ms", StringComparison.InvariantCultureIgnoreCase);
         }
 
         /// <summary>

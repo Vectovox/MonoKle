@@ -95,7 +95,7 @@
         /// The suggestion handler.
         /// </value>
         public ConsoleCommandSuggestionHandler SuggestionHandler { get; private set; }
-
+        
         /// <summary>
         /// Calls the command with the specified arguments.
         /// </summary>
@@ -105,7 +105,7 @@
         {
             if (arguments != null && arguments.Length > 0)
             {
-                if(arguments.Length == this.Arguments.Length)
+                if(arguments.Length >= this.Arguments.Length)
                 {
                     this.Handler(arguments);
                     return true;

@@ -374,7 +374,10 @@
                 IScript script = MBackend.ScriptEnvironment[args[0]];
                 if(script.CanExecute)
                 {
-                    ScriptExecution result = script.Execute();
+                    StringConverter sc = new StringConverter();
+                    object[] arguments = args.Skip(1).Select(a => sc.ToAny(a)).ToArray();
+                    ScriptExecution result = script.Execute(arguments);
+
                     if(result.Success)
                     {
                         if(script.ReturnsValue)

@@ -46,7 +46,7 @@
                 }
                 catch (Exception e)
                 {
-                    message = "Exception: " + e.InnerException?.Message ?? e.Message;
+                    message = "Exception: " + (e.InnerException?.Message ?? e.Message);
                 }
 
                 return new ScriptExecution(res, message == null, message ?? "");

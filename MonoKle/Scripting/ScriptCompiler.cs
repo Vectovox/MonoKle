@@ -1,20 +1,21 @@
-﻿using Microsoft.CSharp;
-using System;
-using System.CodeDom.Compiler;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-
-namespace MonoKle.Scripting
+﻿namespace MonoKle.Scripting
 {
+    using Microsoft.CSharp;
+    using System;
+    using System.CodeDom.Compiler;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Reflection;
+    using System.Text;
+
     /// <summary>
     /// Compiler for scripts.
     /// </summary>
     public class ScriptCompiler
     {
         private const string NAMESPACE = "MonoKleScriptNamespace";
+        private const string EXECUTABLE_METHOD_NAME = "Run";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ScriptCompiler"/> class.
@@ -23,21 +24,36 @@ namespace MonoKle.Scripting
         {
             this.ReferencedAssemblies = new List<Assembly>();
             this.ReferencedAssemblies.Add(Assembly.GetAssembly(typeof(Script)));
-            this.ReferencedAssemblies.Add(Assembly.GetAssembly(typeof(Exception)));
-            this.ReferencedAssemblies.Add(Assembly.GetAssembly(typeof(Stopwatch)));
         }
 
+        /// <summary>
+        /// Gets the referenced assemblies.
+        /// </summary>
+        /// <value>
+        /// The referenced assemblies.
+        /// </value>
         public List<Assembly> ReferencedAssemblies { get; private set; }
 
-        public void Compile(Script script) => this.Compile(new List<Script> { script });
+        /// <summary>
+        /// Compiles the specified script.
+        /// </summary>
+        /// <param name="script">The script to compile.</param>
+        public void Compile(IScriptCompilable script) => this.Compile(new List<IScriptCompilable> { script });
 
-        public void Compile(IEnumerable<Script> scripts)
+        /// <summary>
+        /// Compiles the provided scipts.
+        /// </summary>
+        /// <param name="scripts">The scripts to compile.</param>
+        public void Compile(IEnumerable<IScriptCompilable> scripts)
         {
-            CSharpCodeProvider provider = new CSharpCodeProvider();
+            CSharpCodeProvider provider = new CSharpCodeProvider(new Dictionary<string,string>
+            { { "CompilerVersion", "v4.0" } }
+            );
             CompilerParameters compilerParameters = this.MakeCompilerParameters();
 
-            foreach (Script script in scripts)
+            foreach (IScriptCompilable script in scripts)
             {
+                script.CompilationDate = DateTime.UtcNow;
                 script.InternalScript = null;
                 script.Errors.Clear();
 
@@ -46,20 +62,43 @@ namespace MonoKle.Scripting
                 // Set errors + warnings
                 foreach (CompilerError e in compilationResult.Errors)
                 {
-                    script.Errors.Add(new ScriptCompilationError() { Message = e.ErrorText, Line = e.Line, IsWarning = e.IsWarning });
+                    script.Errors.Add(new ScriptCompilationError(e.ErrorText, e.Line, e.IsWarning));
                 }
 
                 if (!compilationResult.Errors.HasErrors)
                 {
-                    var type = compilationResult.CompiledAssembly.DefinedTypes.Where(t => typeof(ExecutableScript).IsAssignableFrom(t)).FirstOrDefault();
+                    // Get the type of the implementation
+                    var type = compilationResult.CompiledAssembly.DefinedTypes.Where(t => typeof(ScriptImplementation).IsAssignableFrom(t)).FirstOrDefault();
 
                     if (type != null)
                     {
-                        script.InternalScript = (ExecutableScript)Activator.CreateInstance(type);
-                        script.InternalScript.Initialize();
+                        // Instantiate the implementation
+                        script.InternalScript = Activator.CreateInstance(type) as ScriptImplementation;
+                        if (script.InternalScript != null)
+                        {
+                            // Set the execute method
+                            this.InitializeImplementation(script.InternalScript);
+                            if(script.InternalScript.ExecuteMethod == null)
+                            {
+                                script.Errors.Add(new ScriptCompilationError("MonoKle: Implementation does not define method: " + EXECUTABLE_METHOD_NAME, -1, false));
+                            }
+                        }
+                        else
+                        {
+                            script.Errors.Add(new ScriptCompilationError("MonoKle: Could not activate implementation.", -1, false));
+                        }
+                    }
+                    else
+                    {
+                        script.Errors.Add(new ScriptCompilationError("MonoKle: Implementation type error.", -1, false));
                     }
                 }
             }
+        }
+
+        private void InitializeImplementation(ScriptImplementation implementation)
+        {
+            implementation.ExecuteMethod = implementation.GetType().GetMethod(EXECUTABLE_METHOD_NAME, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
         }
 
         private CompilerParameters MakeCompilerParameters()
@@ -70,8 +109,13 @@ namespace MonoKle.Scripting
                 GenerateInMemory = true,
                 IncludeDebugInformation = false,
                 OutputAssembly = "MonoKleTempScriptAssembly",
-                CompilerOptions = "/optimize"
+                CompilerOptions = "/optimize",
             };
+            
+            compilerParameters.ReferencedAssemblies.Add("Microsoft.CSharp.dll");
+            compilerParameters.ReferencedAssemblies.Add("mscorlib.dll");
+            compilerParameters.ReferencedAssemblies.Add("System.dll");
+
             foreach (Assembly a in ReferencedAssemblies)
             {
                 compilerParameters.ReferencedAssemblies.Add(a.Location);
@@ -80,7 +124,7 @@ namespace MonoKle.Scripting
             return compilerParameters;
         }
 
-        private string PreProcessSource(Script script)
+        private string PreProcessSource(IScriptCompilable script)
         {
             var namespaces = ReferencedAssemblies.SelectMany(a => a.GetTypes().Where(t => t.IsPublic).Select(t => t.Namespace)).Distinct();
 
@@ -92,7 +136,7 @@ namespace MonoKle.Scripting
                 usingsBuilder.Append("; ");
             }
 
-            string ret = $"namespace {ScriptCompiler.NAMESPACE} {{ {usingsBuilder.ToString()} public class {script.Name} : {nameof(ExecutableScript)} {{ {script.Source.SoureCode} }} }}";
+            string ret = $"namespace {ScriptCompiler.NAMESPACE} {{ {usingsBuilder.ToString()} public class {script.Name} : {nameof(ScriptImplementation)} {{ {script.Source.Code} }} }}";
             return ret;
         }
     }

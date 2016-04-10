@@ -18,6 +18,7 @@
     using System.Reflection;
     using Input.Keyboard;
     using Scripting;
+    using System.Text;
 
     /// <summary>
     /// Backend for the MonoKle engine. Provides global access to all MonoKle systems.
@@ -305,10 +306,15 @@
                 Console.WriteLine("No such variable exist", Console.ErrorTextColour);
             }
         }
-
+        
         private static ICollection<string> CommandGetRemSuggestion(int index)
         {
             return MBackend.Variables.Variables.Identifiers;
+        }
+
+        private static ICollection<string> CommandScriptSuggestion(int index)
+        {
+            return MBackend.ScriptEnvironment.ScriptNames;
         }
 
         private static void CommandListVariables()
@@ -326,6 +332,113 @@
             if (MBackend.Variables.Variables.Remove(args[0]) == false)
             {
                 MBackend.Console.WriteLine("Could not remove variable since it does not exist.", MBackend.Console.ErrorTextColour);
+            }
+        }
+
+        private static void CommandCompile(string[] args)
+        {
+            if (MBackend.ScriptEnvironment.Compile(args[0]))
+            {
+                IScript script = MBackend.ScriptEnvironment[args[0]];
+                if(script.Errors.Count == 0)
+                {
+                    Console.WriteLine($"Script '{script.Name}' compiled.", Console.CommandTextColour);
+                }
+                else
+                {
+                    Console.WriteLine($"Script '{script.Name}' compiled with {script.Errors.Count} errors:\n  {string.Join("\n  ", script.Errors)}", Console.ErrorTextColour);
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Provided script '{args[0]}' does not exist.", Console.ErrorTextColour);
+            }
+        }
+
+        private static void CommandCompileOutdated()
+        {
+            int amount = MBackend.ScriptEnvironment.CompileOutdated();
+            Console.WriteLine($"Compiled {amount} scripts.", Console.CommandTextColour);
+        }
+
+        private static void CommandCompileAll()
+        {
+            int amount = MBackend.ScriptEnvironment.CompileAll();
+            Console.WriteLine($"Compiled {amount} scripts.", Console.CommandTextColour);
+        }
+
+        private static void CommandRun(string[] args)
+        {
+            if(MBackend.ScriptEnvironment.Contains(args[0]))
+            {
+                IScript script = MBackend.ScriptEnvironment[args[0]];
+                if(script.CanExecute)
+                {
+                    ScriptExecution result = script.Execute();
+                    if(result.Success)
+                    {
+                        if(script.ReturnsValue)
+                        {
+                            Console.WriteLine($"Execution result: {result.Result}", Console.CommandTextColour);
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Error executing script '{script.Name}': {result.Message}", Console.ErrorTextColour);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Can not execute script '{script.Name}'.", Console.ErrorTextColour);
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Provided script '{args[0]}' does not exist.", Console.ErrorTextColour);
+            }
+        }
+
+        private static void CommandListScripts()
+        {
+            var scripts = MBackend.ScriptEnvironment.ScriptNames.Select(s => MBackend.ScriptEnvironment[s]).OrderBy(s => s.Name);
+            foreach (var s in scripts)
+            {
+                StringBuilder sb = new StringBuilder("\t");
+                if (s.ReturnsValue)
+                {
+                    sb.Append(s.ReturnType.Name);
+                    sb.Append(" ");
+                }
+                sb.Append(s.Name);
+                
+                if (s.IsOutdated)
+                {
+                    sb.Append(" -outdated-");
+                }
+                if(s.Errors.Count != 0)
+                {
+                    sb.Append($" -{s.Errors.Count} errors-");
+                }
+
+                Color c = MBackend.Console.DefaultTextColour;
+                if (s.IsOutdated) c = MBackend.Console.WarningTextColour;
+                if (s.Errors.Count != 0) c = MBackend.Console.ErrorTextColour;
+                
+                MBackend.Console.WriteLine(sb.ToString(), c);
+            }
+        }
+
+        private static void CommandSource(string[] args)
+        {
+            if (MBackend.ScriptEnvironment.Contains(args[0]))
+            {
+                IScript script = MBackend.ScriptEnvironment[args[0]];
+                Console.WriteLine($"Printing source for '{script.Name}' from '{script.Source.Date}': ", Console.CommandTextColour);
+                Console.WriteLine("> " + script.Source.Code.Replace("\n", "\n> "));
+            }
+            else
+            {
+                Console.WriteLine($"Provided script '{args[0]}' does not exist.", Console.ErrorTextColour);
             }
         }
 
@@ -396,6 +509,7 @@
             MBackend.Console.CommandBroker.Register(new ArgumentlessConsoleCommand("exit", "Terminates the application.", MBackend.CommandExit));
             MBackend.Console.CommandBroker.Register(new ArgumentlessConsoleCommand("version", "Prints the current MonoKle version.", MBackend.CommandVersion));
             MBackend.Console.CommandBroker.Register(new ArgumentlessConsoleCommand("vars", "Lists the currently active variables.", MBackend.CommandListVariables));
+            MBackend.Console.CommandBroker.Register(new ArgumentlessConsoleCommand("scripts", "Lists the known scripts.", MBackend.CommandListScripts));
             MBackend.Console.CommandBroker.Register(
                 new ConsoleCommand("get", "Prints the value of the provided variable.",
                     new CommandArguments(new string[] { "variable" }, new string[] { "The variable to print" }),
@@ -411,6 +525,20 @@
                     new CommandArguments(new string[] { "variable" }, new string[] { "The variable to remove" }),
                     MBackend.CommandRemove, null, MBackend.CommandGetRemSuggestion)
                 );
+            MBackend.Console.CommandBroker.Register(
+                new ConsoleCommand("run", "Runs the specified script.",
+                new CommandArguments(new Dictionary<string, string> { {"name", "Name of the script to run." } }),
+                MBackend.CommandRun, null, MBackend.CommandScriptSuggestion));
+
+            MBackend.Console.CommandBroker.Register(
+                new ConsoleCommand("compile", "Compiles the specified script. If no script is provided, all outdated will be compiled.",
+                new CommandArguments(new Dictionary<string, string> { { "name", "Name of the script to compile." } }),
+                MBackend.CommandCompile, MBackend.CommandCompileOutdated, MBackend.CommandScriptSuggestion));
+
+            MBackend.Console.CommandBroker.Register(
+                new ConsoleCommand("source", "Prints the source for the given script.",
+                new CommandArguments(new Dictionary<string, string> { { "name", "Name of the script to print source for." } }),
+                MBackend.CommandSource, null, MBackend.CommandScriptSuggestion));
         }
 
         private static void ResolutionChanged(object sender, ResolutionChangedEventArgs e)

@@ -134,8 +134,8 @@
                 //    break;
                 case Keys.OemMinus:
                     return shift ? '_' : '-';
-                //case Keys.OemPeriod:
-                //    break;
+                case Keys.OemPeriod:
+                    return '.';
                 //case Keys.OemQuestion:
                 //    break;
                 //case Keys.OemTilde:

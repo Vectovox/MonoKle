@@ -35,7 +35,7 @@ namespace ScriptTester
 
         private void newButton_Click(object sender, EventArgs e)
         {
-            Script script = new Script("Script" + counter++, new SS() { SoureCode = "" });
+            Script script = new Script("Script" + counter++, new StaticScriptSource(""));
             if (scriptEnvironment.Add(script))
             {
                 this.listBox1.Items.Add(script);
@@ -60,7 +60,7 @@ namespace ScriptTester
                 var result = s.Execute();
                 if(result.Success)
                 {
-                    if(s.InternalScript.HasReturn)
+                    if(s.InternalScript.ReturnsValue)
                     {
                         Logger.Global.Log("Execution: " + result.Result);
                     }
@@ -110,7 +110,7 @@ namespace ScriptTester
             if (selected)
             {
                 Script s = (Script)listBox1.SelectedItem;
-                this.codeBox.Text = s.Source.SoureCode;
+                this.codeBox.Text = s.Source.Code;
             }
             else
             {
@@ -124,22 +124,13 @@ namespace ScriptTester
             if (selected)
             {
                 Script s = (Script)listBox1.SelectedItem;
-                SS ss = s.Source as SS;
+                StaticScriptSource ss = s.Source as StaticScriptSource;
 
-                if(this.codeBox.Text != ss.SoureCode)
+                if(this.codeBox.Text != ss.Code)
                 {
-                    ss.SoureCode = this.codeBox.Text;
+                    ss.Code = this.codeBox.Text;
                 }
             }
-        }
-    }
-
-
-    public class SS : IScriptSource
-    {
-        public string SoureCode
-        {
-            get; set;
         }
     }
 }

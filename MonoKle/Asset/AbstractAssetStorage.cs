@@ -8,7 +8,7 @@
     /// Abstract class for loading, storing, and retrieving MonoKle assets.
     /// </summary>
     /// <typeparam name="T">Type of asset to store.</typeparam>
-    public abstract class AbstractAssetStorage<T> : AbstractFileLoader
+    public abstract class AbstractAssetStorage<T> : AbstractFileReader
     {
         private Dictionary<string, T> assetStorage = new Dictionary<string, T>();
         private string currentGroup = null;
@@ -249,15 +249,15 @@
 
         protected abstract T DoLoadStream(Stream stream);
 
-        protected override bool OperateOnFile(Stream fileStream, string filePath)
+        protected override bool ReadFile(Stream fileStream, MFileInfo file)
         {
             if (this.currentGroup == null)
             {
-                return this.LoadStream(fileStream, filePath);
+                return this.LoadStream(fileStream, file.OriginalPath);
             }
             else
             {
-                return this.LoadStream(fileStream, filePath, this.currentGroup);
+                return this.LoadStream(fileStream, file.OriginalPath, this.currentGroup);
             }
         }
     }

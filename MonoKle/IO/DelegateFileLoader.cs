@@ -6,7 +6,7 @@
     /// <summary>
     /// File loaded that calls on a delegate for the actual loading operation.
     /// </summary>
-    public class DelegateFileLoader : AbstractFileLoader
+    public class DelegateFileLoader : AbstractFileReader
     {
         /// <summary>
         /// The delegate used to perform file loading logic.
@@ -16,7 +16,7 @@
             get; set;
         }
 
-        protected override bool OperateOnFile(Stream fileStream, string filePath)
+        protected override bool ReadFile(Stream fileStream, MFileInfo file)
         {
             if(this.Delegate == null)
             {
@@ -24,7 +24,7 @@
             }
             else
             {
-                return Delegate(fileStream, filePath);
+                return Delegate(fileStream, file);
             }
         }
     }

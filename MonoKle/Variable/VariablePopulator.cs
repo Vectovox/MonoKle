@@ -1,16 +1,12 @@
 ﻿namespace MonoKle.Variable
 {
     using IO;
-    using Core;
-    using System;
-    using System.Globalization;
     using System.IO;
-    using System.Text.RegularExpressions;
 
     /// <summary>
     /// Class for loading variables.
     /// </summary>
-    public class VariablePopulator : AbstractFileLoader
+    public class VariablePopulator : AbstractFileReader
     {
         /// <summary>
         /// The token for commented lines.
@@ -53,7 +49,13 @@
             this.InterpretText(text);
         }
 
-        protected override bool OperateOnFile(Stream fileStream, string filePath)
+        /// <summary>
+        /// Template pattern method that is called on each file that is loaded. The stream is disposed after the call.
+        /// </summary>
+        /// <param name="fileStream">A filestream to a read file.</param>
+        /// <param name="file">The read file.</param>
+        /// <returns></returns>
+        protected override bool ReadFile(Stream fileStream, MFileInfo file)
         {
             this.OperateOnStream(fileStream);
             return true;

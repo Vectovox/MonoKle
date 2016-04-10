@@ -1,13 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MonoKle.Scripting
+﻿namespace MonoKle.Scripting
 {
+    using System;
+
+    /// <summary>
+    /// Interface for a script source.
+    /// </summary>
     public interface IScriptSource
     {
-        string SoureCode { get; }
+        /// <summary>
+        /// Gets the source code.
+        /// </summary>
+        /// <value>
+        /// The source code.
+        /// </value>
+        string Code { get; }
+
+        /// <summary>
+        /// Gets the source date in UTC.
+        /// </summary>
+        /// <value>
+        /// The source date in UTC.
+        /// </value>
+        DateTime Date { get; }
     }
 }

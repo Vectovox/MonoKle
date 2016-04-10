@@ -1,6 +1,7 @@
 ﻿namespace MonoKle.Asset.Texture
 {
     using Microsoft.Xna.Framework.Graphics;
+    using IO;
     using System;
     using System.IO;
 
@@ -32,11 +33,11 @@
         /// </value>
         public Texture2D White { get; private set; }
 
-        protected override bool CheckFile(string filePath)
+        protected override bool CheckFile(MFileInfo file)
         {
-            return filePath.EndsWith(".png", StringComparison.CurrentCultureIgnoreCase)
-                || filePath.EndsWith(".jpg", StringComparison.CurrentCultureIgnoreCase)
-                || filePath.EndsWith(".gif", StringComparison.CurrentCultureIgnoreCase);
+            return file.Extension.Equals(".png", StringComparison.InvariantCultureIgnoreCase)
+                || file.Extension.Equals(".jpg", StringComparison.InvariantCultureIgnoreCase)
+                || file.Extension.Equals(".gif", StringComparison.InvariantCultureIgnoreCase);
         }
 
         protected override Texture2D DoLoadStream(Stream stream)

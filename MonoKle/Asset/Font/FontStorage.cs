@@ -10,6 +10,7 @@
     using System.Runtime.Serialization.Formatters.Binary;
     using System.Drawing.Imaging;
     using System.Xml.Serialization;
+    using IO;
 
     /// <summary>
     /// Manages drawable fonts.
@@ -27,9 +28,9 @@
             this.graphicsDevice = graphicsDevice;
         }
 
-        protected override bool CheckFile(string filePath)
+        protected override bool CheckFile(MFileInfo file)
         {
-            return filePath.EndsWith(".mfnt", StringComparison.CurrentCultureIgnoreCase);
+            return file.Extension.Equals(".mfnt", StringComparison.InvariantCultureIgnoreCase);
         }
 
         protected override Font DoLoadStream(Stream stream)

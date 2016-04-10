@@ -234,6 +234,7 @@ namespace WindowsDemo
             MBackend.Console.WriteLine(MBackend.TextureStorage.LoadFiles("Assets\\Textures", true).Successes + " textures loaded.");
             MBackend.Console.WriteLine(MBackend.FontStorage.LoadFiles("Assets\\Fonts", true).Successes + " fonts loaded.");
             MBackend.Console.WriteLine(MBackend.EffectStorage.LoadFiles("Assets\\Effects", true).Successes + " effects loaded.");
+            MBackend.Console.WriteLine(MBackend.ScriptEnvironment.LoadFiles("Scripts", true).Successes + " scripts loaded.");
             sb = new SpriteBatch(MBackend.GraphicsManager.GraphicsDevice);
             timer.Reset();
             //MonoKleGame.ScriptInterface.AddScriptSources("TestScripts.ms", false);

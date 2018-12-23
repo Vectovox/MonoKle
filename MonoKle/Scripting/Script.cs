@@ -1,24 +1,21 @@
-﻿namespace MonoKle.Scripting
-{
+﻿namespace MonoKle.Scripting {
     using System;
     using System.Collections.Generic;
 
     /// <summary>
     /// An executable script.
     /// </summary>
-    public class Script : IScriptCompilable
-    {
+    public class Script : IScriptCompilable {
         /// <summary>
         /// Initializes a new instance of the <see cref="Script"/> class.
         /// </summary>
         /// <param name="name">The name.</param>
         /// <param name="source">The source.</param>
-        public Script(string name, IScriptSource source)
-        {
-            this.Source = source;
-            this.Name = name;
-            this.Errors = new List<ScriptCompilationError>();
-            this.CompilationDate = DateTime.MinValue;
+        public Script(string name, IScriptSource source) {
+            Source = source;
+            Name = name;
+            Errors = new List<ScriptCompilationError>();
+            CompilationDate = DateTime.MinValue;
         }
 
         /// <summary>
@@ -27,7 +24,7 @@
         /// <value>
         /// <c>true</c> if this instance can execute; otherwise, <c>false</c>.
         /// </value>
-        public bool CanExecute { get { return InternalScript != null; } }
+        public bool CanExecute => InternalScript != null;
 
         /// <summary>
         /// Gets or sets the compilation date in UTC.
@@ -59,7 +56,7 @@
         /// <value>
         /// <c>true</c> if this instance is outdated; otherwise, <c>false</c>.
         /// </value>
-        public bool IsOutdated => this.Source.Date > this.CompilationDate;
+        public bool IsOutdated => Source.Date > CompilationDate;
 
         /// <summary>
         /// Gets the name.
@@ -98,11 +95,9 @@
         /// </summary>
         /// <param name="parameters">The parameters.</param>
         /// <returns></returns>
-        public ScriptExecution Execute(params object[] parameters)
-        {
-            if (this.CanExecute)
-            {
-                return this.InternalScript.Execute(parameters);
+        public ScriptExecution Execute(params object[] parameters) {
+            if (CanExecute) {
+                return InternalScript.Execute(parameters);
             }
 
             return new ScriptExecution(null, false, "Script can not execute.");

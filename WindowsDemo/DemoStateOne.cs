@@ -1,112 +1,101 @@
-﻿using Microsoft.Xna.Framework;
+using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using MonoKle.Asset.Font;
 using MonoKle;
+using MonoKle.Asset.Font;
 using MonoKle.Engine;
-using MonoKle.Input;
+using MonoKle.Graphics;
+using MonoKle.Input.Keyboard;
 using MonoKle.Logging;
 using MonoKle.Messaging;
 using MonoKle.State;
-using System;
-using MonoKle.Graphics;
-using MonoKle.Input.Keyboard;
 
-namespace WindowsDemo
-{
-    public class DemoStateOne : GameState
-    {
+namespace WindowsDemo {
+    public class DemoStateOne : GameState {
         private SpriteBatch sb;
-        private Timer timer = new Timer(5);
+        private Timer timer = new Timer(TimeSpan.FromSeconds(5));
         private Camera2D camera = new Camera2D(new MPoint2(800, 600));
         private PrimitiveBatch2D primitive2D;
 
-        public DemoStateOne() : base("stateOne")
-        {
+        public DemoStateOne() : base("stateOne") {
         }
 
-        public override void Draw(double time)
-        {
-            this.primitive2D.Begin(this.camera.GetTransformMatrix());
-            this.primitive2D.DrawLine(new Vector2(80, 200), new Vector2(200, 80), Color.Red, Color.Blue);
-            this.primitive2D.DrawLine(new Vector2(380, 500), new Vector2(500, 380), Color.Red, Color.Blue);
-            this.primitive2D.End();
+        public override void Draw(TimeSpan deltaTime) {
+            primitive2D.Begin(camera.TransformMatrix);
+            primitive2D.DrawLine(new Vector2(80, 200), new Vector2(200, 80), Color.Red, Color.Blue);
+            primitive2D.DrawLine(new Vector2(380, 500), new Vector2(500, 380), Color.Red, Color.Blue);
+            primitive2D.End();
 
-            sb.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullCounterClockwise, null, camera.GetTransformMatrix());
+            sb.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullCounterClockwise, null, camera.TransformMatrix);
 
             sb.Draw(MBackend.TextureStorage.DefaultValue, new Vector2(50, 50), Color.White);
             sb.Draw(MBackend.TextureStorage.White, new Vector2(150, 50), Color.Red);
-            
+
             var testBoxRect = new MRectangleInt(250, 250, 64, 64);
             bool testBoxMouseWithin = testBoxRect.Contains(camera.TransformInv(MBackend.Mouse.Position.Value.ToMVector2()).ToMPoint2());
             sb.Draw(MBackend.TextureStorage.GetAsset("assets\\textures\\testbox.png"), testBoxRect, testBoxMouseWithin ? Color.Red : Color.White);
-            
+
             Font font = MBackend.FontStorage.GetAsset("Assets\\Fonts\\testfont.mfnt");
 
             // Test timer
-            font.DrawString(sb, "Timer: " + timer.GetTimeLeft() + " (" + timer.Duration + ") Done? " + timer.IsDone(),
+            sb.DrawString(font, "Timer: " + timer.TimeLeft + " (" + timer.Duration + ") Done? " + timer.IsDone,
                 new Vector2(50, 150), Color.Green);
 
             // Test linebreak
-           font.DrawString(sb, "ABCDEF\nabcdef",
-                new Vector2(50, 250), Color.Green);
+            sb.DrawString(font, "ABCDEF\nabcdef",
+                 new Vector2(50, 250), Color.Green);
 
             // Test scale
-           font.DrawString(sb, "ABCDEF\nabcdef",
-                new Vector2(250, 250), Color.Green, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
+            sb.DrawString(font, "ABCDEF\nabcdef",
+                 new Vector2(250, 250), Color.Green, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
 
             // Test rotation
-           font.DrawString(sb, "Rotating",
-                new Vector2(50, 350), Color.Green, (float)MBackend.TotalGameTime.TotalSeconds, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+            sb.DrawString(font, "Rotating",
+                 new Vector2(50, 350), Color.Green, (float)MBackend.TotalGameTime.TotalSeconds, Vector2.Zero, 1f, SpriteEffects.None, 0f);
 
             // Test rotation
-           font.DrawString(sb, "Rotating",
-                new Vector2(0, 0), Color.Green, (float)MBackend.TotalGameTime.TotalSeconds, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+            sb.DrawString(font, "Rotating",
+                 new Vector2(0, 0), Color.Green, (float)MBackend.TotalGameTime.TotalSeconds, Vector2.Zero, 1f, SpriteEffects.None, 0f);
 
             // Rotation with scale
-           font.DrawString(sb, "Rotating scale",
-                new Vector2(350, 350), Color.Green, (float)MBackend.TotalGameTime.TotalSeconds, Vector2.Zero, 2f, SpriteEffects.None, 0f);
+            sb.DrawString(font, "Rotating scale",
+                 new Vector2(350, 350), Color.Green, (float)MBackend.TotalGameTime.TotalSeconds, Vector2.Zero, 2f, SpriteEffects.None, 0f);
 
             // Rotation with scale and origin
-            Vector2 orig =font.MeasureString("Rotating origin scale") * 0.5f;
-           font.DrawString(sb, "Rotating origin scale",
-                new Vector2(550, 150), Color.Green, (float)MBackend.TotalGameTime.TotalSeconds, orig, 2f, SpriteEffects.None, 0f);
+            Vector2 orig = font.MeasureString("Rotating origin scale") * 0.5f;
+            sb.DrawString(font, "Rotating origin scale",
+                 new Vector2(550, 150), Color.Green, (float)MBackend.TotalGameTime.TotalSeconds, orig, 2f, SpriteEffects.None, 0f);
 
             // XXX
-            Vector2 o =font.MeasureString(this.ti.Text) * 0.5f;
-           font.DrawString(sb, this.ti.Text,
-                new Vector2(400, 300), Color.Green, (float)MBackend.TotalGameTime.TotalSeconds, o, 1f, SpriteEffects.None, 0f);
+            Vector2 o = font.MeasureString(ti.Text) * 0.5f;
+            sb.DrawString(font, ti.Text, new Vector2(400, 300), Color.Green, (float)MBackend.TotalGameTime.TotalSeconds, o, 1f, SpriteEffects.None, 0f);
 
             string s = "Testin size";
-            MBackend.FontStorage.DefaultValue.DrawString(sb, s, new Vector2(450, 350), Color.Green);
-            MBackend.FontStorage.DefaultValue.DrawString(sb, s, new Vector2(450, 350 + MBackend.FontStorage.DefaultValue.MeasureString(s).Y), Color.Green);
-            MBackend.FontStorage.DefaultValue.DrawString(sb, s, new Vector2(450, 350 + 2 * MBackend.FontStorage.DefaultValue.MeasureString(s).Y), Color.Green);
+            sb.DrawString(MBackend.FontStorage.DefaultValue, s, new Vector2(450, 350), Color.Green);
+            sb.DrawString(MBackend.FontStorage.DefaultValue, s, new Vector2(450, 350 + MBackend.FontStorage.DefaultValue.MeasureString(s).Y), Color.Green);
+            sb.DrawString(MBackend.FontStorage.DefaultValue, s, new Vector2(450, 350 + 2 * MBackend.FontStorage.DefaultValue.MeasureString(s).Y), Color.Green);
 
             string s2 = "Testin size\nLol";
-            MBackend.FontStorage.DefaultValue.DrawString(sb, s2, new Vector2(0, 0), Color.Green);
-            MBackend.FontStorage.DefaultValue.DrawString(sb, s2, new Vector2(0, 0 + MBackend.FontStorage.DefaultValue.MeasureString(s2).Y), Color.Green);
-            MBackend.FontStorage.DefaultValue.DrawString(sb, s2, new Vector2(0, 0 + 2 * MBackend.FontStorage.DefaultValue.MeasureString(s2).Y), Color.Green);
+            sb.DrawString(MBackend.FontStorage.DefaultValue, s2, new Vector2(0, 0), Color.Green);
+            sb.DrawString(MBackend.FontStorage.DefaultValue, s2, new Vector2(0, 0 + MBackend.FontStorage.DefaultValue.MeasureString(s2).Y), Color.Green);
+            sb.DrawString(MBackend.FontStorage.DefaultValue, s2, new Vector2(0, 0 + 2 * MBackend.FontStorage.DefaultValue.MeasureString(s2).Y), Color.Green);
 
             // Test size measurements.
-            Vector2 pos = new Vector2(50, 450);
-           font.DrawString(sb, "One-",
-                pos, Color.Green);
-            pos.X +=font.MeasureString("One-").X;
+            var pos = new Vector2(50, 450);
+            sb.DrawString(font, "One-", pos, Color.Green);
+            pos.X += font.MeasureString("One-").X;
 
-           font.DrawString(sb, "Two",
-                pos, Color.Red);
+            sb.DrawString(font, "Two", pos, Color.Red);
 
-            pos.Y -=font.MeasureString("Three").Y;
-           font.DrawString(sb, "Three",
-                pos, Color.Orange);
+            pos.Y -= font.MeasureString("Three").Y;
+            sb.DrawString(font, "Three", pos, Color.Orange);
 
-            pos.X +=font.MeasureString("Three").X;
-           font.DrawString(sb, "Four",
-                pos, Color.Blue, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
+            pos.X += font.MeasureString("Three").X;
+            sb.DrawString(font, "Four", pos, Color.Blue, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
 
-            pos.X +=font.MeasureString("Four", 2f).X;
-           font.DrawString(sb, "Five",
-                pos, Color.Black);
+            pos.X += font.MeasureString("Four", 2f).X;
+            sb.DrawString(font, "Five", pos, Color.Black);
 
             sb.End();
 
@@ -115,86 +104,62 @@ namespace WindowsDemo
             sb.End();
         }
 
-        public override void Update(double seconds)
-        {
-            if (MBackend.Console.IsOpen == false)
-            {
-                if (MBackend.Keyboard.IsKeyHeld(Keys.Escape, 1))
-                {
+        public override void Update(TimeSpan deltaTime) {
+            if (MBackend.Console.IsOpen == false) {
+                if (MBackend.Keyboard.IsKeyHeld(Keys.Escape, TimeSpan.FromSeconds(1))) {
                     MBackend.GameInstance.Exit();
                 }
 
-                if (MBackend.Keyboard.IsKeyPressed(Keys.Space))
-                {
+                if (MBackend.Keyboard.IsKeyPressed(Keys.Space)) {
                     MBackend.StateSystem.SwitchState("stateTwo", null);
                 }
 
-                if(MBackend.Keyboard.AreKeysHeld(new Keys[] { Keys.R, Keys.T }, MonoKle.Input.CollectionQueryBehavior.All))
-                {
+                if (MBackend.Keyboard.AreKeysHeld(new Keys[] { Keys.R, Keys.T }, MonoKle.Input.CollectionQueryBehavior.All)) {
                     MBackend.Console.WriteLine("R + T held.");
                 }
 
-                if (MBackend.Keyboard.AreKeysHeld(new Keys[] { Keys.LeftShift, Keys.RightShift }, MonoKle.Input.CollectionQueryBehavior.Any))
-                {
+                if (MBackend.Keyboard.AreKeysHeld(new Keys[] { Keys.LeftShift, Keys.RightShift }, MonoKle.Input.CollectionQueryBehavior.Any)) {
                     MBackend.Console.WriteLine("Any shift held.");
                 }
 
-                if (MBackend.Keyboard.IsKeyHeld(Keys.I))
-                {
-                    camera.SetPosition(camera.GetPosition() + new MVector2(0, -3));
+                if (MBackend.Keyboard.IsKeyHeld(Keys.I)) {
+                    camera.SetPosition(camera.Position + new MVector2(0, -3));
                 }
-                if (MBackend.Keyboard.IsKeyHeld(Keys.K))
-                {
-                    camera.SetPosition(camera.GetPosition() + new MVector2(0, 3));
+                if (MBackend.Keyboard.IsKeyHeld(Keys.K)) {
+                    camera.SetPosition(camera.Position + new MVector2(0, 3));
                 }
-                if (MBackend.Keyboard.IsKeyHeld(Keys.J))
-                {
-                    camera.SetPosition(camera.GetPosition() + new MVector2(-3, 0));
+                if (MBackend.Keyboard.IsKeyHeld(Keys.J)) {
+                    camera.SetPosition(camera.Position + new MVector2(-3, 0));
                 }
-                if (MBackend.Keyboard.IsKeyHeld(Keys.L))
-                {
-                    camera.SetPosition(camera.GetPosition() + new MVector2(3, 0));
+                if (MBackend.Keyboard.IsKeyHeld(Keys.L)) {
+                    camera.SetPosition(camera.Position + new MVector2(3, 0));
                 }
-                if (MBackend.Keyboard.IsKeyHeld(Keys.U))
-                {
-                    camera.SetRotation(camera.GetRotation() + 0.05f);
+                if (MBackend.Keyboard.IsKeyHeld(Keys.U)) {
+                    camera.SetRotation(camera.Rotation + 0.05f);
                 }
-                if (MBackend.Keyboard.IsKeyHeld(Keys.O))
-                {
-                    camera.SetRotation(camera.GetRotation() - 0.05f);
+                if (MBackend.Keyboard.IsKeyHeld(Keys.O)) {
+                    camera.SetRotation(camera.Rotation - 0.05f);
                 }
-                if (MBackend.Keyboard.IsKeyHeld(Keys.Y))
-                {
-                    camera.SetScale(camera.GetScale() + 0.01f);
+                if (MBackend.Keyboard.IsKeyHeld(Keys.Y)) {
+                    camera.SetScale(camera.Scale + 0.01f);
                 }
-                if (MBackend.Keyboard.IsKeyHeld(Keys.H))
-                {
-                    camera.SetScale(camera.GetScale() - 0.01f);
+                if (MBackend.Keyboard.IsKeyHeld(Keys.H)) {
+                    camera.SetScale(camera.Scale - 0.01f);
                 }
 
-                if (MBackend.Keyboard.IsKeyPressed(Keys.F2))
-                {
+                if (MBackend.Keyboard.IsKeyPressed(Keys.F2)) {
                     MBackend.GraphicsManager.Resolution = new MPoint2(1280, 720);
-                }
-                else if (MBackend.Keyboard.IsKeyPressed(Keys.F3))
-                {
+                } else if (MBackend.Keyboard.IsKeyPressed(Keys.F3)) {
                     MBackend.GraphicsManager.Resolution = new MPoint2(800, 600);
                 }
 
-                if (MBackend.Keyboard.IsKeyPressed(Keys.F12))
-                {
+                if (MBackend.Keyboard.IsKeyPressed(Keys.F12)) {
                     // CRASH ON PURPOSE
-                    object o = null; o.Equals(o);
+                    object o = null;
+                    o.Equals(o);
                 }
 
-                //if (MBackend.Keyboard.IsKeyPressed(Keys.M))
-                //{
-                //    MBackend.MessagePasser.SendMessage("testChannel", new MessageEventArgs("I AM HELLO"));
-                //    MBackend.MessagePasser.SendMessage("noChannel", new MessageEventArgs("I AM NOT HELLO"));
-                //}
-
-                if (MBackend.Keyboard.IsKeyPressed(Keys.N))
-                {
+                if (MBackend.Keyboard.IsKeyPressed(Keys.N)) {
                     Logger.Global.Log("I am logging");
                 }
 
@@ -203,33 +168,23 @@ namespace WindowsDemo
 
             }
 
-            camera.Update(seconds);
-            timer.Update(seconds);
+            camera.Update(deltaTime);
+            timer.Update(deltaTime);
         }
 
-        KeyboardTextInput ti = new KeyboardTextInput(new KeyboardCharacterInput(new KeyboardTyper(MBackend.Keyboard, 0.5, 0.05)));
+        KeyboardTextInput ti = new KeyboardTextInput(new KeyboardCharacterInput(new KeyboardTyper(MBackend.Keyboard, TimeSpan.FromSeconds(0.5), TimeSpan.FromMilliseconds(50))));
 
-        public void Test(object sender, MessageEventArgs args)
-        {
-            Console.WriteLine(args.Data as string);
-        }
+        public void Test(object sender, MessageEventArgs args) => Console.WriteLine(args.Data as string);
 
-        public void ConsoleMessage(object sender, MessageEventArgs args)
-        {
+        public void ConsoleMessage(object sender, MessageEventArgs args) {
             string data = args.Data as string;
 
-            if (data.Equals("reset timer"))
-            {
+            if (data.Equals("reset timer")) {
                 timer.Reset();
             }
         }
 
-        protected override void Activated(StateSwitchData data)
-        {
-            //MBackend.MessagePasser.Subscribe("testChannel", Test);
-            //MBackend.MessagePasser.Subscribe("noChannel", Test);
-            //MBackend.MessagePasser.Unsubscribe("noChannel", Test);
-            //MBackend.MessagePasser.Subscribe("CONSOLE", ConsoleMessage);
+        protected override void Activated(StateSwitchData data) {
             MBackend.Console.WriteLine("State one activated! Message: " + (string)data.Data);
             MBackend.Console.WriteLine(MBackend.TextureStorage.LoadFilesGroup("Assets\\Textures", true, "agroup").Successes + " textures loaded.");
             MBackend.TextureStorage.LoadFileId("Assets\\Textures\\TestBox.png", "testbox", "mygroup");
@@ -238,10 +193,7 @@ namespace WindowsDemo
             MBackend.Console.WriteLine(MBackend.ScriptEnvironment.LoadFiles("Scripts", true).Successes + " scripts loaded.");
             sb = new SpriteBatch(MBackend.GraphicsManager.GraphicsDevice);
             timer.Reset();
-            //MonoKleGame.ScriptInterface.AddScriptSources("TestScripts.ms", false);
-            //MonoKleGame.ScriptInterface.CompileSources();
-            this.primitive2D = new PrimitiveBatch2D(MBackend.GraphicsManager.GraphicsDevice);
-            //MonoKleGame.EffectStorage.LoadFiles("shader.fx");
+            primitive2D = new PrimitiveBatch2D(MBackend.GraphicsManager.GraphicsDevice);
         }
     }
 }

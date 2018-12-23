@@ -1,14 +1,14 @@
-﻿namespace MonoKle
-{
+using System;
+
+namespace MonoKle {
     /// <summary>
     /// Interface for updateable components.
     /// </summary>
-    public interface IUpdateable
-    {
+    public interface IUpdateable {
         /// <summary>
-        /// Updates the component with the specified seconds since last update.
+        /// Updates the object with the specified time delta.
         /// </summary>
-        /// <param name="seconds">The amount of seconds since last update.</param>
-        void Update(double seconds);
+        /// <param name="timeDelta">Time since last update.</param>
+        void Update(TimeSpan timeDelta);
     }
 }

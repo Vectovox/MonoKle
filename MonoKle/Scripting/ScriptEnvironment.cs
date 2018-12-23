@@ -1,16 +1,14 @@
-﻿namespace MonoKle.Scripting
-{
-    using IO;
+﻿namespace MonoKle.Scripting {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
+    using IO;
 
     /// <summary>
     /// Class keeping track of scripts.
     /// </summary>
-    public class ScriptEnvironment : AbstractFileFinder
-    {
+    public class ScriptEnvironment : AbstractFileFinder {
         private ScriptCompiler compiler = new ScriptCompiler();
         private Dictionary<string, IScriptCompilable> scriptById = new Dictionary<string, IScriptCompilable>();
 
@@ -25,7 +23,7 @@
         /// <summary>
         /// The referenced assemblies to use when compiling.
         /// </summary>
-        public IList<Assembly> ReferencedAssemblies { get { return this.compiler.ReferencedAssemblies; } }
+        public IList<Assembly> ReferencedAssemblies => compiler.ReferencedAssemblies;
 
         /// <summary>
         /// Returns a list with all known script names.
@@ -40,18 +38,16 @@
         /// </value>
         /// <param name="id">The identifier.</param>
         /// <returns></returns>
-        public IScript this[string id] => this.scriptById[id];
+        public IScript this[string id] => scriptById[id];
 
         /// <summary>
         /// Adds the specified script, returning a bool indicating if the script was added or not.
         /// </summary>
         /// <param name="script">The script.</param>
         /// <returns>True if added; otherwise false.</returns>
-        public bool Add(IScriptCompilable script)
-        {
-            if (!this.scriptById.ContainsKey(script.Name))
-            {
-                this.scriptById.Add(script.Name, script);
+        public bool Add(IScriptCompilable script) {
+            if (!scriptById.ContainsKey(script.Name)) {
+                scriptById.Add(script.Name, script);
                 return true;
             }
             return false;
@@ -62,11 +58,9 @@
         /// </summary>
         /// <param name="script">The script.</param>
         /// <returns>True if script existed.</returns>
-        public bool Compile(string script)
-        {
-            if (scriptById.ContainsKey(script))
-            {
-                this.compiler.Compile(this.scriptById[script]);
+        public bool Compile(string script) {
+            if (scriptById.ContainsKey(script)) {
+                compiler.Compile(scriptById[script]);
                 return true;
             }
             return false;
@@ -76,20 +70,18 @@
         /// Compiles all maintained scripts.
         /// </summary>
         /// <returns>Amount of scripts compiled.</returns>
-        public int CompileAll()
-        {
-            this.compiler.Compile(this.scriptById.Values);
-            return this.scriptById.Values.Count;
+        public int CompileAll() {
+            compiler.Compile(scriptById.Values);
+            return scriptById.Values.Count;
         }
 
         /// <summary>
         /// Compiles the outdated scripts, returning the amount compiled.
         /// </summary>
         /// <returns>Amount of scripts compiled.</returns>
-        public int CompileOutdated()
-        {
-            var outdated = this.scriptById.Values.Where(v => v.IsOutdated).ToList();
-            this.compiler.Compile(outdated);
+        public int CompileOutdated() {
+            var outdated = scriptById.Values.Where(v => v.IsOutdated).ToList();
+            compiler.Compile(outdated);
             return outdated.Count;
         }
 
@@ -103,31 +95,25 @@
         /// <summary>
         /// Clears this instance of all scripts.
         /// </summary>
-        public void Clear() => this.scriptById.Clear();
+        public void Clear() => scriptById.Clear();
 
         /// <summary>
         /// Removes the specified script.
         /// </summary>
         /// <param name="name">The script identifying name.</param>
-        public bool Remove(string name) => this.scriptById.Remove(name);
+        public bool Remove(string name) => scriptById.Remove(name);
 
         /// <summary>
         /// Checks if the file is valid.
         /// </summary>
         /// <param name="file">The file.</param>
         /// <returns></returns>
-        protected override bool CheckFile(MFileInfo file)
-        {
-            return !this.Contains(file.OriginalPath) && file.Extension.Equals(".ms", StringComparison.InvariantCultureIgnoreCase);
-        }
+        protected override bool CheckFile(MFileInfo file) => !Contains(file.OriginalPath) && file.Extension.Equals(".ms", StringComparison.InvariantCultureIgnoreCase);
 
         /// <summary>
         /// Operates on file.
         /// </summary>
         /// <param name="file">The file.</param>
-        protected override bool OperateOnFile(MFileInfo file)
-        {
-            return this.Add(new Script(file.NameWithoutExtension, new FileScriptSource(file)));
-        }
+        protected override bool OperateOnFile(MFileInfo file) => Add(new Script(file.NameWithoutExtension, new FileScriptSource(file)));
     }
 }

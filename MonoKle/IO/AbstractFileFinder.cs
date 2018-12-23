@@ -1,33 +1,25 @@
-﻿namespace MonoKle.IO
-{
+﻿namespace MonoKle.IO {
     using System.Collections.Generic;
     using System.IO;
 
     /// <summary>
     /// Abstract implementation of <see cref="IFileLoader"/>, providing a template pattern method for file loading operations.
     /// </summary>
-    public abstract class AbstractFileFinder : IFileLoader
-    {
+    public abstract class AbstractFileFinder : IFileLoader {
         /// <summary>
         /// Loads the file with the given path.
         /// </summary>
         /// <param name="path">The path to the file.</param>
-        public FileLoadingResult LoadFile(string path)
-        {
-            List<string> foundFiles = new List<string>();
+        public FileLoadingResult LoadFile(string path) {
+            var foundFiles = new List<string>();
             int failures = 0;
 
-            MFileInfo file = new MFileInfo(path);
-            if (file.Exists)
-            {
-                if (this.CheckFile(file))
-                {
-                    if (this.OperateOnFile(file))
-                    {
+            var file = new MFileInfo(path);
+            if (file.Exists) {
+                if (CheckFile(file)) {
+                    if (OperateOnFile(file)) {
                         foundFiles.Add(path);
-                    }
-                    else
-                    {
+                    } else {
                         failures++;
                     }
                 }
@@ -40,20 +32,14 @@
         /// Loads the files in the given path.
         /// </summary>
         /// <param name="path">The path in which to load files.</param>
-        public FileLoadingResult LoadFiles(string path)
-        {
-            return this.LoadFiles(path, false);
-        }
+        public FileLoadingResult LoadFiles(string path) => LoadFiles(path, false);
 
         /// <summary>
         /// Loads the files in the given path; recursively if specified.
         /// </summary>
         /// <param name="path">The path in which to load files.</param>
         /// <param name="recurse">Parameter specifying if to do a recursive search.</param>
-        public FileLoadingResult LoadFiles(string path, bool recurse)
-        {
-            return this.LoadFiles(path, recurse, "*.*");
-        }
+        public FileLoadingResult LoadFiles(string path, bool recurse) => LoadFiles(path, recurse, "*.*");
 
         /// <summary>
         /// Loads the files in the given path with the provided pattern; recursively if specified.
@@ -61,27 +47,19 @@
         /// <param name="path">The path in which to load files.</param>
         /// <param name="recurse">Parameter specifying if to do a recursive search.</param>
         /// <param name="pattern">The pattern that files have to fulfill in order to be loaded.</param>
-        public FileLoadingResult LoadFiles(string path, bool recurse, string pattern)
-        {
-            List<string> foundFiles = new List<string>();
+        public FileLoadingResult LoadFiles(string path, bool recurse, string pattern) {
+            var foundFiles = new List<string>();
             int failures = 0;
 
-            if (Directory.Exists(path))
-            {
+            if (Directory.Exists(path)) {
                 string[] files = Directory.GetFiles(path, pattern, recurse ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
-                foreach (string f in files)
-                {
-                    MFileInfo file = new MFileInfo(f);
-                    if (file.Exists)
-                    {
-                        if (this.CheckFile(file))
-                        {
-                            if (this.OperateOnFile(file))
-                            {
+                foreach (string f in files) {
+                    var file = new MFileInfo(f);
+                    if (file.Exists) {
+                        if (CheckFile(file)) {
+                            if (OperateOnFile(file)) {
                                 foundFiles.Add(path);
-                            }
-                            else
-                            {
+                            } else {
                                 failures++;
                             }
                         }
@@ -97,10 +75,7 @@
         /// </summary>
         /// <param name="file">The file.</param>
         /// <returns></returns>
-        protected virtual bool CheckFile(MFileInfo file)
-        {
-            return true;
-        }
+        protected virtual bool CheckFile(MFileInfo file) => true;
 
         /// <summary>
         /// Template pattern method that is called on each file that is found.

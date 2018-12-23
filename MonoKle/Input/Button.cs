@@ -1,13 +1,11 @@
-﻿namespace MonoKle.Input
-{
+using System;
+
+namespace MonoKle.Input {
     /// <summary>
     /// Class providing the state of a button.
     /// </summary>
-    /// <seealso cref="MonoKle.Input.IPressable" />
-    public class Button : IPressable
-    {
-        private double heldTime;
-        private bool isDown;
+    /// <seealso cref="IPressable" />
+    public class Button : IPressable {
         private bool wasDown;
 
         /// <summary>
@@ -16,7 +14,7 @@
         /// <value>
         /// The held time.
         /// </value>
-        public double HeldTime => this.heldTime;
+        public TimeSpan HeldTime { get; private set; }
 
         /// <summary>
         /// Gets a value indicating whether this instance is down.
@@ -24,7 +22,7 @@
         /// <value>
         ///   <c>true</c> if this instance is down; otherwise, <c>false</c>.
         /// </value>
-        public bool IsDown => this.isDown;
+        public bool IsDown { get; private set; }
 
         /// <summary>
         /// Gets a value indicating whether this instance is held.
@@ -32,7 +30,7 @@
         /// <value>
         ///   <c>true</c> if this instance is held; otherwise, <c>false</c>.
         /// </value>
-        public bool IsHeld => this.isDown && this.wasDown;
+        public bool IsHeld => IsDown && wasDown;
 
         /// <summary>
         /// Gets a value indicating whether this instance is pressed.
@@ -40,7 +38,7 @@
         /// <value>
         /// <c>true</c> if this instance is pressed; otherwise, <c>false</c>.
         /// </value>
-        public bool IsPressed => this.isDown && !this.wasDown;
+        public bool IsPressed => IsDown && !wasDown;
 
         /// <summary>
         /// Gets a value indicating whether this instance is released.
@@ -48,7 +46,7 @@
         /// <value>
         /// <c>true</c> if this instance is released; otherwise, <c>false</c>.
         /// </value>
-        public bool IsReleased => !this.isDown && this.wasDown;
+        public bool IsReleased => !IsDown && wasDown;
 
         /// <summary>
         /// Gets a value indicating whether this instance is up.
@@ -56,27 +54,21 @@
         /// <value>
         ///   <c>true</c> if this instance is up; otherwise, <c>false</c>.
         /// </value>
-        public bool IsUp => !this.isDown;
+        public bool IsUp => !IsDown;
 
         /// <summary>
-        /// Gets a value indicating whether this instance has been held for at least the provided amount of seconds.
+        /// Gets a value indicating whether this instance has been held for at least the provided amount of time.
         /// </summary>
-        /// <param name="seconds">The seconds to have been held.</param>
+        /// <param name="duration">The time to have been held.</param>
         /// <returns>
-        /// True if held for at least the provided amount of seconds; otherwise false.
+        /// True if held for at least the provided amount of duration; otherwise false.
         /// </returns>
-        public bool IsHeldFor(double seconds) => this.heldTime >= seconds;
+        public bool IsHeldFor(TimeSpan duration) => HeldTime >= duration;
 
-        /// <summary>
-        /// Updates the state.
-        /// </summary>
-        /// <param name="down">True if button is down.</param>
-        /// <param name="deltaTime">Time in seconds since last update.</param>
-        public virtual void Update(bool down, double deltaTime)
-        {
-            this.wasDown = this.isDown;
-            this.isDown = down;
-            this.heldTime = down ? this.heldTime + deltaTime : 0;
+        public virtual void Update(bool down, TimeSpan deltaTime) {
+            wasDown = IsDown;
+            IsDown = down;
+            HeldTime = down ? HeldTime + deltaTime : TimeSpan.Zero;
         }
     }
 }

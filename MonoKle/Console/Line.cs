@@ -1,13 +1,10 @@
-﻿namespace MonoKle.Console
-{
+﻿namespace MonoKle.Console {
     using Microsoft.Xna.Framework;
 
-    internal class Line
-    {
-        public Line(string text, Color color)
-        {
-            this.Text = text;
-            this.Color = color;
+    internal class Line {
+        public Line(string text, Color color) {
+            Text = text;
+            Color = color;
         }
 
         public Color Color { get; private set; }

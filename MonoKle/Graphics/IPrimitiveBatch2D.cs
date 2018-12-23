@@ -1,12 +1,10 @@
-﻿namespace MonoKle.Graphics
-{
+﻿namespace MonoKle.Graphics {
     using Microsoft.Xna.Framework;
 
     /// <summary>
     /// Defines an interface for a 2D primitive drawer.
     /// </summary>
-    public interface IPrimitiveBatch2D : IPrimitiveBatch
-    {
+    public interface IPrimitiveBatch2D : IPrimitiveBatch {
         /// <summary>
         /// Draws a line to screen.
         /// </summary>

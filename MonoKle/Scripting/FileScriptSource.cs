@@ -1,15 +1,13 @@
-﻿namespace MonoKle.Scripting
-{
-    using IO;
+﻿namespace MonoKle.Scripting {
     using System;
     using System.IO;
+    using IO;
 
     /// <summary>
     /// Script source from file.
     /// </summary>
-    /// <seealso cref="MonoKle.Scripting.IScriptSource" />
-    public class FileScriptSource : IScriptSource
-    {
+    /// <seealso cref="IScriptSource" />
+    public class FileScriptSource : IScriptSource {
         private MFileInfo file;
         private string cache = "";
         private DateTime cacheDate = DateTime.MinValue;
@@ -18,8 +16,7 @@
         /// Initializes a new instance of the <see cref="FileScriptSource"/> class.
         /// </summary>
         /// <param name="file">The file.</param>
-        public FileScriptSource(MFileInfo file)
-        {
+        public FileScriptSource(MFileInfo file) {
             this.file = new MFileInfo(file.FullPath);
         }
 
@@ -29,32 +26,23 @@
         /// <value>
         /// The source code.
         /// </value>
-        public string Code
-        {
-            get
-            {
+        public string Code {
+            get {
                 file.Update();
-                if (file.Exists)
-                {
-                    if (this.Date > this.cacheDate)
-                    {
-                        try
-                        {
-                            using (StreamReader sr = new StreamReader(file.OpenRead()))
-                            {
-                                this.cache = sr.ReadToEnd();
-                                this.cacheDate = this.Date;
+                if (file.Exists) {
+                    if (Date > cacheDate) {
+                        try {
+                            using (var sr = new StreamReader(file.OpenRead())) {
+                                cache = sr.ReadToEnd();
+                                cacheDate = Date;
                             }
-                        }
-                        catch { this.cache = ""; }
+                        } catch { cache = ""; }
                     }
-                }
-                else
-                {
-                    this.cache = "";
+                } else {
+                    cache = "";
                 }
 
-                return this.cache;
+                return cache;
             }
         }
 
@@ -64,10 +52,8 @@
         /// <value>
         /// The source date in UTC.
         /// </value>
-        public DateTime Date
-        {
-            get
-            {
+        public DateTime Date {
+            get {
                 file.Update();
                 return file.LastWriteTimeUtc;
             }

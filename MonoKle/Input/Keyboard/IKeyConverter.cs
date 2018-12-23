@@ -1,12 +1,10 @@
-﻿namespace MonoKle.Input.Keyboard
-{
+﻿namespace MonoKle.Input.Keyboard {
     using Microsoft.Xna.Framework.Input;
 
     /// <summary>
     /// Interface for converting from keyboard key to its character.
     /// </summary>
-    public interface IKeyConverter
-    {
+    public interface IKeyConverter {
         /// <summary>
         /// Converts the specified key to its character representation. If conversion failed, returns the default <see cref="char"/> value.
         /// </summary>

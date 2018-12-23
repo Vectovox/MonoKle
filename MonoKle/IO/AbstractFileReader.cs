@@ -1,29 +1,22 @@
-﻿namespace MonoKle.IO
-{
+﻿namespace MonoKle.IO {
     using System.IO;
 
     /// <summary>
     /// Abstract implementation of <see cref="IFileLoader"/>, providing a template pattern method for file loading operations.
     /// </summary>
-    public abstract class AbstractFileReader : AbstractFileFinder
-    {
+    public abstract class AbstractFileReader : AbstractFileFinder {
         /// <summary>
         /// Template pattern method that is called on each file that is found.
         /// </summary>
         /// <param name="file">The file.</param>
         /// <returns></returns>
-        protected override bool OperateOnFile(MFileInfo file)
-        {
-            if(file.Exists)
-            {
-                try
-                {
-                    using (Stream stream = file.OpenRead())
-                    {
-                        return this.ReadFile(stream, file);
+        protected override bool OperateOnFile(MFileInfo file) {
+            if (file.Exists) {
+                try {
+                    using (Stream stream = file.OpenRead()) {
+                        return ReadFile(stream, file);
                     }
-                }
-                catch (IOException e) { }
+                } catch (IOException e) { }
             }
             return false;
         }

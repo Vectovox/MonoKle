@@ -1,11 +1,11 @@
-﻿namespace MonoKle.Input
-{
+using System;
+
+namespace MonoKle.Input {
     /// <summary>
     /// Class representing an input position.
     /// </summary>
     /// <seealso cref="IInputPosition" />
-    public class InputPosition : IInputPosition
-    {
+    public class InputPosition : IInputPosition {
         private MPoint2 current;
 
         private MPoint2 delta;
@@ -18,7 +18,7 @@
         /// <value>
         /// The delta value.
         /// </value>
-        public MPoint2 DeltaValue => this.delta;
+        public MPoint2 DeltaValue => delta;
 
         /// <summary>
         /// Gets the previous value.
@@ -26,7 +26,7 @@
         /// <value>
         /// The previous value.
         /// </value>
-        public MPoint2 PreviousValue => this.previous;
+        public MPoint2 PreviousValue => previous;
 
         /// <summary>
         /// Gets the value.
@@ -34,18 +34,17 @@
         /// <value>
         /// The value.
         /// </value>
-        public MPoint2 Value => this.current;
+        public MPoint2 Value => current;
 
         /// <summary>
         /// Updates the current position.
         /// </summary>
         /// <param name="position">The current position.</param>
-        /// <param name="seconds">The delta time in seconds since last update.</param>
-        public void Update(MPoint2 position, double seconds)
-        {
-            this.previous = this.current;
-            this.current = position;
-            this.delta = this.current - this.previous;
+        /// <param name="timeDelta">The delta time since last update.</param>
+        public void Update(MPoint2 position, TimeSpan timeDelta) {
+            previous = current;
+            current = position;
+            delta = current - previous;
         }
     }
 }

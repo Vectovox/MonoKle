@@ -1,13 +1,12 @@
-﻿namespace MonoKle.Input.Keyboard
-{
-    using Microsoft.Xna.Framework.Input;
-    using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework.Input;
 
+namespace MonoKle.Input.Keyboard {
     /// <summary>
     /// Interface providing polling-based keyboard input.
     /// </summary>
-    public interface IKeyboard
-    {
+    public interface IKeyboard {
         /// <summary>
         /// Queries whether the specified keys are down.
         /// </summary>
@@ -31,7 +30,7 @@
         /// <param name="behavior">The query behavior.</param>
         /// <param name="timeHeld">The amount of time.</param>
         /// <returns>True if the keys are held; otherwise false.</returns>
-        bool AreKeysHeld(IEnumerable<Keys> keys, double timeHeld, CollectionQueryBehavior behavior);
+        bool AreKeysHeld(IEnumerable<Keys> keys, TimeSpan timeHeld, CollectionQueryBehavior behavior);
 
         /// <summary>
         /// Queries whether the specified keys are pressed.
@@ -58,11 +57,11 @@
         bool AreKeysUp(IEnumerable<Keys> keys, CollectionQueryBehavior behavior);
 
         /// <summary>
-        /// Provides the time, in seconds, that the specified key has been continously held.
+        /// Provides the time that the specified key has been continously held.
         /// </summary>
         /// <param name="key">The key to query.</param>
-        /// <returns>Seconds that the specified key has been held.</returns>
-        double GetKeyHeldTime(Keys key);
+        /// <returns>Time that the specified key has been held.</returns>
+        TimeSpan GetKeyHeldTime(Keys key);
 
         /// <summary>
         /// Gets the keys that are down.
@@ -97,7 +96,7 @@
         /// <param name="key">Key to query.</param>
         /// <param name="timeHeld">The amount of time.</param>
         /// <returns>True if key has been held for the specified amount of time; otherwise false.</returns>
-        bool IsKeyHeld(Keys key, double timeHeld);
+        bool IsKeyHeld(Keys key, TimeSpan timeHeld);
 
         /// <summary>
         /// Queries whether the specified key is pressed.

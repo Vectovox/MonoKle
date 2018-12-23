@@ -1,11 +1,9 @@
-﻿namespace MonoKle.Input
-{
+﻿namespace MonoKle.Input {
     /// <summary>
     /// Interface for a pressable stick.
     /// </summary>
     /// <seealso cref="IDirectable" />
-    public interface IPressableStick : IDirectable
-    {
+    public interface IPressableStick : IDirectable {
         /// <summary>
         /// Gets the button state.
         /// </summary>

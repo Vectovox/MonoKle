@@ -1,10 +1,10 @@
-﻿namespace MonoKle.State
-{
+using System;
+
+namespace MonoKle.State {
     /// <summary>
     /// Abstract class for a game state.
     /// </summary>
-    public abstract class GameState
-    {
+    public abstract class GameState : IUpdateable, IDrawable {
         private bool hasBeenActivated;
 
         /// <summary>
@@ -27,94 +27,65 @@
         /// Initializes a new instance of the <see cref="GameState"/> class.
         /// </summary>
         /// <param name="identifier">The identifier of the state.</param>
-        public GameState(string identifier)
-        {
-            this.Identifier = identifier;
-        }
+        public GameState(string identifier) => Identifier = identifier;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameState"/> class.
         /// </summary>
         /// <param name="identifier">The identifier of the state.</param>
         /// <param name="isTemporary">If set to <c>true</c>, the state [is temporary].</param>
-        public GameState(string identifier, bool isTemporary) : this(identifier)
-        {
-            this.IsTemporary = isTemporary;
-        }
+        public GameState(string identifier, bool isTemporary) : this(identifier) => IsTemporary = isTemporary;
 
         /// <summary>
         /// Called when the state is being activated.
         /// </summary>
         /// <param name="data">State data to receive.</param>
-        public void Activate(StateSwitchData data)
-        {
-            if(this.hasBeenActivated == false)
-            {
-                this.BeforeFirstActivation(data);
-                this.hasBeenActivated = true;
+        public void Activate(StateSwitchData data) {
+            if (hasBeenActivated == false) {
+                BeforeFirstActivation(data);
+                hasBeenActivated = true;
             }
 
-            this.Activated(data);
+            Activated(data);
         }
 
         /// <summary>
         /// Called when the state is being activated.
         /// </summary>
         /// <param name="data">State data to receive.</param>
-        protected virtual void Activated(StateSwitchData data)
-        {
+        protected virtual void Activated(StateSwitchData data) {
         }
 
         /// <summary>
         /// Call when the state is being activated.
         /// </summary>
         /// <param name="data">State data to receive.</param>
-        public void Deactivate(StateSwitchData data)
-        {
-            this.Deactivated(data);
-        }
+        public void Deactivate(StateSwitchData data) => Deactivated(data);
 
         /// <summary>
         /// Call when the state is being deactivated.
         /// </summary>
         /// <param name="data">State data which will be sent.</param>
-        protected virtual void Deactivated(StateSwitchData data)
-        {
-        }
+        protected virtual void Deactivated(StateSwitchData data) { }
 
-        /// <summary>
-        /// Called when the state should draw itself.
-        /// </summary>
-        /// <param name="seconds">Seconds since last called.</param>
-        public abstract void Draw(double seconds);
+        public abstract void Draw(TimeSpan timeDelta);
 
         /// <summary>
         /// Called before the state is activated for the first time.
         /// </summary>
         /// <param name="data">State data to receive.</param>
-        protected virtual void BeforeFirstActivation(StateSwitchData data)
-        {
-        }
+        protected virtual void BeforeFirstActivation(StateSwitchData data) { }
 
         /// <summary>
         /// Call when the state is removed.
         /// </summary>
-        public void Remove()
-        {
-            this.Removed();
-        }
+        public void Remove() => Removed();
 
         /// <summary>
         /// Called when the state is removed.
         /// </summary>
-        protected virtual void Removed()
-        {
-        }
+        protected virtual void Removed() { }
 
-        /// <summary>
-        /// Called when the state should update itself.
-        /// </summary>
-        /// <param name="seconds">Seconds since last called.</param>
-        public abstract void Update(double seconds);
+        public abstract void Update(TimeSpan timeDelta);
     }
 }

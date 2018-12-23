@@ -1,29 +1,22 @@
-﻿namespace MonoKle.IO
-{
+﻿namespace MonoKle.IO {
     using System;
     using System.IO;
 
     /// <summary>
     /// File loaded that calls on a delegate for the actual loading operation.
     /// </summary>
-    public class DelegateFileLoader : AbstractFileReader
-    {
+    public class DelegateFileLoader : AbstractFileReader {
         /// <summary>
         /// The delegate used to perform file loading logic.
         /// </summary>
-        public FileLoadingDelegate Delegate
-        {
+        public FileLoadingDelegate Delegate {
             get; set;
         }
 
-        protected override bool ReadFile(Stream fileStream, MFileInfo file)
-        {
-            if(this.Delegate == null)
-            {
+        protected override bool ReadFile(Stream fileStream, MFileInfo file) {
+            if (Delegate == null) {
                 throw new InvalidOperationException("No assigned file loading delegate.");
-            }
-            else
-            {
+            } else {
                 return Delegate(fileStream, file);
             }
         }

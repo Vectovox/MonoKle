@@ -1,5 +1,4 @@
-﻿namespace MonoKle.Console
-{
+﻿namespace MonoKle.Console {
     using System.Collections.Generic;
 
     /// <summary>

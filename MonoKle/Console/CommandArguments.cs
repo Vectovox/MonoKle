@@ -1,13 +1,11 @@
-﻿namespace MonoKle.Console
-{
+﻿namespace MonoKle.Console {
     using System;
     using System.Collections.Generic;
 
     /// <summary>
     /// Class for command arguments.
     /// </summary>
-    public class CommandArguments
-    {
+    public class CommandArguments {
         /// <summary>
         /// The no arguments instance.
         /// </summary>
@@ -21,9 +19,8 @@
         /// Initializes a new instance of the <see cref="CommandArguments"/> class.
         /// </summary>
         /// <param name="arguments">The arguments and their descriptions mapped.</param>
-        public CommandArguments(Dictionary<string, string> arguments)
-        {
-            this.CheckArguments(arguments);
+        public CommandArguments(Dictionary<string, string> arguments) {
+            CheckArguments(arguments);
             this.arguments = new Dictionary<string, string>(arguments);
         }
 
@@ -31,12 +28,10 @@
         /// Initializes a new instance of the <see cref="CommandArguments"/> class.
         /// </summary>
         /// <param name="arguments">The arguments.</param>
-        public CommandArguments(ICollection<string> arguments)
-        {
-            this.CheckArguments(arguments);
+        public CommandArguments(ICollection<string> arguments) {
+            CheckArguments(arguments);
             this.arguments = new Dictionary<string, string>();
-            foreach (string s in arguments)
-            {
+            foreach (string s in arguments) {
                 this.arguments.Add(s, null);
             }
         }
@@ -45,17 +40,14 @@
         /// Initializes a new instance of the <see cref="CommandArguments"/> class.
         /// </summary>
         /// <param name="nArguments">The amount of arguments.</param>
-        /// <exception cref="System.ArgumentException">Amount of arguments must be positive.</exception>
-        public CommandArguments(int nArguments)
-        {
-            if (nArguments < 0)
-            {
+        /// <exception cref="ArgumentException">Amount of arguments must be positive.</exception>
+        public CommandArguments(int nArguments) {
+            if (nArguments < 0) {
                 throw new ArgumentException("Amount of arguments must be positive.");
             }
-            this.arguments = new Dictionary<string, string>();
-            for (int i = 1; i <= nArguments; i++)
-            {
-                this.arguments.Add("arg" + i, null);
+            arguments = new Dictionary<string, string>();
+            for (int i = 1; i <= nArguments; i++) {
+                arguments.Add("arg" + i, null);
             }
         }
 
@@ -64,19 +56,16 @@
         /// </summary>
         /// <param name="arguments">The arguments.</param>
         /// <param name="argumentDescriptions">The argument descriptions.</param>
-        /// <exception cref="System.ArgumentException">Arguments length and argument descriptions length must match.</exception>
-        public CommandArguments(string[] arguments, string[] argumentDescriptions)
-        {
-            this.CheckArguments(arguments);
-            this.CheckArguments(argumentDescriptions);
-            if (arguments.Length != argumentDescriptions.Length)
-            {
+        /// <exception cref="ArgumentException">Arguments length and argument descriptions length must match.</exception>
+        public CommandArguments(string[] arguments, string[] argumentDescriptions) {
+            CheckArguments(arguments);
+            CheckArguments(argumentDescriptions);
+            if (arguments.Length != argumentDescriptions.Length) {
                 throw new ArgumentException("Arguments length and argument descriptions length must match.");
             }
 
             this.arguments = new Dictionary<string, string>();
-            for (int i = 0; i < arguments.Length; i++)
-            {
+            for (int i = 0; i < arguments.Length; i++) {
                 this.arguments.Add(arguments[i], argumentDescriptions[i]);
             }
         }
@@ -87,7 +76,7 @@
         /// <value>
         /// The argument description map.
         /// </value>
-        public Dictionary<string, string> ArgumentDescriptionMap { get { return new Dictionary<string, string>(this.arguments); } }
+        public Dictionary<string, string> ArgumentDescriptionMap => new Dictionary<string, string>(arguments);
 
         /// <summary>
         /// Gets the arguments.
@@ -95,7 +84,7 @@
         /// <value>
         /// The arguments.
         /// </value>
-        public ICollection<string> Arguments { get { return this.arguments.Keys; } }
+        public ICollection<string> Arguments => arguments.Keys;
 
         /// <summary>
         /// Gets the amount of arguments.
@@ -103,26 +92,22 @@
         /// <value>
         /// The amount of arguments.
         /// </value>
-        public int Length { get { return this.Arguments.Count; } }
+        public int Length => Arguments.Count;
 
         /// <summary>
         /// Gets the argument description for the specified argument.
         /// </summary>
         /// <param name="argument">The argument.</param>
         /// <returns></returns>
-        public string GetArgumentDescription(string argument)
-        {
-            if (this.arguments.ContainsKey(argument))
-            {
-                return this.arguments[argument];
+        public string GetArgumentDescription(string argument) {
+            if (arguments.ContainsKey(argument)) {
+                return arguments[argument];
             }
             return null;
         }
 
-        private void CheckArguments(object o)
-        {
-            if (o == null)
-            {
+        private void CheckArguments(object o) {
+            if (o == null) {
                 throw new ArgumentNullException(CommandArguments.NullArgumentsMessage);
             }
         }

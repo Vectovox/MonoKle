@@ -1,10 +1,8 @@
-﻿namespace MonoKle.Input
-{
+﻿namespace MonoKle.Input {
     /// <summary>
     /// Abstract implementation of <see cref="ICharacterInput"/>.
     /// </summary>
-    public abstract class AbstractCharacterInput : ICharacterInput
-    {
+    public abstract class AbstractCharacterInput : ICharacterInput {
         /// <summary>
         /// Gets the currently typed character. If no character is typed then the default <see cref="char" /> value is returned.
         /// </summary>
@@ -20,9 +18,8 @@
         /// <returns>
         /// True if a character was typed; otherwise false.
         /// </returns>
-        public bool GetChar(out char character)
-        {
-            character = this.GetChar();
+        public bool GetChar(out char character) {
+            character = GetChar();
             return character != default(char);
         }
     }

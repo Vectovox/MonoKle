@@ -1,10 +1,8 @@
-﻿namespace MonoKle.Input.Mouse
-{
+﻿namespace MonoKle.Input.Mouse {
     /// <summary>
     /// Interface providing polling functionality for mouse input.
     /// </summary>
-    public interface IMouse
-    {
+    public interface IMouse {
         /// <summary>
         /// Gets or sets whether the virtual mouse is enabled.
         /// </summary>

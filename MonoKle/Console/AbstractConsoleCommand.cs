@@ -1,37 +1,32 @@
-﻿namespace MonoKle.Console
-{
+﻿namespace MonoKle.Console {
     using System;
     using System.Collections.Generic;
 
     /// <summary>
     /// Abstract console command class.
     /// </summary>
-    public abstract class AbstractConsoleCommand : IConsoleCommand
-    {
+    public abstract class AbstractConsoleCommand : IConsoleCommand {
         /// <summary>
         /// Initializes a new instance of the <see cref="AbstractConsoleCommand"/> class.
         /// </summary>
         /// <param name="name">The name of the command.</param>
         /// <param name="description">The description of the command.</param>
         /// <param name="arguments">The arguments for the command.</param>
-        /// <exception cref="System.ArgumentNullException">
+        /// <exception cref="ArgumentNullException">
         /// Name must not be null.
         /// or
         /// Arguments must not be null.
         /// </exception>
-        public AbstractConsoleCommand(string name, string description, CommandArguments arguments)
-        {
-            if (name == null)
-            {
+        public AbstractConsoleCommand(string name, string description, CommandArguments arguments) {
+            if (name == null) {
                 throw new ArgumentNullException("Name must not be null.");
             }
-            if (arguments == null)
-            {
+            if (arguments == null) {
                 throw new ArgumentNullException("Arguments must not be null.");
             }
-            this.Name = name.ToLower();
-            this.Description = description;
-            this.Arguments = arguments;
+            Name = name.ToLower();
+            Description = description;
+            Arguments = arguments;
         }
 
         /// <summary>
@@ -85,21 +80,16 @@
         /// Calls the command without passing any arguments.
         /// </summary>
         /// <returns></returns>
-        public bool Call()
-        {
-            return this.Call(null);
-        }
+        public bool Call() => Call(null);
 
         /// <summary>
         /// Gets input suggestions for arguments at the specified index.
         /// </summary>
         /// <param name="index">The index.</param>
         /// <returns></returns>
-        public ICollection<string> GetInputSuggestions(int index)
-        {
-            if (index >= 0 && index < this.Arguments.Length)
-            {
-                return this.DoGetInputSuggestions(index);
+        public ICollection<string> GetInputSuggestions(int index) {
+            if (index >= 0 && index < Arguments.Length) {
+                return DoGetInputSuggestions(index);
             }
             return new string[0];
         }
@@ -109,9 +99,6 @@
         /// </summary>
         /// <param name="index">The index.</param>
         /// <returns></returns>
-        protected virtual ICollection<string> DoGetInputSuggestions(int index)
-        {
-            return new string[0];
-        }
+        protected virtual ICollection<string> DoGetInputSuggestions(int index) => new string[0];
     }
 }

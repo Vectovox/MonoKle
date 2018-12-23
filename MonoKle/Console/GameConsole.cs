@@ -1,27 +1,22 @@
-﻿namespace MonoKle.Console
-{
-    using Attributes;
-    using Core;
-    using Input;
-    using Microsoft.Xna.Framework;
-    using Microsoft.Xna.Framework.Graphics;
-    using Microsoft.Xna.Framework.Input;
-    using Asset.Font;
-    using Logging;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using Input.Keyboard;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using MonoKle.Asset.Font;
+using MonoKle.Attributes;
+using MonoKle.Input.Keyboard;
+using MonoKle.Logging;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
+namespace MonoKle.Console {
     /// <summary>
     /// Class that maintains and displays a console.
     /// </summary>
-    public class GameConsole : IGameConsole, IMonoKleComponent
-    {
-        private const double TypingActivationDelay = 0.4;
-
-        private const double TypingCycleDelay = 0.02;
+    public class GameConsole : IGameConsole, IUpdateable, IDrawable {
+        private static readonly TimeSpan TypingActivationDelay = TimeSpan.FromMilliseconds(400);
+        private static readonly TimeSpan TypingCycleDelay = TimeSpan.FromMilliseconds(2);
 
         private int scrollOffset = 0;
         private GraphicsDevice graphicsDevice;
@@ -39,36 +34,34 @@
         /// <param name="keyboardInput">The keyboard input.</param>
         /// <param name="whiteTexture">The background texture.</param>
         /// <param name="logger">The logger to use.</param>
-        public GameConsole(MRectangleInt area, GraphicsDevice graphicsDevice, IKeyboard keyboardInput, Texture2D whiteTexture, Logger logger)
-        {
+        public GameConsole(MRectangleInt area, GraphicsDevice graphicsDevice, IKeyboard keyboardInput, Texture2D whiteTexture, Logger logger) {
             this.graphicsDevice = graphicsDevice;
-            this.spriteBatch = new SpriteBatch(graphicsDevice);
-            this.keyboard = new KeyboardTyper(keyboardInput, GameConsole.TypingActivationDelay, GameConsole.TypingCycleDelay);
+            spriteBatch = new SpriteBatch(graphicsDevice);
+            keyboard = new KeyboardTyper(keyboardInput, GameConsole.TypingActivationDelay, GameConsole.TypingCycleDelay);
 
-            this.inputField = new InputField("_", ">> ", 0.25, 10, new KeyboardCharacterInput(this.keyboard));
+            inputField = new InputField("_", ">> ", 0.25, 10, new KeyboardCharacterInput(keyboard));
 
-            this.Area = area;
-            this.Size = byte.MaxValue;
+            Area = area;
+            Size = byte.MaxValue;
             this.whiteTexture = whiteTexture;
-            this.BackgroundColor = new Color(0, 0, 0, 0.7f);
-            this.DefaultTextColour = Color.WhiteSmoke;
-            this.WarningTextColour = Color.Yellow;
-            this.ErrorTextColour = Color.Red;
-            this.CommandTextColour = Color.LightGreen;
-            this.DisabledTextColour = Color.Gray;
-            this.TextScale = 0.5f;
-            this.TabLength = 4;
+            BackgroundColor = new Color(0, 0, 0, 0.7f);
+            DefaultTextColour = Color.WhiteSmoke;
+            WarningTextColour = Color.Yellow;
+            ErrorTextColour = Color.Red;
+            CommandTextColour = Color.LightGreen;
+            DisabledTextColour = Color.Gray;
+            TextScale = 0.5f;
+            TabLength = 4;
             logger.LogAddedEvent += LogAdded;
             logger.Log("GameConsole activated.", LogLevel.Debug);
 
-            this.SetupBroker();
+            SetupBroker();
         }
 
         /// <summary>
         /// Gets or sets the area in which the console will be drawn.
         /// </summary>
-        public MRectangleInt Area
-        {
+        public MRectangleInt Area {
             get;
             set;
         }
@@ -76,8 +69,7 @@
         /// <summary>
         /// Gets or sets the background color.
         /// </summary>
-        public Color BackgroundColor
-        {
+        public Color BackgroundColor {
             get;
             set;
         }
@@ -88,8 +80,7 @@
         /// <value>
         /// The command broker.
         /// </value>
-        public CommandBroker CommandBroker
-        {
+        public CommandBroker CommandBroker {
             get;
             private set;
         }
@@ -100,8 +91,7 @@
         /// <value>
         /// The command text colour.
         /// </value>
-        public Color CommandTextColour
-        {
+        public Color CommandTextColour {
             get;
             set;
         }
@@ -109,8 +99,7 @@
         /// <summary>
         /// Gets or sets the color that the text will be drawn with if no other colour is specified.
         /// </summary>
-        public Color DefaultTextColour
-        {
+        public Color DefaultTextColour {
             get;
             set;
         }
@@ -121,8 +110,7 @@
         /// <value>
         /// The disabled text colour.
         /// </value>
-        public Color DisabledTextColour
-        {
+        public Color DisabledTextColour {
             get;
             set;
         }
@@ -133,8 +121,7 @@
         /// <value>
         /// The error text colour.
         /// </value>
-        public Color ErrorTextColour
-        {
+        public Color ErrorTextColour {
             get;
             set;
         }
@@ -142,9 +129,8 @@
         /// <summary>
         /// Gets or sets wether the console is open.
         /// </summary>
-        [PropertyVariableAttribute("c_isopen")]
-        public bool IsOpen
-        {
+        [PropertyVariable("c_isopen")]
+        public bool IsOpen {
             get;
             set;
         }
@@ -152,9 +138,8 @@
         /// <summary>
         /// Gets or sets the maximum amount of entries to keep.
         /// </summary>
-        [PropertyVariableAttribute("c_size")]
-        public int Size
-        {
+        [PropertyVariable("c_size")]
+        public int Size {
             get;
             set;
         }
@@ -165,16 +150,14 @@
         /// <value>
         /// The length of the tabs.
         /// </value>
-        public int TabLength
-        {
+        public int TabLength {
             get; set;
         }
 
         /// <summary>
         /// Gets or sets the string identifier of the text font. If null, the default font will be used.
         /// </summary>
-        public Font TextFont
-        {
+        public Font TextFont {
             get;
             set;
         }
@@ -182,9 +165,8 @@
         /// <summary>
         /// Gets or sets the scale for the font.
         /// </summary>
-        [PropertyVariableAttribute("c_textscale")]
-        public float TextScale
-        {
+        [PropertyVariable("c_textscale")]
+        public float TextScale {
             get;
             set;
         }
@@ -195,8 +177,7 @@
         /// <value>
         /// The toggle key.
         /// </value>
-        public Keys ToggleKey
-        {
+        public Keys ToggleKey {
             get;
             set;
         }
@@ -207,8 +188,7 @@
         /// <value>
         /// The warning text colour.
         /// </value>
-        public Color WarningTextColour
-        {
+        public Color WarningTextColour {
             get;
             set;
         }
@@ -216,338 +196,254 @@
         /// <summary>
         /// Clears all history.
         /// </summary>
-        public void Clear()
-        {
-            this.lines.Clear();
-        }
+        public void Clear() => lines.Clear();
 
-        /// <summary>
-        /// Draws this instance.
-        /// </summary>
-        public void Draw(double seconds)
-        {
-            if (this.IsOpen)
-            {
-                Font font = this.TextFont;
+        public void Draw(TimeSpan timeDelta) {
+            if (IsOpen) {
+                Font font = TextFont;
                 spriteBatch.Begin();
-                spriteBatch.Draw(this.whiteTexture, this.Area, this.BackgroundColor);
+                spriteBatch.Draw(whiteTexture, Area, BackgroundColor);
 
-                string drawnLine = this.inputField.DisplayTextCursor;
-                Vector2 textPos = new Vector2(this.Area.Left, this.Area.Bottom - font.MeasureString(drawnLine, this.TextScale).Y);
-                LinkedListNode<Line> node = lines.Find(lines.ElementAtOrDefault(lines.Count - this.scrollOffset - 1));
-                StringWrapper wrapper = new StringWrapper();
+                string drawnLine = inputField.DisplayTextCursor;
+                var textPos = new Vector2(Area.Left, Area.Bottom - font.MeasureString(drawnLine, TextScale).Y);
+                LinkedListNode<Line> node = lines.Find(lines.ElementAtOrDefault(lines.Count - scrollOffset - 1));
 
-                font.DrawString(this.spriteBatch, drawnLine, textPos, this.CommandTextColour, 0f, Vector2.Zero, this.TextScale, SpriteEffects.None, 0f);
-                while (textPos.Y > 0 && node != null)
-                {
-                    string toDraw = wrapper.WrapWidth(node.Value.Text, font, Area.Width, this.TextScale);
-                    textPos.Y -= font.MeasureString(toDraw, this.TextScale).Y;
-                    font.DrawString(this.spriteBatch, toDraw, textPos, node.Value.Color, 0f, Vector2.Zero, this.TextScale, SpriteEffects.None, 0f);
+                spriteBatch.DrawString(font, drawnLine, textPos, CommandTextColour, 0f, Vector2.Zero, TextScale, SpriteEffects.None, 0f);
+                while (textPos.Y > 0 && node != null) {
+                    string toDraw = font.WrapString(node.Value.Text, Area.Width, TextScale);
+                    textPos.Y -= font.MeasureString(toDraw, TextScale).Y;
+                    spriteBatch.DrawString(font, toDraw, textPos, node.Value.Color, 0f, Vector2.Zero, TextScale, SpriteEffects.None, 0f);
                     node = node.Previous;
                 }
                 spriteBatch.End();
             }
         }
 
-        /// <summary>
-        /// Updates the specified seconds.
-        /// </summary>
-        /// <param name="seconds">The seconds elapsed.</param>
-        public void Update(double seconds)
-        {
-            if (this.keyboard.Keyboard.IsKeyPressed(this.ToggleKey))
-            {
-                this.IsOpen = !this.IsOpen;
+        public void Update(TimeSpan timeDelta) {
+            if (keyboard.Keyboard.IsKeyPressed(ToggleKey)) {
+                IsOpen = !IsOpen;
             }
 
-            if (this.IsOpen)
-            {
+            if (IsOpen) {
                 DoKeyboardInput();
-
-                this.inputField.Update(seconds);
+                inputField.Update(timeDelta);
             }
         }
 
         /// <summary>
-        /// Writes the provided text with the colour <see cref="GameConsole.DefaultTextColour"/>.
+        /// Writes the provided text with the colour <see cref="DefaultTextColour"/>.
         /// </summary>
         /// <param name="text">The text to write.</param>
-        public void WriteLine(string text)
-        {
-            this.WriteLine(text, this.DefaultTextColour);
-        }
+        public void WriteLine(string text) => WriteLine(text, DefaultTextColour);
 
         /// <summary>
         /// Writes the provided text with the given color.
         /// </summary>
         /// <param name="text">The text to write.</param>
         /// <param name="color">Color of the line.</param>
-        public void WriteLine(string text, Color color)
-        {
+        public void WriteLine(string text, Color color) {
             // Divide into separate rows for \n
             string[] rows = text.Split('\n');
 
-            StringBuilder sb = new StringBuilder();
-            foreach (string r in rows)
-            {
+            var sb = new StringBuilder();
+            foreach (string r in rows) {
                 // Add tabs
                 sb.Clear();
                 int column = 0;
-                for (int i = 0; i < r.Length; i++)
-                {
-                    if (r[i] == '\t')
-                    {
-                        int amnt = this.TabLength - (column % this.TabLength);
-                        for (int j = 0; j < amnt; j++)
-                        {
+                for (int i = 0; i < r.Length; i++) {
+                    if (r[i] == '\t') {
+                        int amnt = TabLength - (column % TabLength);
+                        for (int j = 0; j < amnt; j++) {
                             sb.Append(' ');
                             column++;
                         }
-                    }
-                    else
-                    {
+                    } else {
                         sb.Append(r[i]);
                         column++;
                     }
                 }
 
-                this.lines.AddLast(new Line(sb.ToString(), color));
+                lines.AddLast(new Line(sb.ToString(), color));
             }
 
-            this.TrimLines();
+            TrimLines();
         }
 
-        private void AutoComplete()
-        {
-            string current = this.inputField.Text.Trim();
+        private void AutoComplete() {
+            string current = inputField.Text.Trim();
 
-            if (current.Length > 0)
-            {
+            if (current.Length > 0) {
                 string[] split = current.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 string commandString = split[0];
                 string matchingOn = split[split.Length - 1];
                 string completedPart = current.Substring(0, current.Length - matchingOn.Length);
                 ICollection<string> matches = null;
 
-                if (split.Length == 1)
-                {
-                    matches = this.MatchInput(matchingOn, this.CommandBroker.Commands.Select(o => o.Name).ToArray());
-                }
-                else
-                {
-                    IConsoleCommand command = this.CommandBroker.GetCommand(commandString);
-                    if (command != null)
-                    {
-                        matches = this.MatchInput(matchingOn, command.GetInputSuggestions(split.Length - 2));
+                if (split.Length == 1) {
+                    matches = MatchInput(matchingOn, CommandBroker.Commands.Select(o => o.Name).ToArray());
+                } else {
+                    IConsoleCommand command = CommandBroker.GetCommand(commandString);
+                    if (command != null) {
+                        matches = MatchInput(matchingOn, command.GetInputSuggestions(split.Length - 2));
                     }
                 }
 
-                if (matches != null)
-                {
-                    if (matches.Count == 1)
-                    {
-                        this.inputField.Text = completedPart + matches.First();
-                    }
-                    else if (matches.Count > 1)
-                    {
-                        this.WriteLine(this.inputField.DisplayText, this.CommandTextColour);
-                        foreach (string m in matches)
-                        {
-                            this.WriteLine("\t" + m);
+                if (matches != null) {
+                    if (matches.Count == 1) {
+                        inputField.Text = completedPart + matches.First();
+                    } else if (matches.Count > 1) {
+                        WriteLine(inputField.DisplayText, CommandTextColour);
+                        foreach (string m in matches) {
+                            WriteLine("\t" + m);
                         }
-                        this.WriteLine("");
-                        this.inputField.Text = completedPart + this.LongestCommonStartString(matches);
+                        WriteLine("");
+                        inputField.Text = completedPart + LongestCommonStartString(matches);
                     }
                 }
             }
         }
 
-        private void CommandClear()
-        {
-            this.Clear();
-        }
+        private void CommandClear() => Clear();
 
-        private void CommandEcho(string[] arguments)
-        {
-            this.WriteLine(arguments[0]);
-        }
+        private void CommandEcho(string[] arguments) => WriteLine(arguments[0]);
 
-        private void CommandHelp(string[] args)
-        {
-            IConsoleCommand command = this.CommandBroker.GetCommand(args[0]);
-            if (command != null)
-            {
-                if (command.Description != null)
-                {
-                    this.WriteLine(command.Description + "\n");
+        private void CommandHelp(string[] args) {
+            IConsoleCommand command = CommandBroker.GetCommand(args[0]);
+            if (command != null) {
+                if (command.Description != null) {
+                    WriteLine(command.Description + "\n");
                 }
 
-                StringBuilder usageBuilder = new StringBuilder("Usage: ");
-                if (command.AcceptsArguments && command.AllowsZeroArguments)
-                {
+                var usageBuilder = new StringBuilder("Usage: ");
+                if (command.AcceptsArguments && command.AllowsZeroArguments) {
                     usageBuilder.Append(command.Name.ToUpper());
                     usageBuilder.Append("\n       ");
                 }
                 usageBuilder.Append(command.Name.ToUpper());
-                foreach (string a in command.Arguments.Arguments)
-                {
+                foreach (string a in command.Arguments.Arguments) {
                     usageBuilder.Append(" [");
                     usageBuilder.Append(a);
                     usageBuilder.Append(']');
                 }
-                this.WriteLine(usageBuilder.ToString());
+                WriteLine(usageBuilder.ToString());
 
-                if (command.Arguments.Length > 0)
-                {
+                if (command.Arguments.Length > 0) {
                     usageBuilder.Clear();
                     usageBuilder.Append("\n");
 
                     int maxLength = command.Arguments.ArgumentDescriptionMap.Keys.Max(o => o.Length);
-                    foreach (string a in command.Arguments.ArgumentDescriptionMap.Keys)
-                    {
+                    foreach (string a in command.Arguments.ArgumentDescriptionMap.Keys) {
                         usageBuilder.Append("\t");
                         usageBuilder.Append(a);
-                        for (int i = 0; i < maxLength - a.Length; i++)
-                        {
+                        for (int i = 0; i < maxLength - a.Length; i++) {
                             usageBuilder.Append(' ');
                         }
                         usageBuilder.Append(" - ");
                         usageBuilder.AppendLine(command.Arguments.GetArgumentDescription(a));
                     }
 
-                    this.WriteLine(usageBuilder.ToString());
+                    WriteLine(usageBuilder.ToString());
+                } else {
+                    WriteLine("");
                 }
-                else
-                {
-                    this.WriteLine("");
-                }
-            }
-            else
-            {
-                this.WriteLine("There is no such command to get help for.");
+            } else {
+                WriteLine("There is no such command to get help for.");
             }
         }
 
-        private void CommandHelpList()
-        {
-            this.WriteLine("For more information on a specific command, type HELP [command].");
-            List<IConsoleCommand> commands = this.CommandBroker.Commands.ToList();
+        private void CommandHelpList() {
+            WriteLine("For more information on a specific command, type HELP [command].");
+            var commands = CommandBroker.Commands.ToList();
             commands.Sort((a, b) => a.Name.CompareTo(b.Name));
             int maxLength = commands.Max(o => o.Name.Length);
 
-            StringBuilder sb = new StringBuilder();
-            foreach (IConsoleCommand c in commands)
-            {
+            var sb = new StringBuilder();
+            foreach (IConsoleCommand c in commands) {
                 sb.Clear();
                 sb.Append("\t");
                 sb.Append(c.Name);
-                if (c.Description != null)
-                {
-                    for (int i = 0; i < maxLength - c.Name.Length; i++)
-                    {
+                if (c.Description != null) {
+                    for (int i = 0; i < maxLength - c.Name.Length; i++) {
                         sb.Append(' ');
                     }
                     sb.Append(" \t");
                     sb.Append(c.Description);
                 }
-                this.WriteLine(sb.ToString());
+                WriteLine(sb.ToString());
             }
-            this.WriteLine("");
+            WriteLine("");
         }
 
-        private ICollection<string> CommandHelpSuggestions(int index)
-        {
-            return this.CommandBroker.Commands.Select(o => o.Name).ToArray();
-        }
+        private ICollection<string> CommandHelpSuggestions(int index) => CommandBroker.Commands.Select(o => o.Name).ToArray();
 
-        private void DoCommand()
-        {
-            this.WriteLine(this.inputField.DisplayText, this.CommandTextColour);
+        private void DoCommand() {
+            WriteLine(inputField.DisplayText, CommandTextColour);
 
-            string[] split = this.inputField.Text.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            if (split.Length > 0)
-            {
+            string[] split = inputField.Text.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            if (split.Length > 0) {
                 string command = split[0];
                 string[] arguments = new string[split.Length - 1];
                 Array.Copy(split, 1, arguments, 0, arguments.Length);
 
-                if (this.CommandBroker.Call(command, arguments) == false)
-                {
-                    this.WriteLine("'" + command + "' is not a recognized command or has an invalid amount of arguments.", this.WarningTextColour);
+                if (CommandBroker.Call(command, arguments) == false) {
+                    WriteLine("'" + command + "' is not a recognized command or has an invalid amount of arguments.", WarningTextColour);
                 }
-                this.inputField.Remember();
+                inputField.Remember();
             }
 
-            this.inputField.Clear();
+            inputField.Clear();
         }
 
-        private void DoKeyboardInput()
-        {
+        private void DoKeyboardInput() {
             // Check for if command is given
-            if (this.keyboard.IsTyped(Keys.Enter))
-            {
-                this.DoCommand();
+            if (keyboard.IsTyped(Keys.Enter)) {
+                DoCommand();
             }
 
             // Autocomplete
-            if (this.keyboard.IsTyped(Keys.Tab))
-            {
-                this.AutoComplete();
+            if (keyboard.IsTyped(Keys.Tab)) {
+                AutoComplete();
             }
 
             // Scrolling
-            if (this.keyboard.IsTyped(Keys.PageUp))
-            {
-                this.ScrollUp();
+            if (keyboard.IsTyped(Keys.PageUp)) {
+                ScrollUp();
             }
 
-            if (this.keyboard.IsTyped(Keys.PageDown))
-            {
-                this.ScrollDown();
+            if (keyboard.IsTyped(Keys.PageDown)) {
+                ScrollDown();
             }
         }
 
-        private void LogAdded(object sender, LogAddedEventArgs e)
-        {
-            Color c = this.DefaultTextColour;
-            if (e.Log.Level == LogLevel.Warning)
-            {
-                c = this.WarningTextColour;
+        private void LogAdded(object sender, LogAddedEventArgs e) {
+            Color c = DefaultTextColour;
+            if (e.Log.Level == LogLevel.Warning) {
+                c = WarningTextColour;
+            } else if (e.Log.Level == LogLevel.Error) {
+                c = ErrorTextColour;
             }
-            else if (e.Log.Level == LogLevel.Error)
-            {
-                c = this.ErrorTextColour;
-            }
-            this.WriteLine(e.Log.ToString(), c);
+            WriteLine(e.Log.ToString(), c);
         }
 
-        private string LongestCommonStartString(ICollection<string> strings)
-        {
-            if (strings.Count > 0)
-            {
+        private string LongestCommonStartString(ICollection<string> strings) {
+            if (strings.Count > 0) {
                 string longest = strings.OrderByDescending(s => s.Length).First();
-                foreach (string s in strings)
-                {
-                    longest = this.LongestCommonStartString(longest, s);
+                foreach (string s in strings) {
+                    longest = LongestCommonStartString(longest, s);
                 }
                 return longest;
             }
             return "";
         }
 
-        private string LongestCommonStartString(string a, string b)
-        {
-            StringBuilder result = new StringBuilder();
+        private string LongestCommonStartString(string a, string b) {
+            var result = new StringBuilder();
 
             string shortest = a.Length > b.Length ? b : a;
-            for (int i = 0; i < shortest.Length; i++)
-            {
-                if (a[i] == b[i])
-                {
+            for (int i = 0; i < shortest.Length; i++) {
+                if (a[i] == b[i]) {
                     result.Append(a[i]);
-                }
-                else
-                {
+                } else {
                     break;
                 }
             }
@@ -555,53 +451,44 @@
             return result.ToString();
         }
 
-        private string[] MatchInput(string input, ICollection<string> options)
-        {
-            return options.Where(o => o.StartsWith(input)).ToArray();
+        private string[] MatchInput(string input, ICollection<string> options) => options.Where(o => o.StartsWith(input)).ToArray();
+
+        private void Scroll(int delta) {
+            scrollOffset += delta;
+            scrollOffset = Math.Min(scrollOffset, lines.Count - 1);
+            scrollOffset = Math.Max(scrollOffset, 0);
         }
 
-        private void Scroll(int delta)
-        {
-            this.scrollOffset += delta;
-            this.scrollOffset = Math.Min(this.scrollOffset, this.lines.Count - 1);
-            this.scrollOffset = Math.Max(this.scrollOffset, 0);
+        private void ScrollDown() {
+            float height = TextFont.MeasureString("M", TextScale).Y;
+            int maxRows = (int)(Area.Height / height);
+            Scroll(-maxRows / 2);
         }
 
-        private void ScrollDown()
-        {
-            float height = this.TextFont.MeasureString("M", this.TextScale).Y;
-            int maxRows = (int)(this.Area.Height / height);
-            this.Scroll(-maxRows / 2);
+        private void ScrollUp() {
+            float height = TextFont.MeasureString("M", TextScale).Y;
+            int maxRows = (int)(Area.Height / height);
+            Scroll(maxRows / 2);
         }
 
-        private void ScrollUp()
-        {
-            float height = this.TextFont.MeasureString("M", this.TextScale).Y;
-            int maxRows = (int)(this.Area.Height / height);
-            this.Scroll(maxRows / 2);
-        }
-
-        private void SetupBroker()
-        {
-            this.CommandBroker = new CommandBroker();
-            this.CommandBroker.Register(new ArgumentlessConsoleCommand("clear", "Clears the console output.", this.CommandClear));
-            this.CommandBroker.Register(
+        private void SetupBroker() {
+            CommandBroker = new CommandBroker();
+            CommandBroker.Register(new ArgumentlessConsoleCommand("clear", "Clears the console output.", CommandClear));
+            CommandBroker.Register(
                 new ConsoleCommand("help", "Provides help about commands. If no argument is passed, a list of commands will be provided.",
                 new CommandArguments(new string[] { "command" }, new string[] { "The command to get help for" }),
-                this.CommandHelp,
-                this.CommandHelpList,
-                this.CommandHelpSuggestions));
-            this.CommandBroker.Register(
+                CommandHelp,
+                CommandHelpList,
+                CommandHelpSuggestions));
+            CommandBroker.Register(
                 new ConsoleCommand("echo", "Prints the provided argument.",
                 new CommandArguments(new string[] { "print" }, new string[] { "The argument to print" }),
-                this.CommandEcho));
+                CommandEcho));
         }
 
-        private void TrimLines()
-        {
-            while (this.lines.Count > this.Size)
-            {
-                this.lines.RemoveFirst();
+        private void TrimLines() {
+            while (lines.Count > Size) {
+                lines.RemoveFirst();
             }
         }
     }

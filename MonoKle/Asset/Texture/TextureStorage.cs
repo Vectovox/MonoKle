@@ -1,48 +1,37 @@
-﻿namespace MonoKle.Asset.Texture
-{
-    using Microsoft.Xna.Framework.Graphics;
-    using IO;
+﻿namespace MonoKle.Asset.Texture {
     using System;
     using System.IO;
+    using IO;
+    using Microsoft.Xna.Framework;
+    using Microsoft.Xna.Framework.Graphics;
+    using MonoKle.Graphics;
 
     /// <summary>
     /// Loads and maintains texture assets.
     /// </summary>
-    public class TextureStorage : AbstractAssetStorage<Texture2D>
-    {
+    public class TextureStorage : AbstractAssetStorage<Texture2D> {
         private GraphicsDevice graphicsDevice;
+
+        /// <summary>
+        /// Gets a square white texture.
+        /// </summary>
+        public Texture2D White { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TextureStorage"/> class.
         /// </summary>
         /// <param name="graphicsDevice">The graphics device.</param>
-        /// <param name="whiteTexture">The white texture.</param>
-        /// <param name="defaultTexture">The default texture.</param>
-        public TextureStorage(GraphicsDevice graphicsDevice, Texture2D defaultTexture, Texture2D whiteTexture)
-        {
+        public TextureStorage(GraphicsDevice graphicsDevice) {
             this.graphicsDevice = graphicsDevice;
-            this.DefaultValue = defaultTexture;
-            this.White = whiteTexture;
+            DefaultValue = new Texture2D(graphicsDevice, 16, 16).Fill(Color.White);
+            White = new Texture2D(graphicsDevice, 16, 16).Fill(Color.Purple);
         }
 
-        /// <summary>
-        /// Gets a white texture.
-        /// </summary>
-        /// <value>
-        /// The white texture.
-        /// </value>
-        public Texture2D White { get; private set; }
+        protected override bool CheckFile(MFileInfo file) =>
+            file.Extension.Equals(".png", StringComparison.InvariantCultureIgnoreCase)
+            || file.Extension.Equals(".jpg", StringComparison.InvariantCultureIgnoreCase)
+            || file.Extension.Equals(".gif", StringComparison.InvariantCultureIgnoreCase);
 
-        protected override bool CheckFile(MFileInfo file)
-        {
-            return file.Extension.Equals(".png", StringComparison.InvariantCultureIgnoreCase)
-                || file.Extension.Equals(".jpg", StringComparison.InvariantCultureIgnoreCase)
-                || file.Extension.Equals(".gif", StringComparison.InvariantCultureIgnoreCase);
-        }
-
-        protected override Texture2D DoLoadStream(Stream stream)
-        {
-            return Texture2D.FromStream(this.graphicsDevice, stream);
-        }
+        protected override Texture2D DoLoadStream(Stream stream) => Texture2D.FromStream(graphicsDevice, stream);
     }
 }

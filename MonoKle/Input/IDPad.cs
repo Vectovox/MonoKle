@@ -1,10 +1,8 @@
-﻿namespace MonoKle.Input
-{
+﻿namespace MonoKle.Input {
     /// <summary>
     /// Interface for a DPad.
     /// </summary>
-    public interface IDPad
-    {
+    public interface IDPad {
         /// <summary>
         /// Gets the down direction.
         /// </summary>

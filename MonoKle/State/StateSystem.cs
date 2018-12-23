@@ -1,48 +1,37 @@
-﻿namespace MonoKle.State
-{
-    using MonoKle.Logging;
+namespace MonoKle.State {
     using System;
     using System.Collections.Generic;
+    using MonoKle.Logging;
 
     /// <summary>
     /// Class maintaining game states.
     /// </summary>
-    public class StateSystem : IStateSystem, IMonoKleComponent
-    {
+    public class StateSystem : IStateSystem, IUpdateable, IDrawable {
         private GameState currentState;
-        private Dictionary<string, GameState> stateByString;
+        private Dictionary<string, GameState> stateByString = new Dictionary<string, GameState>();
         private StateSwitchData switchData;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StateSystem"/> class.
         /// </summary>
-        public StateSystem()
-        {
-            this.stateByString = new Dictionary<string, GameState>();
-        }
+        public StateSystem() { }
 
         /// <summary>
         /// Gets a collection of the identifiers for the existing states.
         /// </summary>
-        public ICollection<string> StateIdentifiers
-        {
-            get { return this.stateByString.Keys; }
-        }
+        public ICollection<string> StateIdentifiers => stateByString.Keys;
 
         /// <summary>
         /// Adds a state.
         /// </summary>
         /// <param name="state">State to add.</param>
-        public bool AddState(GameState state)
-        {
-            if (state == null)
-            {
+        public bool AddState(GameState state) {
+            if (state == null) {
                 throw new ArgumentNullException("State must not be null.");
             }
 
-            if (this.stateByString.ContainsKey(state.Identifier) == false)
-            {
-                this.stateByString.Add(state.Identifier, state);
+            if (stateByString.ContainsKey(state.Identifier) == false) {
+                stateByString.Add(state.Identifier, state);
                 return true;
             }
 
@@ -50,28 +39,16 @@
             return false;
         }
 
-        /// <summary>
-        /// Draws the specified component with the specified seconds since last drawal.
-        /// </summary>
-        /// <param name="seconds">The amount of seconds since last drawal.</param>
-        public void Draw(double seconds)
-        {
-            if (this.currentState != null)
-            {
-                this.currentState.Draw(seconds);
-            }
-        }
+        public void Draw(TimeSpan timeDelta) => currentState?.Draw(timeDelta);
 
         /// <summary>
         /// Removes the state with the specified identifier.
         /// </summary>
         /// <param name="identifier">String identifier of the state to remove.</param>
-        public bool RemoveState(string identifier)
-        {
-            if (this.stateByString.ContainsKey(identifier))
-            {
-                this.stateByString[identifier].Remove();
-                this.stateByString.Remove(identifier);
+        public bool RemoveState(string identifier) {
+            if (stateByString.ContainsKey(identifier)) {
+                stateByString[identifier].Remove();
+                stateByString.Remove(identifier);
                 return true;
             }
 
@@ -83,48 +60,33 @@
         /// Prepares for a state switch without data.
         /// </summary>
         /// <param name="stateIdentifier">The identifier of the state to switch to.</param>
-        public void SwitchState(string stateIdentifier)
-        {
-            this.SwitchState(stateIdentifier, null);
-        }
+        public void SwitchState(string stateIdentifier) => SwitchState(stateIdentifier, null);
 
         /// <summary>
         /// Prepares for a state switch using the provided data.
         /// </summary>
         /// <param name="stateIdentifier">The identifier of the state to switch to.</param>
         /// <param name="data">Data to send with the switch. May be null.</param>
-        public void SwitchState(string stateIdentifier, object data)
-        {
-            this.switchData = new StateSwitchData(stateIdentifier, this.currentState == null ? null : this.currentState.Identifier, data);
-        }
+        public void SwitchState(string stateIdentifier, object data) => switchData = new StateSwitchData(stateIdentifier, currentState == null ? null : currentState.Identifier, data);
 
-        /// <summary>
-        /// Updates the component with the specified seconds since last update.
-        /// </summary>
-        /// <param name="seconds">The amount of seconds since last update.</param>
-        public void Update(double seconds)
-        {
+        public void Update(TimeSpan timeDelta) {
             // Switch state
-            if (this.switchData != null && this.stateByString.ContainsKey(this.switchData.NextState))
-            {
-                if (this.currentState != null)
-                {
-                    this.currentState.Deactivate(this.switchData);
-                    if (this.currentState.IsTemporary)
-                    {
-                        this.RemoveState(this.currentState.Identifier);
+            if (switchData != null && stateByString.ContainsKey(switchData.NextState)) {
+                if (currentState != null) {
+                    currentState.Deactivate(switchData);
+                    if (currentState.IsTemporary) {
+                        RemoveState(currentState.Identifier);
                     }
                 }
 
-                this.currentState = this.stateByString[this.switchData.NextState];
-                this.currentState.Activate(this.switchData);
-                this.switchData = null;
+                currentState = stateByString[switchData.NextState];
+                currentState.Activate(switchData);
+                switchData = null;
             }
 
             // Update current state
-            if (this.currentState != null)
-            {
-                this.currentState.Update(seconds);
+            if (currentState != null) {
+                currentState.Update(timeDelta);
             }
         }
     }

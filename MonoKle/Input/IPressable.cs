@@ -1,17 +1,17 @@
-﻿namespace MonoKle.Input
-{
+using System;
+
+namespace MonoKle.Input {
     /// <summary>
     /// Provides an interface for a pressable button with two discrete states.
     /// </summary>
-    public interface IPressable
-    {
+    public interface IPressable {
         /// <summary>
         /// Gets the held time.
         /// </summary>
         /// <value>
         /// The held time.
         /// </value>
-        double HeldTime { get; }
+        TimeSpan HeldTime { get; }
 
         /// <summary>
         /// Gets a value indicating whether this instance is down.
@@ -54,10 +54,10 @@
         bool IsUp { get; }
 
         /// <summary>
-        /// Gets a value indicating whether this instance has been held for at least the provided amount of seconds.
+        /// Gets a value indicating whether this instance has been held for at least the provided amount of time.
         /// </summary>
-        /// <param name="seconds">The seconds to have been held.</param>
-        /// <returns>True if held for at least the provided amount of seconds; otherwise false.</returns>
-        bool IsHeldFor(double seconds);
+        /// <param name="timeDelta">The time to have been held.</param>
+        /// <returns>True if held for at least the provided amount of time; otherwise false.</returns>
+        bool IsHeldFor(TimeSpan timeDelta);
     }
 }

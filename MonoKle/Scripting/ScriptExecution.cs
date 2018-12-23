@@ -1,10 +1,8 @@
-﻿namespace MonoKle.Scripting
-{
+﻿namespace MonoKle.Scripting {
     /// <summary>
     /// The result of executing a script.
     /// </summary>
-    public struct ScriptExecution
-    {
+    public struct ScriptExecution {
         /// <summary>
         /// The result of the execution.
         /// </summary>
@@ -26,11 +24,10 @@
         /// <param name="result">The result.</param>
         /// <param name="success">if set to <c>true</c> [success].</param>
         /// <param name="message">The message.</param>
-        public ScriptExecution(object result, bool success, string message)
-        {
-            this.Result = result;
-            this.Success = success;
-            this.Message = message;
+        public ScriptExecution(object result, bool success, string message) {
+            Result = result;
+            Success = success;
+            Message = message;
         }
     }
 }

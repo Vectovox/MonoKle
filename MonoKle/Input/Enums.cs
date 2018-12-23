@@ -1,10 +1,8 @@
-﻿namespace MonoKle.Input
-{
+﻿namespace MonoKle.Input {
     /// <summary>
     /// Enumeration for specifying how input collections should be addressed.
     /// </summary>
-    public enum CollectionQueryBehavior
-    {
+    public enum CollectionQueryBehavior {
         /// <summary>
         /// Any of the specified inputs.
         /// </summary>
@@ -19,8 +17,7 @@
     /// <summary>
     /// Enumeration for mouse buttons.
     /// </summary>
-    public enum MouseButton
-    {
+    public enum MouseButton {
         /// <summary>
         /// The left mouse button.
         /// </summary>
@@ -50,8 +47,7 @@
     /// <summary>
     /// Enumeration for mouse scroll direction.
     /// </summary>
-    public enum MouseScrollDirection
-    {
+    public enum MouseScrollDirection {
         /// <summary>
         /// Up direction.
         /// </summary>

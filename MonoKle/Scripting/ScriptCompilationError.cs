@@ -1,21 +1,18 @@
-﻿namespace MonoKle.Scripting
-{
+﻿namespace MonoKle.Scripting {
     /// <summary>
     /// Class representing an error when compiling a script.
     /// </summary>
-    public class ScriptCompilationError
-    {
+    public class ScriptCompilationError {
         /// <summary>
         /// Initializes a new instance of the <see cref="ScriptCompilationError"/> class.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="line">The line.</param>
         /// <param name="isWarning">if set to <c>true</c> [is warning].</param>
-        public ScriptCompilationError(string message, int line, bool isWarning)
-        {
-            this.Message = message;
-            this.Line = line;
-            this.IsWarning = isWarning;
+        public ScriptCompilationError(string message, int line, bool isWarning) {
+            Message = message;
+            Line = line;
+            IsWarning = isWarning;
         }
 
         /// <summary>
@@ -43,14 +40,11 @@
         public string Message { get; set; }
 
         /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// Returns a <see cref="string" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="string" /> that represents this instance.
         /// </returns>
-        public override string ToString()
-        {
-            return $"Line {Line} - {Message}";
-        }
+        public override string ToString() => $"Line {Line} - {Message}";
     }
 }

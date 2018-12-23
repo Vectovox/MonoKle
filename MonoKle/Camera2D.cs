@@ -1,5 +1,4 @@
-﻿namespace MonoKle
-{
+namespace MonoKle {
     using System;
 
     using Microsoft.Xna.Framework;
@@ -7,10 +6,11 @@
     /// <summary>
     /// Serializable class representing a 2D environment camera providing transformation capabilities.
     /// </summary>
-    [Serializable()]
-    public class Camera2D
-    {
+    [Serializable]
+    public class Camera2D {
         // TODO: Add desired position and a method that travels to a given position from the current one. private Vector2 desiredPosition;
+        // TODO: Calculate matrixes when properties are read to not have to call Update + get lazy evaluation
+        // TODO: Movable camera as a subclass?
         private float desiredRotation;
         private float desiredRotationSpeed = 0;
         private float desiredScale;
@@ -27,84 +27,58 @@
         /// Initiates a new instance of <see cref="Camera2D"/>.
         /// </summary>
         /// <param name="size">The <see cref="MPoint2"/> represenetation of the camera size.</param>
-        public Camera2D(MPoint2 size)
-        {
-            this.size = size;
-        }
+        public Camera2D(MPoint2 size) => this.size = size;
 
         /// <summary>
         /// Gets the size of the camera. 
         /// </summary>
-        public MPoint2 Size
-        {
-            get { return size; }
+        public MPoint2 Size {
+            get => size;
             set { size = value; matrixNeedsUpdate = true; }
         }
 
         /// <summary>
         /// Returns the current camera center position.
         /// </summary>
-        /// <returns>Vector2 representation of the position.</returns>
-        public MVector2 GetPosition()
-        {
-            return this.position;
-        }
+        public MVector2 Position => position;
 
         /// <summary>
         /// Returns the current rotation.
         /// </summary>
-        /// <returns>Float representation of rotation.</returns>
-        public float GetRotation()
-        {
-            return this.rotation;
-        }
+        public float Rotation => rotation;
 
         /// <summary>
         /// Returns the current scale factor.
         /// </summary>
-        /// <returns>Float representation of the scale factor.</returns>
-        public float GetScale()
-        {
-            return this.scale;
-        }
+        public float Scale => scale;
 
         /// <summary>
         /// Gets the transformation matrix representation.
         /// </summary>
-        /// <returns>Transformation matrix.</returns>
-        public Matrix GetTransformMatrix()
-        {
-            return this.transformMatrix;
-        }
+        public Matrix TransformMatrix => transformMatrix;
 
         /// <summary>
         /// Gets the inverse transformation matrix representation.
         /// </summary>
-        /// <returns>Transformation matrix.</returns>
-        public Matrix GetTransformMatrixInv()
-        {
-            return this.transformMatrixInv;
-        }
+        public Matrix TransformMatrixInv => transformMatrixInv;
 
         /// <summary>
         /// Sets the current camera center position to the given coordinate.
         /// </summary>
         /// <param name="position">The Vector2 coordinate to set to.</param>
-        public void SetPosition(MVector2 position)
-        {
+        public void SetPosition(MVector2 position) {
             this.position = position;
-            this.matrixNeedsUpdate = true;
+            matrixNeedsUpdate = true;
         }
 
         /// <summary>
         /// Sets the current rotation to the given value.
         /// </summary>
         /// <param name="rotation">The value to set rotation to.</param>
-        public void SetRotation(float rotation)
-        {
+        public void SetRotation(float rotation) {
             this.rotation = MathHelper.WrapAngle(rotation);
-            this.desiredRotationSpeed = 0;
-            this.matrixNeedsUpdate = true;
+            desiredRotationSpeed = 0;
+            matrixNeedsUpdate = true;
         }
 
         /// <summary>
@@ -112,16 +86,16 @@
         /// </summary>
         /// <param name="rotation">The rotation, in radians, to set to.</param>
         /// <param name="speed">The delta rotation, in radians, per second.</param>
-        public void SetRotation(float rotation, float speed)
-        {
-            this.desiredRotation = MathHelper.WrapAngle(rotation);
-            if(this.desiredRotation != this.rotation)
-            {
+        public void SetRotation(float rotation, float speed) {
+            desiredRotation = MathHelper.WrapAngle(rotation);
+            if (desiredRotation != this.rotation) {
                 float a = desiredRotation - this.rotation;
-                if(a > Math.PI) a -= 2 * (float)Math.PI;
-                if(a < -Math.PI) a += 2 * (float)Math.PI;
+                if (a > Math.PI)
+                    a -= 2 * (float)Math.PI;
+                if (a < -Math.PI)
+                    a += 2 * (float)Math.PI;
 
-                this.desiredRotationSpeed = a < 0 ? -speed : speed;
+                desiredRotationSpeed = a < 0 ? -speed : speed;
             }
         }
 
@@ -129,11 +103,10 @@
         /// Sets the current scale factor to the given value.
         /// </summary>
         /// <param name="scale">The scale factor to set to.</param>
-        public void SetScale(float scale)
-        {
+        public void SetScale(float scale) {
             this.scale = scale;
-            this.desiredScaleSpeed = 0;
-            this.matrixNeedsUpdate = true;
+            desiredScaleSpeed = 0;
+            matrixNeedsUpdate = true;
         }
 
         /// <summary>
@@ -141,10 +114,9 @@
         /// </summary>
         /// <param name="scale">The scale factor to set to.</param>
         /// <param name="speed">The delta scale per second.</param>
-        public void SetScale(float scale, float speed)
-        {
-            this.desiredScale = scale;
-            this.desiredScaleSpeed = (scale - this.scale) < 0 ? -speed : speed;
+        public void SetScale(float scale, float speed) {
+            desiredScale = scale;
+            desiredScaleSpeed = (scale - this.scale) < 0 ? -speed : speed;
         }
 
         /// <summary>
@@ -152,87 +124,64 @@
         /// </summary>
         /// <param name="coordinate">The coordinate to transform.</param>
         /// <returns>Transformed coordinate.</returns>
-        public MVector2 Transform(MVector2 coordinate)
-        {
-            return Vector2.Transform(coordinate, this.transformMatrix);
-        }
+        public MVector2 Transform(MVector2 coordinate) => Vector2.Transform(coordinate, transformMatrix);
 
         /// <summary>
         /// Inversely transforms a given coordinate, effectively untransforming camera space to world space.
         /// </summary>
         /// <param name="coordinate">The coordinate to transform.</param>
         /// <returns>Transformed coordinate.</returns>
-        public MVector2 TransformInv(MVector2 coordinate)
-        {
-            return Vector2.Transform(coordinate, transformMatrixInv);
-        }
+        public MVector2 TransformInv(MVector2 coordinate) => Vector2.Transform(coordinate, transformMatrixInv);
 
         /// <summary>
         /// Updates camera composition with the given amount of delta time.
         /// </summary>
         /// <param name="span">Delta time.</param>
-        public void Update(TimeSpan span)
-        {
-            this.Update(span.TotalSeconds);
-        }
+        public void Update(TimeSpan span) => Update(span.TotalSeconds);
 
-        /// <summary>
-        /// Updates camera composition with the given amount of delta time.
-        /// </summary>
-        /// <param name="seconds">Delta time in seconds.</param>
-        public void Update(double seconds)
-        {
-            this.UpdateScale(ref seconds);
-            this.UpdateRotation(ref seconds);
+        private void Update(double seconds) {
+            UpdateScale(seconds);
+            UpdateRotation(seconds);
 
-            if(this.matrixNeedsUpdate)
-            {
+            if (matrixNeedsUpdate) {
                 MVector2 center = size.ToMVector2() * 0.5f;
-                this.transformMatrix = Matrix.CreateTranslation(-new Vector3(position - center, 0f))
+                transformMatrix = Matrix.CreateTranslation(-new Vector3(position - center, 0f))
                 * Matrix.CreateTranslation(-new Vector3(center, 0f))
                 * Matrix.CreateRotationZ(-rotation)
                 * Matrix.CreateScale(scale)
                 * Matrix.CreateTranslation(new Vector3(center, 0f));
 
-                this.transformMatrixInv = Matrix.Invert(this.transformMatrix);
+                transformMatrixInv = Matrix.Invert(transformMatrix);
             }
         }
 
-        private void UpdateRotation(ref double seconds)
-        {
-            if(desiredRotationSpeed != 0)
-            {
-                float delta = (float)(this.desiredRotationSpeed * seconds);
-                this.rotation = MathHelper.WrapAngle(this.rotation + delta);
-                double distance = Math.Atan2(Math.Sin(this.desiredRotation - this.rotation), Math.Cos(this.desiredRotation - this.rotation));
+        private void UpdateRotation(double seconds) {
+            if (desiredRotationSpeed != 0) {
+                float delta = (float)(desiredRotationSpeed * seconds);
+                rotation = MathHelper.WrapAngle(rotation + delta);
+                double distance = Math.Atan2(Math.Sin(desiredRotation - rotation), Math.Cos(desiredRotation - rotation));
 
                 // Check if we turned past the desired rotation
-                if(Math.Abs(distance) < Math.Abs(delta))
-                {
-                    this.desiredRotationSpeed = 0f;
-                    this.rotation = desiredRotation;
+                if (Math.Abs(distance) < Math.Abs(delta)) {
+                    desiredRotationSpeed = 0f;
+                    rotation = desiredRotation;
                 }
 
                 matrixNeedsUpdate = true;
             }
         }
 
-        private void UpdateScale(ref double seconds)
-        {
-            if(this.desiredScaleSpeed != 0)
-            {
-                float delta = (float)(this.desiredScaleSpeed * seconds);
-                if(Math.Abs(this.scale - this.desiredScale) < Math.Abs(delta))
-                {
-                    this.desiredScaleSpeed = 0;
-                    this.scale = this.desiredScale;
-                }
-                else
-                {
-                    this.scale += delta;
+        private void UpdateScale(double seconds) {
+            if (desiredScaleSpeed != 0) {
+                float delta = (float)(desiredScaleSpeed * seconds);
+                if (Math.Abs(scale - desiredScale) < Math.Abs(delta)) {
+                    desiredScaleSpeed = 0;
+                    scale = desiredScale;
+                } else {
+                    scale += delta;
                 }
 
-                this.matrixNeedsUpdate = true;
+                matrixNeedsUpdate = true;
             }
         }
     }

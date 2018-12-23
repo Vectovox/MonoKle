@@ -1,12 +1,10 @@
-﻿namespace MonoKle.Input.Keyboard
-{
+﻿namespace MonoKle.Input.Keyboard {
     using Microsoft.Xna.Framework.Input;
 
     /// <summary>
     /// Abstract implementation of <see cref="IKeyConverter"/>.
     /// </summary>
-    public abstract class AbstractKeyConverter : IKeyConverter
-    {
+    public abstract class AbstractKeyConverter : IKeyConverter {
         /// <summary>
         /// Converts the specified key to its character representation. If conversion failed, returns the default <see cref="char" /> value.
         /// </summary>
@@ -28,9 +26,8 @@
         /// <returns>
         /// True if conversion succeeded; otherwise false.
         /// </returns>
-        public bool Convert(Keys key, bool shift, bool altgr, out char value)
-        {
-            value = this.Convert(key, shift, altgr);
+        public bool Convert(Keys key, bool shift, bool altgr, out char value) {
+            value = Convert(key, shift, altgr);
             return value != default(char);
         }
     }

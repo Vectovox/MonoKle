@@ -1,12 +1,10 @@
-﻿namespace MonoKle.Console
-{
+﻿namespace MonoKle.Console {
     using System.Collections.Generic;
 
     /// <summary>
     /// Interface for a console command.
     /// </summary>
-    public interface IConsoleCommand
-    {
+    public interface IConsoleCommand {
         /// <summary>
         /// Gets a value indicating whether arguments are accepted.
         /// </summary>

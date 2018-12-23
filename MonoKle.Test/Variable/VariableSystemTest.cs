@@ -1,17 +1,14 @@
-﻿namespace MonoKle.Variable
-{
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Attributes;
+﻿namespace MonoKle.Variable {
     using System;
+    using Attributes;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
-    public class VariableSystemTest
-    {
+    public class VariableSystemTest {
         private VariableSystem system;
 
         [TestMethod]
-        public void Clear_Cleared()
-        {
+        public void Clear_Cleared() {
             system.SetValue("a", 1);
             system.SetValue("b", 2);
             system.SetValue("c", 3);
@@ -23,9 +20,8 @@
         }
 
         [TestMethod]
-        public void GetValue_BoundVariable_Called()
-        {
-            MockVariable b = new MockVariable(true);
+        public void GetValue_BoundVariable_Called() {
+            var b = new MockVariable(true);
             system.Bind(b, "a");
             system.GetValue("a");
             Assert.IsTrue(b.getCalled);
@@ -33,8 +29,7 @@
         }
 
         [TestMethod]
-        public void GetValue_Exists_Correct()
-        {
+        public void GetValue_Exists_Correct() {
             string id = "abc";
             int value = 17;
             system.SetValue(id, value);
@@ -42,15 +37,13 @@
         }
 
         [TestMethod]
-        public void GetValue_Nonexisting_Null()
-        {
+        public void GetValue_Nonexisting_Null() {
             system.SetValue("abcd", 8);
             Assert.AreEqual(null, system.GetValue("abc"));
         }
 
         [TestMethod]
-        public void GetValue_TwoExists_Correct()
-        {
+        public void GetValue_TwoExists_Correct() {
             string id = "abc";
             string id2 = "def";
             int value = 17;
@@ -61,20 +54,13 @@
         }
 
         [TestInitialize]
-        public void Init()
-        {
-            this.system = new VariableSystem();
-        }
+        public void Init() => this.system = new VariableSystem();
 
         [TestMethod]
-        public void NewSystem_NoVariables()
-        {
-            Assert.AreEqual(0, system.Identifiers.Count);
-        }
+        public void NewSystem_NoVariables() => Assert.AreEqual(0, system.Identifiers.Count);
 
         [TestMethod]
-        public void Remove_Removed()
-        {
+        public void Remove_Removed() {
             system.SetValue("a", 1);
             system.SetValue("b", 2);
             system.SetValue("c", 3);
@@ -86,9 +72,8 @@
         }
 
         [TestMethod]
-        public void SetValue_BoundVariable_Called()
-        {
-            MockVariable b = new MockVariable(true);
+        public void SetValue_BoundVariable_Called() {
+            var b = new MockVariable(true);
             system.Bind(b, "a");
             system.SetValue("a", 5);
             Assert.IsFalse(b.getCalled);
@@ -96,17 +81,15 @@
         }
 
         [TestMethod]
-        public void SetValue_BoundVariable_FalseReturn()
-        {
-            MockVariable b = new MockVariable(false);
+        public void SetValue_BoundVariable_FalseReturn() {
+            var b = new MockVariable(false);
             system.Bind(b, "a");
             Assert.IsFalse(system.SetValue("a", 5));
         }
 
         [TestMethod]
-        public void SetValue_BoundVariable_MockNotUpdated()
-        {
-            MockVariable b = new MockVariable(false);
+        public void SetValue_BoundVariable_MockNotUpdated() {
+            var b = new MockVariable(false);
             system.SetValue("a", 5);
             system.Bind(b, "a", false);
             Assert.AreEqual(null, b.var);
@@ -115,9 +98,8 @@
         }
 
         [TestMethod]
-        public void SetValue_BoundVariable_MockUpdated()
-        {
-            MockVariable b = new MockVariable(false);
+        public void SetValue_BoundVariable_MockUpdated() {
+            var b = new MockVariable(false);
             system.SetValue("a", 5);
             system.Bind(b, "a", true);
             Assert.AreEqual(5, b.var);
@@ -126,12 +108,10 @@
         }
 
         [TestMethod]
-        public void SetValue_IdentifierCountIncremented()
-        {
+        public void SetValue_IdentifierCountIncremented() {
             int amount = 5;
             string s = "a";
-            for (int i = 0; i < amount; i++)
-            {
+            for (int i = 0; i < amount; i++) {
                 s += s;
                 system.SetValue(s, 7);
             }
@@ -139,9 +119,8 @@
         }
 
         [TestMethod]
-        public void BindProperties_CorrectlyBound()
-        {
-            BoundClass b = new BoundClass() { X = 1, Y = 2, Z = 3 };
+        public void BindProperties_CorrectlyBound() {
+            var b = new BoundClass() { X = 1, Y = 2, Z = 3 };
             this.system.BindProperties(b);
             this.system.SetValue("z", 17);
             Assert.AreEqual(2, this.system.Identifiers.Count);
@@ -151,8 +130,7 @@
             Assert.AreEqual(b.Z, this.system.GetValue("z"));
         }
 
-        private class BoundClass
-        {
+        private class BoundClass {
             [PropertyVariableAttribute("x")]
             public int X { get; set; }
 
@@ -162,39 +140,26 @@
             public int Z { get; set; }
         }
 
-        private class MockVariable : IVariable
-        {
+        private class MockVariable : IVariable {
             public bool getCalled;
             public bool setCalled;
             public bool toReturnOnSet;
             public object var;
 
-            public MockVariable(bool toReturnOnSet)
-            {
+            public MockVariable(bool toReturnOnSet) {
                 this.toReturnOnSet = toReturnOnSet;
             }
 
-            public Type Type
-            {
-                get
-                {
-                    throw new NotImplementedException();
-                }
-            }
+            public Type Type => throw new NotImplementedException();
 
-            public bool CanSet()
-            {
-                return true;
-            }
+            public bool CanSet() => true;
 
-            public object GetValue()
-            {
+            public object GetValue() {
                 this.getCalled = true;
                 return this.var;
             }
 
-            public bool SetValue(object value)
-            {
+            public bool SetValue(object value) {
                 this.setCalled = true;
                 this.var = value;
                 return this.toReturnOnSet;

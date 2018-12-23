@@ -1,28 +1,23 @@
-﻿namespace MonoKle
-{
-    using Microsoft.Xna.Framework;
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Runtime.CompilerServices;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using Microsoft.Xna.Framework;
+
+namespace MonoKle {
 
     /// <summary>
     /// Class representing a serializable grid with accompanying operations.
     /// </summary>
-    [Serializable()]
-    public class MGrid
-    {
-        private float cellSize;
+    [Serializable]
+    public class MGrid {
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MGrid"/> class.
         /// </summary>
         /// <param name="cellSize">Size of the cells.</param>
-        public MGrid(float cellSize)
-        {
-            this.cellSize = cellSize;
-        }
+        public MGrid(float cellSize) => CellSize = cellSize;
 
         /// <summary>
         /// Gets the size of the cells.
@@ -30,7 +25,7 @@
         /// <value>
         /// The size of the cells.
         /// </value>
-        public float CellSize => cellSize;
+        public float CellSize { get; }
 
         /// <summary>
         /// Returns the cell containing the provided point.
@@ -38,36 +33,32 @@
         /// <param name="point">The provided point.</param>
         /// <returns>Cell containing the provided point.</returns>
         public MPoint2 CellFromPoint(MVector2 point) =>
-            new MPoint2((int)(point.X / this.cellSize) + (point.X > 0 ? 0 : -1),
-                (int)(point.Y / this.cellSize) + (point.Y > 0 ? 0 : -1));
+            new MPoint2((int)(point.X / CellSize) + (point.X > 0 ? 0 : -1),
+                (int)(point.Y / CellSize) + (point.Y > 0 ? 0 : -1));
 
         /// <summary>
         /// Returns the bounding rectangle of the provided cell.
         /// </summary>
         /// <param name="cell">The cell.</param>
         /// <returns>Bounding area.</returns>
-        public MRectangle CellRectangle(MPoint2 cell) => new MRectangle(cell.X * this.cellSize, cell.Y * this.cellSize, this.cellSize, this.cellSize);
+        public MRectangle CellRectangle(MPoint2 cell) => new MRectangle(cell.X * CellSize, cell.Y * CellSize, CellSize, CellSize);
 
         /// <summary>
         /// Returns all the cells containing the provided circle.
         /// </summary>
         /// <param name="circle">The circle.</param>
         /// <returns>List of cells.</returns>
-        public List<MPoint2> CellsFromCircle(MCircle circle)
-        {
-            List<MPoint2> cellList = new List<MPoint2>();
-            MRectangleInt circleBox = new MRectangleInt(
-                this.CellFromPoint(new MVector2(circle.Origin.X - circle.Radius, circle.Origin.Y - circle.Radius)),
-                this.CellFromPoint(new MVector2(circle.Origin.X + circle.Radius, circle.Origin.Y + circle.Radius))
+        public List<MPoint2> CellsFromCircle(MCircle circle) {
+            var cellList = new List<MPoint2>();
+            var circleBox = new MRectangleInt(
+                CellFromPoint(new MVector2(circle.Origin.X - circle.Radius, circle.Origin.Y - circle.Radius)),
+                CellFromPoint(new MVector2(circle.Origin.X + circle.Radius, circle.Origin.Y + circle.Radius))
                 );
 
-            for (int x = circleBox.Left; x <= circleBox.Right; x++)
-            {
-                for (int y = circleBox.Top; y <= circleBox.Bottom; y++)
-                {
-                    MPoint2 point = new MPoint2(x, y);
-                    if (circle.Intersects(this.CellRectangle(point)))
-                    {
+            for (int x = circleBox.Left; x <= circleBox.Right; x++) {
+                for (int y = circleBox.Top; y <= circleBox.Bottom; y++) {
+                    var point = new MPoint2(x, y);
+                    if (circle.Intersects(CellRectangle(point))) {
                         cellList.Add(point);
                     }
                 }
@@ -82,7 +73,7 @@
         /// <param name="lineStart">The start coordinate of the line.</param>
         /// <param name="lineEnd">The end coordinate of the line.</param>
         /// <returns>List of cells.</returns>
-        public List<MPoint2> CellsFromLine(MVector2 lineStart, MVector2 lineEnd) => this.TraverseLine(lineStart, lineEnd).ToList();
+        public List<MPoint2> CellsFromLine(MVector2 lineStart, MVector2 lineEnd) => TraverseLine(lineStart, lineEnd).ToList();
 
         /// <summary>
         /// Returns an <see cref="IEnumerable{MPoint2}"/> for iteratively traversing the cells containing the provided line.
@@ -98,14 +89,12 @@
         /// <summary>
         /// Enumerable
         /// </summary>
-        public class LineEnumerable : IEnumerable<MPoint2>
-        {
+        public class LineEnumerable : IEnumerable<MPoint2> {
             private Vector2 end;
             private Vector2 start;
             private MGrid traverser;
 
-            internal LineEnumerable(MGrid traverser, MVector2 start, MVector2 end)
-            {
+            internal LineEnumerable(MGrid traverser, MVector2 start, MVector2 end) {
                 this.traverser = traverser;
                 this.start = start;
                 this.end = end;
@@ -117,21 +106,14 @@
             /// <returns>
             /// A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the collection.
             /// </returns>
-            public IEnumerator<MPoint2> GetEnumerator()
-            {
-                return new LineEnumerator(this);
-            }
+            public IEnumerator<MPoint2> GetEnumerator() => new LineEnumerator(this);
 
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return this.GetEnumerator();
-            }
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
             /// <summary>
             /// Enumerator
             /// </summary>
-            public class LineEnumerator : IEnumerator<MPoint2>
-            {
+            public class LineEnumerator : IEnumerator<MPoint2> {
                 private int currentX;
                 private int currentY;
                 private float dx;
@@ -147,35 +129,28 @@
                 private float tMaxX;
                 private float tMaxY;
 
-                internal LineEnumerator(LineEnumerable e)
-                {
+                internal LineEnumerator(LineEnumerable e) {
                     this.e = e;
 
-                    this.dx = e.end.X - e.start.X;
-                    this.stepX = dx > 0 ? 1 : -1;
-                    this.tDeltaX = e.traverser.cellSize / dx;
+                    dx = e.end.X - e.start.X;
+                    stepX = dx > 0 ? 1 : -1;
+                    tDeltaX = e.traverser.CellSize / dx;
 
-                    this.dy = e.end.Y - e.start.Y;
-                    this.stepY = dy > 0 ? 1 : -1;
-                    this.tDeltaY = e.traverser.cellSize / dy;
+                    dy = e.end.Y - e.start.Y;
+                    stepY = dy > 0 ? 1 : -1;
+                    tDeltaY = e.traverser.CellSize / dy;
 
-                    this.endPoint = new MPoint2(this.e.end / this.e.traverser.cellSize);
+                    endPoint = new MPoint2(this.e.end / this.e.traverser.CellSize);
 
-                    this.Reset();
+                    Reset();
                 }
 
                 /// <summary>
                 /// Gets the element in the collection at the current position of the enumerator.
                 /// </summary>
-                public MPoint2 Current
-                {
-                    get { return new MPoint2(this.currentX, this.currentY); }
-                }
+                public MPoint2 Current => new MPoint2(currentX, currentY);
 
-                object IEnumerator.Current
-                {
-                    get { return this.Current; }
-                }
+                object IEnumerator.Current => Current;
 
                 /// <summary>
                 /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
@@ -188,66 +163,48 @@
                 /// <returns>
                 /// true if the enumerator was successfully advanced to the next element; false if the enumerator has passed the end of the collection.
                 /// </returns>
-                public bool MoveNext()
-                {
-                    if (this.first)
-                    {
-                        this.first = false;
-                    }
-                    else
-                    {
-                        if (Math.Abs(tMaxX) < Math.Abs(tMaxY))
-                        {
+                public bool MoveNext() {
+                    if (first) {
+                        first = false;
+                    } else {
+                        if (Math.Abs(tMaxX) < Math.Abs(tMaxY)) {
                             tMaxX = tMaxX + tDeltaX;
-                            this.currentX += stepX;
-                        }
-                        else
-                        {
+                            currentX += stepX;
+                        } else {
                             tMaxY = tMaxY + tDeltaY;
-                            this.currentY += stepY;
+                            currentY += stepY;
                         }
                     }
 
-                    if (this.over == false && this.currentX == this.endPoint.X && this.currentY == this.endPoint.Y)
-                    {
-                        this.over = true;
+                    if (over == false && currentX == endPoint.X && currentY == endPoint.Y) {
+                        over = true;
                         return true;
                     }
-                    return !this.over;
+                    return !over;
                 }
 
                 /// <summary>
                 /// Sets the enumerator to its initial position, which is before the first element in the collection.
                 /// </summary>
-                public void Reset()
-                {
-                    if (this.stepX >= 0)
-                    {
-                        this.tMaxX = this.tDeltaX * (1.0f - this.Frac(e.start.X / e.traverser.cellSize));
+                public void Reset() {
+                    if (stepX >= 0) {
+                        tMaxX = tDeltaX * (1.0f - Frac(e.start.X / e.traverser.CellSize));
+                    } else {
+                        tMaxX = tDeltaX * (Frac(e.start.X / e.traverser.CellSize));
                     }
-                    else
-                    {
-                        this.tMaxX = this.tDeltaX * (this.Frac(e.start.X / e.traverser.cellSize));
+                    if (stepY >= 0) {
+                        tMaxY = tDeltaY * (1.0f - Frac(e.start.Y / e.traverser.CellSize));
+                    } else {
+                        tMaxY = tDeltaY * (Frac(e.start.Y / e.traverser.CellSize));
                     }
-                    if (this.stepY >= 0)
-                    {
-                        this.tMaxY = this.tDeltaY * (1.0f - this.Frac(e.start.Y / e.traverser.cellSize));
-                    }
-                    else
-                    {
-                        this.tMaxY = this.tDeltaY * (this.Frac(e.start.Y / e.traverser.cellSize));
-                    }
-                    this.currentX = (int)(this.e.start.X / this.e.traverser.cellSize);
-                    this.currentY = (int)(this.e.start.Y / this.e.traverser.cellSize);
-                    this.first = true;
-                    this.over = false;
+                    currentX = (int)(e.start.X / e.traverser.CellSize);
+                    currentY = (int)(e.start.Y / e.traverser.CellSize);
+                    first = true;
+                    over = false;
                 }
 
                 [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                private float Frac(float value)
-                {
-                    return value - (int)value;
-                }
+                private float Frac(float value) => value - (int)value;
             }
         }
     }

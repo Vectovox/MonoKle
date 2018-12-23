@@ -1,5 +1,4 @@
-﻿namespace MonoKle.IO
-{
+﻿namespace MonoKle.IO {
     using System.IO;
 
     /// <summary>

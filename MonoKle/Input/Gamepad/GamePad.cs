@@ -1,14 +1,13 @@
-﻿namespace MonoKle.Input.Gamepad
-{
-    using Microsoft.Xna.Framework.Input;
+using System;
+using Microsoft.Xna.Framework.Input;
 
+namespace MonoKle.Input.Gamepad {
     /// <summary>
     /// Class representing the current state of a gamepad.
     /// </summary>
     /// <seealso cref="IGamePad" />
     /// <seealso cref="IUpdateable" />
-    public class GamePad : IGamePad, IUpdateable
-    {
+    public class GamePad : IGamePad, IUpdateable {
         private Button buttonA = new Button();
         private Button buttonB = new Button();
         private Button buttonBack = new Button();
@@ -30,10 +29,9 @@
         /// Initializes a new instance of the <see cref="GamePad"/> class.
         /// </summary>
         /// <param name="playerIndex">Index of the player.</param>
-        public GamePad(Microsoft.Xna.Framework.PlayerIndex playerIndex)
-        {
+        public GamePad(Microsoft.Xna.Framework.PlayerIndex playerIndex) {
             this.playerIndex = playerIndex;
-            this.currentState = new GamePadState();
+            currentState = new GamePadState();
         }
 
         /// <summary>
@@ -42,14 +40,14 @@
         /// <value>
         /// A button.
         /// </value>
-        public IPressable A => this.buttonA;
+        public IPressable A => buttonA;
 
         /// <summary>
         /// Gets the B button.</summary>
         /// <value>
         /// B button.
         /// </value>
-        public IPressable B => this.buttonB;
+        public IPressable B => buttonB;
 
         /// <summary>
         /// Gets the Back button.
@@ -57,7 +55,7 @@
         /// <value>
         /// Back button.
         /// </value>
-        public IPressable Back => this.buttonBack;
+        public IPressable Back => buttonBack;
 
         /// <summary>
         /// Gets the Big button.
@@ -65,7 +63,7 @@
         /// <value>
         /// Big button.
         /// </value>
-        public IPressable Big => this.buttonBig;
+        public IPressable Big => buttonBig;
 
         /// <summary>
         /// Gets the D-pad.
@@ -73,7 +71,7 @@
         /// <value>
         /// The D-pad.
         /// </value>
-        public IDPad DPad => this.dPad;
+        public IDPad DPad => dPad;
 
         /// <summary>
         /// Gets a value indicating whether this instance is connected.
@@ -81,7 +79,7 @@
         /// <value>
         /// <c>true</c> if this instance is connected; otherwise, <c>false</c>.
         /// </value>
-        public bool IsConnected => this.currentState.IsConnected;
+        public bool IsConnected => currentState.IsConnected;
 
         /// <summary>
         /// Gets the Left Shoulder button.
@@ -89,7 +87,7 @@
         /// <value>
         /// Left Shoulder button.
         /// </value>
-        public IPressable LeftShoulder => this.buttonLeftShoulder;
+        public IPressable LeftShoulder => buttonLeftShoulder;
 
         /// <summary>
         /// Gets the left thumbstick.
@@ -97,7 +95,7 @@
         /// <value>
         /// The left thumbstick.
         /// </value>
-        public IPressableStick LeftThumbstick => this.stickLeft;
+        public IPressableStick LeftThumbstick => stickLeft;
 
         /// <summary>
         /// Gets the left trigger.
@@ -105,7 +103,7 @@
         /// <value>
         /// The left trigger.
         /// </value>
-        public ITrigger LeftTrigger => this.triggerLeft;
+        public ITrigger LeftTrigger => triggerLeft;
 
         /// <summary>
         /// Gets the packet number.
@@ -113,7 +111,7 @@
         /// <value>
         /// The packet number.
         /// </value>
-        public int PacketNumber => this.currentState.PacketNumber;
+        public int PacketNumber => currentState.PacketNumber;
 
         /// <summary>
         /// Gets the index of the player.
@@ -121,7 +119,7 @@
         /// <value>
         /// The index of the player.
         /// </value>
-        public Microsoft.Xna.Framework.PlayerIndex PlayerIndex => this.playerIndex;
+        public Microsoft.Xna.Framework.PlayerIndex PlayerIndex => playerIndex;
 
         /// <summary>
         /// Gets the Right Shoulder button.
@@ -129,7 +127,7 @@
         /// <value>
         /// Right Shoulder button.
         /// </value>
-        public IPressable RightShoulder => this.buttonRightShoulder;
+        public IPressable RightShoulder => buttonRightShoulder;
 
         /// <summary>
         /// Gets the right thumbstick.
@@ -137,7 +135,7 @@
         /// <value>
         /// The right thumbstick.
         /// </value>
-        public IPressableStick RightThumbstick => this.stickRight;
+        public IPressableStick RightThumbstick => stickRight;
 
         /// <summary>
         /// Gets the right trigger.
@@ -145,7 +143,7 @@
         /// <value>
         /// The right trigger.
         /// </value>
-        public ITrigger RightTrigger => this.triggerRight;
+        public ITrigger RightTrigger => triggerRight;
 
         /// <summary>
         /// Gets the Start button.
@@ -153,14 +151,14 @@
         /// <value>
         /// Start button.
         /// </value>
-        public IPressable Start => this.buttonStart;
+        public IPressable Start => buttonStart;
 
         /// <summary>
         /// Gets the X button.</summary>
         /// <value>
         /// X button.
         /// </value>
-        public IPressable X => this.buttonX;
+        public IPressable X => buttonX;
 
         /// <summary>
         /// Gets the Y button.
@@ -168,41 +166,35 @@
         /// <value>
         /// Y button.
         /// </value>
-        public IPressable Y => this.buttonY;
+        public IPressable Y => buttonY;
 
-        /// <summary>
-        /// Updates the component with the specified seconds since last update.
-        /// </summary>
-        /// <param name="seconds">The amount of seconds since last update.</param>
-        public void Update(double seconds)
-        {
-            this.currentState = Microsoft.Xna.Framework.Input.GamePad.GetState(this.playerIndex);
+        public void Update(TimeSpan timeDelta) {
+            currentState = Microsoft.Xna.Framework.Input.GamePad.GetState(playerIndex);
 
-            if (this.currentState.IsConnected)
-            {
-                this.buttonA.Update(this.currentState.Buttons.A == ButtonState.Pressed, seconds);
-                this.buttonB.Update(this.currentState.Buttons.B == ButtonState.Pressed, seconds);
-                this.buttonBack.Update(this.currentState.Buttons.Back == ButtonState.Pressed, seconds);
-                this.buttonBig.Update(this.currentState.Buttons.BigButton == ButtonState.Pressed, seconds);
-                this.buttonLeftShoulder.Update(this.currentState.Buttons.LeftShoulder == ButtonState.Pressed, seconds);
-                this.buttonRightShoulder.Update(this.currentState.Buttons.RightShoulder == ButtonState.Pressed, seconds);
-                this.buttonStart.Update(this.currentState.Buttons.Start == ButtonState.Pressed, seconds);
-                this.buttonX.Update(this.currentState.Buttons.X == ButtonState.Pressed, seconds);
-                this.buttonY.Update(this.currentState.Buttons.Y == ButtonState.Pressed, seconds);
+            if (currentState.IsConnected) {
+                buttonA.Update(currentState.Buttons.A == ButtonState.Pressed, timeDelta);
+                buttonB.Update(currentState.Buttons.B == ButtonState.Pressed, timeDelta);
+                buttonBack.Update(currentState.Buttons.Back == ButtonState.Pressed, timeDelta);
+                buttonBig.Update(currentState.Buttons.BigButton == ButtonState.Pressed, timeDelta);
+                buttonLeftShoulder.Update(currentState.Buttons.LeftShoulder == ButtonState.Pressed, timeDelta);
+                buttonRightShoulder.Update(currentState.Buttons.RightShoulder == ButtonState.Pressed, timeDelta);
+                buttonStart.Update(currentState.Buttons.Start == ButtonState.Pressed, timeDelta);
+                buttonX.Update(currentState.Buttons.X == ButtonState.Pressed, timeDelta);
+                buttonY.Update(currentState.Buttons.Y == ButtonState.Pressed, timeDelta);
 
-                this.stickLeft.Update(this.currentState.Buttons.LeftStick == ButtonState.Pressed,
-                    this.currentState.ThumbSticks.Left, seconds);
-                this.stickRight.Update(this.currentState.Buttons.RightStick == ButtonState.Pressed,
-                    this.currentState.ThumbSticks.Right, seconds);
+                stickLeft.Update(currentState.Buttons.LeftStick == ButtonState.Pressed,
+                    currentState.ThumbSticks.Left, timeDelta);
+                stickRight.Update(currentState.Buttons.RightStick == ButtonState.Pressed,
+                    currentState.ThumbSticks.Right, timeDelta);
 
-                this.dPad.Update(this.currentState.DPad.Left == ButtonState.Pressed,
-                                 this.currentState.DPad.Right == ButtonState.Pressed,
-                                 this.currentState.DPad.Up == ButtonState.Pressed,
-                                 this.currentState.DPad.Down == ButtonState.Pressed,
-                                 seconds);
+                dPad.Update(currentState.DPad.Left == ButtonState.Pressed,
+                                 currentState.DPad.Right == ButtonState.Pressed,
+                                 currentState.DPad.Up == ButtonState.Pressed,
+                                 currentState.DPad.Down == ButtonState.Pressed,
+                                 timeDelta);
 
-                this.triggerLeft.Update(this.currentState.Triggers.Left, seconds);
-                this.triggerRight.Update(this.currentState.Triggers.Right, seconds);
+                triggerLeft.Update(currentState.Triggers.Left, timeDelta);
+                triggerRight.Update(currentState.Triggers.Right, timeDelta);
             }
         }
     }

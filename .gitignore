@@ -122,3 +122,5 @@ ModelManifest.xml
 #Mysteriou .ide folder
 *.sln.ide/
 
+# More VS stuff
+.vs

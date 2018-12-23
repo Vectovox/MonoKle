@@ -1,23 +1,20 @@
-﻿namespace MonoKle.IO
-{
+﻿namespace MonoKle.IO {
     using System;
     using System.IO;
 
     /// <summary>
     /// File information.
     /// </summary>
-    public class MFileInfo
-    {
+    public class MFileInfo {
         private FileInfo file;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MFileInfo"/> class.
         /// </summary>
         /// <param name="path">The path.</param>
-        public MFileInfo(string path)
-        {
-            this.OriginalPath = path;
-            this.Update();
+        public MFileInfo(string path) {
+            OriginalPath = path;
+            Update();
         }
 
         public DateTime CreationTime => file.CreationTime;
@@ -45,9 +42,6 @@
 
         public FileStream OpenWrite() => file.OpenWrite();
 
-        public void Update()
-        {
-            this.file = new FileInfo(this.OriginalPath);
-        }
+        public void Update() => file = new FileInfo(OriginalPath);
     }
 }

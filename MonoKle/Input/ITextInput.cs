@@ -1,10 +1,8 @@
-﻿namespace MonoKle.Input
-{
+﻿namespace MonoKle.Input {
     /// <summary>
     /// Defines text input methods.
     /// </summary>
-    public interface ITextInput
-    {
+    public interface ITextInput {
         /// <summary>
         /// Gets or sets the cursor position.
         /// </summary>

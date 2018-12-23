@@ -1,20 +1,16 @@
-﻿namespace MonoKle.Console
-{
-    using Core;
+﻿namespace MonoKle.Console {
+    using Asset.Font;
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Input;
-    using Asset.Font;
 
     /// <summary>
     /// Interface for a game console.
     /// </summary>
-    public interface IGameConsole
-    {
+    public interface IGameConsole {
         /// <summary>
         /// Gets or sets the area in which the console will be drawn.
         /// </summary>
-        MRectangleInt Area
-        {
+        MRectangleInt Area {
             get;
             set;
         }
@@ -25,8 +21,7 @@
         /// <value>
         /// The color of the background.
         /// </value>
-        Color BackgroundColor
-        {
+        Color BackgroundColor {
             get;
             set;
         }
@@ -37,8 +32,7 @@
         /// <value>
         /// The command broker.
         /// </value>
-        CommandBroker CommandBroker
-        {
+        CommandBroker CommandBroker {
             get;
         }
 
@@ -48,8 +42,7 @@
         /// <value>
         /// The command text colour.
         /// </value>
-        Color CommandTextColour
-        {
+        Color CommandTextColour {
             get;
             set;
         }
@@ -57,8 +50,7 @@
         /// <summary>
         /// Gets or sets the color that the text will be drawn with if no other colour is specified.
         /// </summary>
-        Color DefaultTextColour
-        {
+        Color DefaultTextColour {
             get;
             set;
         }
@@ -69,8 +61,7 @@
         /// <value>
         /// The disabled text colour.
         /// </value>
-        Color DisabledTextColour
-        {
+        Color DisabledTextColour {
             get;
             set;
         }
@@ -81,8 +72,7 @@
         /// <value>
         /// The error text colour.
         /// </value>
-        Color ErrorTextColour
-        {
+        Color ErrorTextColour {
             get;
             set;
         }
@@ -90,8 +80,7 @@
         /// <summary>
         /// Gets or sets wether the console is open.
         /// </summary>
-        bool IsOpen
-        {
+        bool IsOpen {
             get;
             set;
         }
@@ -99,8 +88,7 @@
         /// <summary>
         /// Gets or sets the maximum amount of entries to keep.
         /// </summary>
-        int Size
-        {
+        int Size {
             get;
             set;
         }
@@ -111,16 +99,14 @@
         /// <value>
         /// The length of the tabs.
         /// </value>
-        int TabLength
-        {
+        int TabLength {
             get; set;
         }
 
         /// <summary>
         /// Gets or sets the string identifier of the text font. If null, the default font will be used.
         /// </summary>
-        Font TextFont
-        {
+        Font TextFont {
             get;
             set;
         }
@@ -128,8 +114,7 @@
         /// <summary>
         /// Gets or sets the scale for the font.
         /// </summary>
-        float TextScale
-        {
+        float TextScale {
             get;
             set;
         }
@@ -140,8 +125,7 @@
         /// <value>
         /// The toggle key.
         /// </value>
-        Keys ToggleKey
-        {
+        Keys ToggleKey {
             get;
             set;
         }
@@ -152,8 +136,7 @@
         /// <value>
         /// The warning text colour.
         /// </value>
-        Color WarningTextColour
-        {
+        Color WarningTextColour {
             get;
             set;
         }

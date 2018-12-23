@@ -1,5 +1,4 @@
-﻿namespace MonoKle.Graphics
-{
+﻿namespace MonoKle.Graphics {
     using System;
 
     using Microsoft.Xna.Framework;
@@ -8,8 +7,7 @@
     /// <summary>
     /// Abstract class for drawing primitives.
     /// </summary>
-    public abstract class AbstractPrimitiveBatch : IPrimitiveBatch
-    {
+    public abstract class AbstractPrimitiveBatch : IPrimitiveBatch {
         private const string EXCEPTION_MSG_ALREADY_BEGUN = "Begin has already been called.";
         private const string EXCEPTION_MSG_NOT_BEGUN = "Begin has not been called.";
         private const int INITIAL_VERTEX_AMOUNT = 1;
@@ -25,64 +23,51 @@
         /// Abstract constructor for <see cref="AbstractPrimitiveBatch"/>.
         /// </summary>
         /// <param name="graphicsDevice">The graphics device to draw with.</param>
-        public AbstractPrimitiveBatch(GraphicsDevice graphicsDevice)
-        {
+        public AbstractPrimitiveBatch(GraphicsDevice graphicsDevice) {
             this.graphicsDevice = graphicsDevice;
-            this.effect = new BasicEffect(graphicsDevice);
-            this.effect.VertexColorEnabled = true;
-            this.Grow();
+            effect = new BasicEffect(graphicsDevice);
+            effect.VertexColorEnabled = true;
+            Grow();
         }
 
         /// <summary>
         /// Begins a batch of primitives.
         /// </summary>
-        public void Begin()
-        {
-            this.Begin(Matrix.Identity);
-        }
+        public void Begin() => Begin(Matrix.Identity);
 
         /// <summary>
         /// Begins a batch of primitives, using a transformation matrix to apply to each primitive.
         /// </summary>
         /// <param name="transformMatrix">Transformation matrix to apply.</param>
-        public void Begin(Matrix transformMatrix)
-        {
-            if(this.hasBegun)
-            {
+        public void Begin(Matrix transformMatrix) {
+            if (hasBegun) {
                 throw new InvalidOperationException(AbstractPrimitiveBatch.EXCEPTION_MSG_ALREADY_BEGUN);
-            }
-            else
-            {
-                this.effect.Projection = transformMatrix * GetPostTransformationMatrix(this.graphicsDevice.Viewport);
-                this.hasBegun = true;
+            } else {
+                effect.Projection = transformMatrix * GetPostTransformationMatrix(graphicsDevice.Viewport);
+                hasBegun = true;
             }
         }
 
         /// <summary>
         /// Ends a batch of primitives.
         /// </summary>
-        public void End()
-        {
-            if(this.hasBegun == false)
-            {
+        public void End() {
+            if (hasBegun == false) {
                 throw new InvalidOperationException(AbstractPrimitiveBatch.EXCEPTION_MSG_NOT_BEGUN);
-            }
-            else
-            {
-                foreach(EffectPass pass in effect.CurrentTechnique.Passes)
-                {
+            } else {
+                foreach (EffectPass pass in effect.CurrentTechnique.Passes) {
                     pass.Apply();
-                    this.graphicsDevice.DrawUserIndexedPrimitives<VertexPositionColor>(PrimitiveType.LineList,
-                        this.vertexArray,
+                    graphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.LineList,
+                        vertexArray,
                         0,
-                        this.nVertices,
-                        this.indexArray,
+                        nVertices,
+                        indexArray,
                         0,
-                        (int)(this.nVertices * 0.5f));
+                        (int)(nVertices * 0.5f));
                 }
 
-                this.nVertices = 0;
-                this.hasBegun = false;
+                nVertices = 0;
+                hasBegun = false;
             }
         }
 
@@ -93,21 +78,16 @@
         /// <param name="end">End coordinate.</param>
         /// <param name="startColor">Color of line on starting coordinate.</param>
         /// <param name="endColor">Color of line on ending coordinate.</param>
-        protected void AddLine(Vector3 start, Vector3 end, Color startColor, Color endColor)
-        {
-            if(this.hasBegun == false)
-            {
+        protected void AddLine(Vector3 start, Vector3 end, Color startColor, Color endColor) {
+            if (hasBegun == false) {
                 throw new InvalidOperationException(AbstractPrimitiveBatch.EXCEPTION_MSG_NOT_BEGUN);
-            }
-            else
-            {
-                if(this.nVertices >= this.vertexArray.Length)
-                {
-                    this.Grow();
+            } else {
+                if (nVertices >= vertexArray.Length) {
+                    Grow();
                 }
-                this.vertexArray[nVertices] = new VertexPositionColor(start, startColor);
-                this.vertexArray[nVertices + 1] = new VertexPositionColor(end, endColor);
-                this.nVertices += 2;
+                vertexArray[nVertices] = new VertexPositionColor(start, startColor);
+                vertexArray[nVertices + 1] = new VertexPositionColor(end, endColor);
+                nVertices += 2;
             }
         }
 
@@ -118,22 +98,19 @@
         /// <returns>Transformation matrix.</returns>
         protected abstract Matrix GetPostTransformationMatrix(Viewport viewport);
 
-        private void Grow()
-        {
+        private void Grow() {
             short[] newIndexArray = new short[indexArray.Length * 2];
-            VertexPositionColor[] newVertexArray = new VertexPositionColor[newIndexArray.Length];
+            var newVertexArray = new VertexPositionColor[newIndexArray.Length];
 
-            for(short i = 0; i < newIndexArray.Length; i++)
-            {
+            for (short i = 0; i < newIndexArray.Length; i++) {
                 newIndexArray[i] = i;
             }
-            for(int i = 0; i < this.vertexArray.Length; i++)
-            {
-                newVertexArray[i] = this.vertexArray[i];
+            for (int i = 0; i < vertexArray.Length; i++) {
+                newVertexArray[i] = vertexArray[i];
             }
 
-            this.indexArray = newIndexArray;
-            this.vertexArray = newVertexArray;
+            indexArray = newIndexArray;
+            vertexArray = newVertexArray;
         }
     }
 }

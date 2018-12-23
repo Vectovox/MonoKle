@@ -1,13 +1,11 @@
-﻿namespace MonoKle.Console
-{
+﻿namespace MonoKle.Console {
     using System;
     using System.Collections.Generic;
 
     /// <summary>
     /// Class for console command with arguments.
     /// </summary>
-    public class ConsoleCommand : AbstractConsoleCommand
-    {
+    public class ConsoleCommand : AbstractConsoleCommand {
         /// <summary>
         /// Initializes a new instance of the <see cref="ArgumentlessConsoleCommand"/> class.
         /// </summary>
@@ -16,8 +14,7 @@
         /// <param name="arguments">The arguments for the command.</param>
         /// <param name="handler">The handler for the command.</param>
         public ConsoleCommand(string name, string description,
-            CommandArguments arguments, ConsoleCommandHandler handler) : this(name, description, arguments, handler, null)
-        {
+            CommandArguments arguments, ConsoleCommandHandler handler) : this(name, description, arguments, handler, null) {
         }
 
         /// <summary>
@@ -30,8 +27,7 @@
         /// <param name="defaultHandler">The default handler for the command if no argument is passed. May be null.</param>
         public ConsoleCommand(string name, string description,
             CommandArguments arguments, ConsoleCommandHandler handler, DefaultConsoleCommandHandler defaultHandler)
-            : this(name, description, arguments, handler, defaultHandler, null)
-        {
+            : this(name, description, arguments, handler, defaultHandler, null) {
         }
 
         /// <summary>
@@ -45,15 +41,13 @@
         /// <param name="suggestionHandler">Handler for providing input suggestions to arguments at a specified index.</param>
         public ConsoleCommand(string name, string description,
             CommandArguments arguments, ConsoleCommandHandler handler, DefaultConsoleCommandHandler defaultHandler,
-            ConsoleCommandSuggestionHandler suggestionHandler) : base(name, description, arguments)
-        {
-            if (handler == null)
-            {
+            ConsoleCommandSuggestionHandler suggestionHandler) : base(name, description, arguments) {
+            if (handler == null) {
                 throw new ArgumentNullException("Handler must not be null");
             }
-            this.Handler = handler;
-            this.DefaultHandler = defaultHandler;
-            this.SuggestionHandler = suggestionHandler;
+            Handler = handler;
+            DefaultHandler = defaultHandler;
+            SuggestionHandler = suggestionHandler;
         }
 
         /// <summary>
@@ -70,7 +64,7 @@
         /// <value>
         /// <c>true</c> if zero arguments are allowed; otherwise, <c>false</c>.
         /// </value>
-        public override bool AllowsZeroArguments { get { return this.DefaultHandler != null; } }
+        public override bool AllowsZeroArguments => DefaultHandler != null;
 
         /// <summary>
         /// Gets the default handler.
@@ -95,25 +89,20 @@
         /// The suggestion handler.
         /// </value>
         public ConsoleCommandSuggestionHandler SuggestionHandler { get; private set; }
-        
+
         /// <summary>
         /// Calls the command with the specified arguments.
         /// </summary>
         /// <param name="arguments">The arguments. Passing null counts as passing zero arguments.</param>
         /// <returns></returns>
-        public override bool Call(string[] arguments)
-        {
-            if (arguments != null && arguments.Length > 0)
-            {
-                if(arguments.Length >= this.Arguments.Length)
-                {
-                    this.Handler(arguments);
+        public override bool Call(string[] arguments) {
+            if (arguments != null && arguments.Length > 0) {
+                if (arguments.Length >= Arguments.Length) {
+                    Handler(arguments);
                     return true;
                 }
-            }
-            else if (this.DefaultHandler != null)
-            {
-                this.DefaultHandler();
+            } else if (DefaultHandler != null) {
+                DefaultHandler();
                 return true;
             }
 
@@ -125,11 +114,9 @@
         /// </summary>
         /// <param name="index">The index.</param>
         /// <returns></returns>
-        protected override ICollection<string> DoGetInputSuggestions(int index)
-        {
-            if (this.SuggestionHandler != null)
-            {
-                return this.SuggestionHandler(index);
+        protected override ICollection<string> DoGetInputSuggestions(int index) {
+            if (SuggestionHandler != null) {
+                return SuggestionHandler(index);
             }
             return new string[0];
         }

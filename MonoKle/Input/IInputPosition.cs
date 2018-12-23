@@ -1,10 +1,8 @@
-﻿namespace MonoKle.Input
-{
+﻿namespace MonoKle.Input {
     /// <summary>
     /// Input position properties.
     /// </summary>
-    public interface IInputPosition
-    {
+    public interface IInputPosition {
         /// <summary>
         /// Gets the delta value.
         /// </summary>

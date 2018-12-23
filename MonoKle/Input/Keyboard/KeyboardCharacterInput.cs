@@ -1,13 +1,11 @@
-﻿namespace MonoKle.Input.Keyboard
-{
-    using Microsoft.Xna.Framework.Input;
+﻿namespace MonoKle.Input.Keyboard {
     using System;
+    using Microsoft.Xna.Framework.Input;
 
     /// <summary>
     /// Class querying for characters via keyboard input.
     /// </summary>
-    public class KeyboardCharacterInput : AbstractCharacterInput
-    {
+    public class KeyboardCharacterInput : AbstractCharacterInput {
         private IKeyConverter converter;
         private KeyboardTyper keyboardTyper;
 
@@ -16,8 +14,7 @@
         /// </summary>
         /// <param name="keyboardTyper">The keyboard typer.</param>
         public KeyboardCharacterInput(KeyboardTyper keyboardTyper)
-            : this(keyboardTyper, new EnglishKeyConverter())
-        {
+            : this(keyboardTyper, new EnglishKeyConverter()) {
         }
 
         /// <summary>
@@ -25,18 +22,15 @@
         /// </summary>
         /// <param name="keyboardTyper">The keyboard typer.</param>
         /// <param name="converter">The input converter.</param>
-        public KeyboardCharacterInput(KeyboardTyper keyboardTyper, IKeyConverter converter)
-        {
-            if (keyboardTyper == null)
-            {
+        public KeyboardCharacterInput(KeyboardTyper keyboardTyper, IKeyConverter converter) {
+            if (keyboardTyper == null) {
                 throw new ArgumentNullException("Keyboard typer must not be null.");
             }
-            if (converter == null)
-            {
+            if (converter == null) {
                 throw new ArgumentNullException("Key converter must not be null.");
             }
             this.keyboardTyper = keyboardTyper;
-            this.Converter = converter;
+            Converter = converter;
         }
 
         /// <summary>
@@ -45,10 +39,9 @@
         /// <value>
         /// The keyboard input converter.
         /// </value>
-        public IKeyConverter Converter
-        {
-            get { return this.converter; }
-            set { this.converter = value; }
+        public IKeyConverter Converter {
+            get { return converter; }
+            set { converter = value; }
         }
 
         /// <summary>
@@ -57,10 +50,7 @@
         /// <value>
         /// The keyboard typer.
         /// </value>
-        public KeyboardTyper KeyboardTyper
-        {
-            get { return this.keyboardTyper; }
-        }
+        public KeyboardTyper KeyboardTyper => keyboardTyper;
 
         /// <summary>
         /// Gets the currently typed character. If no character is typed then the default <see cref="char" /> value is returned.
@@ -68,17 +58,13 @@
         /// <returns>
         /// The typed character or the default <see cref="char" /> value.
         /// </returns>
-        public override char GetChar()
-        {
-            bool shift = this.keyboardTyper.Keyboard.IsKeyDown(Keys.LeftShift) || this.keyboardTyper.Keyboard.IsKeyDown(Keys.RightShift);
-            bool altgr = this.keyboardTyper.Keyboard.IsKeyDown(Keys.RightAlt);
+        public override char GetChar() {
+            bool shift = keyboardTyper.Keyboard.IsKeyDown(Keys.LeftShift) || keyboardTyper.Keyboard.IsKeyDown(Keys.RightShift);
+            bool altgr = keyboardTyper.Keyboard.IsKeyDown(Keys.RightAlt);
 
-            char c;
-            foreach (Keys k in this.keyboardTyper.Keyboard.GetKeysDown())
-            {
-                if (this.converter.Convert(k, shift, altgr, out c)
-                    && this.keyboardTyper.IsTyped(k))
-                {
+            foreach (Keys k in keyboardTyper.Keyboard.GetKeysDown()) {
+                if (converter.Convert(k, shift, altgr, out var c)
+                    && keyboardTyper.IsTyped(k)) {
                     return c;
                 }
             }

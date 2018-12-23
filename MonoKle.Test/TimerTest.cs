@@ -1,113 +1,150 @@
-﻿namespace MonoKle
-{
-    using System;
+using System;
 
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+namespace MonoKle {
     [TestClass]
-    public class TimerTest
-    {
+    public class TimerTest {
         [TestMethod]
-        public void TestConstructors()
-        {
-            TimeSpan d = new TimeSpan(1234567);
-            Timer t = new Timer(d);
-            Timer t2 = new Timer(d.TotalSeconds);
-            Assert.AreEqual(t.Duration, t2.Duration);
+        public void Constructor_CorrectState() {
+            var span = TimeSpan.FromSeconds(123);
+            var timer = new Timer(span);
+            Assert.AreEqual(span, timer.Duration);
+            Assert.IsFalse(timer.IsDone);
+            Assert.AreEqual(span, timer.TimeLeft);
         }
 
         [TestMethod]
-        public void TestDuration()
-        {
-            double duration = 0.79;
-            Timer t = new Timer(duration);
-            Assert.AreEqual(t.Duration, duration);
+        public void IsDone_TrueWhenDone() {
+            var span = TimeSpan.FromSeconds(123);
+            var timer = new Timer(span);
+            timer.Update(span);
+            Assert.IsTrue(timer.IsDone);
         }
 
         [TestMethod]
-        public void TestIsDone()
-        {
-            double duration = 0.79;
-            Timer t = new Timer(duration);
-            t.Update(duration);
-            Assert.IsTrue(t.IsDone());
+        public void IsDone_FalseWhenNotDone() {
+            var span = TimeSpan.FromSeconds(123);
+            var timer = new Timer(span);
+            timer.Update(span - TimeSpan.FromSeconds(10));
+            Assert.IsFalse(timer.IsDone);
         }
 
         [TestMethod]
-        public void TestReset()
-        {
-            double duration = 0.79;
-            double subtract = 0.5;
-            Timer t = new Timer(duration);
-            t.Update(subtract);
-            t.Reset();
-            Assert.AreEqual(t.GetTimeLeft(), duration);
-
-            t.Update(duration);
-            t.Reset();
-            Assert.IsFalse(t.IsDone());
+        public void Reset_NotDone_ResetToDuration() {
+            var span = TimeSpan.FromSeconds(123);
+            var timer = new Timer(span);
+            timer.Reset();
+            Assert.IsFalse(timer.IsDone);
+            Assert.AreEqual(span, timer.TimeLeft);
         }
 
         [TestMethod]
-        public void TestSet()
-        {
-            double duration = 0.79;
-            double duration2 = 0.65;
-            double subtract = 0.5;
-            Timer t = new Timer(duration);
-            t.Update(subtract);
-            t.Set(duration2);
-            Assert.AreEqual(t.GetTimeLeft(), duration2);
-
-            t.Update(duration2);
-            t.Reset();
-            Assert.IsFalse(t.IsDone());
-            Assert.AreEqual(t.GetTimeLeft(), duration2);
-            Assert.AreEqual(t.Duration, duration2);
-
-            // Test that timespan works as well
-            TimeSpan d1 = new TimeSpan(123456);
-            t.Set(d1.TotalSeconds);
-            double tmp = t.Duration;
-            t.Set(d1);
-            Assert.AreEqual(tmp, t.Duration);
+        public void Reset_Done_ResetToDuration() {
+            var span = TimeSpan.FromSeconds(123);
+            var timer = new Timer(span);
+            timer.Trigger();
+            timer.Reset();
+            Assert.IsFalse(timer.IsDone);
+            Assert.AreEqual(span, timer.TimeLeft);
         }
 
         [TestMethod]
-        public void TestTimeLeft()
-        {
-            double duration = 0.79;
-            double subtract = 0.5;
-            Timer t = new Timer(duration);
-            t.Update(subtract);
-            Assert.AreEqual(t.GetTimeLeft(), duration - subtract);
+        public void Set_NotDone_DurationSetAndTimeReset() {
+            var span = TimeSpan.FromSeconds(123);
+            var otherSpan = TimeSpan.FromSeconds(300);
+            var timer = new Timer(span);
+            timer.Set(otherSpan);
+            Assert.IsFalse(timer.IsDone);
+            Assert.AreEqual(otherSpan, timer.TimeLeft);
+            Assert.AreEqual(otherSpan, timer.Duration);
         }
 
         [TestMethod]
-        public void TestTrigger()
-        {
-            Timer t = new Timer(500);
-            t.Trigger();
-            Assert.IsTrue(t.IsDone());
+        public void Set_Done_DurationSetAndTimeReset() {
+            var span = TimeSpan.FromSeconds(123);
+            var otherSpan = TimeSpan.FromSeconds(300);
+            var timer = new Timer(span);
+            timer.Trigger();
+            timer.Set(otherSpan);
+            Assert.IsFalse(timer.IsDone);
+            Assert.AreEqual(otherSpan, timer.TimeLeft);
+            Assert.AreEqual(otherSpan, timer.Duration);
         }
 
         [TestMethod]
-        public void TestUpdate()
-        {
-            TimeSpan duration = new TimeSpan(123456);
-            TimeSpan sub = new TimeSpan(1234);
-            Timer t = new Timer(duration);
-            Assert.IsTrue(t.Update(duration));
-            Assert.IsTrue(t.IsDone());
-            Assert.AreEqual(0, t.GetTimeLeft());
-            t.Reset();
-            Assert.IsTrue(t.Update(duration.TotalSeconds));
-            Assert.IsTrue(t.IsDone());
-            Assert.AreEqual(0, t.GetTimeLeft());
-            t.Reset();
-            Assert.IsFalse(t.Update(sub));
-            Assert.IsFalse(t.IsDone());
-            Assert.AreEqual(duration.TotalSeconds - sub.TotalSeconds, t.GetTimeLeft());
+        public void TimeLeft_CorrectResult() {
+            var span = TimeSpan.FromSeconds(123);
+            var updateSpan = TimeSpan.FromSeconds(39);
+            var timer = new Timer(span);
+            timer.Update(updateSpan);
+            Assert.AreEqual(span - updateSpan, timer.TimeLeft);
+        }
+
+        [TestMethod]
+        public void Trigger_NotRan_DoneAndZeroTimeLeft() {
+            var span = TimeSpan.FromSeconds(123);
+            var timer = new Timer(span);
+            timer.Trigger();
+            Assert.IsTrue(timer.IsDone);
+            Assert.AreEqual(TimeSpan.Zero, timer.TimeLeft);
+        }
+
+        [TestMethod]
+        public void Trigger_NotDone_DoneAndZeroTimeLeft() {
+            var span = TimeSpan.FromSeconds(123);
+            var timer = new Timer(span);
+            timer.Update(TimeSpan.FromSeconds(30));
+            timer.Trigger();
+            Assert.IsTrue(timer.IsDone);
+            Assert.AreEqual(TimeSpan.Zero, timer.TimeLeft);
+        }
+
+        [TestMethod]
+        public void Trigger_Done_DoneAndZeroTimeLeft() {
+            var span = TimeSpan.FromSeconds(123);
+            var timer = new Timer(span);
+            timer.Trigger();
+            timer.Trigger();
+            Assert.IsTrue(timer.IsDone);
+            Assert.AreEqual(TimeSpan.Zero, timer.TimeLeft);
+        }
+
+        [TestMethod]
+        public void Update_PartialUpdate_CorrectTimeLeft() {
+            var span = TimeSpan.FromSeconds(123);
+            var spanToUpdate = TimeSpan.FromSeconds(10);
+            var timer = new Timer(span);
+
+            timer.Update(spanToUpdate);
+
+            Assert.IsFalse(timer.IsDone);
+            Assert.AreEqual(span - spanToUpdate, timer.TimeLeft);
+        }
+
+        [TestMethod]
+        public void Update_LongerElapsedThanSetDuration_ZeroTimeLeft() {
+            var span = TimeSpan.FromSeconds(123);
+            var spanToUpdate = TimeSpan.FromSeconds(300);
+            var timer = new Timer(span);
+
+            timer.Update(spanToUpdate);
+
+            Assert.IsTrue(timer.IsDone);
+            Assert.AreEqual(TimeSpan.Zero, timer.TimeLeft);
+        }
+
+        [TestMethod]
+        public void Update_Done_ZeroTimeLeft() {
+            var span = TimeSpan.FromSeconds(123);
+            var spanToUpdate = TimeSpan.FromSeconds(10);
+            var timer = new Timer(span);
+
+            timer.Trigger();
+            timer.Update(spanToUpdate);
+
+            Assert.IsTrue(timer.IsDone);
+            Assert.AreEqual(TimeSpan.Zero, timer.TimeLeft);
         }
     }
 }

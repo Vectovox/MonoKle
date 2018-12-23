@@ -1,12 +1,10 @@
-﻿namespace MonoKle.Input.Gamepad
-{
+namespace MonoKle.Input.Gamepad {
     using System;
 
     /// <summary>
     /// Class providing methods to get gamepads.
     /// </summary>
-    public class GamePadHub : IGamePadHub, IUpdateable
-    {
+    public class GamePadHub : IGamePadHub, IUpdateable {
         private GamePad playerFour = new GamePad(Microsoft.Xna.Framework.PlayerIndex.Four);
         private GamePad playerOne = new GamePad(Microsoft.Xna.Framework.PlayerIndex.One);
         private GamePad playerThree = new GamePad(Microsoft.Xna.Framework.PlayerIndex.Three);
@@ -18,7 +16,7 @@
         /// <value>
         /// The player four.
         /// </value>
-        public IGamePad PlayerFour => this.playerFour;
+        public IGamePad PlayerFour => playerFour;
 
         /// <summary>
         /// Gets the player one.
@@ -26,7 +24,7 @@
         /// <value>
         /// The player one.
         /// </value>
-        public IGamePad PlayerOne => this.playerOne;
+        public IGamePad PlayerOne => playerOne;
 
         /// <summary>
         /// Gets the player three.
@@ -34,7 +32,7 @@
         /// <value>
         /// The player three.
         /// </value>
-        public IGamePad PlayerThree => this.playerThree;
+        public IGamePad PlayerThree => playerThree;
 
         /// <summary>
         /// Gets the player two.
@@ -42,7 +40,7 @@
         /// <value>
         /// The player two.
         /// </value>
-        public IGamePad PlayerTwo => this.playerTwo;
+        public IGamePad PlayerTwo => playerTwo;
 
         /// <summary>
         /// Gets the game pad for the provided player.
@@ -51,37 +49,30 @@
         /// <returns>
         /// A gamepad.
         /// </returns>
-        public IGamePad GetGamePad(Microsoft.Xna.Framework.PlayerIndex playerIndex)
-        {
-            switch (playerIndex)
-            {
+        public IGamePad GetGamePad(Microsoft.Xna.Framework.PlayerIndex playerIndex) {
+            switch (playerIndex) {
                 case Microsoft.Xna.Framework.PlayerIndex.One:
-                    return this.playerOne;
+                    return playerOne;
 
                 case Microsoft.Xna.Framework.PlayerIndex.Two:
-                    return this.playerTwo;
+                    return playerTwo;
 
                 case Microsoft.Xna.Framework.PlayerIndex.Three:
-                    return this.playerThree;
+                    return playerThree;
 
                 case Microsoft.Xna.Framework.PlayerIndex.Four:
-                    return this.playerFour;
+                    return playerFour;
 
                 default:
                     throw new ArgumentException("Invalid player index provided.");
             }
         }
 
-        /// <summary>
-        /// Updates the component with the specified seconds since last update.
-        /// </summary>
-        /// <param name="seconds">The amount of seconds since last update.</param>
-        public void Update(double seconds)
-        {
-            this.playerOne.Update(seconds);
-            this.playerTwo.Update(seconds);
-            this.playerThree.Update(seconds);
-            this.playerFour.Update(seconds);
+        public void Update(TimeSpan timeDelta) {
+            playerOne.Update(timeDelta);
+            playerTwo.Update(timeDelta);
+            playerThree.Update(timeDelta);
+            playerFour.Update(timeDelta);
         }
     }
 }

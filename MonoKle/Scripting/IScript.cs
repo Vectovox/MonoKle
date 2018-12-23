@@ -1,13 +1,11 @@
-﻿namespace MonoKle.Scripting
-{
+﻿namespace MonoKle.Scripting {
     using System;
     using System.Collections.Generic;
 
     /// <summary>
     /// Interface defining methods for a script.
     /// </summary>
-    public interface IScript
-    {
+    public interface IScript {
         /// <summary>
         /// Gets a value indicating whether this instance can execute.
         /// </summary>

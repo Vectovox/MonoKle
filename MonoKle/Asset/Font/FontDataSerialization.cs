@@ -7,359 +7,303 @@
 
 // The code has however been modified to fit MonoKle, and it thus contains changes to the original work.
 
-using Microsoft.Xna.Framework;
-using MonoKle.Core;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
+using Microsoft.Xna.Framework;
 
-namespace MonoKle.Asset.Font
-{
+namespace MonoKle.Asset.Font {
     [Serializable]
     [XmlRoot("font")]
-    public class FontFile
-    {
+    public class FontFile {
         [XmlElement("info")]
-        public FontInfo Info
-        {
+        public FontInfo Info {
             get;
             set;
         }
 
         [XmlElement("common")]
-        public FontCommon Common
-        {
+        public FontCommon Common {
             get;
             set;
         }
 
         [XmlArray("pages")]
         [XmlArrayItem("page")]
-        public List<FontPage> Pages
-        {
+        public List<FontPage> Pages {
             get;
             set;
         }
 
         [XmlArray("chars")]
         [XmlArrayItem("char")]
-        public List<FontChar> Chars
-        {
+        public List<FontChar> Chars {
             get;
             set;
         }
 
         [XmlArray("kernings")]
         [XmlArrayItem("kerning")]
-        public List<FontKerning> Kernings
-        {
+        public List<FontKerning> Kernings {
             get;
             set;
         }
     }
 
     [Serializable]
-    public class FontInfo
-    {
+    public class FontInfo {
         [XmlAttribute("face")]
-        public String Face
-        {
+        public string Face {
             get;
             set;
         }
 
         [XmlAttribute("size")]
-        public Int32 Size
-        {
+        public int Size {
             get;
             set;
         }
 
         [XmlAttribute("bold")]
-        public Int32 Bold
-        {
+        public int Bold {
             get;
             set;
         }
 
         [XmlAttribute("italic")]
-        public Int32 Italic
-        {
+        public int Italic {
             get;
             set;
         }
 
         [XmlAttribute("charset")]
-        public String CharSet
-        {
+        public string CharSet {
             get;
             set;
         }
 
         [XmlAttribute("unicode")]
-        public Int32 Unicode
-        {
+        public int Unicode {
             get;
             set;
         }
 
         [XmlAttribute("stretchH")]
-        public Int32 StretchHeight
-        {
+        public int StretchHeight {
             get;
             set;
         }
 
         [XmlAttribute("smooth")]
-        public Int32 Smooth
-        {
+        public int Smooth {
             get;
             set;
         }
 
         [XmlAttribute("aa")]
-        public Int32 SuperSampling
-        {
+        public int SuperSampling {
             get;
             set;
         }
 
         private MRectangle _Padding;
         [XmlAttribute("padding")]
-        public String Padding
-        {
-            get
-            {
+        public string Padding {
+            get {
                 return _Padding.Left + "," + _Padding.Top + "," + _Padding.Width + "," + _Padding.Height;
             }
-            set
-            {
-                String[] padding = value.Split(',');
+            set {
+                string[] padding = value.Split(',');
                 _Padding = new MRectangle(Convert.ToInt32(padding[0]), Convert.ToInt32(padding[1]), Convert.ToInt32(padding[2]), Convert.ToInt32(padding[3]));
             }
         }
 
         private MPoint2 _Spacing;
         [XmlAttribute("spacing")]
-        public String Spacing
-        {
-            get
-            {
+        public string Spacing {
+            get {
                 return _Spacing.X + "," + _Spacing.Y;
             }
-            set
-            {
-                String[] spacing = value.Split(',');
+            set {
+                string[] spacing = value.Split(',');
                 _Spacing = new Point(Convert.ToInt32(spacing[0]), Convert.ToInt32(spacing[1]));
             }
         }
 
         [XmlAttribute("outline")]
-        public Int32 OutLine
-        {
+        public int OutLine {
             get;
             set;
         }
     }
 
     [Serializable]
-    public class FontCommon
-    {
+    public class FontCommon {
         [XmlAttribute("lineHeight")]
-        public Int32 LineHeight
-        {
+        public int LineHeight {
             get;
             set;
         }
 
         [XmlAttribute("base")]
-        public Int32 Base
-        {
+        public int Base {
             get;
             set;
         }
 
         [XmlAttribute("scaleW")]
-        public Int32 ScaleW
-        {
+        public int ScaleW {
             get;
             set;
         }
 
         [XmlAttribute("scaleH")]
-        public Int32 ScaleH
-        {
+        public int ScaleH {
             get;
             set;
         }
 
         [XmlAttribute("pages")]
-        public Int32 Pages
-        {
+        public int Pages {
             get;
             set;
         }
 
         [XmlAttribute("packed")]
-        public Int32 Packed
-        {
+        public int Packed {
             get;
             set;
         }
 
         [XmlAttribute("alphaChnl")]
-        public Int32 AlphaChannel
-        {
+        public int AlphaChannel {
             get;
             set;
         }
 
         [XmlAttribute("redChnl")]
-        public Int32 RedChannel
-        {
+        public int RedChannel {
             get;
             set;
         }
 
         [XmlAttribute("greenChnl")]
-        public Int32 GreenChannel
-        {
+        public int GreenChannel {
             get;
             set;
         }
 
         [XmlAttribute("blueChnl")]
-        public Int32 BlueChannel
-        {
+        public int BlueChannel {
             get;
             set;
         }
     }
 
     [Serializable]
-    public class FontPage
-    {
+    public class FontPage {
         [XmlAttribute("id")]
-        public Int32 ID
-        {
+        public int ID {
             get;
             set;
         }
 
         [XmlAttribute("file")]
-        public String File
-        {
+        public string File {
             get;
             set;
         }
     }
 
     [Serializable]
-    public class FontChar
-    {
+    public class FontChar {
         [XmlAttribute("id")]
-        public Int32 ID
-        {
+        public int ID {
             get;
             set;
         }
 
         [XmlAttribute("x")]
-        public Int32 X
-        {
+        public int X {
             get;
             set;
         }
 
         [XmlAttribute("y")]
-        public Int32 Y
-        {
+        public int Y {
             get;
             set;
         }
 
         [XmlAttribute("width")]
-        public Int32 Width
-        {
+        public int Width {
             get;
             set;
         }
 
         [XmlAttribute("height")]
-        public Int32 Height
-        {
+        public int Height {
             get;
             set;
         }
 
         [XmlAttribute("xoffset")]
-        public Int32 XOffset
-        {
+        public int XOffset {
             get;
             set;
         }
 
         [XmlAttribute("yoffset")]
-        public Int32 YOffset
-        {
+        public int YOffset {
             get;
             set;
         }
 
         [XmlAttribute("xadvance")]
-        public Int32 XAdvance
-        {
+        public int XAdvance {
             get;
             set;
         }
 
         [XmlAttribute("page")]
-        public Int32 Page
-        {
+        public int Page {
             get;
             set;
         }
 
         [XmlAttribute("chnl")]
-        public Int32 Channel
-        {
+        public int Channel {
             get;
             set;
         }
     }
 
     [Serializable]
-    public class FontKerning
-    {
+    public class FontKerning {
         [XmlAttribute("first")]
-        public Int32 First
-        {
+        public int First {
             get;
             set;
         }
 
         [XmlAttribute("second")]
-        public Int32 Second
-        {
+        public int Second {
             get;
             set;
         }
 
         [XmlAttribute("amount")]
-        public Int32 Amount
-        {
+        public int Amount {
             get;
             set;
         }
     }
 
-    public class FontLoader
-    {
-        public static FontFile Load(Stream stream)
-        {
-            XmlSerializer deserializer = new XmlSerializer(typeof(FontFile));
-            FontFile file = (FontFile)deserializer.Deserialize(stream);
+    public class FontLoader {
+        public static FontFile Load(Stream stream) {
+            var deserializer = new XmlSerializer(typeof(FontFile));
+            var file = (FontFile)deserializer.Deserialize(stream);
             return file;
         }
     }

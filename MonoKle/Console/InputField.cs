@@ -1,11 +1,13 @@
-namespace MonoKle.Console {
-    using System;
-    using System.Collections.Generic;
+namespace MonoKle.Console
+{
     using Input.Keyboard;
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Input;
+    using System;
+    using System.Collections.Generic;
 
-    internal class InputField : KeyboardTextInput {
+    internal class InputField : KeyboardTextInput
+    {
         private string commandToken;
         private Timer cursorTimer;
         private string cursorToken;
@@ -18,7 +20,8 @@ namespace MonoKle.Console {
         private bool showCursor;
 
         public InputField(string cursorToken, string commandToken, double cursorBlinkRate, int historyCapacity, KeyboardCharacterInput characterInput)
-            : base(characterInput) {
+            : base(characterInput)
+        {
             this.cursorToken = cursorToken;
             this.commandToken = commandToken;
             cursorTimer = new Timer(TimeSpan.FromSeconds(cursorBlinkRate));
@@ -37,39 +40,48 @@ namespace MonoKle.Console {
 
         public void Remember() => Remember(Text);
 
-        public void Remember(string input) {
+        public void Remember(string input)
+        {
             history.Add(input);
-            while (history.Count > historyCapacity) {
+            while (history.Count > historyCapacity)
+            {
                 history.RemoveAt(0);
             }
         }
 
-        public void Update(TimeSpan timeDelta) {
+        public void Update(TimeSpan timeDelta)
+        {
             Update();
 
-            if (cursorTimer.UpdateDone(timeDelta)) {
+            if (cursorTimer.UpdateDone(timeDelta))
+            {
                 showCursor = !showCursor;
                 cursorTimer.Reset();
             }
 
-            if (CharacterInput.KeyboardTyper.IsTyped(NextMemoryKey)) {
+            if (CharacterInput.KeyboardTyper.IsTyped(NextMemoryKey))
+            {
                 ChangeMemory(1);
             }
 
-            if (CharacterInput.KeyboardTyper.IsTyped(PreviousMemoryKey)) {
+            if (CharacterInput.KeyboardTyper.IsTyped(PreviousMemoryKey))
+            {
                 ChangeMemory(-1);
             }
         }
 
         protected override void OnCursorChange() => UpdateDisplayText();
 
-        protected override void OnTextChange() {
+        protected override void OnTextChange()
+        {
             historyIndex = history.Count;
             UpdateDisplayText();
         }
 
-        private void ChangeMemory(int delta) {
-            if (history.Count > 0) {
+        private void ChangeMemory(int delta)
+        {
+            if (history.Count > 0)
+            {
                 int newIndex = historyIndex + delta;
                 newIndex = MathHelper.Clamp(newIndex, 0, history.Count - 1);
                 base.Text = history[newIndex];
@@ -77,13 +89,17 @@ namespace MonoKle.Console {
             }
         }
 
-        private void UpdateDisplayText() {
+        private void UpdateDisplayText()
+        {
             string left, right;
 
-            if (base.Text.Length == 0) {
+            if (base.Text.Length == 0)
+            {
                 left = commandToken + base.Text;
                 right = "";
-            } else {
+            }
+            else
+            {
                 left = commandToken + base.Text.Substring(0, base.CursorPosition);
                 right = base.Text.Substring(base.CursorPosition, base.Text.Length - base.CursorPosition);
             }

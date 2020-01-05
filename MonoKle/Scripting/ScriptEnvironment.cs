@@ -1,14 +1,16 @@
-﻿namespace MonoKle.Scripting {
+﻿namespace MonoKle.Scripting
+{
+    using IO;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-    using IO;
 
     /// <summary>
     /// Class keeping track of scripts.
     /// </summary>
-    public class ScriptEnvironment : AbstractFileFinder {
+    public class ScriptEnvironment : AbstractFileFinder
+    {
         private ScriptCompiler compiler = new ScriptCompiler();
         private Dictionary<string, IScriptCompilable> scriptById = new Dictionary<string, IScriptCompilable>();
 
@@ -45,8 +47,10 @@
         /// </summary>
         /// <param name="script">The script.</param>
         /// <returns>True if added; otherwise false.</returns>
-        public bool Add(IScriptCompilable script) {
-            if (!scriptById.ContainsKey(script.Name)) {
+        public bool Add(IScriptCompilable script)
+        {
+            if (!scriptById.ContainsKey(script.Name))
+            {
                 scriptById.Add(script.Name, script);
                 return true;
             }
@@ -58,8 +62,10 @@
         /// </summary>
         /// <param name="script">The script.</param>
         /// <returns>True if script existed.</returns>
-        public bool Compile(string script) {
-            if (scriptById.ContainsKey(script)) {
+        public bool Compile(string script)
+        {
+            if (scriptById.ContainsKey(script))
+            {
                 compiler.Compile(scriptById[script]);
                 return true;
             }
@@ -70,7 +76,8 @@
         /// Compiles all maintained scripts.
         /// </summary>
         /// <returns>Amount of scripts compiled.</returns>
-        public int CompileAll() {
+        public int CompileAll()
+        {
             compiler.Compile(scriptById.Values);
             return scriptById.Values.Count;
         }
@@ -79,7 +86,8 @@
         /// Compiles the outdated scripts, returning the amount compiled.
         /// </summary>
         /// <returns>Amount of scripts compiled.</returns>
-        public int CompileOutdated() {
+        public int CompileOutdated()
+        {
             var outdated = scriptById.Values.Where(v => v.IsOutdated).ToList();
             compiler.Compile(outdated);
             return outdated.Count;

@@ -1,11 +1,13 @@
-﻿namespace MonoKle.Scripting {
+﻿namespace MonoKle.Scripting
+{
     using System;
 
     /// <summary>
     /// Compilable script interface.
     /// </summary>
     /// <seealso cref="IScript" />
-    public interface IScriptCompilable : IScript {
+    public interface IScriptCompilable : IScript
+    {
         /// <summary>
         /// Gets or sets the compilation date in UTC.
         /// </summary>

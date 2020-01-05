@@ -1,11 +1,13 @@
-﻿namespace MonoKle.Engine {
+﻿namespace MonoKle.Engine
+{
     using Logging;
     using Variable;
 
     /// <summary>
     /// Class containing variable systems.
     /// </summary>
-    public class VariableStorage : ILogged {
+    public class VariableStorage : ILogged
+    {
         /// <summary>
         /// The default file path.
         /// </summary>
@@ -15,7 +17,8 @@
         /// Initializes a new instance of the <see cref="VariableStorage"/> class.
         /// </summary>
         /// <param name="logger">The logger to use.</param>
-        internal VariableStorage(Logger logger) {
+        internal VariableStorage(Logger logger)
+        {
             this.Logger = logger;
             this.Variables = new VariableSystem(logger);
             this.VariablePopulator = new VariablePopulator(this.Variables);

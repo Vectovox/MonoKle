@@ -1,11 +1,13 @@
-﻿namespace MonoKle.Console {
+﻿namespace MonoKle.Console
+{
     using System;
     using System.Collections.Generic;
 
     /// <summary>
     /// Class for console command with arguments.
     /// </summary>
-    public class ConsoleCommand : AbstractConsoleCommand {
+    public class ConsoleCommand : AbstractConsoleCommand
+    {
         /// <summary>
         /// Initializes a new instance of the <see cref="ArgumentlessConsoleCommand"/> class.
         /// </summary>
@@ -14,7 +16,8 @@
         /// <param name="arguments">The arguments for the command.</param>
         /// <param name="handler">The handler for the command.</param>
         public ConsoleCommand(string name, string description,
-            CommandArguments arguments, ConsoleCommandHandler handler) : this(name, description, arguments, handler, null) {
+            CommandArguments arguments, ConsoleCommandHandler handler) : this(name, description, arguments, handler, null)
+        {
         }
 
         /// <summary>
@@ -27,7 +30,8 @@
         /// <param name="defaultHandler">The default handler for the command if no argument is passed. May be null.</param>
         public ConsoleCommand(string name, string description,
             CommandArguments arguments, ConsoleCommandHandler handler, DefaultConsoleCommandHandler defaultHandler)
-            : this(name, description, arguments, handler, defaultHandler, null) {
+            : this(name, description, arguments, handler, defaultHandler, null)
+        {
         }
 
         /// <summary>
@@ -41,8 +45,10 @@
         /// <param name="suggestionHandler">Handler for providing input suggestions to arguments at a specified index.</param>
         public ConsoleCommand(string name, string description,
             CommandArguments arguments, ConsoleCommandHandler handler, DefaultConsoleCommandHandler defaultHandler,
-            ConsoleCommandSuggestionHandler suggestionHandler) : base(name, description, arguments) {
-            if (handler == null) {
+            ConsoleCommandSuggestionHandler suggestionHandler) : base(name, description, arguments)
+        {
+            if (handler == null)
+            {
                 throw new ArgumentNullException("Handler must not be null");
             }
             Handler = handler;
@@ -95,13 +101,18 @@
         /// </summary>
         /// <param name="arguments">The arguments. Passing null counts as passing zero arguments.</param>
         /// <returns></returns>
-        public override bool Call(string[] arguments) {
-            if (arguments != null && arguments.Length > 0) {
-                if (arguments.Length >= Arguments.Length) {
+        public override bool Call(string[] arguments)
+        {
+            if (arguments != null && arguments.Length > 0)
+            {
+                if (arguments.Length >= Arguments.Length)
+                {
                     Handler(arguments);
                     return true;
                 }
-            } else if (DefaultHandler != null) {
+            }
+            else if (DefaultHandler != null)
+            {
                 DefaultHandler();
                 return true;
             }
@@ -114,8 +125,10 @@
         /// </summary>
         /// <param name="index">The index.</param>
         /// <returns></returns>
-        protected override ICollection<string> DoGetInputSuggestions(int index) {
-            if (SuggestionHandler != null) {
+        protected override ICollection<string> DoGetInputSuggestions(int index)
+        {
+            if (SuggestionHandler != null)
+            {
                 return SuggestionHandler(index);
             }
             return new string[0];

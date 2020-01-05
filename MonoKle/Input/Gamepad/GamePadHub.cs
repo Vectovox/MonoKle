@@ -1,10 +1,12 @@
-namespace MonoKle.Input.Gamepad {
+namespace MonoKle.Input.Gamepad
+{
     using System;
 
     /// <summary>
     /// Class providing methods to get gamepads.
     /// </summary>
-    public class GamePadHub : IGamePadHub, IUpdateable {
+    public class GamePadHub : IGamePadHub, IUpdateable
+    {
         private GamePad playerFour = new GamePad(Microsoft.Xna.Framework.PlayerIndex.Four);
         private GamePad playerOne = new GamePad(Microsoft.Xna.Framework.PlayerIndex.One);
         private GamePad playerThree = new GamePad(Microsoft.Xna.Framework.PlayerIndex.Three);
@@ -49,8 +51,10 @@ namespace MonoKle.Input.Gamepad {
         /// <returns>
         /// A gamepad.
         /// </returns>
-        public IGamePad GetGamePad(Microsoft.Xna.Framework.PlayerIndex playerIndex) {
-            switch (playerIndex) {
+        public IGamePad GetGamePad(Microsoft.Xna.Framework.PlayerIndex playerIndex)
+        {
+            switch (playerIndex)
+            {
                 case Microsoft.Xna.Framework.PlayerIndex.One:
                     return playerOne;
 
@@ -68,7 +72,8 @@ namespace MonoKle.Input.Gamepad {
             }
         }
 
-        public void Update(TimeSpan timeDelta) {
+        public void Update(TimeSpan timeDelta)
+        {
             playerOne.Update(timeDelta);
             playerTwo.Update(timeDelta);
             playerThree.Update(timeDelta);

@@ -1,15 +1,18 @@
-namespace MonoKle.State {
+namespace MonoKle.State
+{
     /// <summary>
     /// Container class containing data for the next state and the string represented identifier for it.
     /// </summary>
-    public class StateSwitchData {
+    public class StateSwitchData
+    {
         /// <summary>
         /// Initializes a new instance of the <see cref="StateSwitchData"/> class.
         /// </summary>
         /// <param name="nextState">The string identifier for the next state. May be null.</param>
         /// <param name="previousState">The string identifier for the previous state. May be null.</param>
         /// <param name="data">The data to pass to the next state. May be null.</param>
-        public StateSwitchData(string nextState, string previousState, object data) {
+        public StateSwitchData(string nextState, string previousState, object data)
+        {
             NextState = nextState;
             Data = data;
         }
@@ -17,7 +20,8 @@ namespace MonoKle.State {
         /// <summary>
         /// Gets the data passed to the next state. May be null.
         /// </summary>
-        public object Data {
+        public object Data
+        {
             get;
             private set;
         }
@@ -25,7 +29,8 @@ namespace MonoKle.State {
         /// <summary>
         /// Gets the string identifier for the next state. May be null.
         /// </summary>
-        public string NextState {
+        public string NextState
+        {
             get;
             private set;
         }
@@ -33,7 +38,8 @@ namespace MonoKle.State {
         /// <summary>
         /// Gets the string identifier for the previous state. May be null.
         /// </summary>
-        public string PreviousState {
+        public string PreviousState
+        {
             get;
             private set;
         }

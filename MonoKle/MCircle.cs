@@ -1,11 +1,13 @@
-namespace MonoKle {
+namespace MonoKle
+{
     using System;
 
     /// <summary>
     /// Immutable, serializable, and normalized (positive radius) circle type.
     /// </summary>
     [Serializable]
-    public struct MCircle {
+    public struct MCircle
+    {
         /// <summary>
         /// The origin of the <see cref="MCircle"/>.
         /// </summary>
@@ -21,7 +23,8 @@ namespace MonoKle {
         /// </summary>
         /// <param name="origin">The circle origin.</param>
         /// <param name="radius">The circle radius.</param>
-        public MCircle(MVector2 origin, float radius) {
+        public MCircle(MVector2 origin, float radius)
+        {
             Origin = origin;
             Radius = radius < 0f ? -radius : radius;
         }
@@ -62,7 +65,8 @@ namespace MonoKle {
         /// </summary>
         /// <param name="rectangle">The rectangle.</param>
         /// <returns>True if it intersects; otherwise false.</returns>
-        public bool Intersects(MRectangle rectangle) {
+        public bool Intersects(MRectangle rectangle)
+        {
             MVector2 circleDistance = (Origin - rectangle.Center).Absolute;
 
             if (circleDistance.X > (rectangle.Width / 2 + Radius)) { return false; }
@@ -130,14 +134,18 @@ namespace MonoKle {
         /// </summary>
         /// <param name="circle">The circle to separate from.</param>
         /// <returns></returns>
-        public MVector2 SeparationVector(MCircle circle) {
+        public MVector2 SeparationVector(MCircle circle)
+        {
             MVector2 deltaVector = (circle.Origin - Origin);
             float minDistance = circle.Radius + Radius;
             float toMove = deltaVector.Length - minDistance;
 
-            if (toMove < 0) {
+            if (toMove < 0)
+            {
                 return deltaVector.Normalized * toMove;
-            } else {
+            }
+            else
+            {
                 return MVector2.Zero;
             }
         }
@@ -147,35 +155,48 @@ namespace MonoKle {
         /// </summary>
         /// <param name="rectangle">The rectangle to separate from.</param>
         /// <returns></returns>
-        public MVector2 SeparationVector(MRectangle rectangle) {
+        public MVector2 SeparationVector(MRectangle rectangle)
+        {
             var left = new MVector2(rectangle.TopLeft.X - (Origin.X + Radius), 0);
             var right = new MVector2(rectangle.BottomRight.X - (Origin.X - Radius), 0);
             var up = new MVector2(0, rectangle.TopLeft.Y - (Origin.Y + Radius));
             var down = new MVector2(0, rectangle.BottomRight.Y - (Origin.Y - Radius));
 
-            if (left.X < 0 && right.X > 0 || up.Y < 0 && down.Y > 0) {
+            if (left.X < 0 && right.X > 0 || up.Y < 0 && down.Y > 0)
+            {
                 var shortest = new MVector2(float.MaxValue, float.MaxValue);
 
-                if (Origin.X < rectangle.Left && Origin.Y < rectangle.Top) {
+                if (Origin.X < rectangle.Left && Origin.Y < rectangle.Top)
+                {
                     shortest = SeparationVector(rectangle.TopLeft);
-                } else if (Origin.X > rectangle.Right && Origin.Y < rectangle.Top) {
+                }
+                else if (Origin.X > rectangle.Right && Origin.Y < rectangle.Top)
+                {
                     shortest = SeparationVector(rectangle.TopRight);
-                } else if (Origin.X < rectangle.Left && Origin.Y > rectangle.Bottom) {
+                }
+                else if (Origin.X < rectangle.Left && Origin.Y > rectangle.Bottom)
+                {
                     shortest = SeparationVector(rectangle.BottomLeft);
-                } else if (Origin.X > rectangle.Right && Origin.Y > rectangle.Bottom) {
+                }
+                else if (Origin.X > rectangle.Right && Origin.Y > rectangle.Bottom)
+                {
                     shortest = SeparationVector(rectangle.BottomRight);
                 }
 
-                if (left.X < 0 && left.LengthSquared < shortest.LengthSquared) {
+                if (left.X < 0 && left.LengthSquared < shortest.LengthSquared)
+                {
                     shortest = left;
                 }
-                if (right.X > 0 && right.LengthSquared < shortest.LengthSquared) {
+                if (right.X > 0 && right.LengthSquared < shortest.LengthSquared)
+                {
                     shortest = right;
                 }
-                if (up.Y < 0 && up.LengthSquared < shortest.LengthSquared) {
+                if (up.Y < 0 && up.LengthSquared < shortest.LengthSquared)
+                {
                     shortest = up;
                 }
-                if (down.Y > 0 && down.LengthSquared < shortest.LengthSquared) {
+                if (down.Y > 0 && down.LengthSquared < shortest.LengthSquared)
+                {
                     shortest = down;
                 }
 

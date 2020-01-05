@@ -1,11 +1,13 @@
 using System;
 
-namespace MonoKle.Input {
+namespace MonoKle.Input
+{
     /// <summary>
     /// Class providing the state of a trigger.
     /// </summary>
     /// <seealso cref="ITrigger" />
-    public class Trigger : ITrigger {
+    public class Trigger : ITrigger
+    {
         private Button buttonState = new Button();
 
         /// <summary>
@@ -71,7 +73,8 @@ namespace MonoKle.Input {
         /// </summary>
         /// <param name="state">Continuous state.</param>
         /// <param name="deltaTime">Time since last update.</param>
-        public virtual void Update(float state, TimeSpan deltaTime) {
+        public virtual void Update(float state, TimeSpan deltaTime)
+        {
             State = state;
             buttonState.Update(state != 0, deltaTime);
         }

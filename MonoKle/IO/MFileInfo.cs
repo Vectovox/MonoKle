@@ -1,18 +1,21 @@
-﻿namespace MonoKle.IO {
+﻿namespace MonoKle.IO
+{
     using System;
     using System.IO;
 
     /// <summary>
     /// File information.
     /// </summary>
-    public class MFileInfo {
+    public class MFileInfo
+    {
         private FileInfo file;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MFileInfo"/> class.
         /// </summary>
         /// <param name="path">The path.</param>
-        public MFileInfo(string path) {
+        public MFileInfo(string path)
+        {
             OriginalPath = path;
             Update();
         }

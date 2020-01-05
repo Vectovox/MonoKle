@@ -1,17 +1,21 @@
-﻿namespace MonoKle {
-    using System;
+﻿namespace MonoKle
+{
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Microsoft.Xna.Framework;
+    using System;
 
     [TestClass]
-    public class MRectangleIntTest {
+    public class MRectangleIntTest
+    {
         private const int RANDOM_TEST_AMOUNT = 100;
 
         private readonly Random random = new Random();
 
         [TestMethod]
-        public void TestTranslate() {
-            for (int i = 0; i < MRectangleIntTest.RANDOM_TEST_AMOUNT; i++) {
+        public void TestTranslate()
+        {
+            for (int i = 0; i < MRectangleIntTest.RANDOM_TEST_AMOUNT; i++)
+            {
                 int x = random.Next(-100, 100);
                 int y = random.Next(-100, 100);
                 int w = random.Next(0, 100);
@@ -30,8 +34,10 @@
         }
 
         [TestMethod]
-        public void TestWidthHeight() {
-            for (int i = 0; i < MRectangleIntTest.RANDOM_TEST_AMOUNT; i++) {
+        public void TestWidthHeight()
+        {
+            for (int i = 0; i < MRectangleIntTest.RANDOM_TEST_AMOUNT; i++)
+            {
                 int x = random.Next(-100, 100);
                 int y = random.Next(-100, 100);
                 int x2 = random.Next(-100, 100);
@@ -44,7 +50,8 @@
         }
 
         [TestMethod]
-        public void TestConstructors() {
+        public void TestConstructors()
+        {
             // Test that all constructors work the same
             var a = new MRectangleInt(-5, -5);
             var b = new MRectangleInt(new MPoint2(0, 0), new MPoint2(-5, -5));
@@ -62,7 +69,8 @@
         }
 
         [TestMethod]
-        public void TestContainsCoordinateFloat() {
+        public void TestContainsCoordinateFloat()
+        {
             Assert.IsTrue(new MRectangleInt(50, 51, 50, 50).Contains(new Vector2(50, 51)));
             Assert.IsTrue(new MRectangleInt(50, 51, 50, 50).Contains(new Vector2(100, 101)));
             Assert.IsTrue(new MRectangleInt(50, 51, 50, 50).Contains(new Vector2(75, 75)));
@@ -89,7 +97,8 @@
         }
 
         [TestMethod]
-        public void TestContainsCoordinateInt() {
+        public void TestContainsCoordinateInt()
+        {
             Assert.IsTrue(new MRectangleInt(50, 51, 50, 50).Contains(new MPoint2(50, 51)));
             Assert.IsTrue(new MRectangleInt(50, 51, 50, 50).Contains(new MPoint2(100, 101)));
             Assert.IsTrue(new MRectangleInt(50, 51, 50, 50).Contains(new MPoint2(75, 75)));
@@ -116,7 +125,8 @@
         }
 
         [TestMethod]
-        public void TestContainsArea() {
+        public void TestContainsArea()
+        {
             Assert.IsTrue(new MRectangleInt(50, 51, 50, 50).Contains(new MRectangle(50, 51, 50, 50)));
             Assert.IsTrue(new MRectangleInt(50, 51, 50, 50).Contains(new MRectangle(60, 60, 20, 20)));
             Assert.IsTrue(new MRectangleInt(-10, -10, 20, 20).Contains(new MRectangle(-5, -5, 10, 10)));
@@ -129,7 +139,8 @@
         }
 
         [TestMethod]
-        public void TestContainsAreaInt() {
+        public void TestContainsAreaInt()
+        {
             Assert.IsTrue(new MRectangleInt(50, 51, 50, 50).Contains(new MRectangleInt(50, 51, 50, 50)));
             Assert.IsTrue(new MRectangleInt(50, 51, 50, 50).Contains(new MRectangleInt(60, 60, 20, 20)));
             Assert.IsTrue(new MRectangleInt(-10, -10, 20, 20).Contains(new MRectangleInt(-5, -5, 10, 10)));
@@ -142,7 +153,8 @@
         }
 
         [TestMethod]
-        public void TestClampArea() {
+        public void TestClampArea()
+        {
             Assert.AreEqual(new MRectangle(-1, -1, 2, 2), new MRectangleInt(-5, -5, 10, 10).Clamp(new MRectangle(-1, -1, 2, 2)));
             Assert.AreEqual(new MRectangle(-5, -5, 10, 10), new MRectangleInt(-5, -5, 10, 10).Clamp(new MRectangle(-5, -5, 10, 10)));
             Assert.AreEqual(new MRectangle(-5, -5, 10, 10), new MRectangleInt(-5, -5, 10, 10).Clamp(new MRectangle(-10, -10, 20, 20)));
@@ -154,7 +166,8 @@
         }
 
         [TestMethod]
-        public void TestClampAreaInteger() {
+        public void TestClampAreaInteger()
+        {
             Assert.AreEqual(new MRectangleInt(-1, -1, 2, 2), new MRectangleInt(-5, -5, 10, 10).Clamp(new MRectangleInt(-1, -1, 2, 2)));
             Assert.AreEqual(new MRectangleInt(-5, -5, 10, 10), new MRectangleInt(-5, -5, 10, 10).Clamp(new MRectangleInt(-5, -5, 10, 10)));
             Assert.AreEqual(new MRectangleInt(-5, -5, 10, 10), new MRectangleInt(-5, -5, 10, 10).Clamp(new MRectangleInt(-10, -10, 20, 20)));
@@ -166,7 +179,8 @@
         }
 
         [TestMethod]
-        public void TestClampCoordinate() {
+        public void TestClampCoordinate()
+        {
             Assert.AreEqual(new MVector2(0, 0), new MRectangleInt(-5, -5, 10, 10).Clamp(new MVector2(0, 0)));
             Assert.AreEqual(new MVector2(-5, -5), new MRectangleInt(-5, -5, 10, 10).Clamp(new MVector2(-5, -5)));
             Assert.AreEqual(new MVector2(5, 5), new MRectangleInt(-5, -5, 10, 10).Clamp(new MVector2(5, 5)));
@@ -178,7 +192,8 @@
         }
 
         [TestMethod]
-        public void TestClampCoordinateInteger() {
+        public void TestClampCoordinateInteger()
+        {
             Assert.AreEqual(new MPoint2(0, 0), new MRectangleInt(-5, -5, 10, 10).Clamp(new MPoint2(0, 0)));
             Assert.AreEqual(new MPoint2(-5, -5), new MRectangleInt(-5, -5, 10, 10).Clamp(new MPoint2(-5, -5)));
             Assert.AreEqual(new MPoint2(5, 5), new MRectangleInt(-5, -5, 10, 10).Clamp(new MPoint2(5, 5)));
@@ -190,91 +205,104 @@
         }
 
         [TestMethod]
-        public void TestEqualsObject() {
+        public void TestEqualsObject()
+        {
             Assert.IsTrue(new MRectangleInt(0, 1, 2, 3).Equals((object)new MRectangleInt(0, 1, 2, 3)));
             Assert.IsFalse(new MRectangleInt(0, 1, -2, 3).Equals((object)new MRectangleInt(0, 1, 2, 3)));
             Assert.IsFalse(new MRectangleInt(0, 1, 2, 3).Equals((object)new MRectangleInt(1, 1, 2, 3)));
         }
 
         [TestMethod]
-        public void TestEqualsAreaInteger() {
+        public void TestEqualsAreaInteger()
+        {
             Assert.IsTrue(new MRectangleInt(0, 1, 2, 3).Equals(new MRectangleInt(0, 1, 2, 3)));
             Assert.IsFalse(new MRectangleInt(0, 1, -2, 3).Equals(new MRectangleInt(0, 1, 2, 3)));
             Assert.IsFalse(new MRectangleInt(0, 1, 2, 3).Equals(new MRectangleInt(1, 1, 2, 3)));
         }
 
         [TestMethod]
-        public void TestGetBottom() {
+        public void TestGetBottom()
+        {
             Assert.AreEqual(6f, new MRectangleInt(1, 2, 3, 4).Bottom);
             Assert.AreEqual(2f, new MRectangleInt(-1, -2, 3, 4).Bottom);
             Assert.AreEqual(-2f, new MRectangleInt(-1, -2, -3, -4).Bottom);
         }
 
         [TestMethod]
-        public void TestGetBottomLeft() {
+        public void TestGetBottomLeft()
+        {
             Assert.AreEqual(new MPoint2(1, 6), new MRectangleInt(1, 2, 3, 4).BottomLeft);
             Assert.AreEqual(new MPoint2(-1, 2), new MRectangleInt(-1, -2, 3, 4).BottomLeft);
             Assert.AreEqual(new MPoint2(-4, -2), new MRectangleInt(-1, -2, -3, -4).BottomLeft);
         }
 
         [TestMethod]
-        public void TestGetBottomRight() {
+        public void TestGetBottomRight()
+        {
             Assert.AreEqual(new MPoint2(4, 6), new MRectangleInt(1, 2, 3, 4).BottomRight);
             Assert.AreEqual(new MPoint2(2, 2), new MRectangleInt(-1, -2, 3, 4).BottomRight);
             Assert.AreEqual(new MPoint2(-1, -2), new MRectangleInt(-1, -2, -3, -4).BottomRight);
         }
 
         [TestMethod]
-        public void TestGetLeft() {
+        public void TestGetLeft()
+        {
             Assert.AreEqual(1f, new MRectangleInt(1, 2, 3, 4).Left);
             Assert.AreEqual(-1f, new MRectangleInt(-1, -2, 3, 4).Left);
             Assert.AreEqual(-4f, new MRectangleInt(-1, -2, -3, -4).Left);
         }
 
         [TestMethod]
-        public void TestGetRight() {
+        public void TestGetRight()
+        {
             Assert.AreEqual(4f, new MRectangleInt(1, 2, 3, 4).Right);
             Assert.AreEqual(2f, new MRectangleInt(-1, -2, 3, 4).Right);
             Assert.AreEqual(-1f, new MRectangleInt(-1, -2, -3, -4).Right);
         }
 
         [TestMethod]
-        public void TestGetTop() {
+        public void TestGetTop()
+        {
             Assert.AreEqual(2f, new MRectangleInt(1, 2, 3, 4).Top);
             Assert.AreEqual(-2f, new MRectangleInt(-1, -2, 3, 4).Top);
             Assert.AreEqual(-6f, new MRectangleInt(-1, -2, -3, -4).Top);
         }
 
         [TestMethod]
-        public void TestGetTopLeft() {
+        public void TestGetTopLeft()
+        {
             Assert.AreEqual(new MPoint2(1, 2), new MRectangleInt(1, 2, 3, 4).TopLeft);
             Assert.AreEqual(new MPoint2(-1, -2), new MRectangleInt(-1, -2, 3, 4).TopLeft);
             Assert.AreEqual(new MPoint2(-4, -6), new MRectangleInt(-1, -2, -3, -4).TopLeft);
         }
 
         [TestMethod]
-        public void TestGetTopRight() {
+        public void TestGetTopRight()
+        {
             Assert.AreEqual(new MPoint2(4, 2), new MRectangleInt(1, 2, 3, 4).TopRight);
             Assert.AreEqual(new MPoint2(2, -2), new MRectangleInt(-1, -2, 3, 4).TopRight);
             Assert.AreEqual(new MPoint2(-1, -6), new MRectangleInt(-1, -2, -3, -4).TopRight);
         }
 
         [TestMethod]
-        public void TestOperatorEquals() {
+        public void TestOperatorEquals()
+        {
             Assert.IsTrue(new MRectangleInt(0, 1, 2, 3) == new MRectangleInt(0, 1, 2, 3));
             Assert.IsFalse(new MRectangleInt(0, 1, -2, 3) == new MRectangleInt(0, 1, 2, 3));
             Assert.IsFalse(new MRectangleInt(0, 1, 2, 3) == new MRectangleInt(1, 1, 2, 3));
         }
 
         [TestMethod]
-        public void TestOperatorNotEquals() {
+        public void TestOperatorNotEquals()
+        {
             Assert.IsFalse(new MRectangleInt(0, 1, 2, 3) != new MRectangleInt(0, 1, 2, 3));
             Assert.IsTrue(new MRectangleInt(0, 1, -2, 3) != new MRectangleInt(0, 1, 2, 3));
             Assert.IsTrue(new MRectangleInt(0, 1, 2, 3) != new MRectangleInt(1, 1, 2, 3));
         }
 
         [TestMethod]
-        public void TestImplicitConversion_ToRectangle() {
+        public void TestImplicitConversion_ToRectangle()
+        {
             var original = new Rectangle(-10, -20, 35, 37);
             MRectangleInt conv = original;
             Rectangle back = conv;
@@ -282,7 +310,8 @@
         }
 
         [TestMethod]
-        public void TestImplicitConversion_FromRectangle() {
+        public void TestImplicitConversion_FromRectangle()
+        {
             var original = new MRectangleInt(-10, -20, 35, 37);
             Rectangle conv = original;
             MRectangleInt back = conv;

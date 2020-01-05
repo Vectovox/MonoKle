@@ -1,12 +1,15 @@
-namespace MonoKle {
-    using System;
+namespace MonoKle
+{
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Microsoft.Xna.Framework;
+    using System;
 
     [TestClass]
-    public class MPoint2Test {
+    public class MPoint2Test
+    {
         [TestMethod]
-        public void Parse_TryParse_Equal() {
+        public void Parse_TryParse_Equal()
+        {
             string s = nameof(MPoint2) + "(-15, 0)";
             var v2 = MPoint2.Parse(s);
             MPoint2 v3 = MPoint2.Zero;
@@ -15,21 +18,24 @@ namespace MonoKle {
         }
 
         [TestMethod]
-        public void Parsing_Spaces_StillWorks() {
+        public void Parsing_Spaces_StillWorks()
+        {
             string s = nameof(MPoint2) + "  (  -15  ,   0  )  ";
             var v = new MPoint2(-15, 0);
             Assert.AreEqual(v, MPoint2.Parse(s));
         }
 
         [TestMethod]
-        public void Parsing_ToString_Parse_Equal() {
+        public void Parsing_ToString_Parse_Equal()
+        {
             var v = new MPoint2(-5, 17);
             var v2 = MPoint2.Parse(v.ToString());
             Assert.AreEqual(v, v2);
         }
 
         [TestMethod]
-        public void TestConstructors() {
+        public void TestConstructors()
+        {
             int x = 27, y = -39;
             var v = new MPoint2(x, y);
             Assert.AreEqual(v.X, x);
@@ -42,7 +48,8 @@ namespace MonoKle {
         }
 
         [TestMethod]
-        public void TestEqualsObject() {
+        public void TestEqualsObject()
+        {
             var a = new MPoint2(5, 7);
             var b = new MPoint2(5, 7);
             var c = new MPoint2(4, 7);
@@ -51,7 +58,8 @@ namespace MonoKle {
         }
 
         [TestMethod]
-        public void TestEqualsVector() {
+        public void TestEqualsVector()
+        {
             var a = new MPoint2(5, 7);
             var b = new MPoint2(5, 7);
             var c = new MPoint2(4, 7);
@@ -60,7 +68,8 @@ namespace MonoKle {
         }
 
         [TestMethod]
-        public void TestLength() {
+        public void TestLength()
+        {
             int x = 3, y = -7;
             Assert.AreEqual(Math.Abs(x), new MPoint2(x, 0).Length);
             Assert.AreEqual(Math.Abs(y), new MPoint2(0, y).Length);
@@ -68,7 +77,8 @@ namespace MonoKle {
         }
 
         [TestMethod]
-        public void TestLengthSquared() {
+        public void TestLengthSquared()
+        {
             var v = new MPoint2(23, -19);
             Assert.AreEqual(v.Length, Math.Sqrt(v.LengthSquared));
         }
@@ -86,7 +96,8 @@ namespace MonoKle {
         public void TestOperatorMinus() => Assert.AreEqual(new MPoint2(-1, 10), new MPoint2(1, 3) - new MPoint2(2, -7));
 
         [TestMethod]
-        public void TestOperatorMultiply() {
+        public void TestOperatorMultiply()
+        {
             Assert.AreEqual(new MPoint2(5, 15), new MPoint2(1, 3) * 5);
             Assert.AreEqual(new MPoint2(1, 3) * 5, 5 * new MPoint2(1, 3));
         }
@@ -98,14 +109,16 @@ namespace MonoKle {
         public void TestOperatorPlus() => Assert.AreEqual(new MPoint2(3, -4), new MPoint2(1, 3) + new MPoint2(2, -7));
 
         [TestMethod]
-        public void TestToMVector2() {
+        public void TestToMVector2()
+        {
             int x = 23, y = -19;
             var v = new MPoint2(x, y);
             Assert.AreEqual(new MVector2(x, y), v.ToMVector2());
         }
 
         [TestMethod]
-        public void TestTranslate() {
+        public void TestTranslate()
+        {
             var orig = new MPoint2(-2, -3);
             Assert.AreEqual(orig, new MPoint2(2, 3).Translate(-4, -6));
             Assert.AreEqual(orig.Translate(new MPoint2(1, -2)), orig.Translate(1, -2));

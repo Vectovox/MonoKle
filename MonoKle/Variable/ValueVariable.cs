@@ -1,17 +1,20 @@
 ﻿using System;
 
-namespace MonoKle.Variable {
+namespace MonoKle.Variable
+{
     /// <summary>
     /// Class for variable containing its own value.
     /// </summary>
-    public class ValueVariable : IVariable {
+    public class ValueVariable : IVariable
+    {
         private object value;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ValueVariable"/> class.
         /// </summary>
         /// <param name="value">The value.</param>
-        public ValueVariable(object value) {
+        public ValueVariable(object value)
+        {
             this.value = value;
         }
 
@@ -42,7 +45,8 @@ namespace MonoKle.Variable {
         /// <returns>
         /// True if value could be set; otherwise false.
         /// </returns>
-        public bool SetValue(object value) {
+        public bool SetValue(object value)
+        {
             this.value = value;
             return true;
         }

@@ -1,10 +1,12 @@
-﻿namespace MonoKle.State {
+﻿namespace MonoKle.State
+{
     using System.Collections.Generic;
 
     /// <summary>
     /// Interface for maintaining game states.
     /// </summary>
-    public interface IStateSystem {
+    public interface IStateSystem
+    {
         /// <summary>
         /// Gets a collection of the identifiers for the existing states.
         /// </summary>

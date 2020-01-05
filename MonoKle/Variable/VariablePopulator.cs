@@ -1,11 +1,13 @@
-﻿namespace MonoKle.Variable {
-    using System.IO;
+﻿namespace MonoKle.Variable
+{
     using IO;
+    using System.IO;
 
     /// <summary>
     /// Class for loading variables.
     /// </summary>
-    public class VariablePopulator : AbstractFileReader {
+    public class VariablePopulator : AbstractFileReader
+    {
         /// <summary>
         /// The token for commented lines.
         /// </summary>
@@ -22,7 +24,8 @@
         /// Initializes a new instance of the <see cref="VariablePopulator"/> class.
         /// </summary>
         /// <param name="system">The system to populate.</param>
-        public VariablePopulator(VariableSystem system) {
+        public VariablePopulator(VariableSystem system)
+        {
             this.system = system;
         }
 
@@ -46,20 +49,24 @@
         /// <param name="fileStream">A filestream to a read file.</param>
         /// <param name="file">The read file.</param>
         /// <returns></returns>
-        protected override bool ReadFile(Stream fileStream, MFileInfo file) {
+        protected override bool ReadFile(Stream fileStream, MFileInfo file)
+        {
             OperateOnStream(fileStream);
             return true;
         }
 
-        private bool InterpretLine(string line) {
+        private bool InterpretLine(string line)
+        {
             line = line.Trim();
-            if (line.StartsWith(VariablePopulator.CommentedLineToken)) {
+            if (line.StartsWith(VariablePopulator.CommentedLineToken))
+            {
                 return true;
             }
 
             string[] parts = line.Split(VariablePopulator.VariableValueDivisor);
 
-            if (parts.Length == 2) {
+            if (parts.Length == 2)
+            {
                 object value = null;
                 string variableText = parts[0].Trim();
                 string valueText = parts[1].Trim();
@@ -73,16 +80,20 @@
             return false;
         }
 
-        private void InterpretText(string text) {
+        private void InterpretText(string text)
+        {
             var sr = new StringReader(text);
-            while (sr.Peek() != -1) {
+            while (sr.Peek() != -1)
+            {
                 InterpretLine(sr.ReadLine());
             }
         }
 
-        private void OperateOnStream(Stream stream) {
+        private void OperateOnStream(Stream stream)
+        {
             var sr = new StreamReader(stream);
-            while (sr.EndOfStream == false) {
+            while (sr.EndOfStream == false)
+            {
                 InterpretLine(sr.ReadLine());
             }
         }

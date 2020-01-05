@@ -1,11 +1,13 @@
-﻿namespace MonoKle.Console {
+﻿namespace MonoKle.Console
+{
     using System;
     using System.Collections.Generic;
 
     /// <summary>
     /// Abstract console command class.
     /// </summary>
-    public abstract class AbstractConsoleCommand : IConsoleCommand {
+    public abstract class AbstractConsoleCommand : IConsoleCommand
+    {
         /// <summary>
         /// Initializes a new instance of the <see cref="AbstractConsoleCommand"/> class.
         /// </summary>
@@ -17,11 +19,14 @@
         /// or
         /// Arguments must not be null.
         /// </exception>
-        public AbstractConsoleCommand(string name, string description, CommandArguments arguments) {
-            if (name == null) {
+        public AbstractConsoleCommand(string name, string description, CommandArguments arguments)
+        {
+            if (name == null)
+            {
                 throw new ArgumentNullException("Name must not be null.");
             }
-            if (arguments == null) {
+            if (arguments == null)
+            {
                 throw new ArgumentNullException("Arguments must not be null.");
             }
             Name = name.ToLower();
@@ -87,8 +92,10 @@
         /// </summary>
         /// <param name="index">The index.</param>
         /// <returns></returns>
-        public ICollection<string> GetInputSuggestions(int index) {
-            if (index >= 0 && index < Arguments.Length) {
+        public ICollection<string> GetInputSuggestions(int index)
+        {
+            if (index >= 0 && index < Arguments.Length)
+            {
                 return DoGetInputSuggestions(index);
             }
             return new string[0];

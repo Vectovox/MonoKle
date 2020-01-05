@@ -1,17 +1,19 @@
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using Microsoft.Xna.Framework;
 
-namespace MonoKle {
+namespace MonoKle
+{
 
     /// <summary>
     /// Class representing a serializable grid with accompanying operations.
     /// </summary>
     [Serializable]
-    public class MGrid {
+    public class MGrid
+    {
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MGrid"/> class.
@@ -48,17 +50,21 @@ namespace MonoKle {
         /// </summary>
         /// <param name="circle">The circle.</param>
         /// <returns>List of cells.</returns>
-        public List<MPoint2> CellsFromCircle(MCircle circle) {
+        public List<MPoint2> CellsFromCircle(MCircle circle)
+        {
             var cellList = new List<MPoint2>();
             var circleBox = new MRectangleInt(
                 CellFromPoint(new MVector2(circle.Origin.X - circle.Radius, circle.Origin.Y - circle.Radius)),
                 CellFromPoint(new MVector2(circle.Origin.X + circle.Radius, circle.Origin.Y + circle.Radius))
                 );
 
-            for (int x = circleBox.Left; x <= circleBox.Right; x++) {
-                for (int y = circleBox.Top; y <= circleBox.Bottom; y++) {
+            for (int x = circleBox.Left; x <= circleBox.Right; x++)
+            {
+                for (int y = circleBox.Top; y <= circleBox.Bottom; y++)
+                {
                     var point = new MPoint2(x, y);
-                    if (circle.Intersects(CellRectangle(point))) {
+                    if (circle.Intersects(CellRectangle(point)))
+                    {
                         cellList.Add(point);
                     }
                 }
@@ -89,12 +95,14 @@ namespace MonoKle {
         /// <summary>
         /// Enumerable
         /// </summary>
-        public class LineEnumerable : IEnumerable<MPoint2> {
+        public class LineEnumerable : IEnumerable<MPoint2>
+        {
             private Vector2 end;
             private Vector2 start;
             private MGrid traverser;
 
-            internal LineEnumerable(MGrid traverser, MVector2 start, MVector2 end) {
+            internal LineEnumerable(MGrid traverser, MVector2 start, MVector2 end)
+            {
                 this.traverser = traverser;
                 this.start = start;
                 this.end = end;
@@ -113,7 +121,8 @@ namespace MonoKle {
             /// <summary>
             /// Enumerator
             /// </summary>
-            public class LineEnumerator : IEnumerator<MPoint2> {
+            public class LineEnumerator : IEnumerator<MPoint2>
+            {
                 private int currentX;
                 private int currentY;
                 private float dx;
@@ -129,7 +138,8 @@ namespace MonoKle {
                 private float tMaxX;
                 private float tMaxY;
 
-                internal LineEnumerator(LineEnumerable e) {
+                internal LineEnumerator(LineEnumerable e)
+                {
                     this.e = e;
 
                     dx = e.end.X - e.start.X;
@@ -163,20 +173,28 @@ namespace MonoKle {
                 /// <returns>
                 /// true if the enumerator was successfully advanced to the next element; false if the enumerator has passed the end of the collection.
                 /// </returns>
-                public bool MoveNext() {
-                    if (first) {
+                public bool MoveNext()
+                {
+                    if (first)
+                    {
                         first = false;
-                    } else {
-                        if (Math.Abs(tMaxX) < Math.Abs(tMaxY)) {
+                    }
+                    else
+                    {
+                        if (Math.Abs(tMaxX) < Math.Abs(tMaxY))
+                        {
                             tMaxX = tMaxX + tDeltaX;
                             currentX += stepX;
-                        } else {
+                        }
+                        else
+                        {
                             tMaxY = tMaxY + tDeltaY;
                             currentY += stepY;
                         }
                     }
 
-                    if (over == false && currentX == endPoint.X && currentY == endPoint.Y) {
+                    if (over == false && currentX == endPoint.X && currentY == endPoint.Y)
+                    {
                         over = true;
                         return true;
                     }
@@ -186,15 +204,22 @@ namespace MonoKle {
                 /// <summary>
                 /// Sets the enumerator to its initial position, which is before the first element in the collection.
                 /// </summary>
-                public void Reset() {
-                    if (stepX >= 0) {
+                public void Reset()
+                {
+                    if (stepX >= 0)
+                    {
                         tMaxX = tDeltaX * (1.0f - Frac(e.start.X / e.traverser.CellSize));
-                    } else {
+                    }
+                    else
+                    {
                         tMaxX = tDeltaX * (Frac(e.start.X / e.traverser.CellSize));
                     }
-                    if (stepY >= 0) {
+                    if (stepY >= 0)
+                    {
                         tMaxY = tDeltaY * (1.0f - Frac(e.start.Y / e.traverser.CellSize));
-                    } else {
+                    }
+                    else
+                    {
                         tMaxY = tDeltaY * (Frac(e.start.Y / e.traverser.CellSize));
                     }
                     currentX = (int)(e.start.X / e.traverser.CellSize);

@@ -1,12 +1,14 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
-namespace MonoKle.Asset.Font {
+namespace MonoKle.Asset.Font
+{
     /// <summary>
     /// Extensions for spritebatch font drawing.
     /// </summary>
-    public static class SpritebatchFontExtensions {
+    public static class SpritebatchFontExtensions
+    {
         /// <summary>
         /// Draws a string with the color white.
         /// </summary>
@@ -42,15 +44,21 @@ namespace MonoKle.Asset.Font {
         /// <param name="effect">Applied sprite effects.</param>
         /// <param name="depth">Depth.</param>
         public static void DrawString(this SpriteBatch spriteBatch, Font font, string text, Vector2 position, Color color,
-            float rotation, Vector2 origin, float scale, SpriteEffects effect, float depth) {
+            float rotation, Vector2 origin, float scale, SpriteEffects effect, float depth)
+        {
             Vector2 drawPos = position; // Cursor
-            foreach (char c in text) {
+            foreach (char c in text)
+            {
                 // Set cursor to next line
-                if (c == '\n') {
+                if (c == '\n')
+                {
                     drawPos.Y += font.LineHeight * scale;
                     drawPos.X = position.X;
-                } else {
-                    if (font.TryGetChar(c, out FontChar character)) {
+                }
+                else
+                {
+                    if (font.TryGetChar(c, out FontChar character))
+                    {
                         var sourceRectangle = new Rectangle(character.X, character.Y, character.Width, character.Height);
                         var destinationVector = new Vector2(drawPos.X, drawPos.Y + (character.YOffset * scale));
 

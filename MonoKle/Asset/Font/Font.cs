@@ -1,13 +1,15 @@
-namespace MonoKle.Asset.Font {
-    using System.Collections.Generic;
-    using System.Linq;
+namespace MonoKle.Asset.Font
+{
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
+    using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// Font for drawing strings.
     /// </summary>
-    public class Font {
+    public class Font
+    {
         private readonly FontFile data;
         private readonly Dictionary<char, FontChar> fontCharByChar;
         private readonly List<Texture2D> pageList;
@@ -22,7 +24,8 @@ namespace MonoKle.Asset.Font {
         /// </summary>
         /// <param name="data">The data representation.</param>
         /// <param name="pageList">The image representations.</param>
-        public Font(FontFile data, List<Texture2D> pageList) {
+        public Font(FontFile data, List<Texture2D> pageList)
+        {
             this.data = data;
             this.pageList = pageList;
             fontCharByChar = data.Chars.ToDictionary(ch => (char)ch.ID);
@@ -57,20 +60,28 @@ namespace MonoKle.Asset.Font {
         /// <param name="text">The text to measure.</param>
         /// <param name="scale">The scale.</param>
         /// <returns>A vector2 representing the size.</returns>
-        public Vector2 MeasureString(string text, float scale) {
+        public Vector2 MeasureString(string text, float scale)
+        {
             Vector2 rowSize = Vector2.Zero;
             Vector2 totalSize = Vector2.Zero;
 
-            foreach (char c in text) {
-                if (c == '\n') {
-                    if (totalSize.X < rowSize.X) {
+            foreach (char c in text)
+            {
+                if (c == '\n')
+                {
+                    if (totalSize.X < rowSize.X)
+                    {
                         totalSize.X = rowSize.X;
                     }
                     rowSize.X = 0;
                     totalSize.Y += data.Info.Size;
-                } else {
-                    if (fontCharByChar.TryGetValue(c, out FontChar fc)) {
-                        if (fc.Height > rowSize.Y) {
+                }
+                else
+                {
+                    if (fontCharByChar.TryGetValue(c, out FontChar fc))
+                    {
+                        if (fc.Height > rowSize.Y)
+                        {
                             rowSize.Y = fc.Height;
                         }
                         rowSize.X += fc.XAdvance;
@@ -78,7 +89,8 @@ namespace MonoKle.Asset.Font {
                 }
             }
 
-            if (totalSize.X < rowSize.X) {
+            if (totalSize.X < rowSize.X)
+            {
                 totalSize.X = rowSize.X;
             }
             totalSize.Y += data.Info.Size;
@@ -100,19 +112,27 @@ namespace MonoKle.Asset.Font {
         /// <param name="maximumWidth">The maximum width allowed for the wrapped text</param>
         /// <param name="scale">Scale of font to adjust for.</param>
         /// <returns>A string containing the wrapped text</returns>
-        public string WrapString(string text, float maximumWidth, float scale) {
+        public string WrapString(string text, float maximumWidth, float scale)
+        {
             float width = MeasureString(text, scale).X;
-            if (width > maximumWidth) {
+            if (width > maximumWidth)
+            {
                 int startPtr = 0;
-                for (int i = 1; i < text.Length - startPtr; i++) {
-                    if (text[startPtr + i].Equals('\n')) {
+                for (int i = 1; i < text.Length - startPtr; i++)
+                {
+                    if (text[startPtr + i].Equals('\n'))
+                    {
                         startPtr += i;
                         i = 0;
-                    } else {
+                    }
+                    else
+                    {
                         float length = MeasureString(text.Substring(startPtr, i), scale).X;
-                        if (length > maximumWidth) {
+                        if (length > maximumWidth)
+                        {
                             int index = text.LastIndexOfAny(new char[] { ' ', '.', ',' }, startPtr + i - 1, i);
-                            if (index != -1) {
+                            if (index != -1)
+                            {
                                 text = text.Remove(index, 1).Insert(index, "\n");
                             }
                             startPtr = index + 1;

@@ -1,15 +1,17 @@
-﻿namespace MonoKle.Asset.Texture {
-    using System;
-    using System.IO;
+﻿namespace MonoKle.Asset.Texture
+{
     using IO;
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
     using MonoKle.Graphics;
+    using System;
+    using System.IO;
 
     /// <summary>
     /// Loads and maintains texture assets.
     /// </summary>
-    public class TextureStorage : AbstractAssetStorage<Texture2D> {
+    public class TextureStorage : AbstractAssetStorage<Texture2D>
+    {
         private GraphicsDevice graphicsDevice;
 
         /// <summary>
@@ -21,7 +23,8 @@
         /// Initializes a new instance of the <see cref="TextureStorage"/> class.
         /// </summary>
         /// <param name="graphicsDevice">The graphics device.</param>
-        public TextureStorage(GraphicsDevice graphicsDevice) {
+        public TextureStorage(GraphicsDevice graphicsDevice)
+        {
             this.graphicsDevice = graphicsDevice;
             DefaultValue = new Texture2D(graphicsDevice, 16, 16).Fill(Color.White);
             White = new Texture2D(graphicsDevice, 16, 16).Fill(Color.Purple);

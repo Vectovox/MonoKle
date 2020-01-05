@@ -1,10 +1,12 @@
 using System;
 
-namespace MonoKle.State {
+namespace MonoKle.State
+{
     /// <summary>
     /// Abstract class for a game state.
     /// </summary>
-    public abstract class GameState : IUpdateable, IDrawable {
+    public abstract class GameState : IUpdateable, IDrawable
+    {
         private bool hasBeenActivated;
 
         /// <summary>
@@ -40,8 +42,10 @@ namespace MonoKle.State {
         /// Called when the state is being activated.
         /// </summary>
         /// <param name="data">State data to receive.</param>
-        public void Activate(StateSwitchData data) {
-            if (hasBeenActivated == false) {
+        public void Activate(StateSwitchData data)
+        {
+            if (hasBeenActivated == false)
+            {
                 BeforeFirstActivation(data);
                 hasBeenActivated = true;
             }
@@ -53,7 +57,8 @@ namespace MonoKle.State {
         /// Called when the state is being activated.
         /// </summary>
         /// <param name="data">State data to receive.</param>
-        protected virtual void Activated(StateSwitchData data) {
+        protected virtual void Activated(StateSwitchData data)
+        {
         }
 
         /// <summary>

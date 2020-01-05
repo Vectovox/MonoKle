@@ -1,10 +1,12 @@
 using System;
 
-namespace MonoKle.Input {
+namespace MonoKle.Input
+{
     /// <summary>
     /// Class for pressable sticks.
     /// </summary>
-    public class PressableStick : IPressableStick {
+    public class PressableStick : IPressableStick
+    {
         private Button buttonState = new Button();
 
         /// <summary>
@@ -29,7 +31,8 @@ namespace MonoKle.Input {
         /// <param name="down">True if button is down.</param>
         /// <param name="direction">The direction of the button.</param>
         /// <param name="deltaTime">Time in seconds since last update.</param>
-        public virtual void Update(bool down, MVector2 direction, TimeSpan deltaTime) {
+        public virtual void Update(bool down, MVector2 direction, TimeSpan deltaTime)
+        {
             buttonState.Update(down, deltaTime);
             Direction = direction;
         }

@@ -1,8 +1,10 @@
-﻿namespace MonoKle.IO {
+﻿namespace MonoKle.IO
+{
     /// <summary>
     /// Interface defining a file loader.
     /// </summary>
-    public interface IFileLoader {
+    public interface IFileLoader
+    {
         /// <summary>
         /// Loads the file(s) in the given path.
         /// </summary>

@@ -1,16 +1,19 @@
 ﻿using System;
 
-namespace MonoKle.Scripting {
+namespace MonoKle.Scripting
+{
     /// <summary>
     /// Class for a static script source that does not change over time.
     /// </summary>
     /// <seealso cref="IScriptSource" />
-    public class StaticScriptSource : IScriptSource {
+    public class StaticScriptSource : IScriptSource
+    {
         /// <summary>
         /// Initializes a new instance of the <see cref="StaticScriptSource"/> class.
         /// </summary>
         /// <param name="source">The source.</param>
-        public StaticScriptSource(string source) {
+        public StaticScriptSource(string source)
+        {
             Code = source;
         }
 

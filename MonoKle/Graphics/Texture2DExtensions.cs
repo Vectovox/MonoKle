@@ -1,22 +1,26 @@
-﻿namespace MonoKle.Graphics {
-    using System;
+﻿namespace MonoKle.Graphics
+{
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
+    using System;
 
     /// <summary>
     /// Extensions for <see cref="Texture2D"/>.
     /// </summary>
-    public static class Texture2DExtensions {
+    public static class Texture2DExtensions
+    {
         /// <summary>
         /// Sets the data of the texture using the provided paint method.
         /// </summary>
         /// <param name="texture">The texture to set data on</param>
         /// <param name="paint">Paint function for each pixel index</param>
         /// <returns>The texture</returns>
-        public static Texture2D Paint(this Texture2D texture, Func<int, Color> paint) {
+        public static Texture2D Paint(this Texture2D texture, Func<int, Color> paint)
+        {
             var data = new Color[texture.Width * texture.Height];
 
-            for (int pixel = 0; pixel < data.Length; pixel++) {
+            for (int pixel = 0; pixel < data.Length; pixel++)
+            {
                 data[pixel] = paint(pixel);
             }
 

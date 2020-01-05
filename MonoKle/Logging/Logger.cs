@@ -1,13 +1,15 @@
-namespace MonoKle.Logging {
+namespace MonoKle.Logging
+{
+    using Attributes;
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using Attributes;
 
     /// <summary>
     /// Class for handling logs and triggering log events.
     /// </summary>
-    public class Logger {
+    public class Logger
+    {
         private static Logger globalLogger;
 
         private LogLevel loggingLevel;
@@ -17,7 +19,8 @@ namespace MonoKle.Logging {
         /// <summary>
         /// Creates instance of <see cref="Logger"/>.
         /// </summary>
-        public Logger() {
+        public Logger()
+        {
             LoggingLevel = LogLevel.Info;
             Size = byte.MaxValue;
         }
@@ -31,8 +34,10 @@ namespace MonoKle.Logging {
         /// Returns the instance of the global logger.
         /// </summary>
         /// <returns></returns>
-        public static Logger Global {
-            get {
+        public static Logger Global
+        {
+            get
+            {
                 Logger.globalLogger = Logger.globalLogger ?? new Logger();
                 return Logger.globalLogger;
             }
@@ -41,7 +46,8 @@ namespace MonoKle.Logging {
         /// <summary>
         /// The current logging level accepted.
         /// </summary>
-        public LogLevel LoggingLevel {
+        public LogLevel LoggingLevel
+        {
             get => loggingLevel;
             set => loggingLevel = value;
         }
@@ -50,7 +56,8 @@ namespace MonoKle.Logging {
         /// The maximum amount of logs to be stored.
         /// </summary>
         [PropertyVariable("log_size")]
-        public short Size {
+        public short Size
+        {
             get => size;
             set { size = value; TrimLogs(); }
         }
@@ -64,7 +71,8 @@ namespace MonoKle.Logging {
         /// Dumps the current logs to a provided stream, losing the currently stored logs. The provided stream is closed.
         /// </summary>
         /// <param name="stream">The stream to dump to.</param>
-        public void DumpLog(Stream stream) {
+        public void DumpLog(Stream stream)
+        {
             WriteLog(stream);
             Clear();
         }
@@ -86,11 +94,14 @@ namespace MonoKle.Logging {
         /// </summary>
         /// <param name="message">The message to log.</param>
         /// <param name="level">The severity level of the log.</param>
-        public void Log(string message, LogLevel level) {
-            if (level <= loggingLevel) {
+        public void Log(string message, LogLevel level)
+        {
+            if (level <= loggingLevel)
+            {
                 var newLog = new Log(message, level, DateTime.Now);
                 logs.AddLast(newLog);
-                if (logs.Count > size) {
+                if (logs.Count > size)
+                {
                     logs.RemoveFirst();
                 }
                 OnLogAdded(newLog);
@@ -101,9 +112,11 @@ namespace MonoKle.Logging {
         /// Writes the currently stored logs to a provided stream. The provided stream is closed.
         /// </summary>
         /// <param name="stream">The stream to write to.</param>
-        public void WriteLog(Stream stream) {
+        public void WriteLog(Stream stream)
+        {
             var writer = new StreamWriter(stream);
-            foreach (Log l in GetLogs()) {
+            foreach (Log l in GetLogs())
+            {
                 writer.WriteLine(l.ToString());
             }
             writer.Close();
@@ -112,15 +125,19 @@ namespace MonoKle.Logging {
         /// <summary>
         /// Raises the LogAddedEvent.
         /// </summary>
-        protected void OnLogAdded(Log newLog) {
+        protected void OnLogAdded(Log newLog)
+        {
             LogAddedEventHandler handler = LogAddedEvent;
-            if (handler != null) {
+            if (handler != null)
+            {
                 handler(this, new LogAddedEventArgs(newLog));
             }
         }
 
-        private void TrimLogs() {
-            while (logs.Count > size) {
+        private void TrimLogs()
+        {
+            while (logs.Count > size)
+            {
                 logs.RemoveFirst();
             }
         }

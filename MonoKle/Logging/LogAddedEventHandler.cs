@@ -1,4 +1,5 @@
-﻿namespace MonoKle.Logging {
+﻿namespace MonoKle.Logging
+{
     /// <summary>
     /// Event handler for a logging event.
     /// </summary>

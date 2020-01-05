@@ -1,10 +1,12 @@
 using System;
 
-namespace MonoKle {
+namespace MonoKle
+{
     /// <summary>
     /// Interface for drawable components.
     /// </summary>
-    public interface IDrawable {
+    public interface IDrawable
+    {
         /// <summary>
         /// Draws the specified component with the specified time delta since last drawal.
         /// </summary>

@@ -1,10 +1,12 @@
-﻿namespace MonoKle.Input.Gamepad {
+﻿namespace MonoKle.Input.Gamepad
+{
     using Microsoft.Xna.Framework;
 
     /// <summary>
     /// Interface for a gamepad.
     /// </summary>
-    public interface IGamePad {
+    public interface IGamePad
+    {
         /// <summary>
         /// Gets a value indicating whether this instance is connected.
         /// </summary>

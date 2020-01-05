@@ -1,13 +1,15 @@
-using System;
 using Microsoft.Xna.Framework.Input;
+using System;
 
-namespace MonoKle.Input.Gamepad {
+namespace MonoKle.Input.Gamepad
+{
     /// <summary>
     /// Class representing the current state of a gamepad.
     /// </summary>
     /// <seealso cref="IGamePad" />
     /// <seealso cref="IUpdateable" />
-    public class GamePad : IGamePad, IUpdateable {
+    public class GamePad : IGamePad, IUpdateable
+    {
         private Button buttonA = new Button();
         private Button buttonB = new Button();
         private Button buttonBack = new Button();
@@ -29,7 +31,8 @@ namespace MonoKle.Input.Gamepad {
         /// Initializes a new instance of the <see cref="GamePad"/> class.
         /// </summary>
         /// <param name="playerIndex">Index of the player.</param>
-        public GamePad(Microsoft.Xna.Framework.PlayerIndex playerIndex) {
+        public GamePad(Microsoft.Xna.Framework.PlayerIndex playerIndex)
+        {
             this.playerIndex = playerIndex;
             currentState = new GamePadState();
         }
@@ -168,10 +171,12 @@ namespace MonoKle.Input.Gamepad {
         /// </value>
         public IPressable Y => buttonY;
 
-        public void Update(TimeSpan timeDelta) {
+        public void Update(TimeSpan timeDelta)
+        {
             currentState = Microsoft.Xna.Framework.Input.GamePad.GetState(playerIndex);
 
-            if (currentState.IsConnected) {
+            if (currentState.IsConnected)
+            {
                 buttonA.Update(currentState.Buttons.A == ButtonState.Pressed, timeDelta);
                 buttonB.Update(currentState.Buttons.B == ButtonState.Pressed, timeDelta);
                 buttonBack.Update(currentState.Buttons.Back == ButtonState.Pressed, timeDelta);

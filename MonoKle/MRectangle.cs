@@ -1,13 +1,15 @@
 using System;
 using System.Text;
 
-namespace MonoKle {
+namespace MonoKle
+{
 
     /// <summary>
     /// Struct for storing an immutable, serializable, normalized (positive width and height), floating point precision area.
     /// </summary>
     [Serializable]
-    public struct MRectangle : IEquatable<MRectangle> {
+    public struct MRectangle : IEquatable<MRectangle>
+    {
         /// <summary>
         /// The bottom right coordinate of the <see cref="MRectangle"/>.
         /// </summary>
@@ -22,7 +24,8 @@ namespace MonoKle {
         /// Creates a new instance of <see cref="MRectangle"/> from the given <see cref="MRectangleInt"/>.
         /// <param name="area">The area to instantiate from.</param>
         /// </summary>
-        public MRectangle(MRectangleInt area) {
+        public MRectangle(MRectangleInt area)
+        {
             TopLeft = area.TopLeft.ToMVector2();
             BottomRight = area.BottomRight.ToMVector2();
         }
@@ -32,7 +35,8 @@ namespace MonoKle {
         /// </summary>
         /// <param name="width">Width.</param>
         /// <param name="height">Height.</param>
-        public MRectangle(float width, float height) {
+        public MRectangle(float width, float height)
+        {
             float xLeft = Math.Min(0, width);
             float xRight = Math.Max(0, width);
             float yTop = Math.Min(0, height);
@@ -45,7 +49,8 @@ namespace MonoKle {
         /// Creates a new instance of <see cref="MRectangle"/> around (0, 0) with the given size.
         /// </summary>
         /// <param name="size">The size.</param>
-        public MRectangle(MVector2 size) {
+        public MRectangle(MVector2 size)
+        {
             float xLeft = Math.Min(0, size.X);
             float xRight = Math.Max(0, size.X);
             float yTop = Math.Min(0, size.Y);
@@ -61,7 +66,8 @@ namespace MonoKle {
         /// <param name="y">Y-coordinate of a corner.</param>
         /// <param name="width">Width.</param>
         /// <param name="height">Height.</param>
-        public MRectangle(float x, float y, float width, float height) {
+        public MRectangle(float x, float y, float width, float height)
+        {
             float xLeft = Math.Min(x, x + width);
             float xRight = Math.Max(x, x + width);
             float yTop = Math.Min(y, y + height);
@@ -75,7 +81,8 @@ namespace MonoKle {
         /// </summary>
         /// <param name="coordA">The first coordinate.</param>
         /// <param name="coordB">The second coordinate.</param>
-        public MRectangle(MVector2 coordA, MVector2 coordB) {
+        public MRectangle(MVector2 coordA, MVector2 coordB)
+        {
             float xLeft = Math.Min(coordA.X, coordB.X);
             float xRight = Math.Max(coordA.X, coordB.X);
             float yTop = Math.Min(coordA.Y, coordB.Y);
@@ -89,7 +96,8 @@ namespace MonoKle {
         /// </summary>
         /// <param name="coordA">The first coordinate.</param>
         /// <param name="coordB">The second coordinate.</param>
-        public MRectangle(MPoint2 coordA, MPoint2 coordB) {
+        public MRectangle(MPoint2 coordA, MPoint2 coordB)
+        {
             float xLeft = Math.Min(coordA.X, coordB.X);
             float xRight = Math.Max(coordA.X, coordB.X);
             float yTop = Math.Min(coordA.Y, coordB.Y);
@@ -102,7 +110,8 @@ namespace MonoKle {
         /// Initializes a new instance of the <see cref="MRectangle"/> struct, equating to the bounding box of the provided <see cref="MCircle"/>.
         /// </summary>
         /// <param name="circle">The circle.</param>
-        public MRectangle(MCircle circle) {
+        public MRectangle(MCircle circle)
+        {
             TopLeft = new MVector2(circle.Origin.X - circle.Radius, circle.Origin.Y - circle.Radius);
             BottomRight = new MVector2(circle.Origin.X + circle.Radius, circle.Origin.Y + circle.Radius);
         }
@@ -178,19 +187,26 @@ namespace MonoKle {
         /// Clamps the provided <see cref="MVector2"/> to be positioned within this.
         /// </summary>
         /// <param name="coordinate">The <see cref="MVector2"/> to clamp.</param>
-        public MVector2 Clamp(MVector2 coordinate) {
+        public MVector2 Clamp(MVector2 coordinate)
+        {
             float x = coordinate.X;
             float y = coordinate.Y;
 
-            if (x < TopLeft.X) {
+            if (x < TopLeft.X)
+            {
                 x = TopLeft.X;
-            } else if (x > BottomRight.X) {
+            }
+            else if (x > BottomRight.X)
+            {
                 x = BottomRight.X;
             }
 
-            if (y < TopLeft.Y) {
+            if (y < TopLeft.Y)
+            {
                 y = TopLeft.Y;
-            } else if (coordinate.Y > BottomRight.Y) {
+            }
+            else if (coordinate.Y > BottomRight.Y)
+            {
                 y = BottomRight.Y;
             }
 
@@ -270,8 +286,10 @@ namespace MonoKle {
         /// </summary>
         /// <param name="obj">The object to check for equality with.</param>
         /// <returns>True if equal, else false.</returns>
-        public override bool Equals(object obj) {
-            if (obj is MRectangle) {
+        public override bool Equals(object obj)
+        {
+            if (obj is MRectangle)
+            {
                 return this == ((MRectangle)obj);
             }
             return false;
@@ -288,9 +306,11 @@ namespace MonoKle {
         /// Returns the hash representation.
         /// </summary>
         /// <returns>Hash representation.</returns>
-        public override int GetHashCode() {
+        public override int GetHashCode()
+        {
             const int HASH_CODE_MULTIPLIER = 23;
-            unchecked {
+            unchecked
+            {
                 int hash = 17;
                 hash = hash * HASH_CODE_MULTIPLIER + TopLeft.GetHashCode();
                 hash = hash * HASH_CODE_MULTIPLIER + BottomRight.GetHashCode();
@@ -302,7 +322,8 @@ namespace MonoKle {
         /// Returns the <see cref="string"/> representation.
         /// </summary>
         /// <returns><see cref="string"/> representation.</returns>
-        public override string ToString() {
+        public override string ToString()
+        {
             var sb = new StringBuilder();
             sb.Append("{Top Left: ");
             sb.Append(TopLeft.ToString());

@@ -1,10 +1,12 @@
-﻿namespace MonoKle.Graphics {
+﻿namespace MonoKle.Graphics
+{
     using Microsoft.Xna.Framework;
 
     /// <summary>
     /// Interface for classes drawing primitives.
     /// </summary>
-    public interface IPrimitiveBatch {
+    public interface IPrimitiveBatch
+    {
         /// <summary>
         /// Begins a batch of primitives.
         /// </summary>

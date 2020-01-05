@@ -1,4 +1,5 @@
-﻿namespace MonoKle.Graphics {
+﻿namespace MonoKle.Graphics
+{
     using Attributes;
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
@@ -6,7 +7,8 @@
     /// <summary>
     /// Manages graphics.
     /// </summary>
-    public class GraphicsManager {
+    public class GraphicsManager
+    {
         private GraphicsDeviceManager graphicsDeviceManager;
 
         private MPoint2 resolution;
@@ -15,7 +17,8 @@
         /// Initializes a new instance of the <see cref="GraphicsManager"/> class.
         /// </summary>
         /// <param name="graphicsDeviceManager">The graphics device manager.</param>
-        public GraphicsManager(GraphicsDeviceManager graphicsDeviceManager) {
+        public GraphicsManager(GraphicsDeviceManager graphicsDeviceManager)
+        {
             this.graphicsDeviceManager = graphicsDeviceManager;
             this.graphicsDeviceManager.PreparingDeviceSettings += PreparingDeviceSettings;
         }
@@ -40,7 +43,8 @@
         /// The resolution.
         /// </value>
         [PropertyVariable("g_res")]
-        public MPoint2 Resolution {
+        public MPoint2 Resolution
+        {
             get { return resolution; }
             set { SetResolution(value); }
         }
@@ -51,7 +55,8 @@
         /// <value>
         /// The resolution center.
         /// </value>
-        public MPoint2 ResolutionCenter {
+        public MPoint2 ResolutionCenter
+        {
             get; private set;
         }
 
@@ -62,7 +67,8 @@
         /// The height of the resolution.
         /// </value>
         [PropertyVariable("g_res_y")]
-        public int ResolutionHeight {
+        public int ResolutionHeight
+        {
             get { return Resolution.Y; }
             set { Resolution = new MPoint2(Resolution.X, value); }
         }
@@ -74,14 +80,17 @@
         /// The width of the resolution.
         /// </value>
         [PropertyVariable("g_res_x")]
-        public int ResolutionWidth {
+        public int ResolutionWidth
+        {
             get { return Resolution.X; }
             set { Resolution = new MPoint2(value, Resolution.Y); }
         }
 
-        private void OnResolutionChanged(MPoint2 newResolution) {
+        private void OnResolutionChanged(MPoint2 newResolution)
+        {
             var v = ResolutionChanged;
-            if (v != null) {
+            if (v != null)
+            {
                 v(this, new ResolutionChangedEventArgs(newResolution));
             }
         }
@@ -93,14 +102,17 @@
         /// <c>true</c> if this instance is fullscreen; otherwise, <c>false</c>.
         /// </value>
         [PropertyVariable("g_fullscreen")]
-        public bool IsFullscreen {
+        public bool IsFullscreen
+        {
             get { return graphicsDeviceManager.IsFullScreen; }
             set { SetFullscreenEnabled(value); }
         }
 
-        private void SetFullscreenEnabled(bool enabled) {
+        private void SetFullscreenEnabled(bool enabled)
+        {
             if (enabled && IsFullscreen == false ||
-                enabled == false && IsFullscreen) {
+                enabled == false && IsFullscreen)
+            {
                 ToggleFullscren();
             }
         }
@@ -108,13 +120,15 @@
         /// <summary>
         /// Toggles fullscren.
         /// </summary>
-        public void ToggleFullscren() {
+        public void ToggleFullscren()
+        {
             graphicsDeviceManager.ToggleFullScreen();
             graphicsDeviceManager.ApplyChanges();
         }
 
         // TODO: PreparingDeviceSettings does only fire the first time applychanges is called (or maybe only before game started).
-        private void PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e) {
+        private void PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
+        {
             //this.SetResolution(new MPoint2(e.GraphicsDeviceInformation.PresentationParameters.BackBufferWidth,
             //    e.GraphicsDeviceInformation.PresentationParameters.BackBufferHeight));
             //Vector2DInteger value = new Vector2DInteger(
@@ -125,7 +139,8 @@
             //ScreenCenter = value / 2;
         }
 
-        private void SetResolution(MPoint2 resolution) {
+        private void SetResolution(MPoint2 resolution)
+        {
             graphicsDeviceManager.PreferredBackBufferWidth = resolution.X;
             graphicsDeviceManager.PreferredBackBufferHeight = resolution.Y;
             this.resolution = resolution;          // TODO: Remove when PreparingDeviceSettings is received

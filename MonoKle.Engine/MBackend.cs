@@ -1,10 +1,5 @@
-namespace MonoKle.Engine {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-    using System.Text;
+namespace MonoKle.Engine
+{
     using Asset.Effect;
     using Asset.Font;
     using Asset.Texture;
@@ -17,11 +12,18 @@ namespace MonoKle.Engine {
     using Microsoft.Xna.Framework;
     using Scripting;
     using State;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
+    using System.Text;
 
     /// <summary>
     /// Backend for the MonoKle engine. Provides global access to all MonoKle systems.
     /// </summary>
-    public static class MBackend {
+    public static class MBackend
+    {
         private static GameConsole console;
         private static GamePadHub gamepad;
         private static bool initializing;
@@ -38,7 +40,8 @@ namespace MonoKle.Engine {
         /// <summary>
         /// Gets the effect storage, loading and providing effects.
         /// </summary>
-        public static EffectStorage EffectStorage {
+        public static EffectStorage EffectStorage
+        {
             get;
             private set;
         }
@@ -46,7 +49,8 @@ namespace MonoKle.Engine {
         /// <summary>
         /// Gets the font storage, loading and providing fonts.
         /// </summary>
-        public static FontStorage FontStorage {
+        public static FontStorage FontStorage
+        {
             get;
             private set;
         }
@@ -67,7 +71,8 @@ namespace MonoKle.Engine {
         /// <summary>
         /// Gets the graphics manager. This is in charge of screen settings (resolution, full-screen, etc.) and provides the <see cref="GraphicsDevice"/>.
         /// </summary>
-        public static GraphicsManager GraphicsManager {
+        public static GraphicsManager GraphicsManager
+        {
             get;
             private set;
         }
@@ -75,7 +80,8 @@ namespace MonoKle.Engine {
         /// <summary>
         /// Gets wether the game is running slowly or not.
         /// </summary>
-        public static bool IsRunningSlowly {
+        public static bool IsRunningSlowly
+        {
             get;
             private set;
         }
@@ -88,7 +94,8 @@ namespace MonoKle.Engine {
         /// <summary>
         /// Gets the logging utility, same as <see cref="Logger.Global"/>.
         /// </summary>
-        public static Logger Logger {
+        public static Logger Logger
+        {
             get;
             private set;
         }
@@ -101,7 +108,8 @@ namespace MonoKle.Engine {
         /// <summary>
         /// Gets the script environment. Used for scripting.
         /// </summary>
-        public static ScriptEnvironment ScriptEnvironment {
+        public static ScriptEnvironment ScriptEnvironment
+        {
             get;
             private set;
         }
@@ -114,7 +122,8 @@ namespace MonoKle.Engine {
         /// <summary>
         /// Gets the texture storage, loading and providing textures.
         /// </summary>
-        public static TextureStorage TextureStorage {
+        public static TextureStorage TextureStorage
+        {
             get;
             private set;
         }
@@ -122,7 +131,8 @@ namespace MonoKle.Engine {
         /// <summary>
         /// Gets the total time spent in the game.
         /// </summary>
-        public static TimeSpan TotalGameTime {
+        public static TimeSpan TotalGameTime
+        {
             get;
             private set;
         }
@@ -133,7 +143,8 @@ namespace MonoKle.Engine {
         /// <value>
         /// The variables.
         /// </value>
-        public static VariableStorage Variables {
+        public static VariableStorage Variables
+        {
             get;
             private set;
         }
@@ -165,7 +176,8 @@ namespace MonoKle.Engine {
         /// <param name="resolution">The initial display resolution.</param>
         /// <param name="enableConsole">Enables console.</param>
         /// <returns>Runnable <see cref="MGame"/>.</returns>
-        public static MGame Initialize(MPoint2 resolution, bool enableConsole) {
+        public static MGame Initialize(MPoint2 resolution, bool enableConsole)
+        {
             MBackend.initializing = true;
 
             MBackend.settings.GamePadEnabled = true;
@@ -207,48 +219,59 @@ namespace MonoKle.Engine {
             return MBackend.GameInstance;
         }
 
-        internal static void Draw(GameTime time) {
-            if (MBackend.initializing == false) {
+        internal static void Draw(GameTime time)
+        {
+            if (MBackend.initializing == false)
+            {
                 var deltaTime = time.ElapsedGameTime;
 
                 MBackend.GraphicsManager.GraphicsDevice.Clear(Color.CornflowerBlue);
                 MBackend.stateSystem.Draw(deltaTime);
 
-                if (MBackend.settings.ConsoleEnabled) {
+                if (MBackend.settings.ConsoleEnabled)
+                {
                     MBackend.console.Draw(deltaTime);
                 }
             }
         }
 
-        internal static void Update(GameTime time) {
-            if (MBackend.initializing == false) {
+        internal static void Update(GameTime time)
+        {
+            if (MBackend.initializing == false)
+            {
                 var deltaTime = time.ElapsedGameTime;
                 MBackend.IsRunningSlowly = time.IsRunningSlowly;
                 MBackend.TotalGameTime = time.TotalGameTime;
 
-                if (MBackend.settings.GamePadEnabled) {
+                if (MBackend.settings.GamePadEnabled)
+                {
                     MBackend.gamepad.Update(deltaTime);
                 }
 
-                if (MBackend.settings.KeyboardEnabled) {
+                if (MBackend.settings.KeyboardEnabled)
+                {
                     MBackend.keyboard.Update(deltaTime);
                 }
 
-                if (MBackend.settings.MouseEnabled) {
+                if (MBackend.settings.MouseEnabled)
+                {
                     MBackend.mouse.Update(deltaTime);
                 }
 
-                if (MBackend.settings.ConsoleEnabled == false || MBackend.Console.IsOpen == false) {
+                if (MBackend.settings.ConsoleEnabled == false || MBackend.Console.IsOpen == false)
+                {
                     MBackend.stateSystem.Update(deltaTime);
                 }
 
-                if (MBackend.settings.ConsoleEnabled) {
+                if (MBackend.settings.ConsoleEnabled)
+                {
                     MBackend.console.Update(deltaTime);
                 }
             }
         }
 
-        private static void BindSettings() {
+        private static void BindSettings()
+        {
             MBackend.Variables.Variables.BindProperties(MBackend.Logger);
             MBackend.Variables.Variables.BindProperties(MBackend.GraphicsManager);
             MBackend.Variables.Variables.BindProperties(MBackend.Console);
@@ -258,11 +281,15 @@ namespace MonoKle.Engine {
 
         private static void CommandExit() => MBackend.GameInstance.Exit();
 
-        private static void CommandGet(string[] arguments) {
+        private static void CommandGet(string[] arguments)
+        {
             object value = MBackend.Variables.Variables.GetValue(arguments[0]);
-            if (value != null) {
+            if (value != null)
+            {
                 Console.WriteLine(value.ToString());
-            } else {
+            }
+            else
+            {
                 Console.WriteLine("No such variable exist", Console.ErrorTextColour);
             }
         }
@@ -271,80 +298,109 @@ namespace MonoKle.Engine {
 
         private static ICollection<string> CommandScriptSuggestion(int index) => MBackend.ScriptEnvironment.ScriptNames;
 
-        private static void CommandListVariables() {
+        private static void CommandListVariables()
+        {
             var identifiers = MBackend.Variables.Variables.Identifiers.ToList();
             identifiers.Sort();
-            foreach (string s in identifiers) {
+            foreach (string s in identifiers)
+            {
                 MBackend.Console.WriteLine("\t" + s, MBackend.Variables.Variables.CanSet(s) ? MBackend.Console.DefaultTextColour : MBackend.Console.DisabledTextColour);
             }
         }
 
-        private static void CommandRemove(string[] args) {
-            if (MBackend.Variables.Variables.Remove(args[0]) == false) {
+        private static void CommandRemove(string[] args)
+        {
+            if (MBackend.Variables.Variables.Remove(args[0]) == false)
+            {
                 MBackend.Console.WriteLine("Could not remove variable since it does not exist.", MBackend.Console.ErrorTextColour);
             }
         }
 
-        private static void CommandCompile(string[] args) {
-            if (MBackend.ScriptEnvironment.Compile(args[0])) {
+        private static void CommandCompile(string[] args)
+        {
+            if (MBackend.ScriptEnvironment.Compile(args[0]))
+            {
                 IScript script = MBackend.ScriptEnvironment[args[0]];
-                if (script.Errors.Count == 0) {
+                if (script.Errors.Count == 0)
+                {
                     Console.WriteLine($"Script '{script.Name}' compiled.", Console.CommandTextColour);
-                } else {
+                }
+                else
+                {
                     Console.WriteLine($"Script '{script.Name}' compiled with {script.Errors.Count} errors:\n  {string.Join("\n  ", script.Errors)}", Console.ErrorTextColour);
                 }
-            } else {
+            }
+            else
+            {
                 Console.WriteLine($"Provided script '{args[0]}' does not exist.", Console.ErrorTextColour);
             }
         }
 
-        private static void CommandCompileOutdated() {
+        private static void CommandCompileOutdated()
+        {
             int amount = MBackend.ScriptEnvironment.CompileOutdated();
             Console.WriteLine($"Compiled {amount} scripts.", Console.CommandTextColour);
         }
 
-        private static void CommandCompileAll() {
+        private static void CommandCompileAll()
+        {
             int amount = MBackend.ScriptEnvironment.CompileAll();
             Console.WriteLine($"Compiled {amount} scripts.", Console.CommandTextColour);
         }
 
-        private static void CommandRun(string[] args) {
-            if (MBackend.ScriptEnvironment.Contains(args[0])) {
+        private static void CommandRun(string[] args)
+        {
+            if (MBackend.ScriptEnvironment.Contains(args[0]))
+            {
                 IScript script = MBackend.ScriptEnvironment[args[0]];
-                if (script.CanExecute) {
+                if (script.CanExecute)
+                {
                     var sc = new StringConverter();
                     object[] arguments = args.Skip(1).Select(a => sc.ToAny(a)).ToArray();
                     ScriptExecution result = script.Execute(arguments);
 
-                    if (result.Success) {
-                        if (script.ReturnsValue) {
+                    if (result.Success)
+                    {
+                        if (script.ReturnsValue)
+                        {
                             Console.WriteLine($"Execution result: {result.Result}", Console.CommandTextColour);
                         }
-                    } else {
+                    }
+                    else
+                    {
                         Console.WriteLine($"Error executing script '{script.Name}': {result.Message}", Console.ErrorTextColour);
                     }
-                } else {
+                }
+                else
+                {
                     Console.WriteLine($"Can not execute script '{script.Name}'.", Console.ErrorTextColour);
                 }
-            } else {
+            }
+            else
+            {
                 Console.WriteLine($"Provided script '{args[0]}' does not exist.", Console.ErrorTextColour);
             }
         }
 
-        private static void CommandListScripts() {
+        private static void CommandListScripts()
+        {
             var scripts = MBackend.ScriptEnvironment.ScriptNames.Select(s => MBackend.ScriptEnvironment[s]).OrderBy(s => s.Name);
-            foreach (var s in scripts) {
+            foreach (var s in scripts)
+            {
                 var sb = new StringBuilder("\t");
-                if (s.ReturnsValue) {
+                if (s.ReturnsValue)
+                {
                     sb.Append(s.ReturnType.Name);
                     sb.Append(" ");
                 }
                 sb.Append(s.Name);
 
-                if (s.IsOutdated) {
+                if (s.IsOutdated)
+                {
                     sb.Append(" -outdated-");
                 }
-                if (s.Errors.Count != 0) {
+                if (s.Errors.Count != 0)
+                {
                     sb.Append($" -{s.Errors.Count} errors-");
                 }
 
@@ -358,37 +414,49 @@ namespace MonoKle.Engine {
             }
         }
 
-        private static void CommandSource(string[] args) {
-            if (MBackend.ScriptEnvironment.Contains(args[0])) {
+        private static void CommandSource(string[] args)
+        {
+            if (MBackend.ScriptEnvironment.Contains(args[0]))
+            {
                 IScript script = MBackend.ScriptEnvironment[args[0]];
                 Console.WriteLine($"Printing source for '{script.Name}' from '{script.Source.Date}': ", Console.CommandTextColour);
                 Console.WriteLine("> " + script.Source.Code.Replace("\n", "\n> "));
-            } else {
+            }
+            else
+            {
                 Console.WriteLine($"Provided script '{args[0]}' does not exist.", Console.ErrorTextColour);
             }
         }
 
-        private static void CommandSet(string[] arguments) {
-            if (MBackend.Variables.Variables.Contains(arguments[0]) && MBackend.Variables.Variables.CanSet(arguments[0]) == false) {
+        private static void CommandSet(string[] arguments)
+        {
+            if (MBackend.Variables.Variables.Contains(arguments[0]) && MBackend.Variables.Variables.CanSet(arguments[0]) == false)
+            {
                 Console.WriteLine("Can not set variable since it is read-only", Console.ErrorTextColour);
-            } else if (MBackend.Variables.VariablePopulator.LoadItem(arguments[0], arguments[1]) == false) {
+            }
+            else if (MBackend.Variables.VariablePopulator.LoadItem(arguments[0], arguments[1]) == false)
+            {
                 Console.WriteLine("Variable assignment failed", Console.ErrorTextColour);
             }
         }
 
-        private static ICollection<string> CommandSetSuggestion(int index) {
-            if (index == 0) {
+        private static ICollection<string> CommandSetSuggestion(int index)
+        {
+            if (index == 0)
+            {
                 return MBackend.Variables.Variables.Identifiers;
             }
             return new string[0];
         }
 
-        private static void CommandVersion() {
+        private static void CommandVersion()
+        {
             MBackend.console.WriteLine("       MonoKle Version:\t" + Assembly.GetAssembly(typeof(Timer)).GetName().Version);
             MBackend.console.WriteLine("MonoKle Engine Version:\t" + Assembly.GetAssembly(typeof(MBackend)).GetName().Version);
         }
 
-        private static void InitializeConsole() {
+        private static void InitializeConsole()
+        {
             MBackend.console = new GameConsole(new Rectangle(0, 0, GraphicsManager.Resolution.X, GraphicsManager.Resolution.Y / 3),
                 MBackend.GraphicsManager.GraphicsDevice,
                 MBackend.keyboard,
@@ -398,9 +466,11 @@ namespace MonoKle.Engine {
             MBackend.Console.TextFont = MBackend.FontStorage.DefaultValue;
         }
 
-        private static void InitializeFontStorage() {
+        private static void InitializeFontStorage()
+        {
             MBackend.FontStorage = new FontStorage(GraphicsManager.GraphicsDevice);
-            using (var ms = new MemoryStream(Resources.FontResources.DefaultFont)) {
+            using (var ms = new MemoryStream(Resources.FontResources.DefaultFont))
+            {
                 MBackend.FontStorage.LoadStream(ms, "default");
                 MBackend.FontStorage.DefaultValue = MBackend.FontStorage.GetAsset("default");
             }
@@ -408,12 +478,14 @@ namespace MonoKle.Engine {
 
         private static void InitializeTextureStorage() => MBackend.TextureStorage = new TextureStorage(GraphicsManager.GraphicsDevice);
 
-        private static void InitializeVariables() {
+        private static void InitializeVariables()
+        {
             MBackend.Variables = new VariableStorage(MBackend.Logger);
             MBackend.Variables.LoadDefaultVariables();
         }
 
-        private static void RegisterConsoleCommands() {
+        private static void RegisterConsoleCommands()
+        {
             MBackend.Console.CommandBroker.Register(new ArgumentlessConsoleCommand("exit", "Terminates the application.", MBackend.CommandExit));
             MBackend.Console.CommandBroker.Register(new ArgumentlessConsoleCommand("version", "Prints the current MonoKle version.", MBackend.CommandVersion));
             MBackend.Console.CommandBroker.Register(new ArgumentlessConsoleCommand("vars", "Lists the currently active variables.", MBackend.CommandListVariables));
@@ -449,13 +521,16 @@ namespace MonoKle.Engine {
                 MBackend.CommandSource, null, MBackend.CommandScriptSuggestion));
         }
 
-        private static void ResolutionChanged(object sender, ResolutionChangedEventArgs e) {
-            if (MBackend.Console != null) {
+        private static void ResolutionChanged(object sender, ResolutionChangedEventArgs e)
+        {
+            if (MBackend.Console != null)
+            {
                 MBackend.Console.Area = new Rectangle(0, 0, MBackend.GraphicsManager.ResolutionWidth, MBackend.GraphicsManager.ResolutionHeight / 3);
             }
         }
 
-        private static void UnhandledException(object sender, UnhandledExceptionEventArgs e) {
+        private static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
             MBackend.Logger.Log(e.ExceptionObject.ToString(), LogLevel.Error);
             var fs = new FileStream("./crashdump.log", FileMode.OpenOrCreate | FileMode.Truncate);
             MBackend.Logger.WriteLog(fs); // TODO: Remove magic constant. Not into a constants class, but into settings! E.g. Settings.GetValue("crashdump").

@@ -1,11 +1,13 @@
 using System;
 
-namespace MonoKle {
+namespace MonoKle
+{
     /// <summary>
     /// A serializable and updateable timer that provides information on time left and whether the timer is done counting.
     /// </summary>
     [Serializable]
-    public class Timer : IUpdateable {
+    public class Timer : IUpdateable
+    {
         /// <summary>
         /// Initializes a new instance of the <see cref="Timer"/> class and sets it to the provided duration.
         /// </summary>
@@ -38,7 +40,8 @@ namespace MonoKle {
         /// Sets the timer to the given duration. Reset the timer as a side effect.
         /// </summary>
         /// <param name="duration">The duration to set to.</param>
-        public void Set(TimeSpan duration) {
+        public void Set(TimeSpan duration)
+        {
             Duration = duration;
             Reset();
         }
@@ -48,9 +51,11 @@ namespace MonoKle {
         /// </summary>
         public void Trigger() => TimeLeft = TimeSpan.Zero;
 
-        public void Update(TimeSpan elapsedTime) {
+        public void Update(TimeSpan elapsedTime)
+        {
             TimeLeft -= elapsedTime;
-            if (TimeLeft < TimeSpan.Zero) {
+            if (TimeLeft < TimeSpan.Zero)
+            {
                 TimeLeft = TimeSpan.Zero;
             }
         }
@@ -60,7 +65,8 @@ namespace MonoKle {
         /// </summary>
         /// <param name="elapsedTime">The elapsed time.</param>
         /// <returns>True if done, otherwise false.</returns>
-        public bool UpdateDone(TimeSpan elapsedTime) {
+        public bool UpdateDone(TimeSpan elapsedTime)
+        {
             Update(elapsedTime);
             return IsDone;
         }

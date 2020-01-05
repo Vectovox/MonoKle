@@ -1,11 +1,13 @@
-﻿namespace MonoKle.Console {
+﻿namespace MonoKle.Console
+{
     using System;
     using System.Collections.Generic;
 
     /// <summary>
     /// Class for command arguments.
     /// </summary>
-    public class CommandArguments {
+    public class CommandArguments
+    {
         /// <summary>
         /// The no arguments instance.
         /// </summary>
@@ -19,7 +21,8 @@
         /// Initializes a new instance of the <see cref="CommandArguments"/> class.
         /// </summary>
         /// <param name="arguments">The arguments and their descriptions mapped.</param>
-        public CommandArguments(Dictionary<string, string> arguments) {
+        public CommandArguments(Dictionary<string, string> arguments)
+        {
             CheckArguments(arguments);
             this.arguments = new Dictionary<string, string>(arguments);
         }
@@ -28,10 +31,12 @@
         /// Initializes a new instance of the <see cref="CommandArguments"/> class.
         /// </summary>
         /// <param name="arguments">The arguments.</param>
-        public CommandArguments(ICollection<string> arguments) {
+        public CommandArguments(ICollection<string> arguments)
+        {
             CheckArguments(arguments);
             this.arguments = new Dictionary<string, string>();
-            foreach (string s in arguments) {
+            foreach (string s in arguments)
+            {
                 this.arguments.Add(s, null);
             }
         }
@@ -41,12 +46,15 @@
         /// </summary>
         /// <param name="nArguments">The amount of arguments.</param>
         /// <exception cref="ArgumentException">Amount of arguments must be positive.</exception>
-        public CommandArguments(int nArguments) {
-            if (nArguments < 0) {
+        public CommandArguments(int nArguments)
+        {
+            if (nArguments < 0)
+            {
                 throw new ArgumentException("Amount of arguments must be positive.");
             }
             arguments = new Dictionary<string, string>();
-            for (int i = 1; i <= nArguments; i++) {
+            for (int i = 1; i <= nArguments; i++)
+            {
                 arguments.Add("arg" + i, null);
             }
         }
@@ -57,15 +65,18 @@
         /// <param name="arguments">The arguments.</param>
         /// <param name="argumentDescriptions">The argument descriptions.</param>
         /// <exception cref="ArgumentException">Arguments length and argument descriptions length must match.</exception>
-        public CommandArguments(string[] arguments, string[] argumentDescriptions) {
+        public CommandArguments(string[] arguments, string[] argumentDescriptions)
+        {
             CheckArguments(arguments);
             CheckArguments(argumentDescriptions);
-            if (arguments.Length != argumentDescriptions.Length) {
+            if (arguments.Length != argumentDescriptions.Length)
+            {
                 throw new ArgumentException("Arguments length and argument descriptions length must match.");
             }
 
             this.arguments = new Dictionary<string, string>();
-            for (int i = 0; i < arguments.Length; i++) {
+            for (int i = 0; i < arguments.Length; i++)
+            {
                 this.arguments.Add(arguments[i], argumentDescriptions[i]);
             }
         }
@@ -99,15 +110,19 @@
         /// </summary>
         /// <param name="argument">The argument.</param>
         /// <returns></returns>
-        public string GetArgumentDescription(string argument) {
-            if (arguments.ContainsKey(argument)) {
+        public string GetArgumentDescription(string argument)
+        {
+            if (arguments.ContainsKey(argument))
+            {
                 return arguments[argument];
             }
             return null;
         }
 
-        private void CheckArguments(object o) {
-            if (o == null) {
+        private void CheckArguments(object o)
+        {
+            if (o == null)
+            {
                 throw new ArgumentNullException(CommandArguments.NullArgumentsMessage);
             }
         }

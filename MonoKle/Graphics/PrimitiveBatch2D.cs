@@ -1,17 +1,20 @@
-﻿namespace MonoKle.Graphics {
+﻿namespace MonoKle.Graphics
+{
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
 
     /// <summary>
     /// Class for drawing primitives in 2D space.
     /// </summary>
-    public class PrimitiveBatch2D : AbstractPrimitiveBatch, IPrimitiveBatch2D {
+    public class PrimitiveBatch2D : AbstractPrimitiveBatch, IPrimitiveBatch2D
+    {
         /// <summary>
         /// Creates a new instance of <see cref="PrimitiveBatch2D"/>.
         /// </summary>
         /// <param name="graphicsDevice">The graphics device to draw with.</param>
         public PrimitiveBatch2D(GraphicsDevice graphicsDevice)
-            : base(graphicsDevice) {
+            : base(graphicsDevice)
+        {
         }
 
         /// <summary>

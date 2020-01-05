@@ -1,10 +1,12 @@
 using System;
 
-namespace MonoKle.Input {
+namespace MonoKle.Input
+{
     /// <summary>
     /// Provides an interface for a pressable button with two discrete states.
     /// </summary>
-    public interface IPressable {
+    public interface IPressable
+    {
         /// <summary>
         /// Gets the held time.
         /// </summary>

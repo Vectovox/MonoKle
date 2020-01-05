@@ -1,11 +1,13 @@
-﻿namespace MonoKle.Console {
+﻿namespace MonoKle.Console
+{
     using System;
     using System.Collections.Generic;
 
     /// <summary>
     /// Broker for console commands.
     /// </summary>
-    public class CommandBroker {
+    public class CommandBroker
+    {
         private Dictionary<string, IConsoleCommand> dictionary = new Dictionary<string, IConsoleCommand>();
 
         /// <summary>
@@ -29,9 +31,11 @@
         /// <param name="command">The command to call.</param>
         /// <param name="arguments">The arguments.</param>
         /// <returns>True if command is registered and correct argument length was provided; otherwise false.</returns>
-        public bool Call(string command, string[] arguments) {
+        public bool Call(string command, string[] arguments)
+        {
             command = command.ToLower();
-            if (dictionary.ContainsKey(command)) {
+            if (dictionary.ContainsKey(command))
+            {
                 IConsoleCommand c = dictionary[command];
                 return c.Call(arguments);
             }
@@ -48,9 +52,11 @@
         /// </summary>
         /// <param name="command">The command to retrieve.</param>
         /// <returns></returns>
-        public IConsoleCommand GetCommand(string command) {
+        public IConsoleCommand GetCommand(string command)
+        {
             command = command.ToLower();
-            if (dictionary.ContainsKey(command)) {
+            if (dictionary.ContainsKey(command))
+            {
                 return dictionary[command];
             }
             return null;
@@ -60,12 +66,15 @@
         /// Registers the specified command.
         /// </summary>
         /// <param name="command">The command.</param>
-        public bool Register(IConsoleCommand command) {
-            if (command == null) {
+        public bool Register(IConsoleCommand command)
+        {
+            if (command == null)
+            {
                 throw new ArgumentNullException("Command must not be null.");
             }
 
-            if (dictionary.ContainsKey(command.Name) == false) {
+            if (dictionary.ContainsKey(command.Name) == false)
+            {
                 dictionary.Add(command.Name, command);
                 return true;
             }

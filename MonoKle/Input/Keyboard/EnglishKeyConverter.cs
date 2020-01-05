@@ -1,10 +1,12 @@
-﻿namespace MonoKle.Input.Keyboard {
+﻿namespace MonoKle.Input.Keyboard
+{
     using Microsoft.Xna.Framework.Input;
 
     /// <summary>
     /// Keyboard input converter for EN-US QWERTY-keyboards.
     /// </summary>
-    public class EnglishKeyConverter : AbstractKeyConverter {
+    public class EnglishKeyConverter : AbstractKeyConverter
+    {
         /// <summary>
         /// Converts the specified key to its character representation. If conversion failed, returns the default <see cref="char" /> value.
         /// </summary>
@@ -14,8 +16,10 @@
         /// <returns>
         /// Character representation of the key; the default <see cref="char" /> value if no representation was found.
         /// </returns>
-        public override char Convert(Keys key, bool shift, bool altgr) {
-            switch (key) {
+        public override char Convert(Keys key, bool shift, bool altgr)
+        {
+            switch (key)
+            {
                 case Keys.Space:
                     return ' ';
                 case Keys.D0:

@@ -1,4 +1,3 @@
-using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -10,18 +9,23 @@ using MonoKle.Input.Keyboard;
 using MonoKle.Logging;
 using MonoKle.Messaging;
 using MonoKle.State;
+using System;
 
-namespace WindowsDemo {
-    public class DemoStateOne : GameState {
+namespace WindowsDemo
+{
+    public class DemoStateOne : GameState
+    {
         private SpriteBatch sb;
         private Timer timer = new Timer(TimeSpan.FromSeconds(5));
         private Camera2D camera = new Camera2D(new MPoint2(800, 600));
         private PrimitiveBatch2D primitive2D;
 
-        public DemoStateOne() : base("stateOne") {
+        public DemoStateOne() : base("stateOne")
+        {
         }
 
-        public override void Draw(TimeSpan deltaTime) {
+        public override void Draw(TimeSpan deltaTime)
+        {
             primitive2D.Begin(camera.TransformMatrix);
             primitive2D.DrawLine(new Vector2(80, 200), new Vector2(200, 80), Color.Red, Color.Blue);
             primitive2D.DrawLine(new Vector2(380, 500), new Vector2(500, 380), Color.Red, Color.Blue);
@@ -104,62 +108,81 @@ namespace WindowsDemo {
             sb.End();
         }
 
-        public override void Update(TimeSpan deltaTime) {
-            if (MBackend.Console.IsOpen == false) {
-                if (MBackend.Keyboard.IsKeyHeld(Keys.Escape, TimeSpan.FromSeconds(1))) {
+        public override void Update(TimeSpan deltaTime)
+        {
+            if (MBackend.Console.IsOpen == false)
+            {
+                if (MBackend.Keyboard.IsKeyHeld(Keys.Escape, TimeSpan.FromSeconds(1)))
+                {
                     MBackend.GameInstance.Exit();
                 }
 
-                if (MBackend.Keyboard.IsKeyPressed(Keys.Space)) {
+                if (MBackend.Keyboard.IsKeyPressed(Keys.Space))
+                {
                     MBackend.StateSystem.SwitchState("stateTwo", null);
                 }
 
-                if (MBackend.Keyboard.AreKeysHeld(new Keys[] { Keys.R, Keys.T }, MonoKle.Input.CollectionQueryBehavior.All)) {
+                if (MBackend.Keyboard.AreKeysHeld(new Keys[] { Keys.R, Keys.T }, MonoKle.Input.CollectionQueryBehavior.All))
+                {
                     MBackend.Console.WriteLine("R + T held.");
                 }
 
-                if (MBackend.Keyboard.AreKeysHeld(new Keys[] { Keys.LeftShift, Keys.RightShift }, MonoKle.Input.CollectionQueryBehavior.Any)) {
+                if (MBackend.Keyboard.AreKeysHeld(new Keys[] { Keys.LeftShift, Keys.RightShift }, MonoKle.Input.CollectionQueryBehavior.Any))
+                {
                     MBackend.Console.WriteLine("Any shift held.");
                 }
 
-                if (MBackend.Keyboard.IsKeyHeld(Keys.I)) {
+                if (MBackend.Keyboard.IsKeyHeld(Keys.I))
+                {
                     camera.SetPosition(camera.Position + new MVector2(0, -3));
                 }
-                if (MBackend.Keyboard.IsKeyHeld(Keys.K)) {
+                if (MBackend.Keyboard.IsKeyHeld(Keys.K))
+                {
                     camera.SetPosition(camera.Position + new MVector2(0, 3));
                 }
-                if (MBackend.Keyboard.IsKeyHeld(Keys.J)) {
+                if (MBackend.Keyboard.IsKeyHeld(Keys.J))
+                {
                     camera.SetPosition(camera.Position + new MVector2(-3, 0));
                 }
-                if (MBackend.Keyboard.IsKeyHeld(Keys.L)) {
+                if (MBackend.Keyboard.IsKeyHeld(Keys.L))
+                {
                     camera.SetPosition(camera.Position + new MVector2(3, 0));
                 }
-                if (MBackend.Keyboard.IsKeyHeld(Keys.U)) {
+                if (MBackend.Keyboard.IsKeyHeld(Keys.U))
+                {
                     camera.SetRotation(camera.Rotation + 0.05f);
                 }
-                if (MBackend.Keyboard.IsKeyHeld(Keys.O)) {
+                if (MBackend.Keyboard.IsKeyHeld(Keys.O))
+                {
                     camera.SetRotation(camera.Rotation - 0.05f);
                 }
-                if (MBackend.Keyboard.IsKeyHeld(Keys.Y)) {
+                if (MBackend.Keyboard.IsKeyHeld(Keys.Y))
+                {
                     camera.SetScale(camera.Scale + 0.01f);
                 }
-                if (MBackend.Keyboard.IsKeyHeld(Keys.H)) {
+                if (MBackend.Keyboard.IsKeyHeld(Keys.H))
+                {
                     camera.SetScale(camera.Scale - 0.01f);
                 }
 
-                if (MBackend.Keyboard.IsKeyPressed(Keys.F2)) {
+                if (MBackend.Keyboard.IsKeyPressed(Keys.F2))
+                {
                     MBackend.GraphicsManager.Resolution = new MPoint2(1280, 720);
-                } else if (MBackend.Keyboard.IsKeyPressed(Keys.F3)) {
+                }
+                else if (MBackend.Keyboard.IsKeyPressed(Keys.F3))
+                {
                     MBackend.GraphicsManager.Resolution = new MPoint2(800, 600);
                 }
 
-                if (MBackend.Keyboard.IsKeyPressed(Keys.F12)) {
+                if (MBackend.Keyboard.IsKeyPressed(Keys.F12))
+                {
                     // CRASH ON PURPOSE
                     object o = null;
                     o.Equals(o);
                 }
 
-                if (MBackend.Keyboard.IsKeyPressed(Keys.N)) {
+                if (MBackend.Keyboard.IsKeyPressed(Keys.N))
+                {
                     Logger.Global.Log("I am logging");
                 }
 
@@ -176,15 +199,18 @@ namespace WindowsDemo {
 
         public void Test(object sender, MessageEventArgs args) => Console.WriteLine(args.Data as string);
 
-        public void ConsoleMessage(object sender, MessageEventArgs args) {
+        public void ConsoleMessage(object sender, MessageEventArgs args)
+        {
             string data = args.Data as string;
 
-            if (data.Equals("reset timer")) {
+            if (data.Equals("reset timer"))
+            {
                 timer.Reset();
             }
         }
 
-        protected override void Activated(StateSwitchData data) {
+        protected override void Activated(StateSwitchData data)
+        {
             MBackend.Console.WriteLine("State one activated! Message: " + (string)data.Data);
             MBackend.Console.WriteLine(MBackend.TextureStorage.LoadFilesGroup("Assets\\Textures", true, "agroup").Successes + " textures loaded.");
             MBackend.TextureStorage.LoadFileId("Assets\\Textures\\TestBox.png", "testbox", "mygroup");

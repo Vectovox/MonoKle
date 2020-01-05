@@ -1,8 +1,10 @@
-﻿namespace MonoKle.Input {
+﻿namespace MonoKle.Input
+{
     /// <summary>
     /// Defines a method for character input.
     /// </summary>
-    public interface ICharacterInput {
+    public interface ICharacterInput
+    {
         /// <summary>
         /// Gets the currently typed character. If no character is typed then the default <see cref="char"/> value is returned.
         /// </summary>

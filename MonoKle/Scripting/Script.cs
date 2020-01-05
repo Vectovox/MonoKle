@@ -1,17 +1,20 @@
-﻿namespace MonoKle.Scripting {
+﻿namespace MonoKle.Scripting
+{
     using System;
     using System.Collections.Generic;
 
     /// <summary>
     /// An executable script.
     /// </summary>
-    public class Script : IScriptCompilable {
+    public class Script : IScriptCompilable
+    {
         /// <summary>
         /// Initializes a new instance of the <see cref="Script"/> class.
         /// </summary>
         /// <param name="name">The name.</param>
         /// <param name="source">The source.</param>
-        public Script(string name, IScriptSource source) {
+        public Script(string name, IScriptSource source)
+        {
             Source = source;
             Name = name;
             Errors = new List<ScriptCompilationError>();
@@ -95,8 +98,10 @@
         /// </summary>
         /// <param name="parameters">The parameters.</param>
         /// <returns></returns>
-        public ScriptExecution Execute(params object[] parameters) {
-            if (CanExecute) {
+        public ScriptExecution Execute(params object[] parameters)
+        {
+            if (CanExecute)
+            {
                 return InternalScript.Execute(parameters);
             }
 

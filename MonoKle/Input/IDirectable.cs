@@ -1,8 +1,10 @@
-﻿namespace MonoKle.Input {
+﻿namespace MonoKle.Input
+{
     /// <summary>
     /// Provides a input direction property.
     /// </summary>
-    public interface IDirectable {
+    public interface IDirectable
+    {
         /// <summary>
         /// Gets the direction.
         /// </summary>

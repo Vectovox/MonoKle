@@ -1,8 +1,10 @@
-﻿namespace MonoKle.Logging {
+﻿namespace MonoKle.Logging
+{
     /// <summary>
     /// Levels of logging that indicates severity.
     /// </summary>
-    public enum LogLevel {
+    public enum LogLevel
+    {
         /// <summary>
         /// Lowest level of logging, indicating that an error that will affect the operation of the software.
         /// </summary>

@@ -1,11 +1,13 @@
-﻿namespace MonoKle.Scripting {
+﻿namespace MonoKle.Scripting
+{
     using System;
     using System.Reflection;
 
     /// <summary>
     /// Implementation class of an executable script.
     /// </summary>
-    public abstract class ScriptImplementation {
+    public abstract class ScriptImplementation
+    {
         /// <summary>
         /// The method used for execution.
         /// </summary>
@@ -32,18 +34,25 @@
         /// </summary>
         /// <param name="args">The arguments.</param>
         /// <returns></returns>
-        public ScriptExecution Execute(params object[] args) {
-            if (ExecuteMethod != null) {
+        public ScriptExecution Execute(params object[] args)
+        {
+            if (ExecuteMethod != null)
+            {
                 object res = null;
                 string message = null;
-                try {
+                try
+                {
                     res = ExecuteMethod.Invoke(this, args);
-                } catch (Exception e) {
+                }
+                catch (Exception e)
+                {
                     message = "Exception: " + (e.InnerException?.Message ?? e.Message);
                 }
 
                 return new ScriptExecution(res, message == null, message ?? "");
-            } else {
+            }
+            else
+            {
                 return new ScriptExecution(null, false, "Execution method not defined.");
             }
         }

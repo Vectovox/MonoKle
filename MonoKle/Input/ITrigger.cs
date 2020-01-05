@@ -1,8 +1,10 @@
-﻿namespace MonoKle.Input {
+﻿namespace MonoKle.Input
+{
     /// <summary>
     /// Interface for a continuous-state trigger.
     /// </summary>
-    public interface ITrigger : IPressable {
+    public interface ITrigger : IPressable
+    {
         /// <summary>
         /// Gets the continuous state.
         /// </summary>

@@ -1,14 +1,16 @@
-﻿namespace MonoKle.Asset {
+﻿namespace MonoKle.Asset
+{
+    using MonoKle.IO;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using MonoKle.IO;
 
     /// <summary>
     /// Abstract class for loading, storing, and retrieving MonoKle assets.
     /// </summary>
     /// <typeparam name="T">Type of asset to store.</typeparam>
-    public abstract class AbstractAssetStorage<T> : AbstractFileReader {
+    public abstract class AbstractAssetStorage<T> : AbstractFileReader
+    {
         private Dictionary<string, T> assetStorage = new Dictionary<string, T>();
         private string currentGroup = null;
         private Dictionary<string, HashSet<string>> groupDictionary = new Dictionary<string, HashSet<string>>();
@@ -43,11 +45,15 @@
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <returns></returns>
-        public T GetAsset(string id) {
+        public T GetAsset(string id)
+        {
             id = id.ToLower();
-            if (assetStorage.ContainsKey(id)) {
+            if (assetStorage.ContainsKey(id))
+            {
                 return assetStorage[id];
-            } else {
+            }
+            else
+            {
                 Logging.Logger.Global.Log("Asset not found: " + id, Logging.LogLevel.Warning);
             }
             return DefaultValue;
@@ -58,9 +64,11 @@
         /// </summary>
         /// <param name="asset">The asset to get the group for.</param>
         /// <returns></returns>
-        public string GetAssetGroup(string asset) {
+        public string GetAssetGroup(string asset)
+        {
             asset = asset.ToLower();
-            if (groupFromAsset.ContainsKey(asset)) {
+            if (groupFromAsset.ContainsKey(asset))
+            {
                 return groupFromAsset[asset];
             }
             return null;
@@ -76,9 +84,11 @@
         /// Gets all asset identifiers in the specified group.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<string> GetAssetIdentifiers(string group) {
+        public IEnumerable<string> GetAssetIdentifiers(string group)
+        {
             group = group.ToLower();
-            if (groupDictionary.ContainsKey(group)) {
+            if (groupDictionary.ContainsKey(group))
+            {
                 return new List<string>(groupDictionary[group]);
             }
             return new List<string>();
@@ -97,26 +107,33 @@
         /// <param name="id">The identifier to use for the file.</param>
         /// <param name="group">The optinal group to use. May be null.</param>
         /// <returns></returns>
-        public FileLoadingResult LoadFileId(string path, string id, string group = null) {
+        public FileLoadingResult LoadFileId(string path, string id, string group = null)
+        {
             path = path.ToLower();
             id = id.ToLower();
 
             // If asset already exists, create an alias for it
-            if (assetStorage.ContainsKey(path)) {
-                if (AddAsset(assetStorage[path], id, group)) {
+            if (assetStorage.ContainsKey(path))
+            {
+                if (AddAsset(assetStorage[path], id, group))
+                {
                     return new FileLoadingResult(new List<string> { path }, 0);
                 }
                 return new FileLoadingResult(new List<string>(), 1);
-            } else {
+            }
+            else
+            {
                 // Otherwise add new item and modify it
                 currentGroup = group;
                 FileLoadingResult result = base.LoadFile(path);
                 currentGroup = null;
 
-                if (result.Successes > 0) {
+                if (result.Successes > 0)
+                {
                     T value = assetStorage[path];
 
-                    if (UnloadAsset(path) != 0) {
+                    if (UnloadAsset(path) != 0)
+                    {
                         AddAsset(value, id, group);
                     }
                 }
@@ -129,7 +146,8 @@
         /// </summary>
         /// <param name="path">The path to load files from.</param>
         /// <param name="group">The group to add the files to.</param>
-        public FileLoadingResult LoadFileGroup(string path, string group) {
+        public FileLoadingResult LoadFileGroup(string path, string group)
+        {
             currentGroup = group;
             FileLoadingResult result = base.LoadFile(path);
             currentGroup = null;
@@ -143,7 +161,8 @@
         /// <param name="recurse">Specifiec whether to recursively find files.</param>
         /// <param name="group">The group to add the files to.</param>
         /// <param name="pattern">Pattern to use when finding files.</param>
-        public FileLoadingResult LoadFilesGroup(string path, bool recurse, string group, string pattern = "*.*") {
+        public FileLoadingResult LoadFilesGroup(string path, bool recurse, string group, string pattern = "*.*")
+        {
             currentGroup = group;
             FileLoadingResult result = base.LoadFiles(path, recurse, pattern);
             currentGroup = null;
@@ -156,9 +175,11 @@
         /// <param name="stream">The stream to load from.</param>
         /// <param name="id">The id to assign the asset.</param>
         /// <returns>True if successful; otherwise false.</returns>
-        public bool LoadStream(Stream stream, string id) {
+        public bool LoadStream(Stream stream, string id)
+        {
             id = id.ToLower();
-            if (assetStorage.ContainsKey(id) == false) {
+            if (assetStorage.ContainsKey(id) == false)
+            {
                 T value = DoLoadStream(stream);
                 return AddAsset(value, id);
             }
@@ -172,9 +193,11 @@
         /// <param name="id">The id to assign the asset.</param>
         /// <param name="group">Group to place the asset in.</param>
         /// <returns>True if successful; otherwise false.</returns>
-        public bool LoadStream(Stream stream, string id, string group) {
+        public bool LoadStream(Stream stream, string id, string group)
+        {
             id = id.ToLower();
-            if (assetStorage.ContainsKey(id) == false) {
+            if (assetStorage.ContainsKey(id) == false)
+            {
                 T value = DoLoadStream(stream);
                 return AddAsset(value, id, group);
             }
@@ -185,7 +208,8 @@
         /// Unloads all assets.
         /// </summary>
         /// <returns>Integer representing the amount of unloaded entries.</returns>
-        public int UnloadAll() {
+        public int UnloadAll()
+        {
             int nUnloaded = assetStorage.Keys.Count;
             assetStorage.Clear();
             groupDictionary.Clear();
@@ -199,12 +223,16 @@
         /// </summary>
         /// <param name="id">The identifier of the entry to unload.</param>
         /// <returns>Integer representing the amount of unloaded entries.</returns>
-        public int UnloadAsset(string id) {
+        public int UnloadAsset(string id)
+        {
             id = id.ToLower();
-            if (assetStorage.Remove(id)) {
-                if (groupFromAsset.ContainsKey(id)) {
+            if (assetStorage.Remove(id))
+            {
+                if (groupFromAsset.ContainsKey(id))
+                {
                     groupDictionary[groupFromAsset[id]].Remove(id);
-                    if (groupDictionary[groupFromAsset[id]].Count == 0) {
+                    if (groupDictionary[groupFromAsset[id]].Count == 0)
+                    {
                         groupDictionary.Remove(groupFromAsset[id]);
                     }
                     groupFromAsset.Remove(id);
@@ -220,11 +248,14 @@
         /// </summary>
         /// <param name="group">The group to remove assets belonging to.</param>
         /// <returns>Amount of assets removed.</returns>
-        public int UnloadGroup(string group) {
+        public int UnloadGroup(string group)
+        {
             group = group.ToLower();
             int n = 0;
-            if (groupDictionary.ContainsKey(group)) {
-                foreach (string s in groupDictionary[group].ToList()) {
+            if (groupDictionary.ContainsKey(group))
+            {
+                foreach (string s in groupDictionary[group].ToList())
+                {
                     n += UnloadAsset(s);
                 }
             }
@@ -233,19 +264,27 @@
 
         protected abstract T DoLoadStream(Stream stream);
 
-        protected override bool ReadFile(Stream fileStream, MFileInfo file) {
-            if (currentGroup == null) {
+        protected override bool ReadFile(Stream fileStream, MFileInfo file)
+        {
+            if (currentGroup == null)
+            {
                 return LoadStream(fileStream, file.OriginalPath);
-            } else {
+            }
+            else
+            {
                 return LoadStream(fileStream, file.OriginalPath, currentGroup);
             }
         }
 
-        private bool AddAsset(T value, string id, string group = null) {
-            if (id != null && !assetStorage.ContainsKey(id) && value != null) {
+        private bool AddAsset(T value, string id, string group = null)
+        {
+            if (id != null && !assetStorage.ContainsKey(id) && value != null)
+            {
                 assetStorage.Add(id, value);
-                if (group != null) {
-                    if (groupDictionary.ContainsKey(group) == false) {
+                if (group != null)
+                {
+                    if (groupDictionary.ContainsKey(group) == false)
+                    {
                         groupDictionary.Add(group, new HashSet<string>());
                     }
                     groupDictionary[group].Add(id);

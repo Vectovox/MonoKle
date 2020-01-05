@@ -1,11 +1,13 @@
 using System;
 
-namespace MonoKle.Input {
+namespace MonoKle.Input
+{
     /// <summary>
     /// Class representing an input position.
     /// </summary>
     /// <seealso cref="IInputPosition" />
-    public class InputPosition : IInputPosition {
+    public class InputPosition : IInputPosition
+    {
         private MPoint2 current;
 
         private MPoint2 delta;
@@ -41,7 +43,8 @@ namespace MonoKle.Input {
         /// </summary>
         /// <param name="position">The current position.</param>
         /// <param name="timeDelta">The delta time since last update.</param>
-        public void Update(MPoint2 position, TimeSpan timeDelta) {
+        public void Update(MPoint2 position, TimeSpan timeDelta)
+        {
             previous = current;
             current = position;
             delta = current - previous;

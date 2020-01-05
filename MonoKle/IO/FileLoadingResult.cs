@@ -1,17 +1,20 @@
 ﻿using System.Collections.Generic;
 
-namespace MonoKle.IO {
+namespace MonoKle.IO
+{
     /// <summary>
     /// Immutable struct for the results of loading files.
     /// </summary>
-    public struct FileLoadingResult {
+    public struct FileLoadingResult
+    {
         /// <summary>
         /// Creates a new <see cref="FileLoadingResult"/>.
         /// </summary>
         /// <param name="loadedFiles">The successfully loaded file paths.</param>
         /// <param name="failures">The amount of files that failed to load.</param>
         public FileLoadingResult(IList<string> loadedFiles, int failures)
-            : this(loadedFiles, failures, null) {
+            : this(loadedFiles, failures, null)
+        {
         }
 
         /// <summary>
@@ -20,7 +23,8 @@ namespace MonoKle.IO {
         /// <param name="loadedFiles">The successfully loaded file paths.</param>
         /// <param name="failures">The amount of files that failed to load.</param>
         /// <param name="extra">Extra data to associate with the file loading.</param>
-        public FileLoadingResult(IList<string> loadedFiles, int failures, object extra) : this() {
+        public FileLoadingResult(IList<string> loadedFiles, int failures, object extra) : this()
+        {
             LoadedFiles = loadedFiles;
             Failures = failures;
             Extra = extra;
@@ -29,7 +33,8 @@ namespace MonoKle.IO {
         /// <summary>
         /// Gets the extra data associated with loading files. Can be null.
         /// </summary>
-        public object Extra {
+        public object Extra
+        {
             get; private set;
         }
 
@@ -44,7 +49,8 @@ namespace MonoKle.IO {
         /// <summary>
         /// Gets the amount of files that failed to load.
         /// </summary>
-        public int Failures {
+        public int Failures
+        {
             get; private set;
         }
 

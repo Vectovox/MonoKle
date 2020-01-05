@@ -1,16 +1,18 @@
-namespace MonoKle.Asset.Font {
+namespace MonoKle.Asset.Font
+{
+    using Baking;
+    using IO;
+    using Microsoft.Xna.Framework.Graphics;
     using System;
     using System.IO;
     using System.Linq;
     using System.Xml.Serialization;
-    using Baking;
-    using IO;
-    using Microsoft.Xna.Framework.Graphics;
 
     /// <summary>
     /// Manages drawable fonts.
     /// </summary>
-    public class FontStorage : AbstractAssetStorage<Font> {
+    public class FontStorage : AbstractAssetStorage<Font>
+    {
         private GraphicsDevice graphicsDevice;
 
         /// <summary>
@@ -21,19 +23,25 @@ namespace MonoKle.Asset.Font {
 
         protected override bool CheckFile(MFileInfo file) => file.Extension.Equals(".mfnt", StringComparison.InvariantCultureIgnoreCase);
 
-        protected override Font DoLoadStream(Stream stream) {
+        protected override Font DoLoadStream(Stream stream)
+        {
             var serializer = new XmlSerializer(typeof(BakedFont));
             object o = serializer.Deserialize(stream);
             BakedFont baked;
 
-            try {
+            try
+            {
                 baked = (BakedFont)o;
-            } catch {
+            }
+            catch
+            {
                 return null;
             }
 
-            var texList = baked.ImageList.Select(byteArray => {
-                using (var textureStream = new MemoryStream(byteArray, false)) {
+            var texList = baked.ImageList.Select(byteArray =>
+            {
+                using (var textureStream = new MemoryStream(byteArray, false))
+                {
                     return Texture2D.FromStream(graphicsDevice, textureStream);
                 }
             }).ToList();

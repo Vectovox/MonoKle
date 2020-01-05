@@ -1,15 +1,18 @@
-﻿namespace MonoKle.Input.Keyboard {
+﻿namespace MonoKle.Input.Keyboard
+{
     using Microsoft.Xna.Framework.Input;
 
     /// <summary>
     /// Class for making strings from keyboard input using common text editor behavior.
     /// </summary>
-    public class KeyboardTextInput : AbstractTextInput {
+    public class KeyboardTextInput : AbstractTextInput
+    {
         /// <summary>
         /// Initializes a new instance of the <see cref="KeyboardTextInput"/> class.
         /// </summary>
         /// <param name="characterInput">The character input.</param>
-        public KeyboardTextInput(KeyboardCharacterInput characterInput) {
+        public KeyboardTextInput(KeyboardCharacterInput characterInput)
+        {
             CharacterInput = characterInput;
             CursorBeginningKey = Keys.Home;
             CursorEndKey = Keys.End;
@@ -78,26 +81,34 @@
         /// <summary>
         /// Updates this instance.
         /// </summary>
-        public override void Update() {
-            if (CharacterInput.GetChar(out var typedCharacter)) {
+        public override void Update()
+        {
+            if (CharacterInput.GetChar(out var typedCharacter))
+            {
                 base.Type(typedCharacter);
             }
-            if (CharacterInput.KeyboardTyper.IsTyped(EraseKey)) {
+            if (CharacterInput.KeyboardTyper.IsTyped(EraseKey))
+            {
                 base.Erase();
             }
-            if (CharacterInput.KeyboardTyper.IsTyped(DeleteKey)) {
+            if (CharacterInput.KeyboardTyper.IsTyped(DeleteKey))
+            {
                 base.Delete();
             }
-            if (CharacterInput.KeyboardTyper.IsTyped(CursorBeginningKey)) {
+            if (CharacterInput.KeyboardTyper.IsTyped(CursorBeginningKey))
+            {
                 base.CursorBeginning();
             }
-            if (CharacterInput.KeyboardTyper.IsTyped(CursorEndKey)) {
+            if (CharacterInput.KeyboardTyper.IsTyped(CursorEndKey))
+            {
                 base.CursorEnd();
             }
-            if (CharacterInput.KeyboardTyper.IsTyped(CursorLeftKey)) {
+            if (CharacterInput.KeyboardTyper.IsTyped(CursorLeftKey))
+            {
                 base.CursorLeft();
             }
-            if (CharacterInput.KeyboardTyper.IsTyped(CursorRightKey)) {
+            if (CharacterInput.KeyboardTyper.IsTyped(CursorRightKey))
+            {
                 base.CursorRight();
             }
         }

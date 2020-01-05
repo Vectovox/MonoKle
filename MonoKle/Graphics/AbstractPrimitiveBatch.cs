@@ -1,13 +1,14 @@
-﻿namespace MonoKle.Graphics {
-    using System;
-
+﻿namespace MonoKle.Graphics
+{
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
+    using System;
 
     /// <summary>
     /// Abstract class for drawing primitives.
     /// </summary>
-    public abstract class AbstractPrimitiveBatch : IPrimitiveBatch {
+    public abstract class AbstractPrimitiveBatch : IPrimitiveBatch
+    {
         private const string EXCEPTION_MSG_ALREADY_BEGUN = "Begin has already been called.";
         private const string EXCEPTION_MSG_NOT_BEGUN = "Begin has not been called.";
         private const int INITIAL_VERTEX_AMOUNT = 1;
@@ -23,7 +24,8 @@
         /// Abstract constructor for <see cref="AbstractPrimitiveBatch"/>.
         /// </summary>
         /// <param name="graphicsDevice">The graphics device to draw with.</param>
-        public AbstractPrimitiveBatch(GraphicsDevice graphicsDevice) {
+        public AbstractPrimitiveBatch(GraphicsDevice graphicsDevice)
+        {
             this.graphicsDevice = graphicsDevice;
             effect = new BasicEffect(graphicsDevice);
             effect.VertexColorEnabled = true;
@@ -39,10 +41,14 @@
         /// Begins a batch of primitives, using a transformation matrix to apply to each primitive.
         /// </summary>
         /// <param name="transformMatrix">Transformation matrix to apply.</param>
-        public void Begin(Matrix transformMatrix) {
-            if (hasBegun) {
+        public void Begin(Matrix transformMatrix)
+        {
+            if (hasBegun)
+            {
                 throw new InvalidOperationException(AbstractPrimitiveBatch.EXCEPTION_MSG_ALREADY_BEGUN);
-            } else {
+            }
+            else
+            {
                 effect.Projection = transformMatrix * GetPostTransformationMatrix(graphicsDevice.Viewport);
                 hasBegun = true;
             }
@@ -51,11 +57,16 @@
         /// <summary>
         /// Ends a batch of primitives.
         /// </summary>
-        public void End() {
-            if (hasBegun == false) {
+        public void End()
+        {
+            if (hasBegun == false)
+            {
                 throw new InvalidOperationException(AbstractPrimitiveBatch.EXCEPTION_MSG_NOT_BEGUN);
-            } else {
-                foreach (EffectPass pass in effect.CurrentTechnique.Passes) {
+            }
+            else
+            {
+                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                {
                     pass.Apply();
                     graphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.LineList,
                         vertexArray,
@@ -78,11 +89,16 @@
         /// <param name="end">End coordinate.</param>
         /// <param name="startColor">Color of line on starting coordinate.</param>
         /// <param name="endColor">Color of line on ending coordinate.</param>
-        protected void AddLine(Vector3 start, Vector3 end, Color startColor, Color endColor) {
-            if (hasBegun == false) {
+        protected void AddLine(Vector3 start, Vector3 end, Color startColor, Color endColor)
+        {
+            if (hasBegun == false)
+            {
                 throw new InvalidOperationException(AbstractPrimitiveBatch.EXCEPTION_MSG_NOT_BEGUN);
-            } else {
-                if (nVertices >= vertexArray.Length) {
+            }
+            else
+            {
+                if (nVertices >= vertexArray.Length)
+                {
                     Grow();
                 }
                 vertexArray[nVertices] = new VertexPositionColor(start, startColor);
@@ -98,14 +114,17 @@
         /// <returns>Transformation matrix.</returns>
         protected abstract Matrix GetPostTransformationMatrix(Viewport viewport);
 
-        private void Grow() {
+        private void Grow()
+        {
             short[] newIndexArray = new short[indexArray.Length * 2];
             var newVertexArray = new VertexPositionColor[newIndexArray.Length];
 
-            for (short i = 0; i < newIndexArray.Length; i++) {
+            for (short i = 0; i < newIndexArray.Length; i++)
+            {
                 newIndexArray[i] = i;
             }
-            for (int i = 0; i < vertexArray.Length; i++) {
+            for (int i = 0; i < vertexArray.Length; i++)
+            {
                 newVertexArray[i] = vertexArray[i];
             }
 

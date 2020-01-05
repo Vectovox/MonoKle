@@ -1,10 +1,13 @@
-namespace MonoKle {
+namespace MonoKle
+{
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
-    public class MVector2Test {
+    public class MVector2Test
+    {
         [TestMethod]
-        public void Parse_TryParse_Equal() {
+        public void Parse_TryParse_Equal()
+        {
             string s = nameof(MVector2) + "(-15.2, 0.1)";
             var v2 = MVector2.Parse(s);
             MVector2 v3 = MVector2.Zero;
@@ -13,21 +16,24 @@ namespace MonoKle {
         }
 
         [TestMethod]
-        public void Parsing_Spaces_StillWorks() {
+        public void Parsing_Spaces_StillWorks()
+        {
             string s = nameof(MVector2) + "  (  -15.2  ,   0.1  )  ";
             var v = new MVector2(-15.2f, 0.1f);
             Assert.AreEqual(v, MVector2.Parse(s));
         }
 
         [TestMethod]
-        public void Parsing_ToString_Parse_Equal() {
+        public void Parsing_ToString_Parse_Equal()
+        {
             var v = new MVector2(-5.3f, 17f);
             var v2 = MVector2.Parse(v.ToString());
             Assert.AreEqual(v, v2);
         }
 
         [TestMethod]
-        public void TestClosestPoint() {
+        public void TestClosestPoint()
+        {
             float distance;
             var point = new MVector2(-5, 5);
             var points = new MVector2[] {

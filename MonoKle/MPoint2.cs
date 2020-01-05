@@ -1,16 +1,18 @@
+using Microsoft.Xna.Framework;
 using System;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
-using Microsoft.Xna.Framework;
 
-namespace MonoKle {
+namespace MonoKle
+{
 
     /// <summary>
     /// Two-dimensional, immutable, serializable, integer-based point.
     /// </summary>
     [Serializable]
-    public struct MPoint2 : IEquatable<MPoint2> {
+    public struct MPoint2 : IEquatable<MPoint2>
+    {
         /// <summary>
         /// The X component of the <see cref="MPoint2"/>.
         /// </summary>
@@ -28,7 +30,8 @@ namespace MonoKle {
         /// </summary>
         /// <param name="x">X component.</param>
         /// <param name="y">Y component.</param>
-        public MPoint2(int x, int y) {
+        public MPoint2(int x, int y)
+        {
             X = x;
             Y = y;
         }
@@ -37,7 +40,8 @@ namespace MonoKle {
         /// Initializes a new instance of the <see cref="MPoint2"/> struct from the <see cref="MVector2"/> vector, rounding down the components to integer values.
         /// </summary>
         /// <param name="vector">The original vector.</param>
-        public MPoint2(MVector2 vector) {
+        public MPoint2(MVector2 vector)
+        {
             X = (int)vector.X;
             Y = (int)vector.Y;
         }
@@ -139,8 +143,10 @@ namespace MonoKle {
         /// </summary>
         /// <param name="s">The string to parse.</param>
         /// <returns></returns>
-        public static MPoint2 Parse(string s) {
-            if (MPoint2.TryParse(s, out MPoint2 res) == false) {
+        public static MPoint2 Parse(string s)
+        {
+            if (MPoint2.TryParse(s, out MPoint2 res) == false)
+            {
                 throw new FormatException("String format not correctly defined.");
             }
             return res;
@@ -152,10 +158,12 @@ namespace MonoKle {
         /// <param name="s">The string to parse.</param>
         /// <param name="result">The out parameter result of parsing.</param>
         /// <returns>True if parsing was successful; otherwise false.</returns>
-        public static bool TryParse(string s, out MPoint2 result) {
+        public static bool TryParse(string s, out MPoint2 result)
+        {
             Match match = Regex.Match(s.Replace(" ", ""), MPoint2.RegexParse);
             result = MPoint2.Zero;
-            if (match.Success) {
+            if (match.Success)
+            {
                 int x = int.Parse(match.Groups[1].Value, NumberFormatInfo.InvariantInfo);
                 int y = int.Parse(match.Groups[2].Value, NumberFormatInfo.InvariantInfo);
                 result = new MPoint2(x, y);
@@ -168,8 +176,10 @@ namespace MonoKle {
         /// </summary>
         /// <param name="obj">The object to compare with.</param>
         /// <returns>True if they are equal, else false.</returns>
-        public override bool Equals(object obj) {
-            if (obj is MPoint2) {
+        public override bool Equals(object obj)
+        {
+            if (obj is MPoint2)
+            {
                 return this == (MPoint2)obj;
             }
             return false;
@@ -186,9 +196,11 @@ namespace MonoKle {
         /// Returns the hash code representation.
         /// </summary>
         /// <returns>Hash code representation.</returns>
-        public override int GetHashCode() {
+        public override int GetHashCode()
+        {
             const int HASH_CODE_MULTIPLIER = 101;
-            unchecked {
+            unchecked
+            {
                 int hash = 73;
                 hash = hash * HASH_CODE_MULTIPLIER + X;
                 hash = hash * HASH_CODE_MULTIPLIER + Y;
@@ -218,7 +230,8 @@ namespace MonoKle {
         /// Returns the string representation of the <see cref="MPoint2"/>.
         /// </summary>
         /// <returns>String representation.</returns>
-        public override string ToString() {
+        public override string ToString()
+        {
             var sb = new StringBuilder(nameof(MPoint2));
             sb.Append('(');
             sb.Append(X);

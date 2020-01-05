@@ -1,10 +1,12 @@
-﻿namespace MonoKle.Scripting {
+﻿namespace MonoKle.Scripting
+{
     using System;
 
     /// <summary>
     /// Interface for a script source.
     /// </summary>
-    public interface IScriptSource {
+    public interface IScriptSource
+    {
         /// <summary>
         /// Gets the source code.
         /// </summary>

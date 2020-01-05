@@ -1,10 +1,12 @@
 using System;
 
-namespace MonoKle {
+namespace MonoKle
+{
     /// <summary>
     /// Interface for updateable components.
     /// </summary>
-    public interface IUpdateable {
+    public interface IUpdateable
+    {
         /// <summary>
         /// Updates the object with the specified time delta.
         /// </summary>

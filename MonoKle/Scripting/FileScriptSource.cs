@@ -1,13 +1,15 @@
-﻿namespace MonoKle.Scripting {
+﻿namespace MonoKle.Scripting
+{
+    using IO;
     using System;
     using System.IO;
-    using IO;
 
     /// <summary>
     /// Script source from file.
     /// </summary>
     /// <seealso cref="IScriptSource" />
-    public class FileScriptSource : IScriptSource {
+    public class FileScriptSource : IScriptSource
+    {
         private MFileInfo file;
         private string cache = "";
         private DateTime cacheDate = DateTime.MinValue;
@@ -16,7 +18,8 @@
         /// Initializes a new instance of the <see cref="FileScriptSource"/> class.
         /// </summary>
         /// <param name="file">The file.</param>
-        public FileScriptSource(MFileInfo file) {
+        public FileScriptSource(MFileInfo file)
+        {
             this.file = new MFileInfo(file.FullPath);
         }
 
@@ -26,19 +29,28 @@
         /// <value>
         /// The source code.
         /// </value>
-        public string Code {
-            get {
+        public string Code
+        {
+            get
+            {
                 file.Update();
-                if (file.Exists) {
-                    if (Date > cacheDate) {
-                        try {
-                            using (var sr = new StreamReader(file.OpenRead())) {
+                if (file.Exists)
+                {
+                    if (Date > cacheDate)
+                    {
+                        try
+                        {
+                            using (var sr = new StreamReader(file.OpenRead()))
+                            {
                                 cache = sr.ReadToEnd();
                                 cacheDate = Date;
                             }
-                        } catch { cache = ""; }
+                        }
+                        catch { cache = ""; }
                     }
-                } else {
+                }
+                else
+                {
                     cache = "";
                 }
 
@@ -52,8 +64,10 @@
         /// <value>
         /// The source date in UTC.
         /// </value>
-        public DateTime Date {
-            get {
+        public DateTime Date
+        {
+            get
+            {
                 file.Update();
                 return file.LastWriteTimeUtc;
             }

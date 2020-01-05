@@ -1,10 +1,12 @@
-﻿namespace MonoKle.Console {
+﻿namespace MonoKle.Console
+{
     using System;
 
     /// <summary>
     /// Class for console command without arguments.
     /// </summary>
-    public class ArgumentlessConsoleCommand : AbstractConsoleCommand {
+    public class ArgumentlessConsoleCommand : AbstractConsoleCommand
+    {
         /// <summary>
         /// Initializes a new instance of the <see cref="ArgumentlessConsoleCommand"/> class.
         /// </summary>
@@ -13,8 +15,10 @@
         /// <param name="handler">The handler for the command.</param>
         /// <exception cref="ArgumentNullException">Handler must not be null</exception>
         public ArgumentlessConsoleCommand(string name, string description, DefaultConsoleCommandHandler handler)
-            : base(name, description, CommandArguments.NoArguments) {
-            if (handler == null) {
+            : base(name, description, CommandArguments.NoArguments)
+        {
+            if (handler == null)
+            {
                 throw new ArgumentNullException("Handler must not be null");
             }
             Handler = handler;
@@ -49,8 +53,10 @@
         /// </summary>
         /// <param name="arguments">The arguments. Passing null counts as passing zero arguments.</param>
         /// <returns></returns>
-        public override bool Call(string[] arguments) {
-            if (arguments == null || arguments.Length == 0) {
+        public override bool Call(string[] arguments)
+        {
+            if (arguments == null || arguments.Length == 0)
+            {
                 Handler();
                 return true;
             }

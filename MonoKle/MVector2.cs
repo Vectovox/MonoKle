@@ -1,17 +1,18 @@
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
-using Microsoft.Xna.Framework;
 
-namespace MonoKle {
-
+namespace MonoKle
+{
     /// <summary>
     /// Two-dimensional, immutable, serializable, floating-point vector. Has implicit operator to <see cref="Vector2"/>.
     /// </summary>
     [Serializable]
-    public struct MVector2 : IEquatable<MVector2> {
+    public struct MVector2 : IEquatable<MVector2>
+    {
         /// <summary>
         /// The X component of the <see cref="MVector2"/>.
         /// </summary>
@@ -27,7 +28,8 @@ namespace MonoKle {
         /// </summary>
         /// <param name="x">The X component.</param>
         /// <param name="y">The Y component.</param>
-        public MVector2(float x, float y) {
+        public MVector2(float x, float y)
+        {
             X = x;
             Y = y;
         }
@@ -55,8 +57,10 @@ namespace MonoKle {
         /// <value>
         /// The normalized vector.
         /// </value>
-        public MVector2 Normalized {
-            get {
+        public MVector2 Normalized
+        {
+            get
+            {
                 Vector2 v = this;
                 v.Normalize();
                 return v;
@@ -152,8 +156,10 @@ namespace MonoKle {
         /// </summary>
         /// <param name="s">The string to parse.</param>
         /// <returns>Parsed value</returns>
-        public static MVector2 Parse(string s) {
-            if (TryParse(s, out MVector2 result)) {
+        public static MVector2 Parse(string s)
+        {
+            if (TryParse(s, out MVector2 result))
+            {
                 return result;
             }
             throw new FormatException("String format not correctly defined.");
@@ -165,13 +171,15 @@ namespace MonoKle {
         /// <param name="s">The string to parse.</param>
         /// <param name="result">The out parameter result of parsing.</param>
         /// <returns>True if parsing was successful; otherwise false.</returns>
-        public static bool TryParse(string s, out MVector2 result) {
+        public static bool TryParse(string s, out MVector2 result)
+        {
             const string parseRegex = "^" + nameof(MVector2) + "\\((-?[0-9]+(\\.[0-9]+)?),(-?[0-9]+(\\.[0-9]+)?)\\)$";
 
             result = Zero;
 
             Match match = Regex.Match(s.Replace(" ", ""), parseRegex, RegexOptions.Compiled);
-            if (match.Success) {
+            if (match.Success)
+            {
                 float x = float.Parse(match.Groups[1].Value, NumberFormatInfo.InvariantInfo);
                 float y = float.Parse(match.Groups[3].Value, NumberFormatInfo.InvariantInfo);
                 result = new MVector2(x, y);
@@ -185,13 +193,16 @@ namespace MonoKle {
         /// </summary>
         /// <param name="comparisonPoints">The compared points.</param>
         /// <returns>The closest point.</returns>
-        public MVector2 ClosestPoint(IEnumerable<MVector2> comparisonPoints) {
+        public MVector2 ClosestPoint(IEnumerable<MVector2> comparisonPoints)
+        {
             float closestDistance = float.MaxValue;
             MVector2 closest = this;
-            foreach (MVector2 point in comparisonPoints) {
+            foreach (MVector2 point in comparisonPoints)
+            {
                 var delta = this - point;
                 var distance = delta.LengthSquared;
-                if (distance < closestDistance) {
+                if (distance < closestDistance)
+                {
                     closestDistance = distance;
                     closest = point;
                 }
@@ -205,7 +216,8 @@ namespace MonoKle {
         /// <param name="compared">The compared points.</param>
         /// <param name="distance">The distance to the closest point.</param>
         /// <returns>The closest point.</returns>
-        public MVector2 ClosestPoint(IEnumerable<MVector2> compared, out float distance) {
+        public MVector2 ClosestPoint(IEnumerable<MVector2> compared, out float distance)
+        {
             MVector2 closest = ClosestPoint(compared);
             float dx = X - closest.X;
             float dy = Y - closest.Y;
@@ -231,9 +243,11 @@ namespace MonoKle {
         /// Returns the hash code representation.
         /// </summary>
         /// <returns>Hash code representation.</returns>
-        public override int GetHashCode() {
+        public override int GetHashCode()
+        {
             const int HASH_CODE_MULTIPLIER = 101;
-            unchecked {
+            unchecked
+            {
                 int hash = 73;
                 hash = hash * HASH_CODE_MULTIPLIER + X.GetHashCode();
                 hash = hash * HASH_CODE_MULTIPLIER + Y.GetHashCode();
@@ -262,7 +276,8 @@ namespace MonoKle {
         /// Returns the string representation.
         /// </summary>
         /// <returns>String representation.</returns>
-        public override string ToString() {
+        public override string ToString()
+        {
             var sb = new StringBuilder(nameof(MVector2));
             sb.Append('(');
             sb.Append(X.ToString(NumberFormatInfo.InvariantInfo));

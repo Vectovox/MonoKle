@@ -1,7 +1,9 @@
-﻿namespace MonoKle.Engine {
+﻿namespace MonoKle.Engine
+{
     using Attributes;
 
-    public class MonoKleSettings {
+    public class MonoKleSettings
+    {
         /// <summary>
         /// Gets or sets a value indicating whether keyboard is enabled.
         /// </summary>

@@ -1,10 +1,12 @@
-﻿namespace MonoKle.Input.Gamepad {
+﻿namespace MonoKle.Input.Gamepad
+{
     using Microsoft.Xna.Framework;
 
     /// <summary>
     /// Interface providing methods to get gamepads.
     /// </summary>
-    public interface IGamePadHub {
+    public interface IGamePadHub
+    {
         /// <summary>
         /// Gets the player four.
         /// </summary>

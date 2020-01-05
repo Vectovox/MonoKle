@@ -1,12 +1,14 @@
-namespace MonoKle.Input.Mouse {
-    using System;
+namespace MonoKle.Input.Mouse
+{
     using Attributes;
     using Microsoft.Xna.Framework.Input;
+    using System;
 
     /// <summary>
     /// Class representing the current state of a mouse.
     /// </summary>
-    public class Mouse : IMouse, IUpdateable {
+    public class Mouse : IMouse, IUpdateable
+    {
         private Button left = new Button();
         private Button middle = new Button();
         private InputPosition position = new InputPosition();
@@ -70,7 +72,8 @@ namespace MonoKle.Input.Mouse {
         /// Gets or sets whether the virtual mouse is enabled.
         /// </summary>
         [PropertyVariable("mouse_isvirtual")]
-        public bool IsVirtual {
+        public bool IsVirtual
+        {
             get;
             set;
         }
@@ -103,8 +106,10 @@ namespace MonoKle.Input.Mouse {
         /// <param name="button">The button.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentException">Non supported mouse button value provided.</exception>
-        public IPressable GetButton(MouseButton button) {
-            switch (button) {
+        public IPressable GetButton(MouseButton button)
+        {
+            switch (button)
+            {
                 case MouseButton.Left:
                     return left;
 
@@ -125,7 +130,8 @@ namespace MonoKle.Input.Mouse {
             }
         }
 
-        public void Update(TimeSpan timeDelta) {
+        public void Update(TimeSpan timeDelta)
+        {
             MouseState currentState = Microsoft.Xna.Framework.Input.Mouse.GetState();
 
             // Buttons
@@ -143,7 +149,8 @@ namespace MonoKle.Input.Mouse {
 
             // Mouse position
             var mousePosition = new MPoint2(currentState.X, currentState.Y);
-            if (IsVirtual) {
+            if (IsVirtual)
+            {
                 // Update the virtual mouse using the mouse movement from the region center and center the actual mouse again
                 var center = VirtualRegion.Center.ToMPoint2();
                 mousePosition = position.Value + (mousePosition - center);

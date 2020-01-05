@@ -1,20 +1,22 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using MonoKle.Asset.Font;
 using MonoKle.Attributes;
 using MonoKle.Input.Keyboard;
 using MonoKle.Logging;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
-namespace MonoKle.Console {
+namespace MonoKle.Console
+{
     /// <summary>
     /// Class that maintains and displays a console.
     /// </summary>
-    public class GameConsole : IGameConsole, IUpdateable, IDrawable {
+    public class GameConsole : IGameConsole, IUpdateable, IDrawable
+    {
         private static readonly TimeSpan TypingActivationDelay = TimeSpan.FromMilliseconds(400);
         private static readonly TimeSpan TypingCycleDelay = TimeSpan.FromMilliseconds(2);
 
@@ -34,7 +36,8 @@ namespace MonoKle.Console {
         /// <param name="keyboardInput">The keyboard input.</param>
         /// <param name="whiteTexture">The background texture.</param>
         /// <param name="logger">The logger to use.</param>
-        public GameConsole(MRectangleInt area, GraphicsDevice graphicsDevice, IKeyboard keyboardInput, Texture2D whiteTexture, Logger logger) {
+        public GameConsole(MRectangleInt area, GraphicsDevice graphicsDevice, IKeyboard keyboardInput, Texture2D whiteTexture, Logger logger)
+        {
             this.graphicsDevice = graphicsDevice;
             spriteBatch = new SpriteBatch(graphicsDevice);
             keyboard = new KeyboardTyper(keyboardInput, GameConsole.TypingActivationDelay, GameConsole.TypingCycleDelay);
@@ -61,7 +64,8 @@ namespace MonoKle.Console {
         /// <summary>
         /// Gets or sets the area in which the console will be drawn.
         /// </summary>
-        public MRectangleInt Area {
+        public MRectangleInt Area
+        {
             get;
             set;
         }
@@ -69,7 +73,8 @@ namespace MonoKle.Console {
         /// <summary>
         /// Gets or sets the background color.
         /// </summary>
-        public Color BackgroundColor {
+        public Color BackgroundColor
+        {
             get;
             set;
         }
@@ -80,7 +85,8 @@ namespace MonoKle.Console {
         /// <value>
         /// The command broker.
         /// </value>
-        public CommandBroker CommandBroker {
+        public CommandBroker CommandBroker
+        {
             get;
             private set;
         }
@@ -91,7 +97,8 @@ namespace MonoKle.Console {
         /// <value>
         /// The command text colour.
         /// </value>
-        public Color CommandTextColour {
+        public Color CommandTextColour
+        {
             get;
             set;
         }
@@ -99,7 +106,8 @@ namespace MonoKle.Console {
         /// <summary>
         /// Gets or sets the color that the text will be drawn with if no other colour is specified.
         /// </summary>
-        public Color DefaultTextColour {
+        public Color DefaultTextColour
+        {
             get;
             set;
         }
@@ -110,7 +118,8 @@ namespace MonoKle.Console {
         /// <value>
         /// The disabled text colour.
         /// </value>
-        public Color DisabledTextColour {
+        public Color DisabledTextColour
+        {
             get;
             set;
         }
@@ -121,7 +130,8 @@ namespace MonoKle.Console {
         /// <value>
         /// The error text colour.
         /// </value>
-        public Color ErrorTextColour {
+        public Color ErrorTextColour
+        {
             get;
             set;
         }
@@ -130,7 +140,8 @@ namespace MonoKle.Console {
         /// Gets or sets wether the console is open.
         /// </summary>
         [PropertyVariable("c_isopen")]
-        public bool IsOpen {
+        public bool IsOpen
+        {
             get;
             set;
         }
@@ -139,7 +150,8 @@ namespace MonoKle.Console {
         /// Gets or sets the maximum amount of entries to keep.
         /// </summary>
         [PropertyVariable("c_size")]
-        public int Size {
+        public int Size
+        {
             get;
             set;
         }
@@ -150,14 +162,16 @@ namespace MonoKle.Console {
         /// <value>
         /// The length of the tabs.
         /// </value>
-        public int TabLength {
+        public int TabLength
+        {
             get; set;
         }
 
         /// <summary>
         /// Gets or sets the string identifier of the text font. If null, the default font will be used.
         /// </summary>
-        public Font TextFont {
+        public Font TextFont
+        {
             get;
             set;
         }
@@ -166,7 +180,8 @@ namespace MonoKle.Console {
         /// Gets or sets the scale for the font.
         /// </summary>
         [PropertyVariable("c_textscale")]
-        public float TextScale {
+        public float TextScale
+        {
             get;
             set;
         }
@@ -177,7 +192,8 @@ namespace MonoKle.Console {
         /// <value>
         /// The toggle key.
         /// </value>
-        public Keys ToggleKey {
+        public Keys ToggleKey
+        {
             get;
             set;
         }
@@ -188,7 +204,8 @@ namespace MonoKle.Console {
         /// <value>
         /// The warning text colour.
         /// </value>
-        public Color WarningTextColour {
+        public Color WarningTextColour
+        {
             get;
             set;
         }
@@ -198,8 +215,10 @@ namespace MonoKle.Console {
         /// </summary>
         public void Clear() => lines.Clear();
 
-        public void Draw(TimeSpan timeDelta) {
-            if (IsOpen) {
+        public void Draw(TimeSpan timeDelta)
+        {
+            if (IsOpen)
+            {
                 Font font = TextFont;
                 spriteBatch.Begin();
                 spriteBatch.Draw(whiteTexture, Area, BackgroundColor);
@@ -209,7 +228,8 @@ namespace MonoKle.Console {
                 LinkedListNode<Line> node = lines.Find(lines.ElementAtOrDefault(lines.Count - scrollOffset - 1));
 
                 spriteBatch.DrawString(font, drawnLine, textPos, CommandTextColour, 0f, Vector2.Zero, TextScale, SpriteEffects.None, 0f);
-                while (textPos.Y > 0 && node != null) {
+                while (textPos.Y > 0 && node != null)
+                {
                     string toDraw = font.WrapString(node.Value.Text, Area.Width, TextScale);
                     textPos.Y -= font.MeasureString(toDraw, TextScale).Y;
                     spriteBatch.DrawString(font, toDraw, textPos, node.Value.Color, 0f, Vector2.Zero, TextScale, SpriteEffects.None, 0f);
@@ -219,12 +239,15 @@ namespace MonoKle.Console {
             }
         }
 
-        public void Update(TimeSpan timeDelta) {
-            if (keyboard.Keyboard.IsKeyPressed(ToggleKey)) {
+        public void Update(TimeSpan timeDelta)
+        {
+            if (keyboard.Keyboard.IsKeyPressed(ToggleKey))
+            {
                 IsOpen = !IsOpen;
             }
 
-            if (IsOpen) {
+            if (IsOpen)
+            {
                 DoKeyboardInput();
                 inputField.Update(timeDelta);
             }
@@ -241,23 +264,30 @@ namespace MonoKle.Console {
         /// </summary>
         /// <param name="text">The text to write.</param>
         /// <param name="color">Color of the line.</param>
-        public void WriteLine(string text, Color color) {
+        public void WriteLine(string text, Color color)
+        {
             // Divide into separate rows for \n
             string[] rows = text.Split('\n');
 
             var sb = new StringBuilder();
-            foreach (string r in rows) {
+            foreach (string r in rows)
+            {
                 // Add tabs
                 sb.Clear();
                 int column = 0;
-                for (int i = 0; i < r.Length; i++) {
-                    if (r[i] == '\t') {
+                for (int i = 0; i < r.Length; i++)
+                {
+                    if (r[i] == '\t')
+                    {
                         int amnt = TabLength - (column % TabLength);
-                        for (int j = 0; j < amnt; j++) {
+                        for (int j = 0; j < amnt; j++)
+                        {
                             sb.Append(' ');
                             column++;
                         }
-                    } else {
+                    }
+                    else
+                    {
                         sb.Append(r[i]);
                         column++;
                     }
@@ -269,31 +299,42 @@ namespace MonoKle.Console {
             TrimLines();
         }
 
-        private void AutoComplete() {
+        private void AutoComplete()
+        {
             string current = inputField.Text.Trim();
 
-            if (current.Length > 0) {
+            if (current.Length > 0)
+            {
                 string[] split = current.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 string commandString = split[0];
                 string matchingOn = split[split.Length - 1];
                 string completedPart = current.Substring(0, current.Length - matchingOn.Length);
                 ICollection<string> matches = null;
 
-                if (split.Length == 1) {
+                if (split.Length == 1)
+                {
                     matches = MatchInput(matchingOn, CommandBroker.Commands.Select(o => o.Name).ToArray());
-                } else {
+                }
+                else
+                {
                     IConsoleCommand command = CommandBroker.GetCommand(commandString);
-                    if (command != null) {
+                    if (command != null)
+                    {
                         matches = MatchInput(matchingOn, command.GetInputSuggestions(split.Length - 2));
                     }
                 }
 
-                if (matches != null) {
-                    if (matches.Count == 1) {
+                if (matches != null)
+                {
+                    if (matches.Count == 1)
+                    {
                         inputField.Text = completedPart + matches.First();
-                    } else if (matches.Count > 1) {
+                    }
+                    else if (matches.Count > 1)
+                    {
                         WriteLine(inputField.DisplayText, CommandTextColour);
-                        foreach (string m in matches) {
+                        foreach (string m in matches)
+                        {
                             WriteLine("\t" + m);
                         }
                         WriteLine("");
@@ -307,35 +348,43 @@ namespace MonoKle.Console {
 
         private void CommandEcho(string[] arguments) => WriteLine(arguments[0]);
 
-        private void CommandHelp(string[] args) {
+        private void CommandHelp(string[] args)
+        {
             IConsoleCommand command = CommandBroker.GetCommand(args[0]);
-            if (command != null) {
-                if (command.Description != null) {
+            if (command != null)
+            {
+                if (command.Description != null)
+                {
                     WriteLine(command.Description + "\n");
                 }
 
                 var usageBuilder = new StringBuilder("Usage: ");
-                if (command.AcceptsArguments && command.AllowsZeroArguments) {
+                if (command.AcceptsArguments && command.AllowsZeroArguments)
+                {
                     usageBuilder.Append(command.Name.ToUpper());
                     usageBuilder.Append("\n       ");
                 }
                 usageBuilder.Append(command.Name.ToUpper());
-                foreach (string a in command.Arguments.Arguments) {
+                foreach (string a in command.Arguments.Arguments)
+                {
                     usageBuilder.Append(" [");
                     usageBuilder.Append(a);
                     usageBuilder.Append(']');
                 }
                 WriteLine(usageBuilder.ToString());
 
-                if (command.Arguments.Length > 0) {
+                if (command.Arguments.Length > 0)
+                {
                     usageBuilder.Clear();
                     usageBuilder.Append("\n");
 
                     int maxLength = command.Arguments.ArgumentDescriptionMap.Keys.Max(o => o.Length);
-                    foreach (string a in command.Arguments.ArgumentDescriptionMap.Keys) {
+                    foreach (string a in command.Arguments.ArgumentDescriptionMap.Keys)
+                    {
                         usageBuilder.Append("\t");
                         usageBuilder.Append(a);
-                        for (int i = 0; i < maxLength - a.Length; i++) {
+                        for (int i = 0; i < maxLength - a.Length; i++)
+                        {
                             usageBuilder.Append(' ');
                         }
                         usageBuilder.Append(" - ");
@@ -343,27 +392,35 @@ namespace MonoKle.Console {
                     }
 
                     WriteLine(usageBuilder.ToString());
-                } else {
+                }
+                else
+                {
                     WriteLine("");
                 }
-            } else {
+            }
+            else
+            {
                 WriteLine("There is no such command to get help for.");
             }
         }
 
-        private void CommandHelpList() {
+        private void CommandHelpList()
+        {
             WriteLine("For more information on a specific command, type HELP [command].");
             var commands = CommandBroker.Commands.ToList();
             commands.Sort((a, b) => a.Name.CompareTo(b.Name));
             int maxLength = commands.Max(o => o.Name.Length);
 
             var sb = new StringBuilder();
-            foreach (IConsoleCommand c in commands) {
+            foreach (IConsoleCommand c in commands)
+            {
                 sb.Clear();
                 sb.Append("\t");
                 sb.Append(c.Name);
-                if (c.Description != null) {
-                    for (int i = 0; i < maxLength - c.Name.Length; i++) {
+                if (c.Description != null)
+                {
+                    for (int i = 0; i < maxLength - c.Name.Length; i++)
+                    {
                         sb.Append(' ');
                     }
                     sb.Append(" \t");
@@ -376,16 +433,19 @@ namespace MonoKle.Console {
 
         private ICollection<string> CommandHelpSuggestions(int index) => CommandBroker.Commands.Select(o => o.Name).ToArray();
 
-        private void DoCommand() {
+        private void DoCommand()
+        {
             WriteLine(inputField.DisplayText, CommandTextColour);
 
             string[] split = inputField.Text.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            if (split.Length > 0) {
+            if (split.Length > 0)
+            {
                 string command = split[0];
                 string[] arguments = new string[split.Length - 1];
                 Array.Copy(split, 1, arguments, 0, arguments.Length);
 
-                if (CommandBroker.Call(command, arguments) == false) {
+                if (CommandBroker.Call(command, arguments) == false)
+                {
                     WriteLine("'" + command + "' is not a recognized command or has an invalid amount of arguments.", WarningTextColour);
                 }
                 inputField.Remember();
@@ -394,41 +454,53 @@ namespace MonoKle.Console {
             inputField.Clear();
         }
 
-        private void DoKeyboardInput() {
+        private void DoKeyboardInput()
+        {
             // Check for if command is given
-            if (keyboard.IsTyped(Keys.Enter)) {
+            if (keyboard.IsTyped(Keys.Enter))
+            {
                 DoCommand();
             }
 
             // Autocomplete
-            if (keyboard.IsTyped(Keys.Tab)) {
+            if (keyboard.IsTyped(Keys.Tab))
+            {
                 AutoComplete();
             }
 
             // Scrolling
-            if (keyboard.IsTyped(Keys.PageUp)) {
+            if (keyboard.IsTyped(Keys.PageUp))
+            {
                 ScrollUp();
             }
 
-            if (keyboard.IsTyped(Keys.PageDown)) {
+            if (keyboard.IsTyped(Keys.PageDown))
+            {
                 ScrollDown();
             }
         }
 
-        private void LogAdded(object sender, LogAddedEventArgs e) {
+        private void LogAdded(object sender, LogAddedEventArgs e)
+        {
             Color c = DefaultTextColour;
-            if (e.Log.Level == LogLevel.Warning) {
+            if (e.Log.Level == LogLevel.Warning)
+            {
                 c = WarningTextColour;
-            } else if (e.Log.Level == LogLevel.Error) {
+            }
+            else if (e.Log.Level == LogLevel.Error)
+            {
                 c = ErrorTextColour;
             }
             WriteLine(e.Log.ToString(), c);
         }
 
-        private string LongestCommonStartString(ICollection<string> strings) {
-            if (strings.Count > 0) {
+        private string LongestCommonStartString(ICollection<string> strings)
+        {
+            if (strings.Count > 0)
+            {
                 string longest = strings.OrderByDescending(s => s.Length).First();
-                foreach (string s in strings) {
+                foreach (string s in strings)
+                {
                     longest = LongestCommonStartString(longest, s);
                 }
                 return longest;
@@ -436,14 +508,19 @@ namespace MonoKle.Console {
             return "";
         }
 
-        private string LongestCommonStartString(string a, string b) {
+        private string LongestCommonStartString(string a, string b)
+        {
             var result = new StringBuilder();
 
             string shortest = a.Length > b.Length ? b : a;
-            for (int i = 0; i < shortest.Length; i++) {
-                if (a[i] == b[i]) {
+            for (int i = 0; i < shortest.Length; i++)
+            {
+                if (a[i] == b[i])
+                {
                     result.Append(a[i]);
-                } else {
+                }
+                else
+                {
                     break;
                 }
             }
@@ -453,25 +530,29 @@ namespace MonoKle.Console {
 
         private string[] MatchInput(string input, ICollection<string> options) => options.Where(o => o.StartsWith(input)).ToArray();
 
-        private void Scroll(int delta) {
+        private void Scroll(int delta)
+        {
             scrollOffset += delta;
             scrollOffset = Math.Min(scrollOffset, lines.Count - 1);
             scrollOffset = Math.Max(scrollOffset, 0);
         }
 
-        private void ScrollDown() {
+        private void ScrollDown()
+        {
             float height = TextFont.MeasureString("M", TextScale).Y;
             int maxRows = (int)(Area.Height / height);
             Scroll(-maxRows / 2);
         }
 
-        private void ScrollUp() {
+        private void ScrollUp()
+        {
             float height = TextFont.MeasureString("M", TextScale).Y;
             int maxRows = (int)(Area.Height / height);
             Scroll(maxRows / 2);
         }
 
-        private void SetupBroker() {
+        private void SetupBroker()
+        {
             CommandBroker = new CommandBroker();
             CommandBroker.Register(new ArgumentlessConsoleCommand("clear", "Clears the console output.", CommandClear));
             CommandBroker.Register(
@@ -486,8 +567,10 @@ namespace MonoKle.Console {
                 CommandEcho));
         }
 
-        private void TrimLines() {
-            while (lines.Count > Size) {
+        private void TrimLines()
+        {
+            while (lines.Count > Size)
+            {
                 lines.RemoveFirst();
             }
         }

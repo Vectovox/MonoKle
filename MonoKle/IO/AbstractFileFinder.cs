@@ -1,25 +1,33 @@
-﻿namespace MonoKle.IO {
+﻿namespace MonoKle.IO
+{
     using System.Collections.Generic;
     using System.IO;
 
     /// <summary>
     /// Abstract implementation of <see cref="IFileLoader"/>, providing a template pattern method for file loading operations.
     /// </summary>
-    public abstract class AbstractFileFinder : IFileLoader {
+    public abstract class AbstractFileFinder : IFileLoader
+    {
         /// <summary>
         /// Loads the file with the given path.
         /// </summary>
         /// <param name="path">The path to the file.</param>
-        public FileLoadingResult LoadFile(string path) {
+        public FileLoadingResult LoadFile(string path)
+        {
             var foundFiles = new List<string>();
             int failures = 0;
 
             var file = new MFileInfo(path);
-            if (file.Exists) {
-                if (CheckFile(file)) {
-                    if (OperateOnFile(file)) {
+            if (file.Exists)
+            {
+                if (CheckFile(file))
+                {
+                    if (OperateOnFile(file))
+                    {
                         foundFiles.Add(path);
-                    } else {
+                    }
+                    else
+                    {
                         failures++;
                     }
                 }
@@ -47,19 +55,27 @@
         /// <param name="path">The path in which to load files.</param>
         /// <param name="recurse">Parameter specifying if to do a recursive search.</param>
         /// <param name="pattern">The pattern that files have to fulfill in order to be loaded.</param>
-        public FileLoadingResult LoadFiles(string path, bool recurse, string pattern) {
+        public FileLoadingResult LoadFiles(string path, bool recurse, string pattern)
+        {
             var foundFiles = new List<string>();
             int failures = 0;
 
-            if (Directory.Exists(path)) {
+            if (Directory.Exists(path))
+            {
                 string[] files = Directory.GetFiles(path, pattern, recurse ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
-                foreach (string f in files) {
+                foreach (string f in files)
+                {
                     var file = new MFileInfo(f);
-                    if (file.Exists) {
-                        if (CheckFile(file)) {
-                            if (OperateOnFile(file)) {
+                    if (file.Exists)
+                    {
+                        if (CheckFile(file))
+                        {
+                            if (OperateOnFile(file))
+                            {
                                 foundFiles.Add(path);
-                            } else {
+                            }
+                            else
+                            {
                                 failures++;
                             }
                         }

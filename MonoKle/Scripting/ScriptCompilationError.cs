@@ -1,15 +1,18 @@
-﻿namespace MonoKle.Scripting {
+﻿namespace MonoKle.Scripting
+{
     /// <summary>
     /// Class representing an error when compiling a script.
     /// </summary>
-    public class ScriptCompilationError {
+    public class ScriptCompilationError
+    {
         /// <summary>
         /// Initializes a new instance of the <see cref="ScriptCompilationError"/> class.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="line">The line.</param>
         /// <param name="isWarning">if set to <c>true</c> [is warning].</param>
-        public ScriptCompilationError(string message, int line, bool isWarning) {
+        public ScriptCompilationError(string message, int line, bool isWarning)
+        {
             Message = message;
             Line = line;
             IsWarning = isWarning;

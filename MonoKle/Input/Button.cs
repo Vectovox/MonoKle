@@ -1,11 +1,13 @@
 using System;
 
-namespace MonoKle.Input {
+namespace MonoKle.Input
+{
     /// <summary>
     /// Class providing the state of a button.
     /// </summary>
     /// <seealso cref="IPressable" />
-    public class Button : IPressable {
+    public class Button : IPressable
+    {
         private bool wasDown;
 
         /// <summary>
@@ -65,7 +67,8 @@ namespace MonoKle.Input {
         /// </returns>
         public bool IsHeldFor(TimeSpan duration) => HeldTime >= duration;
 
-        public virtual void Update(bool down, TimeSpan deltaTime) {
+        public virtual void Update(bool down, TimeSpan deltaTime)
+        {
             wasDown = IsDown;
             IsDown = down;
             HeldTime = down ? HeldTime + deltaTime : TimeSpan.Zero;

@@ -1,12 +1,14 @@
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-namespace MonoKle {
+namespace MonoKle
+{
     [TestClass]
-    public class TimerTest {
+    public class TimerTest
+    {
         [TestMethod]
-        public void Constructor_CorrectState() {
+        public void Constructor_CorrectState()
+        {
             var span = TimeSpan.FromSeconds(123);
             var timer = new Timer(span);
             Assert.AreEqual(span, timer.Duration);
@@ -15,7 +17,8 @@ namespace MonoKle {
         }
 
         [TestMethod]
-        public void IsDone_TrueWhenDone() {
+        public void IsDone_TrueWhenDone()
+        {
             var span = TimeSpan.FromSeconds(123);
             var timer = new Timer(span);
             timer.Update(span);
@@ -23,7 +26,8 @@ namespace MonoKle {
         }
 
         [TestMethod]
-        public void IsDone_FalseWhenNotDone() {
+        public void IsDone_FalseWhenNotDone()
+        {
             var span = TimeSpan.FromSeconds(123);
             var timer = new Timer(span);
             timer.Update(span - TimeSpan.FromSeconds(10));
@@ -31,7 +35,8 @@ namespace MonoKle {
         }
 
         [TestMethod]
-        public void Reset_NotDone_ResetToDuration() {
+        public void Reset_NotDone_ResetToDuration()
+        {
             var span = TimeSpan.FromSeconds(123);
             var timer = new Timer(span);
             timer.Reset();
@@ -40,7 +45,8 @@ namespace MonoKle {
         }
 
         [TestMethod]
-        public void Reset_Done_ResetToDuration() {
+        public void Reset_Done_ResetToDuration()
+        {
             var span = TimeSpan.FromSeconds(123);
             var timer = new Timer(span);
             timer.Trigger();
@@ -50,7 +56,8 @@ namespace MonoKle {
         }
 
         [TestMethod]
-        public void Set_NotDone_DurationSetAndTimeReset() {
+        public void Set_NotDone_DurationSetAndTimeReset()
+        {
             var span = TimeSpan.FromSeconds(123);
             var otherSpan = TimeSpan.FromSeconds(300);
             var timer = new Timer(span);
@@ -61,7 +68,8 @@ namespace MonoKle {
         }
 
         [TestMethod]
-        public void Set_Done_DurationSetAndTimeReset() {
+        public void Set_Done_DurationSetAndTimeReset()
+        {
             var span = TimeSpan.FromSeconds(123);
             var otherSpan = TimeSpan.FromSeconds(300);
             var timer = new Timer(span);
@@ -73,7 +81,8 @@ namespace MonoKle {
         }
 
         [TestMethod]
-        public void TimeLeft_CorrectResult() {
+        public void TimeLeft_CorrectResult()
+        {
             var span = TimeSpan.FromSeconds(123);
             var updateSpan = TimeSpan.FromSeconds(39);
             var timer = new Timer(span);
@@ -82,7 +91,8 @@ namespace MonoKle {
         }
 
         [TestMethod]
-        public void Trigger_NotRan_DoneAndZeroTimeLeft() {
+        public void Trigger_NotRan_DoneAndZeroTimeLeft()
+        {
             var span = TimeSpan.FromSeconds(123);
             var timer = new Timer(span);
             timer.Trigger();
@@ -91,7 +101,8 @@ namespace MonoKle {
         }
 
         [TestMethod]
-        public void Trigger_NotDone_DoneAndZeroTimeLeft() {
+        public void Trigger_NotDone_DoneAndZeroTimeLeft()
+        {
             var span = TimeSpan.FromSeconds(123);
             var timer = new Timer(span);
             timer.Update(TimeSpan.FromSeconds(30));
@@ -101,7 +112,8 @@ namespace MonoKle {
         }
 
         [TestMethod]
-        public void Trigger_Done_DoneAndZeroTimeLeft() {
+        public void Trigger_Done_DoneAndZeroTimeLeft()
+        {
             var span = TimeSpan.FromSeconds(123);
             var timer = new Timer(span);
             timer.Trigger();
@@ -111,7 +123,8 @@ namespace MonoKle {
         }
 
         [TestMethod]
-        public void Update_PartialUpdate_CorrectTimeLeft() {
+        public void Update_PartialUpdate_CorrectTimeLeft()
+        {
             var span = TimeSpan.FromSeconds(123);
             var spanToUpdate = TimeSpan.FromSeconds(10);
             var timer = new Timer(span);
@@ -123,7 +136,8 @@ namespace MonoKle {
         }
 
         [TestMethod]
-        public void Update_LongerElapsedThanSetDuration_ZeroTimeLeft() {
+        public void Update_LongerElapsedThanSetDuration_ZeroTimeLeft()
+        {
             var span = TimeSpan.FromSeconds(123);
             var spanToUpdate = TimeSpan.FromSeconds(300);
             var timer = new Timer(span);
@@ -135,7 +149,8 @@ namespace MonoKle {
         }
 
         [TestMethod]
-        public void Update_Done_ZeroTimeLeft() {
+        public void Update_Done_ZeroTimeLeft()
+        {
             var span = TimeSpan.FromSeconds(123);
             var spanToUpdate = TimeSpan.FromSeconds(10);
             var timer = new Timer(span);

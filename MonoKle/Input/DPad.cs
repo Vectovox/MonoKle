@@ -1,11 +1,13 @@
 using System;
 
-namespace MonoKle.Input {
+namespace MonoKle.Input
+{
     /// <summary>
     /// Class providing the state of a DPad.
     /// </summary>
     /// <seealso cref="IDPad" />
-    public class DPad : IDPad {
+    public class DPad : IDPad
+    {
         private Button up = new Button();
         private Button down = new Button();
         private Button left = new Button();
@@ -48,7 +50,8 @@ namespace MonoKle.Input {
         /// <param name="upDown">True if the up-direction is down.</param>
         /// <param name="downDown">True if the down-direction is down.</param>
         /// <param name="deltaTime">Time since last update.</param>
-        public virtual void Update(bool leftDown, bool rightDown, bool upDown, bool downDown, TimeSpan deltaTime) {
+        public virtual void Update(bool leftDown, bool rightDown, bool upDown, bool downDown, TimeSpan deltaTime)
+        {
             up.Update(upDown, deltaTime);
             down.Update(downDown, deltaTime);
             left.Update(leftDown, deltaTime);

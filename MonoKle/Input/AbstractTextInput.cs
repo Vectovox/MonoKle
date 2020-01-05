@@ -1,11 +1,13 @@
-﻿namespace MonoKle.Input {
-    using System.Text;
+﻿namespace MonoKle.Input
+{
     using Microsoft.Xna.Framework;
+    using System.Text;
 
     /// <summary>
     /// Abstract implementation of <see cref="ITextInput"/>.
     /// </summary>
-    public abstract class AbstractTextInput : ITextInput {
+    public abstract class AbstractTextInput : ITextInput
+    {
         private int cursorPos;
         private string text = "";
         private StringBuilder textBuilder = new StringBuilder();
@@ -16,12 +18,15 @@
         /// <value>
         /// The cursor position.
         /// </value>
-        public int CursorPosition {
-            get {
+        public int CursorPosition
+        {
+            get
+            {
                 return cursorPos;
             }
 
-            set {
+            set
+            {
                 CursorSet(value);
             }
         }
@@ -32,12 +37,15 @@
         /// <value>
         /// The current text.
         /// </value>
-        public string Text {
-            get {
+        public string Text
+        {
+            get
+            {
                 return text;
             }
 
-            set {
+            set
+            {
                 textBuilder.Clear();
                 textBuilder.Append(value);
                 UpdatePublicText();
@@ -94,7 +102,8 @@
         /// Sets the cursor position.
         /// </summary>
         /// <param name="position">The position.</param>
-        protected void CursorSet(int position) {
+        protected void CursorSet(int position)
+        {
             cursorPos = MathHelper.Clamp(position, 0, textBuilder.Length);
             OnCursorChange();
         }
@@ -102,8 +111,10 @@
         /// <summary>
         /// Deletes the character after the cursor.
         /// </summary>
-        protected void Delete() {
-            if (Text.Length > 0 && cursorPos < Text.Length) {
+        protected void Delete()
+        {
+            if (Text.Length > 0 && cursorPos < Text.Length)
+            {
                 textBuilder.Remove(cursorPos, 1);
                 UpdatePublicText();
                 OnTextChange();
@@ -113,8 +124,10 @@
         /// <summary>
         /// Erases the character before the cursor.
         /// </summary>
-        protected void Erase() {
-            if (Text.Length > 0 && cursorPos > 0) {
+        protected void Erase()
+        {
+            if (Text.Length > 0 && cursorPos > 0)
+            {
                 textBuilder.Remove(cursorPos - 1, 1);
                 UpdatePublicText();
                 CursorLeft();
@@ -125,13 +138,15 @@
         /// <summary>
         /// Called when cursor changes.
         /// </summary>
-        protected virtual void OnCursorChange() {
+        protected virtual void OnCursorChange()
+        {
         }
 
         /// <summary>
         /// Called when text changes.
         /// </summary>
-        protected virtual void OnTextChange() {
+        protected virtual void OnTextChange()
+        {
         }
 
         /// <summary>
@@ -144,7 +159,8 @@
         /// Types the specified text at the current cursor position.
         /// </summary>
         /// <param name="text">The text to type.</param>
-        protected void Type(string text) {
+        protected void Type(string text)
+        {
             textBuilder.Insert(cursorPos, text);
             UpdatePublicText();
             CursorMove(text.Length);

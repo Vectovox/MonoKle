@@ -1,9 +1,9 @@
-﻿namespace MonoKle.Console
-{
-    using Asset.Font;
-    using Microsoft.Xna.Framework;
-    using Microsoft.Xna.Framework.Input;
+﻿using MonoKle.Asset.Font;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
+namespace MonoKle.Console
+{
     /// <summary>
     /// Interface for a game console.
     /// </summary>
@@ -21,9 +21,6 @@
         /// <summary>
         /// Gets or sets the color of the background.
         /// </summary>
-        /// <value>
-        /// The color of the background.
-        /// </value>
         Color BackgroundColor
         {
             get;
@@ -33,9 +30,6 @@
         /// <summary>
         /// Gets the command broker. Used for executing console commands.
         /// </summary>
-        /// <value>
-        /// The command broker.
-        /// </value>
         CommandBroker CommandBroker
         {
             get;
@@ -44,9 +38,6 @@
         /// <summary>
         /// Gets or sets the command text colour.
         /// </summary>
-        /// <value>
-        /// The command text colour.
-        /// </value>
         Color CommandTextColour
         {
             get;
@@ -65,9 +56,6 @@
         /// <summary>
         /// Gets or sets the disabled text colour.
         /// </summary>
-        /// <value>
-        /// The disabled text colour.
-        /// </value>
         Color DisabledTextColour
         {
             get;
@@ -77,9 +65,6 @@
         /// <summary>
         /// Gets or sets the error text colour.
         /// </summary>
-        /// <value>
-        /// The error text colour.
-        /// </value>
         Color ErrorTextColour
         {
             get;
@@ -98,7 +83,7 @@
         /// <summary>
         /// Gets or sets the maximum amount of entries to keep.
         /// </summary>
-        int Size
+        uint Size
         {
             get;
             set;
@@ -107,16 +92,13 @@
         /// <summary>
         /// Gets or sets the length of the tabs.
         /// </summary>
-        /// <value>
-        /// The length of the tabs.
-        /// </value>
         int TabLength
         {
             get; set;
         }
 
         /// <summary>
-        /// Gets or sets the string identifier of the text font. If null, the default font will be used.
+        /// Gets or sets the string identifier of the text font.
         /// </summary>
         Font TextFont
         {
@@ -136,9 +118,6 @@
         /// <summary>
         /// Gets or sets the toggle key.
         /// </summary>
-        /// <value>
-        /// The toggle key.
-        /// </value>
         Keys ToggleKey
         {
             get;
@@ -148,9 +127,6 @@
         /// <summary>
         /// Gets or sets the warning text colour.
         /// </summary>
-        /// <value>
-        /// The warning text colour.
-        /// </value>
         Color WarningTextColour
         {
             get;
@@ -161,6 +137,12 @@
         /// Clears all history.
         /// </summary>
         void Clear();
+
+        /// <summary>
+        /// Writes the provided text with the colour <see cref="GameConsole.ErrorTextColour"/>.
+        /// </summary>
+        /// <param name="message">The error message to write.</param>
+        void WriteError(string message);
 
         /// <summary>
         /// Writes the provided text with the colour <see cref="GameConsole.DefaultTextColour"/>.

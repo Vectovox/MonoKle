@@ -1,52 +1,63 @@
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+using MonoKle.Input.Keyboard;
+using System;
+using System.Collections.Generic;
+
 namespace MonoKle.Console
 {
-    using Input.Keyboard;
-    using Microsoft.Xna.Framework;
-    using Microsoft.Xna.Framework.Input;
-    using System;
-    using System.Collections.Generic;
-
-    internal class InputField : KeyboardTextInput
+    /// <summary>
+    /// Class for a CLI-like input field.
+    /// </summary>
+    public class InputField : KeyboardTextInput
     {
-        private string commandToken;
-        private Timer cursorTimer;
-        private string cursorToken;
-        private string displayText;
-        private string displayTextCursor;
-        private string displayTextCursorNoToken;
-        private List<string> history = new List<string>();
-        private int historyCapacity;
-        private int historyIndex = -1;
-        private bool showCursor;
+        private readonly List<string> history;
 
-        public InputField(string cursorToken, string commandToken, double cursorBlinkRate, int historyCapacity, KeyboardCharacterInput characterInput)
+        private readonly Timer cursorTimer;
+
+        private readonly string commandToken;
+        private readonly string cursorToken;
+
+        private string displayTextCursor = "";
+        private string displayTextCursorNoToken = "";
+
+        private int historyIndex = 0;
+        private bool isBlinking;
+
+        public InputField(string cursorToken, string commandToken, TimeSpan cursorBlinkRate, int historyCapacity, KeyboardCharacterInput characterInput)
             : base(characterInput)
         {
             this.cursorToken = cursorToken;
             this.commandToken = commandToken;
-            cursorTimer = new Timer(TimeSpan.FromSeconds(cursorBlinkRate));
-            NextMemoryKey = Keys.Down;
-            PreviousMemoryKey = Keys.Up;
-            this.historyCapacity = historyCapacity;
+            history = new List<string>(historyCapacity);
+            cursorTimer = new Timer(cursorBlinkRate);
             OnTextChange();
         }
 
-        public string DisplayText => displayText;
+        public string DisplayText { get; private set; } = "";
 
-        public string DisplayTextCursor => showCursor ? displayTextCursor : displayTextCursorNoToken;
+        public string CursorDisplayText => isBlinking ? displayTextCursorNoToken : displayTextCursor;
 
-        public Keys NextMemoryKey { get; set; }
-        public Keys PreviousMemoryKey { get; set; }
+        public Keys NextMemoryKey { get; set; } = Keys.Down;
 
-        public void Remember() => Remember(Text);
+        public Keys PreviousMemoryKey { get; set; } = Keys.Up;
 
-        public void Remember(string input)
+        /// <summary>
+        /// Remembers the current line.
+        /// </summary>
+        public void RememberCurrent() => Remember(Text);
+
+        /// <summary>
+        /// Remembers the given text.
+        /// </summary>
+        /// <param name="input">The text to remember.</param>
+        public void Remember(string text)
         {
-            history.Add(input);
-            while (history.Count > historyCapacity)
+            if (history.Count == history.Capacity)
             {
                 history.RemoveAt(0);
             }
+            history.Add(text);
         }
 
         public void Update(TimeSpan timeDelta)
@@ -55,7 +66,7 @@ namespace MonoKle.Console
 
             if (cursorTimer.UpdateDone(timeDelta))
             {
-                showCursor = !showCursor;
+                isBlinking = !isBlinking;
                 cursorTimer.Reset();
             }
 
@@ -84,29 +95,19 @@ namespace MonoKle.Console
             {
                 int newIndex = historyIndex + delta;
                 newIndex = MathHelper.Clamp(newIndex, 0, history.Count - 1);
-                base.Text = history[newIndex];
+                Text = history[newIndex];
+                // Overwrite history index after text update
                 historyIndex = newIndex;
             }
         }
 
         private void UpdateDisplayText()
         {
-            string left, right;
-
-            if (base.Text.Length == 0)
-            {
-                left = commandToken + base.Text;
-                right = "";
-            }
-            else
-            {
-                left = commandToken + base.Text.Substring(0, base.CursorPosition);
-                right = base.Text.Substring(base.CursorPosition, base.Text.Length - base.CursorPosition);
-            }
-
-            displayText = left + right;
-            displayTextCursor = left + cursorToken + right;
-            displayTextCursorNoToken = left + " " + right;
+            var beforeCursor = commandToken + Text[..CursorPosition];
+            var afterCursor = Text[CursorPosition..];
+            DisplayText = beforeCursor + afterCursor;
+            displayTextCursor = beforeCursor + cursorToken + afterCursor;
+            displayTextCursorNoToken = beforeCursor + " " + afterCursor;
         }
     }
 }

@@ -1,25 +1,21 @@
+using Microsoft.Xna.Framework;
+using MonoKle.Asset.Effect;
+using MonoKle.Asset.Font;
+using MonoKle.Asset.Texture;
+using MonoKle.Console;
+using MonoKle.Graphics;
+using MonoKle.Input.Gamepad;
+using MonoKle.Input.Keyboard;
+using MonoKle.Input.Mouse;
+using MonoKle.Logging;
+using MonoKle.Scripting;
+using MonoKle.State;
+using System;
+using System.IO;
+using System.Reflection;
+
 namespace MonoKle.Engine
 {
-    using Asset.Effect;
-    using Asset.Font;
-    using Asset.Texture;
-    using Console;
-    using Graphics;
-    using Input.Gamepad;
-    using Input.Keyboard;
-    using Input.Mouse;
-    using Logging;
-    using Microsoft.Xna.Framework;
-    using MonoKle.Console;
-    using Scripting;
-    using State;
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-    using System.Text;
-
     /// <summary>
     /// Backend for the MonoKle engine. Provides global access to all MonoKle systems.
     /// </summary>
@@ -30,7 +26,7 @@ namespace MonoKle.Engine
         private static bool initializing;
         private static Keyboard keyboard;
         private static Mouse mouse;
-        private static MonoKleSettings settings = new MonoKleSettings();
+        private static readonly MonoKleSettings settings = new MonoKleSettings();
         private static StateSystem stateSystem;
 
         /// <summary>
@@ -208,7 +204,7 @@ namespace MonoKle.Engine
             MBackend.EffectStorage = new EffectStorage(GraphicsManager.GraphicsDevice);
             MBackend.InitializeConsole();
 
-            MBackend.RegisterConsoleCommands();
+            Console.CommandBroker.RegisterCallingAssembly();
             MBackend.BindSettings();
 
             mouse.VirtualRegion = new MRectangleInt(GraphicsManager.Resolution);
@@ -280,188 +276,13 @@ namespace MonoKle.Engine
             MBackend.Variables.Variables.BindProperties(MBackend.Mouse);
         }
 
-        private static void CommandExit() => MBackend.GameInstance.Exit();
-
-        private static void CommandGet(string[] arguments)
-        {
-            object value = MBackend.Variables.Variables.GetValue(arguments[0]);
-            if (value != null)
-            {
-                Console.WriteLine(value.ToString());
-            }
-            else
-            {
-                Console.WriteLine("No such variable exist", Console.ErrorTextColour);
-            }
-        }
-
-        private static ICollection<string> CommandGetRemSuggestion(int index) => MBackend.Variables.Variables.Identifiers;
-
-        private static ICollection<string> CommandScriptSuggestion(int index) => MBackend.ScriptEnvironment.ScriptNames;
-
-        private static void CommandListVariables()
-        {
-            var identifiers = MBackend.Variables.Variables.Identifiers.ToList();
-            identifiers.Sort();
-            foreach (string s in identifiers)
-            {
-                MBackend.Console.WriteLine("\t" + s, MBackend.Variables.Variables.CanSet(s) ? MBackend.Console.DefaultTextColour : MBackend.Console.DisabledTextColour);
-            }
-        }
-
-        private static void CommandRemove(string[] args)
-        {
-            if (MBackend.Variables.Variables.Remove(args[0]) == false)
-            {
-                MBackend.Console.WriteLine("Could not remove variable since it does not exist.", MBackend.Console.ErrorTextColour);
-            }
-        }
-
-        private static void CommandCompile(string[] args)
-        {
-            if (MBackend.ScriptEnvironment.Compile(args[0]))
-            {
-                IScript script = MBackend.ScriptEnvironment[args[0]];
-                if (script.Errors.Count == 0)
-                {
-                    Console.WriteLine($"Script '{script.Name}' compiled.", Console.CommandTextColour);
-                }
-                else
-                {
-                    Console.WriteLine($"Script '{script.Name}' compiled with {script.Errors.Count} errors:\n  {string.Join("\n  ", script.Errors)}", Console.ErrorTextColour);
-                }
-            }
-            else
-            {
-                Console.WriteLine($"Provided script '{args[0]}' does not exist.", Console.ErrorTextColour);
-            }
-        }
-
-        private static void CommandCompileOutdated()
-        {
-            int amount = MBackend.ScriptEnvironment.CompileOutdated();
-            Console.WriteLine($"Compiled {amount} scripts.", Console.CommandTextColour);
-        }
-
-        private static void CommandCompileAll()
-        {
-            int amount = MBackend.ScriptEnvironment.CompileAll();
-            Console.WriteLine($"Compiled {amount} scripts.", Console.CommandTextColour);
-        }
-
-        private static void CommandRun(string[] args)
-        {
-            if (MBackend.ScriptEnvironment.Contains(args[0]))
-            {
-                IScript script = MBackend.ScriptEnvironment[args[0]];
-                if (script.CanExecute)
-                {
-                    var sc = new StringConverter();
-                    object[] arguments = args.Skip(1).Select(a => sc.ToAny(a)).ToArray();
-                    ScriptExecution result = script.Execute(arguments);
-
-                    if (result.Success)
-                    {
-                        if (script.ReturnsValue)
-                        {
-                            Console.WriteLine($"Execution result: {result.Result}", Console.CommandTextColour);
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine($"Error executing script '{script.Name}': {result.Message}", Console.ErrorTextColour);
-                    }
-                }
-                else
-                {
-                    Console.WriteLine($"Can not execute script '{script.Name}'.", Console.ErrorTextColour);
-                }
-            }
-            else
-            {
-                Console.WriteLine($"Provided script '{args[0]}' does not exist.", Console.ErrorTextColour);
-            }
-        }
-
-        private static void CommandListScripts()
-        {
-            var scripts = MBackend.ScriptEnvironment.ScriptNames.Select(s => MBackend.ScriptEnvironment[s]).OrderBy(s => s.Name);
-            foreach (var s in scripts)
-            {
-                var sb = new StringBuilder("\t");
-                if (s.ReturnsValue)
-                {
-                    sb.Append(s.ReturnType.Name);
-                    sb.Append(" ");
-                }
-                sb.Append(s.Name);
-
-                if (s.IsOutdated)
-                {
-                    sb.Append(" -outdated-");
-                }
-                if (s.Errors.Count != 0)
-                {
-                    sb.Append($" -{s.Errors.Count} errors-");
-                }
-
-                Color c = MBackend.Console.DefaultTextColour;
-                if (s.IsOutdated)
-                    c = MBackend.Console.WarningTextColour;
-                if (s.Errors.Count != 0)
-                    c = MBackend.Console.ErrorTextColour;
-
-                MBackend.Console.WriteLine(sb.ToString(), c);
-            }
-        }
-
-        private static void CommandSource(string[] args)
-        {
-            if (MBackend.ScriptEnvironment.Contains(args[0]))
-            {
-                IScript script = MBackend.ScriptEnvironment[args[0]];
-                Console.WriteLine($"Printing source for '{script.Name}' from '{script.Source.Date}': ", Console.CommandTextColour);
-                Console.WriteLine("> " + script.Source.Code.Replace("\n", "\n> "));
-            }
-            else
-            {
-                Console.WriteLine($"Provided script '{args[0]}' does not exist.", Console.ErrorTextColour);
-            }
-        }
-
-        private static void CommandSet(string[] arguments)
-        {
-            if (MBackend.Variables.Variables.Contains(arguments[0]) && MBackend.Variables.Variables.CanSet(arguments[0]) == false)
-            {
-                Console.WriteLine("Can not set variable since it is read-only", Console.ErrorTextColour);
-            }
-            else if (MBackend.Variables.VariablePopulator.LoadItem(arguments[0], arguments[1]) == false)
-            {
-                Console.WriteLine("Variable assignment failed", Console.ErrorTextColour);
-            }
-        }
-
-        private static ICollection<string> CommandSetSuggestion(int index)
-        {
-            if (index == 0)
-            {
-                return MBackend.Variables.Variables.Identifiers;
-            }
-            return new string[0];
-        }
-
-        private static void CommandVersion()
-        {
-            MBackend.console.WriteLine("       MonoKle Version:\t" + Assembly.GetAssembly(typeof(Timer)).GetName().Version);
-            MBackend.console.WriteLine("MonoKle Engine Version:\t" + Assembly.GetAssembly(typeof(MBackend)).GetName().Version);
-        }
-
         private static void InitializeConsole()
         {
             MBackend.console = new GameConsole(new Rectangle(0, 0, GraphicsManager.Resolution.X, GraphicsManager.Resolution.Y / 3),
                 MBackend.GraphicsManager.GraphicsDevice,
                 MBackend.keyboard,
                 MBackend.TextureStorage.White,
+                MBackend.FontStorage.DefaultValue,
                 MBackend.Logger);
             MBackend.Console.ToggleKey = Microsoft.Xna.Framework.Input.Keys.F1;
             MBackend.Console.TextFont = MBackend.FontStorage.DefaultValue;
@@ -470,11 +291,9 @@ namespace MonoKle.Engine
         private static void InitializeFontStorage()
         {
             MBackend.FontStorage = new FontStorage(GraphicsManager.GraphicsDevice);
-            using (var ms = new MemoryStream(Resources.FontResources.DefaultFont))
-            {
-                MBackend.FontStorage.LoadStream(ms, "default");
-                MBackend.FontStorage.DefaultValue = MBackend.FontStorage.GetAsset("default");
-            }
+            using var ms = new MemoryStream(Resources.FontResources.DefaultFont);
+            MBackend.FontStorage.LoadStream(ms, "default");
+            MBackend.FontStorage.DefaultValue = MBackend.FontStorage.GetAsset("default");
         }
 
         private static void InitializeTextureStorage() => MBackend.TextureStorage = new TextureStorage(GraphicsManager.GraphicsDevice);
@@ -483,43 +302,6 @@ namespace MonoKle.Engine
         {
             MBackend.Variables = new VariableStorage(MBackend.Logger);
             MBackend.Variables.LoadDefaultVariables();
-        }
-
-        private static void RegisterConsoleCommands()
-        {
-            MBackend.Console.CommandBroker.Register(new ArgumentlessConsoleCommand("exit", "Terminates the application.", MBackend.CommandExit));
-            MBackend.Console.CommandBroker.Register(new ArgumentlessConsoleCommand("version", "Prints the current MonoKle version.", MBackend.CommandVersion));
-            MBackend.Console.CommandBroker.Register(new ArgumentlessConsoleCommand("vars", "Lists the currently active variables.", MBackend.CommandListVariables));
-            MBackend.Console.CommandBroker.Register(new ArgumentlessConsoleCommand("scripts", "Lists the known scripts.", MBackend.CommandListScripts));
-            MBackend.Console.CommandBroker.Register(
-                new ConsoleCommand("get", "Prints the value of the provided variable.",
-                    new CommandArguments(new string[] { "variable" }, new string[] { "The variable to print" }),
-                    MBackend.CommandGet, null, MBackend.CommandGetRemSuggestion)
-                );
-            MBackend.Console.CommandBroker.Register(
-                new ConsoleCommand("set", "Assigns the provided variable with the given value.",
-                    new CommandArguments(new string[] { "variable", "value" }, new string[] { "The variable to print", "The value to assign" }),
-                    MBackend.CommandSet, null, MBackend.CommandSetSuggestion)
-                );
-            MBackend.Console.CommandBroker.Register(
-                new ConsoleCommand("rem", "Removes the provided variable.",
-                    new CommandArguments(new string[] { "variable" }, new string[] { "The variable to remove" }),
-                    MBackend.CommandRemove, null, MBackend.CommandGetRemSuggestion)
-                );
-            MBackend.Console.CommandBroker.Register(
-                new ConsoleCommand("run", "Runs the specified script.",
-                new CommandArguments(new Dictionary<string, string> { { "name", "Name of the script to run." } }),
-                MBackend.CommandRun, null, MBackend.CommandScriptSuggestion));
-
-            MBackend.Console.CommandBroker.Register(
-                new ConsoleCommand("compile", "Compiles the specified script. If no script is provided, all outdated will be compiled.",
-                new CommandArguments(new Dictionary<string, string> { { "name", "Name of the script to compile." } }),
-                MBackend.CommandCompile, MBackend.CommandCompileOutdated, MBackend.CommandScriptSuggestion));
-
-            MBackend.Console.CommandBroker.Register(
-                new ConsoleCommand("source", "Prints the source for the given script.",
-                new CommandArguments(new Dictionary<string, string> { { "name", "Name of the script to print source for." } }),
-                MBackend.CommandSource, null, MBackend.CommandScriptSuggestion));
         }
 
         private static void ResolutionChanged(object sender, ResolutionChangedEventArgs e)

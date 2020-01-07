@@ -1,5 +1,6 @@
 ﻿namespace MonoKle.Scripting
 {
+    using Microsoft.CSharp;
     using System;
     using System.CodeDom.Compiler;
     using System.Collections.Generic;

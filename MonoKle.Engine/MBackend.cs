@@ -10,6 +10,7 @@ namespace MonoKle.Engine
     using Input.Mouse;
     using Logging;
     using Microsoft.Xna.Framework;
+    using MonoKle.Console;
     using Scripting;
     using State;
     using System;

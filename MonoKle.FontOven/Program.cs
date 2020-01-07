@@ -1,8 +1,8 @@
-﻿namespace MonoKle.FontOven
-{
-    using Asset.Font.Baking;
-    using System;
+﻿using System;
+using MonoKle.Asset.Font.Baking;
 
+namespace MonoKle.FontOven
+{
     internal class Program
     {
         private static void Main(string[] args)
@@ -23,20 +23,21 @@
             }
 
             var baker = new FontBaker();
+
             if (baker.Bake(input, output))
             {
-                Console.WriteLine("Success!");
+                System.Console.WriteLine("Success!");
             }
             else
             {
-                Console.WriteLine("Error: " + baker.ErrorMessage);
+                System.Console.WriteLine("Error: " + baker.ErrorMessage);
                 if (detailed)
                 {
-                    Console.WriteLine("Details: " + baker.DetailedError);
+                    System.Console.WriteLine("Details: " + baker.DetailedError);
                 }
             }
         }
 
-        private static void DisplayUsage() => Console.WriteLine("Usage: fontoven <inputPath> <outputPath> [--detailed]");
+        private static void DisplayUsage() => System.Console.WriteLine("Usage: fontoven <inputPath> <outputPath> [--detailed]");
     }
 }

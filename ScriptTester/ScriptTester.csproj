@@ -79,12 +79,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\MonoKle\MonoKle.csproj">
-      <Project>{34afe7b2-73e7-4417-b677-3ccd65f2c3fd}</Project>
-      <Name>MonoKle</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

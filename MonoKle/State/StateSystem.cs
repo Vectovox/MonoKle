@@ -1,9 +1,9 @@
+using MonoKle.Logging;
+using System;
+using System.Collections.Generic;
+
 namespace MonoKle.State
 {
-    using MonoKle.Logging;
-    using System;
-    using System.Collections.Generic;
-
     /// <summary>
     /// Class maintaining game states.
     /// </summary>

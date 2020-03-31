@@ -1,7 +1,7 @@
-﻿namespace MonoKle.Input.Keyboard
-{
-    using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework.Input;
 
+namespace MonoKle.Input.Keyboard
+{
     /// <summary>
     /// Interface for converting from keyboard key to its character.
     /// </summary>

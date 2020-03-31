@@ -1,9 +1,9 @@
+using MonoKle.Attributes;
+using Microsoft.Xna.Framework.Input;
+using System;
+
 namespace MonoKle.Input.Mouse
 {
-    using Attributes;
-    using Microsoft.Xna.Framework.Input;
-    using System;
-
     /// <summary>
     /// Class representing the current state of a mouse.
     /// </summary>

@@ -1,9 +1,9 @@
-﻿namespace MonoKle.Variable
-{
-    using Attributes;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System;
+﻿using MonoKle.Attributes;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
+namespace MonoKle.Variable
+{
     [TestClass]
     public class VariableSystemTest
     {

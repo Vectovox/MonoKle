@@ -1,11 +1,11 @@
-﻿namespace MonoKle.Scripting
-{
-    using IO;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection;
+﻿using MonoKle.IO;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
+namespace MonoKle.Scripting
+{
     /// <summary>
     /// Class keeping track of scripts.
     /// </summary>

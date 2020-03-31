@@ -1,7 +1,7 @@
+using MonoKle.Logging;
+
 namespace MonoKle
 {
-    using MonoKle.Logging;
-
     /// <summary>
     /// Interface for classes utilizing a logger.
     /// </summary>

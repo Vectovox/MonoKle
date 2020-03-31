@@ -1,7 +1,7 @@
-﻿namespace MonoKle.Variable
-{
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+namespace MonoKle.Variable
+{
     [TestClass]
     public class VariablePopulatorTest
     {

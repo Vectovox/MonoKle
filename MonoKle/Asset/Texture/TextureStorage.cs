@@ -1,12 +1,12 @@
-﻿namespace MonoKle.Asset.Texture
-{
-    using IO;
-    using Microsoft.Xna.Framework;
-    using Microsoft.Xna.Framework.Graphics;
-    using MonoKle.Graphics;
-    using System;
-    using System.IO;
+﻿using MonoKle.IO;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using MonoKle.Graphics;
+using System;
+using System.IO;
 
+namespace MonoKle.Asset.Texture
+{
     /// <summary>
     /// Loads and maintains texture assets.
     /// </summary>

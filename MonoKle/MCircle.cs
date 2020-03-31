@@ -1,7 +1,7 @@
+using System;
+
 namespace MonoKle
 {
-    using System;
-
     /// <summary>
     /// Immutable, serializable, and normalized (positive radius) circle type.
     /// </summary>

@@ -1,7 +1,7 @@
+using System;
+
 namespace MonoKle.Input.Gamepad
 {
-    using System;
-
     /// <summary>
     /// Class providing methods to get gamepads.
     /// </summary>

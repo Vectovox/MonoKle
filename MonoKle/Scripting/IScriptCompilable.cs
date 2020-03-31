@@ -1,7 +1,7 @@
-﻿namespace MonoKle.Scripting
-{
-    using System;
+﻿using System;
 
+namespace MonoKle.Scripting
+{
     /// <summary>
     /// Compilable script interface.
     /// </summary>

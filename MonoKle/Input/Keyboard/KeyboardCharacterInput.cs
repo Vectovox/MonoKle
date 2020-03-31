@@ -1,8 +1,8 @@
-﻿namespace MonoKle.Input.Keyboard
-{
-    using Microsoft.Xna.Framework.Input;
-    using System;
+﻿using Microsoft.Xna.Framework.Input;
+using System;
 
+namespace MonoKle.Input.Keyboard
+{
     /// <summary>
     /// Class querying for characters via keyboard input.
     /// </summary>

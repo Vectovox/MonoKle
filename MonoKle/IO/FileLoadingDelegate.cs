@@ -1,7 +1,7 @@
-﻿namespace MonoKle.IO
-{
-    using System.IO;
+﻿using System.IO;
 
+namespace MonoKle.IO
+{
     /// <summary>
     /// Delegate for loading a file.
     /// </summary>

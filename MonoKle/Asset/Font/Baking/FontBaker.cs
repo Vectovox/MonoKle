@@ -1,12 +1,12 @@
-﻿namespace MonoKle.Asset.Font.Baking
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Drawing;
-    using System.Drawing.Imaging;
-    using System.IO;
-    using System.Xml.Serialization;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Xml.Serialization;
 
+namespace MonoKle.Asset.Font.Baking
+{
     public class FontBaker
     {
         public string ErrorMessage { get; private set; }

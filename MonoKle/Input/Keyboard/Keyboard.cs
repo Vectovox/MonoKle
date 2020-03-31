@@ -1,10 +1,10 @@
+using Microsoft.Xna.Framework.Input;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace MonoKle.Input.Keyboard
 {
-    using Microsoft.Xna.Framework.Input;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
     /// <summary>
     /// Class providing polling-based keyboard.
     /// </summary>

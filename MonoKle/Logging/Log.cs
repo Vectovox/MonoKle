@@ -1,8 +1,8 @@
-﻿namespace MonoKle.Logging
-{
-    using System;
-    using System.Text;
+﻿using System;
+using System.Text;
 
+namespace MonoKle.Logging
+{
     /// <summary>
     /// An immutable class containing a log message and relevant accompanying information.
     /// </summary>

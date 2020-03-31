@@ -6,7 +6,6 @@ using System.Text.RegularExpressions;
 
 namespace MonoKle
 {
-
     /// <summary>
     /// Two-dimensional, immutable, serializable, integer-based point.
     /// </summary>

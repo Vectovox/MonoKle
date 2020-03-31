@@ -1,8 +1,8 @@
+using Microsoft.Xna.Framework;
+using System;
+
 namespace MonoKle
 {
-    using Microsoft.Xna.Framework;
-    using System;
-
     /// <summary>
     /// Serializable class representing a 2D environment camera providing transformation capabilities.
     /// </summary>

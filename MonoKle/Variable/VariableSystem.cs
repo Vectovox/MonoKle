@@ -1,11 +1,11 @@
-﻿namespace MonoKle.Variable
-{
-    using Attributes;
-    using Logging;
-    using System;
-    using System.Collections.Generic;
-    using System.Reflection;
+﻿using MonoKle.Attributes;
+using MonoKle.Logging;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
 
+namespace MonoKle.Variable
+{
     /// <summary>
     /// Class binding and storing variables.
     /// </summary>

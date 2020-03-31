@@ -1,8 +1,8 @@
-﻿namespace MonoKle.Variable
-{
-    using IO;
-    using System.IO;
+﻿using MonoKle.IO;
+using System.IO;
 
+namespace MonoKle.Variable
+{
     /// <summary>
     /// Class for loading variables.
     /// </summary>

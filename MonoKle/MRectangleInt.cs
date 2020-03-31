@@ -4,7 +4,6 @@ using System.Text;
 
 namespace MonoKle
 {
-
     /// <summary>
     /// Struct for storing an immutable, serializable, normalized (non-negative width and height), integer-based area.
     /// </summary>

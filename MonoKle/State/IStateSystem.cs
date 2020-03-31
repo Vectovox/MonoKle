@@ -1,7 +1,7 @@
-﻿namespace MonoKle.State
-{
-    using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
+namespace MonoKle.State
+{
     /// <summary>
     /// Interface for maintaining game states.
     /// </summary>

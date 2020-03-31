@@ -1,9 +1,9 @@
-﻿namespace MonoKle
-{
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Microsoft.Xna.Framework;
-    using System.Collections.Generic;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 
+namespace MonoKle
+{
     [TestClass]
     public class GridTest
     {

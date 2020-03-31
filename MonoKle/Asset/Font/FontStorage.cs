@@ -1,13 +1,13 @@
+using MonoKle.Asset.Font.Baking;
+using MonoKle.IO;
+using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.IO;
+using System.Linq;
+using System.Xml.Serialization;
+
 namespace MonoKle.Asset.Font
 {
-    using Baking;
-    using IO;
-    using Microsoft.Xna.Framework.Graphics;
-    using System;
-    using System.IO;
-    using System.Linq;
-    using System.Xml.Serialization;
-
     /// <summary>
     /// Manages drawable fonts.
     /// </summary>

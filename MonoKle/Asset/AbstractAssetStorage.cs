@@ -1,10 +1,10 @@
-﻿namespace MonoKle.Asset
-{
-    using MonoKle.IO;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
+﻿using MonoKle.IO;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
+namespace MonoKle.Asset
+{
     /// <summary>
     /// Abstract class for loading, storing, and retrieving MonoKle assets.
     /// </summary>

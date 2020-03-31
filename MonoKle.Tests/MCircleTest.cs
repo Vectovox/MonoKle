@@ -1,8 +1,8 @@
-﻿namespace MonoKle
-{
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
+namespace MonoKle
+{
     [TestClass]
     public class MCircleTest
     {

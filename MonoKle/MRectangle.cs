@@ -3,7 +3,6 @@ using System.Text;
 
 namespace MonoKle
 {
-
     /// <summary>
     /// Struct for storing an immutable, serializable, normalized (positive width and height), floating point precision area.
     /// </summary>

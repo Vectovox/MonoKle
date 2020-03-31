@@ -1,9 +1,9 @@
-﻿namespace MonoKle.Graphics
-{
-    using Microsoft.Xna.Framework;
-    using Microsoft.Xna.Framework.Graphics;
-    using System;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
 
+namespace MonoKle.Graphics
+{
     /// <summary>
     /// Extensions for <see cref="Texture2D"/>.
     /// </summary>

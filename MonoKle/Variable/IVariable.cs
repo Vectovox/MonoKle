@@ -1,7 +1,7 @@
-﻿namespace MonoKle.Variable
-{
-    using System;
+﻿using System;
 
+namespace MonoKle.Variable
+{
     /// <summary>
     /// Interface for an assignable variable.
     /// </summary>

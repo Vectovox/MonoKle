@@ -1,8 +1,8 @@
-﻿namespace WindowsDemo
-{
-    using MonoKle.Engine;
-    using System;
+﻿using MonoKle.Engine;
+using System;
 
+namespace WindowsDemo
+{
     /// <summary>
     /// The main class.
     /// </summary>

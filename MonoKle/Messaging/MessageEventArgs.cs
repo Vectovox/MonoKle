@@ -1,7 +1,7 @@
-﻿namespace MonoKle.Messaging
-{
-    using System;
+﻿using System;
 
+namespace MonoKle.Messaging
+{
     /// <summary>
     /// Event argument for message events.
     /// </summary>

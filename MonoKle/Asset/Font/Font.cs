@@ -1,10 +1,10 @@
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace MonoKle.Asset.Font
 {
-    using Microsoft.Xna.Framework;
-    using Microsoft.Xna.Framework.Graphics;
-    using System.Collections.Generic;
-    using System.Linq;
-
     /// <summary>
     /// Font for drawing strings.
     /// </summary>

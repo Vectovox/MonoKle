@@ -1,7 +1,7 @@
-﻿namespace MonoKle.Input.Keyboard
-{
-    using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework.Input;
 
+namespace MonoKle.Input.Keyboard
+{
     /// <summary>
     /// Class for making strings from keyboard input using common text editor behavior.
     /// </summary>

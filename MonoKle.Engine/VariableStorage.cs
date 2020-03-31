@@ -1,8 +1,8 @@
-﻿namespace MonoKle.Engine
-{
-    using Logging;
-    using Variable;
+﻿using MonoKle.Logging;
+using MonoKle.Variable;
 
+namespace MonoKle.Engine
+{
     /// <summary>
     /// Class containing variable systems.
     /// </summary>

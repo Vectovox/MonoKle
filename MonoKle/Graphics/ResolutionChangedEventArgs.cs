@@ -1,7 +1,7 @@
-﻿namespace MonoKle.Graphics
-{
-    using System;
+﻿using System;
 
+namespace MonoKle.Graphics
+{
     /// <summary>
     /// Event arguments for changed screen size events.
     /// </summary>

@@ -1,8 +1,8 @@
-﻿namespace MonoKle.Variable
-{
-    using System;
-    using System.Reflection;
+﻿using System;
+using System.Reflection;
 
+namespace MonoKle.Variable
+{
     /// <summary>
     /// Class for a property-based variable.
     /// </summary>

@@ -1,7 +1,7 @@
-﻿namespace MonoKle.IO
-{
-    using System.IO;
+﻿using System.IO;
 
+namespace MonoKle.IO
+{
     /// <summary>
     /// Abstract implementation of <see cref="IFileLoader"/>, providing a template pattern method for file loading operations.
     /// </summary>

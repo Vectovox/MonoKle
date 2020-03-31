@@ -1,7 +1,7 @@
-﻿namespace MonoKle.Attributes
-{
-    using System;
+﻿using System;
 
+namespace MonoKle.Attributes
+{
     /// <summary>
     /// Attribute class for declaring properties that should be bound through property variables.
     /// </summary>

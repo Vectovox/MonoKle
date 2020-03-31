@@ -1,7 +1,7 @@
-﻿namespace MonoKle.Logging
-{
-    using System;
+﻿using System;
 
+namespace MonoKle.Logging
+{
     /// <summary>
     /// Event arguments for when a log was added.
     /// </summary>

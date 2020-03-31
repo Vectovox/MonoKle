@@ -1,7 +1,7 @@
-﻿namespace MonoKle.Input.Gamepad
-{
-    using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
+namespace MonoKle.Input.Gamepad
+{
     /// <summary>
     /// Interface providing methods to get gamepads.
     /// </summary>

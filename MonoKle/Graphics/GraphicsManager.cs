@@ -1,9 +1,9 @@
-﻿namespace MonoKle.Graphics
-{
-    using Attributes;
-    using Microsoft.Xna.Framework;
-    using Microsoft.Xna.Framework.Graphics;
+﻿using MonoKle.Attributes;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
+namespace MonoKle.Graphics
+{
     /// <summary>
     /// Manages graphics.
     /// </summary>

@@ -7,7 +7,6 @@ using System.Runtime.CompilerServices;
 
 namespace MonoKle
 {
-
     /// <summary>
     /// Class representing a serializable grid with accompanying operations.
     /// </summary>

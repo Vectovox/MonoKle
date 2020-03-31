@@ -1,7 +1,7 @@
-﻿namespace MonoKle.Graphics
-{
-    using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
+namespace MonoKle.Graphics
+{
     /// <summary>
     /// Defines an interface for a 3D primitive drawer.
     /// </summary>

@@ -1,10 +1,10 @@
+using MonoKle.Attributes;
+using System;
+using System.Collections.Generic;
+using System.IO;
+
 namespace MonoKle.Logging
 {
-    using Attributes;
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-
     /// <summary>
     /// Class for handling logs and triggering log events.
     /// </summary>

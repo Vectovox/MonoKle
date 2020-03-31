@@ -1,8 +1,8 @@
-﻿namespace MonoKle.Input
-{
-    using Microsoft.Xna.Framework;
-    using System.Text;
+﻿using Microsoft.Xna.Framework;
+using System.Text;
 
+namespace MonoKle.Input
+{
     /// <summary>
     /// Abstract implementation of <see cref="ITextInput"/>.
     /// </summary>

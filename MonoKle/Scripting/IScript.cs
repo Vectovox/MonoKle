@@ -1,8 +1,8 @@
-﻿namespace MonoKle.Scripting
-{
-    using System;
-    using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
+namespace MonoKle.Scripting
+{
     /// <summary>
     /// Interface defining methods for a script.
     /// </summary>

@@ -1,7 +1,7 @@
-﻿namespace MonoKle.Engine
-{
-    using Attributes;
+﻿using MonoKle.Attributes;
 
+namespace MonoKle.Engine
+{
     public class MonoKleSettings
     {
         /// <summary>

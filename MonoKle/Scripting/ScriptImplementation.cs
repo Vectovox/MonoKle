@@ -1,8 +1,8 @@
-﻿namespace MonoKle.Scripting
-{
-    using System;
-    using System.Reflection;
+﻿using System;
+using System.Reflection;
 
+namespace MonoKle.Scripting
+{
     /// <summary>
     /// Implementation class of an executable script.
     /// </summary>

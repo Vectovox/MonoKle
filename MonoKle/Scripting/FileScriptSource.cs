@@ -1,9 +1,9 @@
-﻿namespace MonoKle.Scripting
-{
-    using IO;
-    using System;
-    using System.IO;
+﻿using MonoKle.IO;
+using System;
+using System.IO;
 
+namespace MonoKle.Scripting
+{
     /// <summary>
     /// Script source from file.
     /// </summary>

@@ -1,8 +1,8 @@
-﻿namespace MonoKle.Graphics
-{
-    using Microsoft.Xna.Framework;
-    using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
+namespace MonoKle.Graphics
+{
     /// <summary>
     /// Class for drawing primitives in 3D space.
     /// </summary>

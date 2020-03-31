@@ -1,7 +1,7 @@
-﻿namespace MonoKle.Engine
-{
-    using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
+namespace MonoKle.Engine
+{
     /// <summary>
     /// Main game class for MonoKle.
     /// </summary>

@@ -1,9 +1,9 @@
-﻿namespace MonoKle.Asset.Font.Baking
-{
-    using System.Drawing;
-    using System.Drawing.Imaging;
-    using System.IO;
+﻿using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 
+namespace MonoKle.Asset.Font.Baking
+{
     public class ImageSerializer
     {
         public ImageFormat ImageFormat { get; set; }

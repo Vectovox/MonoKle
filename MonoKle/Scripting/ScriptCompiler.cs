@@ -1,13 +1,13 @@
-﻿namespace MonoKle.Scripting
-{
-    using Microsoft.CSharp;
-    using System;
-    using System.CodeDom.Compiler;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection;
-    using System.Text;
+﻿using Microsoft.CSharp;
+using System;
+using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
 
+namespace MonoKle.Scripting
+{
     /// <summary>
     /// Compiler for scripts.
     /// </summary>

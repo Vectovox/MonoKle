@@ -216,7 +216,6 @@ namespace WindowsDemo
             MBackend.TextureStorage.LoadFileId("Assets\\Textures\\TestBox.png", "testbox", "mygroup");
             MBackend.Console.WriteLine(MBackend.FontStorage.LoadFiles("Assets\\Fonts", true).Successes + " fonts loaded.");
             MBackend.Console.WriteLine(MBackend.EffectStorage.LoadFiles("Assets\\Effects", true).Successes + " effects loaded.");
-            MBackend.Console.WriteLine(MBackend.ScriptEnvironment.LoadFiles("Scripts", true).Successes + " scripts loaded.");
             sb = new SpriteBatch(MBackend.GraphicsManager.GraphicsDevice);
             timer.Reset();
             primitive2D = new PrimitiveBatch2D(MBackend.GraphicsManager.GraphicsDevice);

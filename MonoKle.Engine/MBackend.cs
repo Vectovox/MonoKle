@@ -8,7 +8,6 @@ using MonoKle.Input.Gamepad;
 using MonoKle.Input.Keyboard;
 using MonoKle.Input.Mouse;
 using MonoKle.Logging;
-using MonoKle.Scripting;
 using MonoKle.State;
 using System;
 using System.IO;
@@ -103,15 +102,6 @@ namespace MonoKle.Engine
         public static IMouse Mouse => MBackend.mouse;
 
         /// <summary>
-        /// Gets the script environment. Used for scripting.
-        /// </summary>
-        public static ScriptEnvironment ScriptEnvironment
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
         /// Gets the state system, which keeps track of the states and switches between them.
         /// </summary>
         public static IStateSystem StateSystem => MBackend.stateSystem;
@@ -186,8 +176,6 @@ namespace MonoKle.Engine
             MBackend.Logger = Logger.Global;
             MBackend.InitializeVariables();
 
-            MBackend.ScriptEnvironment = new ScriptEnvironment();
-            MBackend.ScriptEnvironment.ReferencedAssemblies.Add(typeof(MBackend).Assembly);
             MBackend.GameInstance = new MGame();
             MBackend.GraphicsManager = new GraphicsManager(new GraphicsDeviceManager(MBackend.GameInstance));
             MBackend.GraphicsManager.ResolutionChanged += ResolutionChanged;

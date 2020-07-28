@@ -11,7 +11,7 @@ using MonoKle.Messaging;
 using MonoKle.State;
 using System;
 
-namespace WindowsDemo
+namespace Demo.Domain
 {
     public class DemoStateOne : GameState
     {

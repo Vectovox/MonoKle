@@ -5,7 +5,7 @@ using MonoKle.Graphics;
 using MonoKle.State;
 using System;
 
-namespace WindowsDemo
+namespace Demo.Domain
 {
     public class DemoStateTwo : GameState
     {

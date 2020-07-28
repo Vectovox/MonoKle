@@ -1,7 +1,8 @@
-﻿using MonoKle.Engine;
+﻿using Demo.Domain;
+using MonoKle.Engine;
 using System;
 
-namespace WindowsDemo
+namespace Demo.Windows
 {
     /// <summary>
     /// The main class.
@@ -15,9 +16,7 @@ namespace WindowsDemo
         private static void Main()
         {
             using var game = MonoKleGame.Initialize();
-            MonoKleGame.StateSystem.AddState(new DemoStateOne());
-            MonoKleGame.StateSystem.AddState(new DemoStateTwo());
-            MonoKleGame.StateSystem.SwitchState("stateOne", null);
+            Boilerplate.ConfigureStates();
             game.Run();
         }
     }

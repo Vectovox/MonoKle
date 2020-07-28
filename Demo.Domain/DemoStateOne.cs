@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoKle;
-using MonoKle.Asset.Font;
+using MonoKle.Asset;
 using MonoKle.Engine;
 using MonoKle.Graphics;
 using MonoKle.Input.Keyboard;
@@ -38,9 +38,9 @@ namespace Demo.Domain
 
             var testBoxRect = new MRectangleInt(250, 250, 64, 64);
             bool testBoxMouseWithin = testBoxRect.Contains(camera.TransformInv(MonoKleGame.Mouse.Position.Value.ToMVector2()).ToMPoint2());
-            sb.Draw(MonoKleGame.TextureStorage.GetAsset("assets\\textures\\testbox.png"), testBoxRect, testBoxMouseWithin ? Color.Red : Color.White);
+            sb.Draw(MonoKleGame.TextureStorage.GetAsset("textures/testbox.png"), testBoxRect, testBoxMouseWithin ? Color.Red : Color.White);
 
-            Font font = MonoKleGame.FontStorage.GetAsset("Assets\\Fonts\\testfont.mfnt");
+            Font font = MonoKleGame.FontStorage.GetAsset("Fonts/testfont.mfnt");
 
             // Test timer
             sb.DrawString(font, "Timer: " + timer.TimeLeft + " (" + timer.Duration + ") Done? " + timer.IsDone,
@@ -212,10 +212,9 @@ namespace Demo.Domain
         protected override void Activated(StateSwitchData data)
         {
             MonoKleGame.Console.WriteLine("State one activated! Message: " + (string)data.Data);
-            MonoKleGame.Console.WriteLine(MonoKleGame.TextureStorage.LoadFilesGroup("Assets\\Textures", true, "agroup").Successes + " textures loaded.");
-            MonoKleGame.TextureStorage.LoadFileId("Assets\\Textures\\TestBox.png", "testbox", "mygroup");
-            MonoKleGame.Console.WriteLine(MonoKleGame.FontStorage.LoadFiles("Assets\\Fonts", true).Successes + " fonts loaded.");
-            MonoKleGame.Console.WriteLine(MonoKleGame.EffectStorage.LoadFiles("Assets\\Effects", true).Successes + " effects loaded.");
+            MonoKleGame.Console.WriteLine(MonoKleGame.TextureStorage.LoadFromManifest() + " textures loaded.");
+            MonoKleGame.Console.WriteLine(MonoKleGame.FontStorage.LoadFromManifest() + " fonts loaded.");
+            MonoKleGame.Console.WriteLine(MonoKleGame.EffectStorage.LoadFromManifest() + " effects loaded.");
             sb = new SpriteBatch(MonoKleGame.GraphicsManager.GraphicsDevice);
             timer.Reset();
             primitive2D = new PrimitiveBatch2D(MonoKleGame.GraphicsManager.GraphicsDevice);

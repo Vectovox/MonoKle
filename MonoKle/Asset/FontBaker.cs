@@ -4,8 +4,9 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Xml.Serialization;
+using MonoKle.Utilities;
 
-namespace MonoKle.Asset.Font.Baking
+namespace MonoKle.Asset
 {
     public class FontBaker
     {

@@ -2,8 +2,11 @@
 using System.Drawing.Imaging;
 using System.IO;
 
-namespace MonoKle.Asset.Font.Baking
+namespace MonoKle.Utilities
 {
+    /// <summary>
+    /// Serializes <see cref="Image"/> instances to byte arrays.
+    /// </summary>
     public class ImageSerializer
     {
         public ImageFormat ImageFormat { get; set; }
@@ -15,19 +18,15 @@ namespace MonoKle.Asset.Font.Baking
 
         public byte[] ImageToBytes(Image image)
         {
-            using (var ms = new MemoryStream())
-            {
-                image.Save(ms, ImageFormat);
-                return ms.ToArray();
-            }
+            using var ms = new MemoryStream();
+            image.Save(ms, ImageFormat);
+            return ms.ToArray();
         }
 
         public Image BytesToImage(byte[] bytes)
         {
-            using (var ms = new MemoryStream(bytes))
-            {
-                return Image.FromStream(ms);
-            }
+            using var ms = new MemoryStream(bytes);
+            return Image.FromStream(ms);
         }
     }
 }

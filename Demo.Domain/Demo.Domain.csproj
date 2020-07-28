@@ -12,6 +12,9 @@
     <ProjectReference Include="..\MonoKle\MonoKle.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="Assets\assets.manifest">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Assets\Fonts\testfont.mfnt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

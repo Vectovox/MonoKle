@@ -1,19 +1,17 @@
-using MonoKle.Asset.Font.Baking;
-using MonoKle.IO;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
 
-namespace MonoKle.Asset.Font
+namespace MonoKle.Asset
 {
     /// <summary>
     /// Manages drawable fonts.
     /// </summary>
     public class FontStorage : AbstractAssetStorage<Font>
     {
-        private GraphicsDevice graphicsDevice;
+        private readonly GraphicsDevice graphicsDevice;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FontStorage"/> class.
@@ -21,7 +19,7 @@ namespace MonoKle.Asset.Font
         /// <param name="graphicsDevice">Graphics device</param>
         public FontStorage(GraphicsDevice graphicsDevice) => this.graphicsDevice = graphicsDevice;
 
-        protected override bool CheckFile(MFileInfo file) => file.Extension.Equals(".mfnt", StringComparison.InvariantCultureIgnoreCase);
+        protected override bool FileSupported(string extension) => extension.Equals(".mfnt", StringComparison.InvariantCultureIgnoreCase);
 
         protected override Font DoLoadStream(Stream stream)
         {

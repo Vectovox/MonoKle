@@ -1,4 +1,4 @@
-﻿using MonoKle.Asset.Font;
+﻿using MonoKle.Asset;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 

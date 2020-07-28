@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MonoKle.Asset.Font
+namespace MonoKle.Asset
 {
     /// <summary>
     /// Font for drawing strings.

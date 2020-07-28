@@ -1,4 +1,5 @@
-﻿using MonoKle.IO;
+﻿using Microsoft.Xna.Framework;
+using MonoKle.Logging;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,10 +10,9 @@ namespace MonoKle.Asset
     /// Abstract class for loading, storing, and retrieving MonoKle assets.
     /// </summary>
     /// <typeparam name="T">Type of asset to store.</typeparam>
-    public abstract class AbstractAssetStorage<T> : AbstractFileReader
+    public abstract class AbstractAssetStorage<T>
     {
         private Dictionary<string, T> assetStorage = new Dictionary<string, T>();
-        private string currentGroup = null;
         private Dictionary<string, HashSet<string>> groupDictionary = new Dictionary<string, HashSet<string>>();
         private Dictionary<string, string> groupFromAsset = new Dictionary<string, string>();
 
@@ -44,32 +44,26 @@ namespace MonoKle.Asset
         /// Gets the asset with the associated id.
         /// </summary>
         /// <param name="id">The identifier.</param>
-        /// <returns></returns>
         public T GetAsset(string id)
         {
             id = id.ToLower();
-            if (assetStorage.ContainsKey(id))
+            if (assetStorage.TryGetValue(id, out T value))
             {
-                return assetStorage[id];
+                return value;
             }
-            else
-            {
-                Logging.Logger.Global.Log("Asset not found: " + id, Logging.LogLevel.Warning);
-            }
+            Logger.Global.Log($"Asset not found: {id}", LogLevel.Warning);
             return DefaultValue;
         }
 
         /// <summary>
         /// Gets the group of the specified asset.
         /// </summary>
-        /// <param name="asset">The asset to get the group for.</param>
-        /// <returns></returns>
-        public string GetAssetGroup(string asset)
+        /// <param name="asset">The asset id to get the group for.</param>
+        public string GetAssetGroup(string id)
         {
-            asset = asset.ToLower();
-            if (groupFromAsset.ContainsKey(asset))
+            if (groupFromAsset.TryGetValue(id.ToLower(), out var group))
             {
-                return groupFromAsset[asset];
+                return group;
             }
             return null;
         }
@@ -77,96 +71,100 @@ namespace MonoKle.Asset
         /// <summary>
         /// Gets all asset identifiers.
         /// </summary>
-        /// <returns></returns>
-        public IEnumerable<string> GetAssetIdentifiers() => new List<string>(assetStorage.Keys);
+        public IEnumerable<string> GetAssetIdentifiers() => assetStorage.Keys.ToList();
 
         /// <summary>
         /// Gets all asset identifiers in the specified group.
         /// </summary>
-        /// <returns></returns>
         public IEnumerable<string> GetAssetIdentifiers(string group)
         {
-            group = group.ToLower();
-            if (groupDictionary.ContainsKey(group))
+            if (groupDictionary.TryGetValue(group.ToLower(), out var identifiers))
             {
-                return new List<string>(groupDictionary[group]);
+                return identifiers;
             }
-            return new List<string>();
+            return Enumerable.Empty<string>();
         }
 
         /// <summary>
         /// Gets all groups.
         /// </summary>
-        /// <returns></returns>
-        public IEnumerable<string> GetGroups() => new List<string>(groupDictionary.Keys);
+        public IEnumerable<string> GetGroups() => groupDictionary.Keys.ToList();
 
         /// <summary>
-        /// Loads the file with the provided path, giving it the specified id and optional group.
+        /// Load the asset manifest file.
         /// </summary>
-        /// <param name="path">The path to the file.</param>
-        /// <param name="id">The identifier to use for the file.</param>
-        /// <param name="group">The optinal group to use. May be null.</param>
-        /// <returns></returns>
-        public FileLoadingResult LoadFileId(string path, string id, string group = null)
+        public int LoadFromManifest()
         {
-            path = path.ToLower();
-            id = id.ToLower();
-
-            // If asset already exists, create an alias for it
-            if (assetStorage.ContainsKey(path))
+            try
             {
-                if (AddAsset(assetStorage[path], id, group))
-                {
-                    return new FileLoadingResult(new List<string> { path }, 0);
-                }
-                return new FileLoadingResult(new List<string>(), 1);
-            }
-            else
-            {
-                // Otherwise add new item and modify it
-                currentGroup = group;
-                FileLoadingResult result = base.LoadFile(path);
-                currentGroup = null;
+                (var manifestStream, var prefix) = GetManifest();
+                using StreamReader reader = new StreamReader(manifestStream);
 
-                if (result.Successes > 0)
+                int counter = 0;
+                while (!reader.EndOfStream)
                 {
-                    T value = assetStorage[path];
-
-                    if (UnloadAsset(path) != 0)
+                    var line = reader.ReadLine();
+                    if (Load(GetAssetPath(prefix, line), line, null))
                     {
-                        AddAsset(value, id, group);
+                        counter++;
+                    }
+                    else
+                    {
+                        Logger.Global.Log($"Could not load asset '{line}' from manifest", LogLevel.Error);
                     }
                 }
-                return result;
+                return counter;
+            }
+            catch (IOException)
+            {
+                return 0;
             }
         }
 
-        /// <summary>
-        /// Loads the file in the given path, adding it to the provided group.
-        /// </summary>
-        /// <param name="path">The path to load files from.</param>
-        /// <param name="group">The group to add the files to.</param>
-        public FileLoadingResult LoadFileGroup(string path, string group)
+        // Like Path.Combine() but with forward slash to be compatible with android (possible *nix too?)
+        private string GetAssetPath(string prefix, string assetPath) =>
+            prefix.Length == 0
+            ? assetPath
+            : $"{prefix}/{assetPath}";
+
+        // Loads expected manifest file and returns the stream to it + the expected asset prefix
+        private (Stream, string) GetManifest()
         {
-            currentGroup = group;
-            FileLoadingResult result = base.LoadFile(path);
-            currentGroup = null;
-            return result;
+            // Android
+            try
+            {
+                return (TitleContainer.OpenStream("assets.manifest"), string.Empty);
+            }
+            catch (IOException)
+            {
+            }
+
+            // PC
+            return (TitleContainer.OpenStream("Assets/assets.manifest"), "Assets");
         }
 
         /// <summary>
-        /// Loads the files in the given path, adding them to the provided group.
+        /// Loads the asset in the relative asset path, using the given id, adding it to the provided group.
         /// </summary>
         /// <param name="path">The path to load files from.</param>
-        /// <param name="recurse">Specifiec whether to recursively find files.</param>
+        /// <param name="id">The identifier to use for the asset.</param>
         /// <param name="group">The group to add the files to.</param>
-        /// <param name="pattern">Pattern to use when finding files.</param>
-        public FileLoadingResult LoadFilesGroup(string path, bool recurse, string group, string pattern = "*.*")
+        public bool Load(string path, string id, string group)
         {
-            currentGroup = group;
-            FileLoadingResult result = base.LoadFiles(path, recurse, pattern);
-            currentGroup = null;
-            return result;
+            if (!FileSupported(new FileInfo(path).Extension))
+            {
+                return false;
+            }
+
+            try
+            {
+                var stream = TitleContainer.OpenStream(path);
+                return Load(stream, id, group);
+            }
+            catch (IOException)
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -175,16 +173,7 @@ namespace MonoKle.Asset
         /// <param name="stream">The stream to load from.</param>
         /// <param name="id">The id to assign the asset.</param>
         /// <returns>True if successful; otherwise false.</returns>
-        public bool LoadStream(Stream stream, string id)
-        {
-            id = id.ToLower();
-            if (assetStorage.ContainsKey(id) == false)
-            {
-                T value = DoLoadStream(stream);
-                return AddAsset(value, id);
-            }
-            return false;
-        }
+        public bool Load(Stream stream, string id) => Load(stream, id, null);
 
         /// <summary>
         /// Loads asset from stream, placing it in the specified asset group.
@@ -193,7 +182,7 @@ namespace MonoKle.Asset
         /// <param name="id">The id to assign the asset.</param>
         /// <param name="group">Group to place the asset in.</param>
         /// <returns>True if successful; otherwise false.</returns>
-        public bool LoadStream(Stream stream, string id, string group)
+        public bool Load(Stream stream, string id, string group)
         {
             id = id.ToLower();
             if (assetStorage.ContainsKey(id) == false)
@@ -219,21 +208,20 @@ namespace MonoKle.Asset
         }
 
         /// <summary>
-        /// Unloads the asset with the given identifier.
+        /// Unloads the asset with the given identifier, returning the amount of assets unloaded.
         /// </summary>
         /// <param name="id">The identifier of the entry to unload.</param>
-        /// <returns>Integer representing the amount of unloaded entries.</returns>
-        public int UnloadAsset(string id)
+        public int Unload(string id)
         {
             id = id.ToLower();
             if (assetStorage.Remove(id))
             {
-                if (groupFromAsset.ContainsKey(id))
+                if (groupFromAsset.TryGetValue(id, out var group))
                 {
-                    groupDictionary[groupFromAsset[id]].Remove(id);
-                    if (groupDictionary[groupFromAsset[id]].Count == 0)
+                    groupDictionary[group].Remove(id);
+                    if (groupDictionary[group].Count == 0)
                     {
-                        groupDictionary.Remove(groupFromAsset[id]);
+                        groupDictionary.Remove(group);
                     }
                     groupFromAsset.Remove(id);
                 }
@@ -247,7 +235,6 @@ namespace MonoKle.Asset
         /// Unloads all assets within the provided group.
         /// </summary>
         /// <param name="group">The group to remove assets belonging to.</param>
-        /// <returns>Amount of assets removed.</returns>
         public int UnloadGroup(string group)
         {
             group = group.ToLower();
@@ -256,7 +243,7 @@ namespace MonoKle.Asset
             {
                 foreach (string s in groupDictionary[group].ToList())
                 {
-                    n += UnloadAsset(s);
+                    n += Unload(s);
                 }
             }
             return n;
@@ -264,17 +251,7 @@ namespace MonoKle.Asset
 
         protected abstract T DoLoadStream(Stream stream);
 
-        protected override bool ReadFile(Stream fileStream, MFileInfo file)
-        {
-            if (currentGroup == null)
-            {
-                return LoadStream(fileStream, file.OriginalPath);
-            }
-            else
-            {
-                return LoadStream(fileStream, file.OriginalPath, currentGroup);
-            }
-        }
+        protected abstract bool FileSupported(string extension);
 
         private bool AddAsset(T value, string id, string group = null)
         {

@@ -1,7 +1,5 @@
 using Microsoft.Xna.Framework;
-using MonoKle.Asset.Effect;
-using MonoKle.Asset.Font;
-using MonoKle.Asset.Texture;
+using MonoKle.Asset;
 using MonoKle.Console;
 using MonoKle.Graphics;
 using MonoKle.Input.Gamepad;
@@ -285,7 +283,7 @@ namespace MonoKle.Engine
         {
             MonoKleGame.FontStorage = new FontStorage(GraphicsManager.GraphicsDevice);
             using var ms = new MemoryStream(Resources.FontResources.DefaultFont);
-            MonoKleGame.FontStorage.LoadStream(ms, "default");
+            MonoKleGame.FontStorage.Load(ms, "default");
             MonoKleGame.FontStorage.DefaultValue = MonoKleGame.FontStorage.GetAsset("default");
         }
 

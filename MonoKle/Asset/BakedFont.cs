@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace MonoKle.Asset.Font.Baking
+namespace MonoKle.Asset
 {
     public class BakedFont
     {

@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 
-namespace MonoKle.Asset.Font
+namespace MonoKle.Asset
 {
     /// <summary>
     /// Extensions for spritebatch font drawing.

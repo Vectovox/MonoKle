@@ -1,14 +1,14 @@
 ﻿using System.IO;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace MonoKle.Asset.Effect
+namespace MonoKle.Asset
 {
     /// <summary>
     /// Class storing and loading effect files.
     /// </summary>
-    public class EffectStorage : AbstractAssetStorage<Microsoft.Xna.Framework.Graphics.Effect>
+    public class EffectStorage : AbstractAssetStorage<Effect>
     {
-        private GraphicsDevice graphicsDevice;
+        private readonly GraphicsDevice graphicsDevice;
 
         /// <summary>
         /// Initializes a new instance of <see cref="EffectStorage"/>.
@@ -19,12 +19,14 @@ namespace MonoKle.Asset.Effect
             this.graphicsDevice = graphicsDevice;
         }
 
-        protected override Microsoft.Xna.Framework.Graphics.Effect DoLoadStream(Stream stream)
+        protected override Effect DoLoadStream(Stream stream)
         {
             var br = new BinaryReader(stream);
             byte[] byteCode = br.ReadBytes((int)stream.Length);
-            var effect = new Microsoft.Xna.Framework.Graphics.Effect(graphicsDevice, byteCode);
+            var effect = new Effect(graphicsDevice, byteCode);
             return effect;
         }
+
+        protected override bool FileSupported(string extension) => extension.Equals(".fx");
     }
 }

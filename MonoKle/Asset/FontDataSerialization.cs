@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 
-namespace MonoKle.Asset.Font
+namespace MonoKle.Asset
 {
     [Serializable]
     [XmlRoot("font")]

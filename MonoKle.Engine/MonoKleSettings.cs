@@ -32,6 +32,6 @@ namespace MonoKle.Engine
         /// Gets or sets a value indicating whether the mouse cursor is visible inside the application.
         /// </summary>
         [PropertyVariableAttribute("mouse_visible")]
-        public bool MouseVisible { get { return MBackend.GameInstance.IsMouseVisible; } set { MBackend.GameInstance.IsMouseVisible = value; } }
+        public bool MouseVisible { get { return MonoKleGame.GameInstance.IsMouseVisible; } set { MonoKleGame.GameInstance.IsMouseVisible = value; } }
     }
 }

@@ -8,9 +8,9 @@ namespace MonoKle.Engine.Commands
     [ConsoleCommand("vars", Description = "Lists the currently active variables.")]
     public class VarsCommand : IConsoleCommand
     {
-        public void Call(IGameConsole console) => MBackend.Variables.Variables.Identifiers
+        public void Call(IGameConsole console) => MonoKleGame.Variables.Variables.Identifiers
                 .OrderBy(i => i)
-                .ForEach(identifier => MBackend.Console.WriteLine("\t" + identifier, MBackend.Variables.Variables.CanSet(identifier) ? MBackend.Console.DefaultTextColour : MBackend.Console.DisabledTextColour));
+                .ForEach(identifier => MonoKleGame.Console.WriteLine("\t" + identifier, MonoKleGame.Variables.Variables.CanSet(identifier) ? MonoKleGame.Console.DefaultTextColour : MonoKleGame.Console.DisabledTextColour));
 
         public ICollection<string> GetPositionalSuggestions() => new string[0];
     }

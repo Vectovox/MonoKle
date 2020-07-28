@@ -11,7 +11,7 @@ namespace MonoKle.Engine.Commands
 
         public void Call(IGameConsole console)
         {
-            object value = MBackend.Variables.Variables.GetValue(Variable);
+            object value = MonoKleGame.Variables.Variables.GetValue(Variable);
             if (value != null)
             {
                 console.WriteLine(value.ToString());
@@ -22,6 +22,6 @@ namespace MonoKle.Engine.Commands
             }
         }
 
-        public ICollection<string> GetPositionalSuggestions() => MBackend.Variables.Variables.Identifiers;
+        public ICollection<string> GetPositionalSuggestions() => MonoKleGame.Variables.Variables.Identifiers;
     }
 }

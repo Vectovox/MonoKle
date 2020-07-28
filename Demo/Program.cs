@@ -14,13 +14,11 @@ namespace WindowsDemo
         [STAThread]
         private static void Main()
         {
-            using (MGame game = MBackend.Initialize())
-            {
-                MBackend.StateSystem.AddState(new DemoStateOne());
-                MBackend.StateSystem.AddState(new DemoStateTwo());
-                MBackend.StateSystem.SwitchState("stateOne", null);
-                game.Run();
-            }
+            using var game = MonoKleGame.Initialize();
+            MonoKleGame.StateSystem.AddState(new DemoStateOne());
+            MonoKleGame.StateSystem.AddState(new DemoStateTwo());
+            MonoKleGame.StateSystem.SwitchState("stateOne", null);
+            game.Run();
         }
     }
 }

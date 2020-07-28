@@ -23,7 +23,7 @@ namespace WindowsDemo
             var view = Matrix.CreateLookAt(camPos, camPos + new Vector3(0f, 0f, -1f), Vector3.Up);
             var projection = Matrix.CreatePerspectiveFieldOfView(
                 MathHelper.ToRadians(45.0f),
-                MBackend.GraphicsManager.Resolution.X / MBackend.GraphicsManager.Resolution.Y,
+                MonoKleGame.GraphicsManager.Resolution.X / MonoKleGame.GraphicsManager.Resolution.Y,
                 1.0f, 10000.0f
                 );
 
@@ -36,38 +36,38 @@ namespace WindowsDemo
 
         public override void Update(TimeSpan time)
         {
-            if (MBackend.Keyboard.IsKeyHeld(Keys.Escape, TimeSpan.FromSeconds(1)))
+            if (MonoKleGame.Keyboard.IsKeyHeld(Keys.Escape, TimeSpan.FromSeconds(1)))
             {
-                MBackend.GameInstance.Exit();
+                MonoKleGame.GameInstance.Exit();
             }
 
-            if (MBackend.Keyboard.IsKeyHeld(Keys.I))
+            if (MonoKleGame.Keyboard.IsKeyHeld(Keys.I))
             {
                 camPos.Y += 5;
             }
-            if (MBackend.Keyboard.IsKeyHeld(Keys.K))
+            if (MonoKleGame.Keyboard.IsKeyHeld(Keys.K))
             {
                 camPos.Y -= 5;
             }
-            if (MBackend.Keyboard.IsKeyHeld(Keys.L))
+            if (MonoKleGame.Keyboard.IsKeyHeld(Keys.L))
             {
                 camPos.X += 5;
             }
-            if (MBackend.Keyboard.IsKeyHeld(Keys.J))
+            if (MonoKleGame.Keyboard.IsKeyHeld(Keys.J))
             {
                 camPos.X -= 5;
             }
 
-            if (MBackend.Keyboard.IsKeyPressed(Keys.Space))
+            if (MonoKleGame.Keyboard.IsKeyPressed(Keys.Space))
             {
-                MBackend.StateSystem.SwitchState("stateOne", "HELLO!");
+                MonoKleGame.StateSystem.SwitchState("stateOne", "HELLO!");
             }
         }
 
         protected override void Activated(StateSwitchData data)
         {
             Console.WriteLine("State two activated! Message: " + (string)data.Data);
-            primitive3D = new PrimitiveBatch3D(MBackend.GraphicsManager.GraphicsDevice);
+            primitive3D = new PrimitiveBatch3D(MonoKleGame.GraphicsManager.GraphicsDevice);
         }
     }
 }

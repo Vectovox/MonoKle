@@ -62,18 +62,16 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+      <AndroidAsset Include="..\Demo.Domain\Assets\**\*.*">
+          <Link>Assets\%(RecursiveDir)%(FileName)%(Extension)</Link>
+      </AndroidAsset>
+  </ItemGroup>
+  <ItemGroup>
     <AndroidResource Include="Resources\Drawable\Icon.png" />
     <AndroidResource Include="Resources\Values\Strings.xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Content\Content.mgcb" />
     <None Include="Properties\AndroidManifest.xml" />
-    <None Include="settings.ini">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <MonoGameContentReference Include="Content\Content.mgcb" Visible="false" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.0.1375-develop" />

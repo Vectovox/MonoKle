@@ -25,8 +25,8 @@ namespace MonoKle.Asset
         public TextureStorage(GraphicsDevice graphicsDevice)
         {
             this.graphicsDevice = graphicsDevice;
-            DefaultValue = new Texture2D(graphicsDevice, 16, 16).Fill(Color.White);
-            White = new Texture2D(graphicsDevice, 16, 16).Fill(Color.Purple);
+            DefaultValue = new Texture2D(graphicsDevice, 16, 16).Fill(Color.Purple);
+            White = new Texture2D(graphicsDevice, 16, 16).Fill(Color.White);
         }
 
         protected override bool FileSupported(string extension) =>

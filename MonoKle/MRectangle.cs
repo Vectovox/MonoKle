@@ -136,6 +136,12 @@ namespace MonoKle
         public float Height => BottomRight.Y - TopLeft.Y;
 
         /// <summary>
+        /// Gets the width divided by the height.
+        /// </summary>
+        /// <exception cref="DivideByZeroException">Thrown if height is zero.</exception>
+        public float AspectRatio => Width / Height;
+
+        /// <summary>
         /// Gets the X-coordinate of the left border.
         /// </summary>
         public float Left => TopLeft.X;
@@ -210,6 +216,28 @@ namespace MonoKle
             }
 
             return new MVector2(x, y);
+        }
+
+        /// <summary>
+        /// Scales the <see cref="MRectangle"/> to a size that fits the given bounding rectangle.
+        /// Maintains position and aspect ratio but alters width or height.
+        /// </summary>
+        /// <param name="boundinRectangle">The bounding rectangle to fit to.</param>
+        public MRectangle ScaleToFit(MRectangle boundingRectangle)
+        {
+            float thisRatio = AspectRatio;
+            float boundingRatio = boundingRectangle.AspectRatio;
+            if (thisRatio > boundingRatio)
+            {
+                // Letterbox top-bottom
+                return new MRectangle(TopLeft.X, TopLeft.Y, boundingRectangle.Width, boundingRectangle.Width / thisRatio);
+            }
+            else if(thisRatio < boundingRatio)
+            {
+                // Letterbox left-right
+                return new MRectangle(TopLeft.X, TopLeft.Y, boundingRectangle.Height * thisRatio, boundingRectangle.Height);
+            }
+            return boundingRectangle;
         }
 
         /// <summary>

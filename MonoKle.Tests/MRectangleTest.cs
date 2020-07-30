@@ -371,5 +371,74 @@ namespace MonoKle
                 Assert.AreEqual(Math.Abs(x2 - x), a.Width);
             }
         }
+
+        [TestMethod]
+        public void AspectRatio()
+        {
+            var testRectangle = new MRectangle(16, 9);
+            var testRectangle2 = new MRectangle(4, 3);
+            Assert.AreEqual(testRectangle.Width / testRectangle.Height, testRectangle.AspectRatio);
+            Assert.AreEqual(testRectangle2.Width / testRectangle2.Height, testRectangle2.AspectRatio);
+        }
+
+        [TestMethod]
+        public void ScaleToFit_LargerThanBounding_LetterboxedTopBottom()
+        {
+            var testRectangle = new MRectangle(16, 9);
+            var boundingRectangle = new MRectangle(4, 3);
+            var result = testRectangle.ScaleToFit(boundingRectangle);
+            Assert.AreEqual(testRectangle.AspectRatio, result.AspectRatio, "The aspect ratio must be preserved");
+            Assert.AreEqual(new MRectangle(4, 2.25f), result);
+        }
+
+        [TestMethod]
+        public void ScaleToFit_LargerThanBounding_LetterboxedLeftRight()
+        {
+            var testRectangle = new MRectangle(24, 18);
+            var boundingRectangle = new MRectangle(16, 9);
+            var result = testRectangle.ScaleToFit(boundingRectangle);
+            Assert.AreEqual(testRectangle.AspectRatio, result.AspectRatio, "The aspect ratio must be preserved");
+            Assert.AreEqual(new MRectangle(12, 9), result);
+        }
+
+        [TestMethod]
+        public void ScaleToFit_LargerThanBounding_NoLetterbox()
+        {
+            var testRectangle = new MRectangle(32, 18);
+            var boundingRectangle = new MRectangle(16, 9);
+            var result = testRectangle.ScaleToFit(boundingRectangle);
+            Assert.AreEqual(testRectangle.AspectRatio, result.AspectRatio, "The aspect ratio must be preserved");
+            Assert.AreEqual(boundingRectangle, result);
+        }
+
+        [TestMethod]
+        public void ScaleToFit_SmallerThanBounding_LetterboxedTopBottom()
+        {
+            var testRectangle = new MRectangle(16, 9);
+            var boundingRectangle = new MRectangle(40, 30);
+            var result = testRectangle.ScaleToFit(boundingRectangle);
+            Assert.AreEqual(testRectangle.AspectRatio, result.AspectRatio, "The aspect ratio must be preserved");
+            Assert.AreEqual(new MRectangle(40, 22.5f), result);
+        }
+
+        [TestMethod]
+        public void ScaleToFit_SmallerThanBounding_LetterboxedLeftRight()
+        {
+            var testRectangle = new MRectangle(24, 18);
+            var boundingRectangle = new MRectangle(160, 90);
+            var result = testRectangle.ScaleToFit(boundingRectangle);
+            Assert.AreEqual(testRectangle.AspectRatio, result.AspectRatio, "The aspect ratio must be preserved");
+            Assert.AreEqual(new MRectangle(120, 90), result);
+        }
+
+        [TestMethod]
+        public void ScaleToFit_SmallerThanBounding_NoLetterbox()
+        {
+            var testRectangle = new MRectangle(16, 9);
+            var boundingRectangle = new MRectangle(32, 18);
+            var result = testRectangle.ScaleToFit(boundingRectangle);
+            Assert.AreEqual(testRectangle.AspectRatio, result.AspectRatio, "The aspect ratio must be preserved");
+            Assert.AreEqual(boundingRectangle, result);
+        }
     }
 }

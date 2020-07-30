@@ -142,23 +142,9 @@ namespace MonoKle.Engine
         /// <summary>
         /// Initializes the MonoKle backend, returning a runnable game instance.
         /// </summary>
-        /// <returns></returns>
-        public static MonoKleGame Initialize() => MonoKleGame.Initialize(new MPoint2(640, 400));
-
-        /// <summary>
-        /// Initializes the MonoKle backend, returning a runnable game instance.
-        /// </summary>
-        /// <param name="resolution">The resolution.</param>
-        /// <returns></returns>
-        public static MonoKleGame Initialize(MPoint2 resolution) => MonoKleGame.Initialize(resolution, false);
-
-        /// <summary>
-        /// Initializes the MonoKle backend, returning a runnable game instance.
-        /// </summary>
         /// <param name="resolution">The initial display resolution.</param>
-        /// <param name="enableConsole">Enables console.</param>
-        /// <returns>Runnable <see cref="MGame"/>.</returns>
-        public static MonoKleGame Initialize(MPoint2 resolution, bool enableConsole)
+        /// <param name="fullscreen">The initial fullscreen setting.</param>
+        public static MonoKleGame Create(bool fullscreen)
         {
             MonoKleGame.initializing = true;
             
@@ -168,12 +154,11 @@ namespace MonoKle.Engine
             // Graphics device has to be created immediately but cannot be used before LoadContent
             MonoKleGame.GraphicsManager = new GraphicsManager(new GraphicsDeviceManager(GameInstance));
             MonoKleGame.GraphicsManager.ResolutionChanged += ResolutionChanged;
-            MonoKleGame.GraphicsManager.Resolution = resolution;
+            MonoKleGame.GraphicsManager.IsFullscreen = fullscreen;
 
             MonoKleGame.settings.GamePadEnabled = true;
             MonoKleGame.settings.KeyboardEnabled = true;
             MonoKleGame.settings.MouseEnabled = true;
-            MonoKleGame.settings.ConsoleEnabled = enableConsole;
 
             // Set logger and enabled crashdumps
             MonoKleGame.Logger = Logger.Global;

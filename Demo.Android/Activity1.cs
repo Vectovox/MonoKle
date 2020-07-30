@@ -23,7 +23,7 @@ namespace Demo.Android
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
-            var _game = MonoKleGame.Initialize();
+            var _game = MonoKleGame.Create(true);
             Boilerplate.ConfigureStates();
             _view = _game.Services.GetService(typeof(View)) as View;
             SetContentView(_view);

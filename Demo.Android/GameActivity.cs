@@ -1,10 +1,8 @@
 using Android.App;
 using Android.Content.PM;
-using Android.OS;
-using Android.Views;
 using Demo.Domain;
-using Microsoft.Xna.Framework;
 using MonoKle.Engine;
+using MonoKle.Engine.Android;
 
 namespace Demo.Android
 {
@@ -17,17 +15,11 @@ namespace Demo.Android
         ScreenOrientation = ScreenOrientation.FullUser,
         ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.Keyboard | ConfigChanges.KeyboardHidden | ConfigChanges.ScreenSize
     )]
-    public class Activity1 : AndroidGameActivity
+    public class GameActivity : MonoKleActivity
     {
-        private View _view;
-        protected override void OnCreate(Bundle bundle)
+        protected override void OnBeforeRun(MonoKleGame game)
         {
-            base.OnCreate(bundle);
-            var _game = MonoKleGame.Create(true);
             Boilerplate.ConfigureStates();
-            _view = _game.Services.GetService(typeof(View)) as View;
-            SetContentView(_view);
-            _game.Run();
         }
     }
 }

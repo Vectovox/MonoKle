@@ -57,7 +57,7 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Activity1.cs" />
+    <Compile Include="GameActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -86,6 +86,10 @@
     <ProjectReference Include="..\Demo.Domain\Demo.Domain.csproj">
       <Project>{6844944f-bfe6-481a-b309-9d145260ca11}</Project>
       <Name>Demo.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MonoKle.Engine.Android\MonoKle.Engine.Android.csproj">
+      <Project>{10a57800-561b-4bd0-b326-ed6778463d89}</Project>
+      <Name>MonoKle.Engine.Android</Name>
     </ProjectReference>
     <ProjectReference Include="..\MonoKle.Engine\MonoKle.Engine.csproj">
       <Project>{4fcd63a6-4b48-4610-b697-f968decf8093}</Project>

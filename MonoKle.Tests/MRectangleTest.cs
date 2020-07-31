@@ -442,6 +442,89 @@ namespace MonoKle
         }
 
         [TestMethod]
+        public void ScaleToFit_PositionInvariant()
+        {
+            var testRectangle = new MRectangle(20, 30, 24, 18);
+            var boundingRectangle = new MRectangle(160, 90);
+            var result = testRectangle.ScaleToFit(boundingRectangle);
+            Assert.AreEqual(testRectangle.AspectRatio, result.AspectRatio, "The aspect ratio must be preserved");
+            Assert.AreEqual(testRectangle.TopLeft, result.TopLeft);
+        }
+
+        [DataRow(1f, 1f)]
+        [DataRow(2f, 2f)]
+        [DataRow(3f, 3f)]
+        [TestMethod]
+        public void ScaleToFill_SameRatio_ReturnsBounding(float width, float height)
+        {
+            var testRectangle = new MRectangle(width, height);
+            var boundingRectangle = new MRectangle(2, 2);
+            var result = testRectangle.ScaleToFill(boundingRectangle);
+            Assert.AreEqual(testRectangle.AspectRatio, result.AspectRatio, "The aspect ratio must be preserved");
+            Assert.AreEqual(boundingRectangle, result);
+        }
+
+        [TestMethod]
+        [DataRow(3f, 3f)]
+        [DataRow(2f, 4f)]
+        public void ScaleToFill_AlreadyFills_ReturnsOriginal(float width, float height)
+        {
+            var testRectangle = new MRectangle(width, height);
+            var boundingRectangle = new MRectangle(2, 3);
+            var result = testRectangle.ScaleToFill(boundingRectangle);
+            Assert.AreEqual(testRectangle.AspectRatio, result.AspectRatio, "The aspect ratio must be preserved");
+            Assert.AreEqual(testRectangle, result);
+        }
+
+        [TestMethod]
+        [DataRow(14f, 12f, 11.66666f, 10f, DisplayName = "Larger horizontal rectangle fits height")]
+        [DataRow(10f, 12f, 8.333333f, 10f, DisplayName = "Larger vertical rectangle fits height")]
+        [DataRow(5f, 20f, 4f, 16f, DisplayName = "Larger vertical rectangle fits width")]
+        [DataRow(3f, 2f, 15f, 10f, DisplayName = "Smaller horizontal rectangle fits height")]
+        [DataRow(3.9f, 9f, 4.333333f, 10f, DisplayName = "Smaller vertical rectangle fits height")]
+        [DataRow(3f, 9.9f, 4f, 13.2f, DisplayName = "Smaller vertical rectangle fits width")]
+        [DataRow(3f, 11f, 4f, 14.66666f, DisplayName = "Vertical rectangle with smaller width and larger height fits width")]
+        [DataRow(5f, 9f, 5.55555f, 10f, DisplayName = "Vertical rectangle with smaller height and larger width fits height")]
+        public void ScaleToFill_VerticalBounding(float width, float height, float expectedWidth, float expectedHeight)
+        {
+            var testRectangle = new MRectangle(width, height);
+            var boundingRectangle = new MRectangle(4, 10);
+            var result = testRectangle.ScaleToFill(boundingRectangle);
+            Assert.AreEqual(testRectangle.AspectRatio, result.AspectRatio, 0.00001f, "The aspect ratio must be preserved");
+            Assert.AreEqual(expectedWidth, result.Width, 0.00001f);
+            Assert.AreEqual(expectedHeight, result.Height, 0.00001f);
+        }
+
+        [TestMethod]
+        [DataRow(12f, 14f, 10, 11.66666f, DisplayName = "Larger vertical rectangle fits width")]
+        [DataRow(12f, 10f, 10f, 8.333333f, DisplayName = "Larger horizontal rectangle fits width")]
+        [DataRow(20f, 5f, 16f, 4f, DisplayName = "Larger horizontal rectangle fits height")]
+        [DataRow(2f, 3f, 10f, 15f, DisplayName = "Smaller vertical rectangle fits width")]
+        [DataRow(9f, 3.9f, 10f, 4.333333f, DisplayName = "Smaller horizontal rectangle fits width")]
+        [DataRow(9.9f, 3f, 13.2f, 4f, DisplayName = "Smaller horizontal rectangle fits height")]
+        [DataRow(11f, 3f, 14.66666f, 4f, DisplayName = "Horizontal rectangle with smaller height and larger width fits height")]
+        [DataRow(9f, 5f, 10f, 5.55555f, DisplayName = "Horizontal rectangle with smaller width and larger height fits width")]
+        public void ScaleToFill_HorizontalBounding(float width, float height, float expectedWidth, float expectedHeight)
+        {
+            var testRectangle = new MRectangle(width, height);
+            var boundingRectangle = new MRectangle(10, 4);
+            var result = testRectangle.ScaleToFill(boundingRectangle);
+            Assert.AreEqual(testRectangle.AspectRatio, result.AspectRatio, 0.00001f, "The aspect ratio must be preserved");
+            Assert.AreEqual(expectedWidth, result.Width, 0.00001f);
+            Assert.AreEqual(expectedHeight, result.Height, 0.00001f);
+        }
+
+        [TestMethod]
+        public void ScaleToFill_PositionInvariant()
+        {
+            var testRectangle = new MRectangle(10, 20, 9f, 5f);
+            var boundingRectangle = new MRectangle(10, 4);
+            var result = testRectangle.ScaleToFill(boundingRectangle);
+            Assert.AreEqual(testRectangle.AspectRatio, result.AspectRatio, 0.00001f, "The aspect ratio must be preserved");
+            Assert.AreEqual(testRectangle.TopLeft, result.TopLeft);
+        }
+
+        [TestMethod]
         public void PositionCenter_Point()
         {
             var testRectangle = new MRectangle(16, 9);

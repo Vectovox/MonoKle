@@ -219,8 +219,8 @@ namespace MonoKle
         }
 
         /// <summary>
-        /// Scales the <see cref="MRectangle"/> to a size that fits the given bounding rectangle.
-        /// Maintains position and aspect ratio but alters width or height.
+        /// Scales the <see cref="MRectangle"/> to a size that fits the given bounding rectangle as well
+        /// as possible without affecting the aspect ratio. Position is left unaltered.
         /// </summary>
         /// <param name="boundinRectangle">The bounding rectangle to fit to.</param>
         public MRectangle ScaleToFit(MRectangle boundingRectangle)
@@ -236,6 +236,26 @@ namespace MonoKle
             {
                 // Letterbox left-right
                 return new MRectangle(TopLeft.X, TopLeft.Y, boundingRectangle.Height * thisRatio, boundingRectangle.Height);
+            }
+            return boundingRectangle;
+        }
+
+        /// <summary>
+        /// Scales the <see cref="MRectangle"/> to a minimal size that fills the given bounding rectangle
+        /// without affecting the aspect ratio. Position is left unaltered.
+        /// </summary>
+        /// <param name="boundinRectangle">The bounding rectangle to fit to.</param>
+        public MRectangle ScaleToFill(MRectangle boundingRectangle)
+        {
+            float thisRatio = AspectRatio;
+            float boundingRatio = boundingRectangle.AspectRatio;
+            if (thisRatio > boundingRatio)
+            {
+                return new MRectangle(TopLeft.X, TopLeft.Y, boundingRectangle.Height * thisRatio, boundingRectangle.Height);
+            }
+            else if (thisRatio < boundingRatio)
+            {
+                return new MRectangle(TopLeft.X, TopLeft.Y, boundingRectangle.Width, boundingRectangle.Width / thisRatio);
             }
             return boundingRectangle;
         }

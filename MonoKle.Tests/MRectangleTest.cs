@@ -541,5 +541,12 @@ namespace MonoKle
             var result = testRectangle.PositionCenter(boundingRectangle);
             Assert.AreEqual(new MRectangle(26 - 8, 19 - 4.5f, testRectangle.Width, testRectangle.Height), result);
         }
+
+        [TestMethod]
+        public void Dimensions()
+        {
+            var testRectangle = new MRectangle(12, 13, 14, 15);
+            Assert.AreEqual(new MVector2(14, 15), testRectangle.Dimensions);
+        }
     }
 }

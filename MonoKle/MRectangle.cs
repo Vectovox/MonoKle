@@ -162,6 +162,11 @@ namespace MonoKle
         public MVector2 TopRight => new MVector2(BottomRight.X, TopLeft.Y);
 
         /// <summary>
+        /// Gets the <see cref="MVector2"/> representing width and height.
+        /// </summary>
+        public MVector2 Dimensions => new MVector2(Width, Height);
+
+        /// <summary>
         /// Gets the height.
         /// </summary>
         public float Width => BottomRight.X - TopLeft.X;

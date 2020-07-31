@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using MonoKle;
 using MonoKle.Engine;
 using MonoKle.Graphics;
 using MonoKle.State;
@@ -10,8 +11,10 @@ namespace Demo.Domain
     public class DemoStateTwo : GameState
     {
         private PrimitiveBatch3D primitive3D;
+        private PrimitiveBatch2D primitiveBatch2D;
 
         private Vector3 camPos = new Vector3(0f, 0f, 500f);
+        private RenderingArea2D renderingArea;
 
         public DemoStateTwo()
             : base("stateTwo")
@@ -31,8 +34,11 @@ namespace Demo.Domain
             primitive3D.DrawLine(new Vector3(100, 100, 0), new Vector3(200, 300, 400), Color.Green, Color.Red);
             primitive3D.DrawLine(new Vector3(0, 0, 0), new Vector3(0, 0, 300), Color.Green, Color.Red);
             primitive3D.End();
-        }
 
+            primitiveBatch2D.Begin();
+            primitiveBatch2D.DrawRenderingArea(renderingArea);
+            primitiveBatch2D.End();
+        }
 
         public override void Update(TimeSpan time)
         {
@@ -68,6 +74,8 @@ namespace Demo.Domain
         {
             Console.WriteLine("State two activated! Message: " + (string)data.Data);
             primitive3D = new PrimitiveBatch3D(MonoKleGame.GraphicsManager.GraphicsDevice);
+            primitiveBatch2D = new PrimitiveBatch2D(MonoKleGame.GraphicsManager.GraphicsDevice);
+            renderingArea = new RenderingArea2D(new MPoint2(320, 200), MonoKleGame.GraphicsManager.Resolution);
         }
     }
 }

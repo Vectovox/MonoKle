@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Input.Touch;
 using MonoKle;
 using MonoKle.Asset;
 using MonoKle.Engine;
@@ -188,7 +189,14 @@ namespace Demo.Domain
 
 
                 ti.Update();
-
+                while (TouchPanel.IsGestureAvailable)
+                {
+                    var gesture = TouchPanel.ReadGesture();
+                    if (gesture.GestureType == GestureType.Tap)
+                    {
+                        MonoKleGame.StateSystem.SwitchState("stateTwo", null);
+                    }
+                }
             }
 
             camera.Update(deltaTime);

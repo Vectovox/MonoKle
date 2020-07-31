@@ -26,7 +26,7 @@ namespace Demo.Domain
             var view = Matrix.CreateLookAt(camPos, camPos + new Vector3(0f, 0f, -1f), Vector3.Up);
             var projection = Matrix.CreatePerspectiveFieldOfView(
                 MathHelper.ToRadians(45.0f),
-                MonoKleGame.GraphicsManager.Resolution.X / MonoKleGame.GraphicsManager.Resolution.Y,
+                MonoKleGame.GraphicsManager.GraphicsDevice.PresentationParameters.BackBufferWidth / MonoKleGame.GraphicsManager.GraphicsDevice.PresentationParameters.BackBufferHeight,
                 1.0f, 10000.0f
                 );
 
@@ -75,6 +75,12 @@ namespace Demo.Domain
             Console.WriteLine("State two activated! Message: " + (string)data.Data);
             primitive3D = new PrimitiveBatch3D(MonoKleGame.GraphicsManager.GraphicsDevice);
             primitiveBatch2D = new PrimitiveBatch2D(MonoKleGame.GraphicsManager.GraphicsDevice);
+            renderingArea = new RenderingArea2D(new MPoint2(320, 200), MonoKleGame.GraphicsManager.Resolution);
+            MonoKleGame.GraphicsManager.ResolutionChanged += GraphicsManager_ResolutionChanged;
+        }
+
+        private void GraphicsManager_ResolutionChanged(object sender, ResolutionChangedEventArgs e)
+        {
             renderingArea = new RenderingArea2D(new MPoint2(320, 200), MonoKleGame.GraphicsManager.Resolution);
         }
     }

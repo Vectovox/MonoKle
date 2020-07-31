@@ -1,4 +1,5 @@
-﻿using MonoKle.Engine;
+﻿using Microsoft.Xna.Framework.Input.Touch;
+using MonoKle.Engine;
 
 namespace Demo.Domain
 {
@@ -9,6 +10,7 @@ namespace Demo.Domain
             MonoKleGame.StateSystem.AddState(new DemoStateOne());
             MonoKleGame.StateSystem.AddState(new DemoStateTwo());
             MonoKleGame.StateSystem.SwitchState("stateOne", null);
+            TouchPanel.EnabledGestures = GestureType.Tap;
         }
     }
 }

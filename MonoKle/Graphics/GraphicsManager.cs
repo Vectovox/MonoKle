@@ -5,13 +5,11 @@ using Microsoft.Xna.Framework.Graphics;
 namespace MonoKle.Graphics
 {
     /// <summary>
-    /// Manages graphics.
+    /// Facade for graphics management.
     /// </summary>
     public class GraphicsManager
     {
-        private GraphicsDeviceManager graphicsDeviceManager;
-
-        private MPoint2 resolution;
+        private readonly GraphicsDeviceManager graphicsDeviceManager;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GraphicsManager"/> class.
@@ -20,7 +18,6 @@ namespace MonoKle.Graphics
         public GraphicsManager(GraphicsDeviceManager graphicsDeviceManager)
         {
             this.graphicsDeviceManager = graphicsDeviceManager;
-            this.graphicsDeviceManager.PreparingDeviceSettings += PreparingDeviceSettings;
         }
 
         /// <summary>
@@ -45,19 +42,8 @@ namespace MonoKle.Graphics
         [PropertyVariable("g_res")]
         public MPoint2 Resolution
         {
-            get { return resolution; }
+            get { return new MPoint2(graphicsDeviceManager.PreferredBackBufferWidth, graphicsDeviceManager.PreferredBackBufferHeight); }
             set { SetResolution(value); }
-        }
-
-        /// <summary>
-        /// Gets the center point of the current resolution.
-        /// </summary>
-        /// <value>
-        /// The resolution center.
-        /// </value>
-        public MPoint2 ResolutionCenter
-        {
-            get; private set;
         }
 
         /// <summary>
@@ -86,14 +72,7 @@ namespace MonoKle.Graphics
             set { Resolution = new MPoint2(value, Resolution.Y); }
         }
 
-        private void OnResolutionChanged(MPoint2 newResolution)
-        {
-            var v = ResolutionChanged;
-            if (v != null)
-            {
-                v(this, new ResolutionChangedEventArgs(newResolution));
-            }
-        }
+        private void OnResolutionChanged(MPoint2 newResolution) => ResolutionChanged?.Invoke(this, new ResolutionChangedEventArgs(newResolution));
 
         /// <summary>
         /// Gets or sets a value indicating whether full screen is enabled.
@@ -126,27 +105,21 @@ namespace MonoKle.Graphics
             graphicsDeviceManager.ApplyChanges();
         }
 
-        // TODO: PreparingDeviceSettings does only fire the first time applychanges is called (or maybe only before game started).
-        private void PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
-        {
-            //this.SetResolution(new MPoint2(e.GraphicsDeviceInformation.PresentationParameters.BackBufferWidth,
-            //    e.GraphicsDeviceInformation.PresentationParameters.BackBufferHeight));
-            //Vector2DInteger value = new Vector2DInteger(
-            //        e.GraphicsDeviceInformation.PresentationParameters.BackBufferWidth,
-            //        e.GraphicsDeviceInformation.PresentationParameters.BackBufferHeight
-            //    );
-            //ScreenSize = value;
-            //ScreenCenter = value / 2;
-        }
-
         private void SetResolution(MPoint2 resolution)
         {
             graphicsDeviceManager.PreferredBackBufferWidth = resolution.X;
             graphicsDeviceManager.PreferredBackBufferHeight = resolution.Y;
-            this.resolution = resolution;          // TODO: Remove when PreparingDeviceSettings is received
-            ResolutionCenter = resolution / 2;    // TODO: Remove when PreparingDeviceSettings is received
             graphicsDeviceManager.ApplyChanges();
             OnResolutionChanged(resolution);
+        }
+
+        public void Update(MPoint2 windowResolution)
+        {
+            if (windowResolution != Resolution)
+            {
+                OnResolutionChanged(Resolution);
+                SetResolution(windowResolution);
+            }
         }
     }
 }

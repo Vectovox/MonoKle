@@ -231,6 +231,8 @@ namespace MonoKle.Engine
                     MonoKleGame.mouse.Update(deltaTime);
                 }
 
+                GraphicsManager.Update(Window.ClientBounds.Size);
+
                 if (MonoKleGame.settings.ConsoleEnabled == false || MonoKleGame.Console.IsOpen == false)
                 {
                     MonoKleGame.stateSystem.Update(deltaTime);

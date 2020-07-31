@@ -241,6 +241,20 @@ namespace MonoKle
         }
 
         /// <summary>
+        /// Centers the <see cref="MRectangle"/> such that its center aligns with the center
+        /// of the provided <see cref="MRectangle"/>.
+        /// </summary>
+        /// <param name="boundingRectangle">The rectangle to align to.</param>
+        public MRectangle PositionCenter(MRectangle boundingRectangle) => PositionCenter(boundingRectangle.Center);
+
+        /// <summary>
+        /// Centers the <see cref="MRectangle"/> such that its center aligns with the provided
+        /// <see cref="MVector2"/>.
+        /// </summary>
+        /// <param name="position">The point to align to.</param>
+        public MRectangle PositionCenter(MVector2 position) => new MRectangle(position.X - Width * 0.5f, position.Y - Height * 0.5f, Width, Height);
+
+        /// <summary>
         /// Checks if contains the provided <see cref="MRectangle"/>.
         /// </summary>
         /// <param name="area">The <see cref="MRectangle"/> to check if contained.</param>

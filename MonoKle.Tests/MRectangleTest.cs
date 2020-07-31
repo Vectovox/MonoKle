@@ -440,5 +440,23 @@ namespace MonoKle
             Assert.AreEqual(testRectangle.AspectRatio, result.AspectRatio, "The aspect ratio must be preserved");
             Assert.AreEqual(boundingRectangle, result);
         }
+
+        [TestMethod]
+        public void PositionCenter_Point()
+        {
+            var testRectangle = new MRectangle(16, 9);
+            var point = new MVector2(32, 18);
+            var result = testRectangle.PositionCenter(point);
+            Assert.AreEqual(new MRectangle(32 - 8, 18 - 4.5f, testRectangle.Width, testRectangle.Height), result);
+        }
+
+        [TestMethod]
+        public void PositionCenter_Rectangle()
+        {
+            var testRectangle = new MRectangle(16, 9);
+            var boundingRectangle = new MRectangle(10, 10, 32, 18);
+            var result = testRectangle.PositionCenter(boundingRectangle);
+            Assert.AreEqual(new MRectangle(26 - 8, 19 - 4.5f, testRectangle.Width, testRectangle.Height), result);
+        }
     }
 }

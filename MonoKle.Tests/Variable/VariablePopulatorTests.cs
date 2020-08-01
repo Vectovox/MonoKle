@@ -1,9 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace MonoKle.Variable
+namespace MonoKle.Variable.Tests
 {
     [TestClass]
-    public class VariablePopulatorTest
+    public class VariablePopulatorTests
     {
         private VariablePopulator populator;
         private VariableSystem system;

@@ -2,10 +2,10 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace MonoKle.Variable
+namespace MonoKle.Variable.Tests
 {
     [TestClass]
-    public class VariableSystemTest
+    public class VariableSystemTests
     {
         private VariableSystem system;
 

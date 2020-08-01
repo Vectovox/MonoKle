@@ -1,10 +1,10 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace MonoKle
+namespace MonoKle.Tests
 {
     [TestClass]
-    public class TimerTest
+    public class TimerTests
     {
         [TestMethod]
         public void Constructor_CorrectState()

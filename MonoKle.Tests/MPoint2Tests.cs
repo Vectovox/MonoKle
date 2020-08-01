@@ -2,10 +2,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Xna.Framework;
 using System;
 
-namespace MonoKle
+namespace MonoKle.Tests
 {
     [TestClass]
-    public class MPoint2Test
+    public class MPoint2Tests
     {
         [TestMethod]
         public void Parse_TryParse_Equal()

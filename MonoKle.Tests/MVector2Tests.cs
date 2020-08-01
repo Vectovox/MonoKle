@@ -1,9 +1,9 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace MonoKle
+namespace MonoKle.Tests
 {
     [TestClass]
-    public class MVector2Test
+    public class MVector2Tests
     {
         [TestMethod]
         public void Parse_TryParse_Equal()

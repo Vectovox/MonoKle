@@ -2,10 +2,10 @@
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 
-namespace MonoKle
+namespace MonoKle.Tests
 {
     [TestClass]
-    public class GridTest
+    public class GridTests
     {
         private const float cellSize = 32;
         private MGrid grid;

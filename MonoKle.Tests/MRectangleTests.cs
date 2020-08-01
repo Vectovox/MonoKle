@@ -2,10 +2,10 @@
 using Microsoft.Xna.Framework;
 using System;
 
-namespace MonoKle
+namespace MonoKle.Tests
 {
     [TestClass]
-    public class MRectangleTest
+    public class MRectangleTests
     {
         private const int RANDOM_TEST_AMOUNT = 100;
 
@@ -337,7 +337,7 @@ namespace MonoKle
         [TestMethod]
         public void TestTranslate()
         {
-            for (int i = 0; i < MRectangleTest.RANDOM_TEST_AMOUNT; i++)
+            for (int i = 0; i < MRectangleTests.RANDOM_TEST_AMOUNT; i++)
             {
                 float x = random.Next(-100, 100);
                 float y = random.Next(-100, 100);
@@ -359,7 +359,7 @@ namespace MonoKle
         [TestMethod]
         public void TestWidthHeight()
         {
-            for (int i = 0; i < MRectangleTest.RANDOM_TEST_AMOUNT; i++)
+            for (int i = 0; i < MRectangleTests.RANDOM_TEST_AMOUNT; i++)
             {
                 float x = random.Next(-100, 100);
                 float y = random.Next(-100, 100);

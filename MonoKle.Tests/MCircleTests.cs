@@ -1,10 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace MonoKle
+namespace MonoKle.Tests
 {
     [TestClass]
-    public class MCircleTest
+    public class MCircleTests
     {
         [TestMethod]
         public void Area()

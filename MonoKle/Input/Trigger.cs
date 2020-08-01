@@ -8,65 +8,25 @@ namespace MonoKle.Input
     /// <seealso cref="ITrigger" />
     public class Trigger : ITrigger
     {
-        private Button buttonState = new Button();
+        private readonly Button _buttonState = new Button();
 
-        /// <summary>
-        /// Gets the held time.
-        /// </summary>
-        /// <value>
-        /// The held time.
-        /// </value>
-        public TimeSpan HeldTime => buttonState.HeldTime;
+        public TimeSpan HeldTime => _buttonState.HeldTime;
 
-        /// <summary>
-        /// Gets a value indicating whether this instance is down.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if this instance is down; otherwise, <c>false</c>.
-        /// </value>
-        public bool IsDown => buttonState.IsDown;
+        public bool IsDown => _buttonState.IsDown;
 
-        /// <summary>
-        /// Gets a value indicating whether this instance is held.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if this instance is held; otherwise, <c>false</c>.
-        /// </value>
-        public bool IsHeld => buttonState.IsHeld;
+        public bool IsHeld => _buttonState.IsHeld;
 
-        /// <summary>
-        /// Gets a value indicating whether this instance is pressed.
-        /// </summary>
-        /// <value>
-        /// <c>true</c> if this instance is pressed; otherwise, <c>false</c>.
-        /// </value>
-        public bool IsPressed => buttonState.IsPressed;
+        public bool IsPressed => _buttonState.IsPressed;
 
-        /// <summary>
-        /// Gets a value indicating whether this instance is released.
-        /// </summary>
-        /// <value>
-        /// <c>true</c> if this instance is released; otherwise, <c>false</c>.
-        /// </value>
-        public bool IsReleased => buttonState.IsReleased;
+        public bool IsReleased => _buttonState.IsReleased;
 
-        /// <summary>
-        /// Gets a value indicating whether this instance is up.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if this instance is up; otherwise, <c>false</c>.
-        /// </value>
-        public bool IsUp => buttonState.IsUp;
+        public bool IsUp => _buttonState.IsUp;
 
-        /// <summary>
-        /// Gets the continuous state.
-        /// </summary>
-        /// <value>
-        /// The state.
-        /// </value>
         public float State { get; private set; }
 
-        public bool IsHeldFor(TimeSpan duration) => buttonState.IsHeldFor(duration);
+        public bool IsHeldFor(TimeSpan duration) => _buttonState.IsHeldFor(duration);
+
+        public bool IsHeldForOnce(TimeSpan duration) => _buttonState.IsHeldForOnce(duration);
 
         /// <summary>
         /// Updates the state of the <see cref="Trigger"/>.
@@ -76,7 +36,7 @@ namespace MonoKle.Input
         public virtual void Update(float state, TimeSpan deltaTime)
         {
             State = state;
-            buttonState.Update(state != 0, deltaTime);
+            _buttonState.Update(state != 0, deltaTime);
         }
     }
 }

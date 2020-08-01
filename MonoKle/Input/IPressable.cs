@@ -58,8 +58,17 @@ namespace MonoKle.Input
         /// <summary>
         /// Gets a value indicating whether this instance has been held for at least the provided amount of time.
         /// </summary>
-        /// <param name="timeDelta">The time to have been held.</param>
+        /// <param name="duration">The time to have been held.</param>
         /// <returns>True if held for at least the provided amount of time; otherwise false.</returns>
-        bool IsHeldFor(TimeSpan timeDelta);
+        bool IsHeldFor(TimeSpan duration);
+
+        /// <summary>
+        /// Gets a value indicating whether this instance has been held for at least the provided amount of time.
+        /// When this returns true, it resets to not become true until after it having been released and held again
+        /// for the provided amount of time.
+        /// </summary>
+        /// <param name="duration">The time to have been held.</param>
+        /// <returns>True if held for at least the provided amount of time; otherwise false.</returns>
+        bool IsHeldForOnce(TimeSpan duration);
     }
 }

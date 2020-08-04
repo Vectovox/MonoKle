@@ -71,7 +71,7 @@ namespace MonoKle.Input.Mouse
         /// <summary>
         /// Gets or sets whether the virtual mouse is enabled.
         /// </summary>
-        [PropertyVariable("mouse_isvirtual")]
+        [Variable("mouse_isvirtual")]
         public bool IsVirtual
         {
             get;

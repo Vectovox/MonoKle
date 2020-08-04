@@ -39,7 +39,7 @@ namespace MonoKle.Graphics
         /// <value>
         /// The resolution.
         /// </value>
-        [PropertyVariable("g_res")]
+        [Variable("g_res")]
         public MPoint2 Resolution
         {
             get { return new MPoint2(graphicsDeviceManager.PreferredBackBufferWidth, graphicsDeviceManager.PreferredBackBufferHeight); }
@@ -52,7 +52,7 @@ namespace MonoKle.Graphics
         /// <value>
         /// The height of the resolution.
         /// </value>
-        [PropertyVariable("g_res_y")]
+        [Variable("g_res_y")]
         public int ResolutionHeight
         {
             get { return Resolution.Y; }
@@ -65,7 +65,7 @@ namespace MonoKle.Graphics
         /// <value>
         /// The width of the resolution.
         /// </value>
-        [PropertyVariable("g_res_x")]
+        [Variable("g_res_x")]
         public int ResolutionWidth
         {
             get { return Resolution.X; }
@@ -80,7 +80,7 @@ namespace MonoKle.Graphics
         /// <value>
         /// <c>true</c> if this instance is fullscreen; otherwise, <c>false</c>.
         /// </value>
-        [PropertyVariable("g_fullscreen")]
+        [Variable("g_fullscreen")]
         public bool IsFullscreen
         {
             get { return graphicsDeviceManager.IsFullScreen; }

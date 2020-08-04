@@ -13,7 +13,7 @@ namespace SettingsLister
             var properties = types.SelectMany(t => t.GetProperties());
             foreach (var property in properties)
             {
-                var attribute = property.GetCustomAttribute<MonoKle.Attributes.PropertyVariableAttribute>();
+                var attribute = property.GetCustomAttribute<MonoKle.Attributes.VariableAttribute>();
                 if (attribute != null)
                 {
                     Console.WriteLine($"{attribute.Identifier} : {property.DeclaringType.Name}");

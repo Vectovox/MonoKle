@@ -1,12 +1,12 @@
 ﻿using MonoKle.IO;
 using System.IO;
 
-namespace MonoKle.Variable
+namespace MonoKle.Configuration
 {
     /// <summary>
-    /// Class for loading variables.
+    /// Class for loading variables from file.
     /// </summary>
-    public class VariablePopulator : AbstractFileReader
+    public class CVarFileLoader : AbstractFileReader
     {
         /// <summary>
         /// The token for commented lines.
@@ -18,13 +18,13 @@ namespace MonoKle.Variable
         /// </summary>
         public const char VariableValueDivisor = '=';
 
-        private VariableSystem system;
+        private CVarSystem system;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="VariablePopulator"/> class.
+        /// Initializes a new instance of the <see cref="CVarFileLoader"/> class.
         /// </summary>
         /// <param name="system">The system to populate.</param>
-        public VariablePopulator(VariableSystem system)
+        public CVarFileLoader(CVarSystem system)
         {
             this.system = system;
         }
@@ -35,7 +35,7 @@ namespace MonoKle.Variable
         /// <param name="identifier">The variable identifier.</param>
         /// <param name="value">The value.</param>
         /// <returns>True if successful; otherwise false.</returns>
-        public bool LoadItem(string identifier, string value) => InterpretLine(identifier + VariablePopulator.VariableValueDivisor + value);
+        public bool LoadItem(string identifier, string value) => InterpretLine(identifier + CVarFileLoader.VariableValueDivisor + value);
 
         /// <summary>
         /// Loads variables from the given text.
@@ -58,21 +58,20 @@ namespace MonoKle.Variable
         private bool InterpretLine(string line)
         {
             line = line.Trim();
-            if (line.StartsWith(VariablePopulator.CommentedLineToken))
+            if (line.StartsWith(CVarFileLoader.CommentedLineToken))
             {
                 return true;
             }
 
-            string[] parts = line.Split(VariablePopulator.VariableValueDivisor);
+            string[] parts = line.Split(CVarFileLoader.VariableValueDivisor);
 
             if (parts.Length == 2)
             {
-                object value = null;
                 string variableText = parts[0].Trim();
                 string valueText = parts[1].Trim();
 
                 var sc = new StringConverter();
-                value = sc.ToAny(valueText);
+                object value = sc.ToAny(valueText);
 
                 return system.SetValue(variableText, value);
             }

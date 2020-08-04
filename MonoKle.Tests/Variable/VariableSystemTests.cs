@@ -2,12 +2,12 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace MonoKle.Variable.Tests
+namespace MonoKle.Configuration.Tests
 {
     [TestClass]
     public class VariableSystemTests
     {
-        private VariableSystem system;
+        private CVarSystem system;
 
         [TestMethod]
         public void Clear_Cleared()
@@ -61,7 +61,7 @@ namespace MonoKle.Variable.Tests
         }
 
         [TestInitialize]
-        public void Init() => this.system = new VariableSystem();
+        public void Init() => this.system = new CVarSystem();
 
         [TestMethod]
         public void NewSystem_NoVariables() => Assert.AreEqual(0, system.Identifiers.Count);
@@ -147,16 +147,16 @@ namespace MonoKle.Variable.Tests
 
         private class BoundClass
         {
-            [PropertyVariableAttribute("x")]
+            [VariableAttribute("x")]
             public int X { get; set; }
 
             public int Y { get; set; }
 
-            [PropertyVariableAttribute("z")]
+            [VariableAttribute("z")]
             public int Z { get; set; }
         }
 
-        private class MockVariable : IVariable
+        private class MockVariable : ICVar
         {
             public bool getCalled;
             public bool setCalled;

@@ -67,17 +67,17 @@ namespace MonoKle.Console
 
         public Color ErrorTextColour { get; set; } = Color.Red;
 
-        [PropertyVariable("c_isopen")]
+        [Variable("c_isopen")]
         public bool IsOpen { get; set; }
 
-        [PropertyVariable("c_size")]
+        [Variable("c_size")]
         public uint Size { get; set; } = byte.MaxValue;
 
         public int TabLength { get; set; } = 4;
 
         public Font TextFont { get; set; }
 
-        [PropertyVariable("c_textscale")]
+        [Variable("c_textscale")]
         public float TextScale { get; set; } = 0.5f;
 
         public Keys ToggleKey { get; set; } = Keys.F1;

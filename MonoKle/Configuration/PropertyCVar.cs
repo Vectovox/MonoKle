@@ -1,42 +1,42 @@
 ﻿using System;
 using System.Reflection;
 
-namespace MonoKle.Variable
+namespace MonoKle.Configuration
 {
     /// <summary>
-    /// Class for a property-based variable.
+    /// Class for a property-based variable, binding to a specific property.
     /// </summary>
-    public class PropertyVariable : IVariable
+    public class PropertyCVar : ICVar
     {
-        private object owner;
-        private PropertyInfo property;
+        private readonly object _owner;
+        private readonly PropertyInfo _property;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PropertyVariable"/> class for instanced properties.
+        /// Initializes a new instance of the <see cref="PropertyCVar"/> class for instanced properties.
         /// </summary>
         /// <param name="propertyName">The name of the property.</param>
         /// <param name="owner">The owner instance of the property.</param>
-        public PropertyVariable(string propertyName, object owner) :
+        public PropertyCVar(string propertyName, object owner) :
             this(owner.GetType().GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic), owner)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PropertyVariable"/> class for static properties.
+        /// Initializes a new instance of the <see cref="PropertyCVar"/> class for static properties.
         /// </summary>
         /// <param name="propertyName">The name of the property.</param>
         /// <param name="staticType">The static type containing the property.</param>
-        public PropertyVariable(string propertyName, Type staticType) :
+        public PropertyCVar(string propertyName, Type staticType) :
             this(staticType.GetProperty(propertyName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic), null)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PropertyVariable"/> class from a <see cref="PropertyInfo"/> and eventual owner.
+        /// Initializes a new instance of the <see cref="PropertyCVar"/> class from a <see cref="PropertyInfo"/> and eventual owner.
         /// </summary>
         /// <param name="property">The property to use.</param>
         /// <param name="owner">The owner. Must be null for static properties.</param>
-        public PropertyVariable(PropertyInfo property, object owner)
+        public PropertyCVar(PropertyInfo property, object owner)
         {
             if (property == null)
             {
@@ -51,8 +51,8 @@ namespace MonoKle.Variable
                 throw new ArgumentNullException("Non-static properties must have non-null owner.");
             }
 
-            this.property = property;
-            this.owner = owner;
+            _property = property;
+            _owner = owner;
         }
 
         /// <summary>
@@ -61,19 +61,19 @@ namespace MonoKle.Variable
         /// <value>
         /// The type.
         /// </value>
-        public Type Type => CanSet() ? property.PropertyType : null;
+        public Type Type => CanSet() ? _property.PropertyType : null;
 
         /// <summary>
         /// Determines whether this instance can set.
         /// </summary>
         /// <returns></returns>
-        public bool CanSet() => property.SetMethod != null;
+        public bool CanSet() => _property.SetMethod != null;
 
         /// <summary>
         /// Gets the variable value.
         /// </summary>
         /// <returns></returns>
-        public object GetValue() => property.GetValue(owner);
+        public object GetValue() => _property.GetValue(_owner);
 
         /// <summary>
         /// Sets the variable to the provided value if possible.
@@ -85,17 +85,17 @@ namespace MonoKle.Variable
             if (CanSet())
             {
                 Type valueType = value.GetType();
-                if (property.PropertyType.IsAssignableFrom(valueType))
+                if (_property.PropertyType.IsAssignableFrom(valueType))
                 {
-                    property.SetValue(owner, value);
+                    _property.SetValue(_owner, value);
                     return true;
                 }
-                else if (property.PropertyType.IsValueType && valueType.IsValueType)
+                else if (_property.PropertyType.IsValueType && valueType.IsValueType)
                 {
                     try
                     {
-                        object newObj = Convert.ChangeType(value, property.PropertyType);
-                        property.SetValue(owner, newObj);
+                        object newObj = Convert.ChangeType(value, _property.PropertyType);
+                        _property.SetValue(_owner, newObj);
                         return true;
                     }
                     catch (InvalidCastException e)

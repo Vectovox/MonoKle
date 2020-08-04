@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace MonoKle.Variable
+namespace MonoKle.Configuration
 {
     /// <summary>
     /// Interface for an assignable variable.
     /// </summary>
-    public interface IVariable
+    public interface ICVar
     {
         /// <summary>
         /// Gets the type of the variable.

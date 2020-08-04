@@ -1,18 +1,18 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace MonoKle.Variable.Tests
+namespace MonoKle.Configuration.Tests
 {
     [TestClass]
     public class VariablePopulatorTests
     {
-        private VariablePopulator populator;
-        private VariableSystem system;
+        private CVarFileLoader populator;
+        private CVarSystem system;
 
         [TestInitialize()]
         public void Init()
         {
-            this.system = new VariableSystem();
-            this.populator = new VariablePopulator(this.system);
+            this.system = new CVarSystem();
+            this.populator = new CVarFileLoader(this.system);
         }
 
         [TestMethod]
@@ -62,7 +62,7 @@ namespace MonoKle.Variable.Tests
         [TestMethod]
         public void LoadText_Multiline()
         {
-            string text = "a = 5\nb=2.5\n" + VariablePopulator.CommentedLineToken + "kaka=5\nc=\"hej\"";
+            string text = "a = 5\nb=2.5\n" + CVarFileLoader.CommentedLineToken + "kaka=5\nc=\"hej\"";
             this.populator.LoadText(text);
             Assert.AreEqual(5, this.system.GetValue("a"));
             Assert.AreEqual(2.5f, this.system.GetValue("b"));
@@ -100,8 +100,8 @@ namespace MonoKle.Variable.Tests
 
         private void LoadTextLine(string variable, string value, bool commented)
         {
-            string line = variable + VariablePopulator.VariableValueDivisor + value;
-            this.populator.LoadText(commented ? VariablePopulator.CommentedLineToken + line : line);
+            string line = variable + CVarFileLoader.VariableValueDivisor + value;
+            this.populator.LoadText(commented ? CVarFileLoader.CommentedLineToken + line : line);
         }
     }
 }

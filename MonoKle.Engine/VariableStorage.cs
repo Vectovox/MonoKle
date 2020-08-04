@@ -1,5 +1,5 @@
 ﻿using MonoKle.Logging;
-using MonoKle.Variable;
+using MonoKle.Configuration;
 
 namespace MonoKle.Engine
 {
@@ -20,8 +20,8 @@ namespace MonoKle.Engine
         internal VariableStorage(Logger logger)
         {
             this.Logger = logger;
-            this.Variables = new VariableSystem(logger);
-            this.VariablePopulator = new VariablePopulator(this.Variables);
+            this.Variables = new CVarSystem(logger);
+            this.VariablePopulator = new CVarFileLoader(this.Variables);
         }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace MonoKle.Engine
         /// <value>
         /// The variable populator.
         /// </value>
-        public VariablePopulator VariablePopulator { get; private set; }
+        public CVarFileLoader VariablePopulator { get; private set; }
 
         /// <summary>
         /// Gets the variables.
@@ -46,7 +46,7 @@ namespace MonoKle.Engine
         /// <value>
         /// The variables.
         /// </value>
-        public VariableSystem Variables { get; private set; }
+        public CVarSystem Variables { get; private set; }
 
         /// <summary>
         /// Loads the default settings from the default path (<see cref="VariableStorage.DefaultFilePath"/>).

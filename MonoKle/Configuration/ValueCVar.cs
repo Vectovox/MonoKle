@@ -1,21 +1,21 @@
 ﻿using System;
 
-namespace MonoKle.Variable
+namespace MonoKle.Configuration
 {
     /// <summary>
-    /// Class for variable containing its own value.
+    /// Class for a simple CVar variable hodling a value.
     /// </summary>
-    public class ValueVariable : IVariable
+    public class ValueCVar : ICVar
     {
-        private object value;
+        private object _value;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValueVariable"/> class.
+        /// Initializes a new instance of the <see cref="ValueCVar"/> class.
         /// </summary>
         /// <param name="value">The value.</param>
-        public ValueVariable(object value)
+        public ValueCVar(object value)
         {
-            this.value = value;
+            _value = value;
         }
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace MonoKle.Variable
         /// Gets the variable value.
         /// </summary>
         /// <returns></returns>
-        public object GetValue() => value;
+        public object GetValue() => _value;
 
         /// <summary>
         /// Sets the variable to the provided value if possible.
@@ -47,7 +47,7 @@ namespace MonoKle.Variable
         /// </returns>
         public bool SetValue(object value)
         {
-            this.value = value;
+            _value = value;
             return true;
         }
     }

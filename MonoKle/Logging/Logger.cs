@@ -55,7 +55,7 @@ namespace MonoKle.Logging
         /// <summary>
         /// The maximum amount of logs to be stored.
         /// </summary>
-        [PropertyVariable("log_size")]
+        [Variable("log_size")]
         public short Size
         {
             get => size;

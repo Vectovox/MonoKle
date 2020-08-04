@@ -7,37 +7,37 @@ namespace MonoKle.Engine
         /// <summary>
         /// Gets or sets a value indicating whether keyboard is enabled.
         /// </summary>
-        [PropertyVariableAttribute("keyboard_enabled")]
+        [PropertyVariable("keyboard_enabled")]
         public bool KeyboardEnabled { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether gamepad is enabled.
         /// </summary>
-        [PropertyVariableAttribute("gamepad_enabled")]
+        [PropertyVariable("gamepad_enabled")]
         public bool GamePadEnabled { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether mouse is enabled.
         /// </summary>
-        [PropertyVariableAttribute("mouse_enabled")]
+        [PropertyVariable("mouse_enabled")]
         public bool MouseEnabled { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether mouse is enabled.
         /// </summary>
-        [PropertyVariable("g_touch_enabled")]
+        [PropertyVariable("touch_enabled")]
         public bool TouchEnabled { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether console is enabled.
         /// </summary>
-        [PropertyVariableAttribute("console_enabled")]
+        [PropertyVariable("console_enabled")]
         public bool ConsoleEnabled { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the mouse cursor is visible inside the application.
         /// </summary>
-        [PropertyVariableAttribute("mouse_visible")]
+        [PropertyVariable("mouse_visible")]
         public bool MouseVisible { get { return MonoKleGame.GameInstance.IsMouseVisible; } set { MonoKleGame.GameInstance.IsMouseVisible = value; } }
     }
 }

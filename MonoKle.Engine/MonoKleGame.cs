@@ -245,7 +245,7 @@ namespace MonoKle.Engine
 
                 GraphicsManager.Update(Window.ClientBounds.Size);
 
-                if (MonoKleGame.settings.ConsoleEnabled == false || MonoKleGame.Console.IsOpen == false)
+                if (MonoKleGame.Console.IsOpen == false)
                 {
                     MonoKleGame.stateSystem.Update(deltaTime);
                 }

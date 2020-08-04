@@ -18,7 +18,7 @@ namespace MonoKle.Input.Touch
 
         private readonly Button _mouseButton = new Button();
 
-        [PropertyVariable("t_virtual_touch")]
+        [PropertyVariable("touch_virtual")]
         public bool VirtualTouch { get; set; }
 
         public ITouchAction Tap => GetActionInternal(GestureType.Tap);

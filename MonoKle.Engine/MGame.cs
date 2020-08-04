@@ -17,7 +17,7 @@ namespace MonoKle.Engine
     /// <summary>
     /// Backend for the MonoKle engine. Provides global access to all MonoKle systems.
     /// </summary>
-    public class MonoKleGame : Game
+    public class MGame : Game
     {
         private static bool initializing = true;
 
@@ -81,7 +81,7 @@ namespace MonoKle.Engine
         /// <summary>
         /// Gets the running game instance.
         /// </summary>
-        public static MonoKleGame GameInstance { get; } = new MonoKleGame();
+        public static MGame GameInstance { get; } = new MGame();
 
         /// <summary>
         /// Gets or sets the global game settings.
@@ -114,7 +114,7 @@ namespace MonoKle.Engine
         /// </summary>
         /// <param name="resolution">The initial display resolution.</param>
         /// <param name="fullscreen">The initial fullscreen setting.</param>
-        public static MonoKleGame Create(bool fullscreen)
+        public static MGame Create(bool fullscreen)
         {
             // Graphics device has to be created immediately but cannot be used before LoadContent
             GraphicsManager = new GraphicsManager(new GraphicsDeviceManager(GameInstance));
@@ -150,7 +150,7 @@ namespace MonoKle.Engine
 
             // Done initializing
             console.WriteLine("MonoKle Engine initialized!", Console.CommandTextColour);
-            console.WriteLine("Running version: " + Assembly.GetAssembly(typeof(MonoKleGame)).GetName().Version, Console.CommandTextColour);
+            console.WriteLine("Running version: " + Assembly.GetAssembly(typeof(MGame)).GetName().Version, Console.CommandTextColour);
             initializing = false;
         }
 
@@ -259,9 +259,9 @@ namespace MonoKle.Engine
 
         private static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            MonoKleGame.Logger.Log(e.ExceptionObject.ToString(), LogLevel.Error);
+            Logger.Log(e.ExceptionObject.ToString(), LogLevel.Error);
             var fs = new FileStream("./crashdump.log", FileMode.OpenOrCreate | FileMode.Truncate);
-            MonoKleGame.Logger.WriteLog(fs); // TODO: Remove magic constant. Not into a constants class, but into settings! E.g. Settings.GetValue("crashdump").
+            Logger.WriteLog(fs); // TODO: Remove magic constant. Not into a constants class, but into settings! E.g. Settings.GetValue("crashdump").
         }
     }
 }

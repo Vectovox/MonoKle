@@ -19,7 +19,7 @@ namespace MonoKle.Engine.Android
             base.OnCreate(bundle);
 
             // Create MonoKleGame
-            var game = MonoKleGame.Create(true);
+            var game = MGame.Create(true);
             
             // Hook up MonoGame
             View = game.Services.GetService(typeof(View)) as View;
@@ -44,6 +44,6 @@ namespace MonoKle.Engine.Android
         /// Called just before game is run, allowing setting of states or overriding Android settings.
         /// </summary>
         /// <param name="game">The game instance that is going to run.</param>
-        protected abstract void OnBeforeRun(MonoKleGame game);
+        protected abstract void OnBeforeRun(MGame game);
     }
 }

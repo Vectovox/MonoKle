@@ -18,7 +18,7 @@ namespace Demo.Android
     )]
     public class GameActivity : MonoKleActivity
     {
-        protected override void OnBeforeRun(MonoKleGame game)
+        protected override void OnBeforeRun(MGame game)
         {
             Boilerplate.ConfigureStates();
         }

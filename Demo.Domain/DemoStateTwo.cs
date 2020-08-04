@@ -30,7 +30,7 @@ namespace Demo.Domain
             var view = Matrix.CreateLookAt(camPos, camPos + new Vector3(0f, 0f, -1f), Vector3.Up);
             var projection = Matrix.CreatePerspectiveFieldOfView(
                 MathHelper.ToRadians(45.0f),
-                MonoKleGame.GraphicsManager.GraphicsDevice.PresentationParameters.BackBufferWidth / MonoKleGame.GraphicsManager.GraphicsDevice.PresentationParameters.BackBufferHeight,
+                MGame.GraphicsManager.GraphicsDevice.PresentationParameters.BackBufferWidth / MGame.GraphicsManager.GraphicsDevice.PresentationParameters.BackBufferHeight,
                 1.0f, 10000.0f
                 );
 
@@ -44,63 +44,63 @@ namespace Demo.Domain
             primitiveBatch2D.End();
 
             spriteBatch.Begin();
-            spriteBatch.DrawString(MonoKleGame.FontStorage.DefaultValue, tapString, Vector2.Zero, Color.White);
+            spriteBatch.DrawString(MGame.FontStorage.DefaultValue, tapString, Vector2.Zero, Color.White);
             spriteBatch.End();
         }
 
         public override void Update(TimeSpan time)
         {
-            if (MonoKleGame.Keyboard.IsKeyHeld(Keys.Escape, TimeSpan.FromSeconds(1)))
+            if (MGame.Keyboard.IsKeyHeld(Keys.Escape, TimeSpan.FromSeconds(1)))
             {
-                MonoKleGame.GameInstance.Exit();
+                MGame.GameInstance.Exit();
             }
 
-            if (MonoKleGame.Keyboard.IsKeyHeld(Keys.I))
+            if (MGame.Keyboard.IsKeyHeld(Keys.I))
             {
                 camPos.Y += 5;
             }
-            if (MonoKleGame.Keyboard.IsKeyHeld(Keys.K))
+            if (MGame.Keyboard.IsKeyHeld(Keys.K))
             {
                 camPos.Y -= 5;
             }
-            if (MonoKleGame.Keyboard.IsKeyHeld(Keys.L))
+            if (MGame.Keyboard.IsKeyHeld(Keys.L))
             {
                 camPos.X += 5;
             }
-            if (MonoKleGame.Keyboard.IsKeyHeld(Keys.J))
+            if (MGame.Keyboard.IsKeyHeld(Keys.J))
             {
                 camPos.X -= 5;
             }
 
-            if (MonoKleGame.Keyboard.IsKeyPressed(Keys.Space))
+            if (MGame.Keyboard.IsKeyPressed(Keys.Space))
             {
-                MonoKleGame.StateSystem.SwitchState("stateOne", "HELLO!");
+                MGame.StateSystem.SwitchState("stateOne", "HELLO!");
             }
 
-            if (MonoKleGame.TouchScreen.Tap.TryGetCoordinate(out var tapCoordinate))
+            if (MGame.TouchScreen.Tap.TryGetCoordinate(out var tapCoordinate))
             {
                 tapString = tapCoordinate.ToString();
             }
 
-            if (MonoKleGame.TouchScreen.Hold.TryGetCoordinate(out var holdCoordinate))
+            if (MGame.TouchScreen.Hold.TryGetCoordinate(out var holdCoordinate))
             {
-                MonoKleGame.StateSystem.SwitchState("stateOne", $"You switched on: {holdCoordinate}");
+                MGame.StateSystem.SwitchState("stateOne", $"You switched on: {holdCoordinate}");
             }
         }
 
         protected override void Activated(StateSwitchData data)
         {
             Console.WriteLine("State two activated! Message: " + (string)data.Data);
-            primitive3D = new PrimitiveBatch3D(MonoKleGame.GraphicsManager.GraphicsDevice);
-            spriteBatch = new SpriteBatch(MonoKleGame.GraphicsManager.GraphicsDevice);
-            primitiveBatch2D = new PrimitiveBatch2D(MonoKleGame.GraphicsManager.GraphicsDevice);
-            renderingArea = new RenderingArea2D(new MPoint2(320, 200), MonoKleGame.GraphicsManager.Resolution);
-            MonoKleGame.GraphicsManager.ResolutionChanged += GraphicsManager_ResolutionChanged;
+            primitive3D = new PrimitiveBatch3D(MGame.GraphicsManager.GraphicsDevice);
+            spriteBatch = new SpriteBatch(MGame.GraphicsManager.GraphicsDevice);
+            primitiveBatch2D = new PrimitiveBatch2D(MGame.GraphicsManager.GraphicsDevice);
+            renderingArea = new RenderingArea2D(new MPoint2(320, 200), MGame.GraphicsManager.Resolution);
+            MGame.GraphicsManager.ResolutionChanged += GraphicsManager_ResolutionChanged;
         }
 
         private void GraphicsManager_ResolutionChanged(object sender, ResolutionChangedEventArgs e)
         {
-            renderingArea = new RenderingArea2D(new MPoint2(320, 200), MonoKleGame.GraphicsManager.Resolution);
+            renderingArea = new RenderingArea2D(new MPoint2(320, 200), MGame.GraphicsManager.Resolution);
         }
     }
 }

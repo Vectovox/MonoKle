@@ -14,16 +14,16 @@ namespace MonoKle.Engine.Commands
 
         public void Call(IGameConsole console)
         {
-            if (MonoKleGame.Variables.Variables.Contains(Variable) && MonoKleGame.Variables.Variables.CanSet(Variable) == false)
+            if (MGame.Variables.Variables.Contains(Variable) && MGame.Variables.Variables.CanSet(Variable) == false)
             {
                 console.WriteError("Can not set variable since it is read-only");
             }
-            else if (MonoKleGame.Variables.VariablePopulator.LoadItem(Variable, Value) == false)
+            else if (MGame.Variables.VariablePopulator.LoadItem(Variable, Value) == false)
             {
                 console.WriteError("Variable assignment failed");
             }
         }
 
-        public ICollection<string> GetPositionalSuggestions() => MonoKleGame.Variables.Variables.Identifiers;
+        public ICollection<string> GetPositionalSuggestions() => MGame.Variables.Variables.Identifiers;
     }
 }

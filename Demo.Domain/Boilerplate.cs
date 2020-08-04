@@ -7,9 +7,9 @@ namespace Demo.Domain
     {
         public static void ConfigureStates()
         {
-            MonoKleGame.StateSystem.AddState(new DemoStateOne());
-            MonoKleGame.StateSystem.AddState(new DemoStateTwo());
-            MonoKleGame.StateSystem.SwitchState("stateOne", null);
+            MGame.StateSystem.AddState(new DemoStateOne());
+            MGame.StateSystem.AddState(new DemoStateTwo());
+            MGame.StateSystem.SwitchState("stateOne", null);
             TouchPanel.EnabledGestures = GestureType.Tap;
         }
     }

@@ -15,7 +15,7 @@ namespace Demo.Windows
         [STAThread]
         private static void Main()
         {
-            using var game = MonoKleGame.Create(false);
+            using var game = MGame.Create(false);
             Boilerplate.ConfigureStates();
             game.Run();
         }

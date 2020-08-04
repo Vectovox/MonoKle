@@ -95,12 +95,11 @@ namespace MonoKle.Asset
         /// </summary>
         public int LoadFromManifest()
         {
+            int counter = 0;
             try
             {
                 (var manifestStream, var prefix) = GetManifest();
                 using StreamReader reader = new StreamReader(manifestStream);
-
-                int counter = 0;
                 while (!reader.EndOfStream)
                 {
                     var line = reader.ReadLine();
@@ -118,12 +117,13 @@ namespace MonoKle.Asset
                         }
                     }
                 }
-                return counter;
             }
-            catch (IOException)
+            catch (IOException e)
             {
-                return 0;
+                Logger.Global.Log($"Error loading from manifest {e.Message}", LogLevel.Error);
             }
+
+            return counter;
         }
 
         // Like Path.Combine() but with forward slash to be compatible with android (possible *nix too?)

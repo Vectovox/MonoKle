@@ -104,13 +104,18 @@ namespace MonoKle.Asset
                 while (!reader.EndOfStream)
                 {
                     var line = reader.ReadLine();
-                    if (Load(GetAssetPath(prefix, line), line, null))
+                    var path = GetAssetPath(prefix, line);
+
+                    if (FileSupported(new FileInfo(path).Extension))
                     {
-                        counter++;
-                    }
-                    else
-                    {
-                        Logger.Global.Log($"Could not load asset '{line}' from manifest", LogLevel.Error);
+                        if (Load(path, line, null))
+                        {
+                            counter++;
+                        }
+                        else
+                        {
+                            Logger.Global.Log($"Could not load asset '{line}' from manifest", LogLevel.Error);
+                        }
                     }
                 }
                 return counter;
@@ -151,11 +156,6 @@ namespace MonoKle.Asset
         /// <param name="group">The group to add the files to.</param>
         public bool Load(string path, string id, string group)
         {
-            if (!FileSupported(new FileInfo(path).Extension))
-            {
-                return false;
-            }
-
             try
             {
                 var stream = TitleContainer.OpenStream(path);

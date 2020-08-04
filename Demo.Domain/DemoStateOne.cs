@@ -7,6 +7,7 @@ using MonoKle.Asset;
 using MonoKle.Engine;
 using MonoKle.Graphics;
 using MonoKle.Input.Keyboard;
+using MonoKle.Input.Touch;
 using MonoKle.Logging;
 using MonoKle.Messaging;
 using MonoKle.State;
@@ -20,6 +21,7 @@ namespace Demo.Domain
         private Timer timer = new Timer(TimeSpan.FromSeconds(5));
         private Camera2D camera = new Camera2D(new MPoint2(800, 600));
         private PrimitiveBatch2D primitive2D;
+        private string stateSwitchMessage = string.Empty;
 
         public DemoStateOne() : base("stateOne")
         {
@@ -85,6 +87,8 @@ namespace Demo.Domain
             sb.DrawString(MonoKleGame.FontStorage.DefaultValue, s2, new Vector2(0, 0), Color.Green);
             sb.DrawString(MonoKleGame.FontStorage.DefaultValue, s2, new Vector2(0, 0 + MonoKleGame.FontStorage.DefaultValue.MeasureString(s2).Y), Color.Green);
             sb.DrawString(MonoKleGame.FontStorage.DefaultValue, s2, new Vector2(0, 0 + 2 * MonoKleGame.FontStorage.DefaultValue.MeasureString(s2).Y), Color.Green);
+
+            sb.DrawString(MonoKleGame.FontStorage.DefaultValue, stateSwitchMessage, new Vector2(0, 700), Color.Green);
 
             // Test size measurements.
             var pos = new Vector2(50, 450);
@@ -189,13 +193,9 @@ namespace Demo.Domain
 
 
                 ti.Update();
-                while (TouchPanel.IsGestureAvailable)
+                if (MonoKleGame.TouchScreen.Hold.IsTriggered)
                 {
-                    var gesture = TouchPanel.ReadGesture();
-                    if (gesture.GestureType == GestureType.Tap)
-                    {
-                        MonoKleGame.StateSystem.SwitchState("stateTwo", null);
-                    }
+                    MonoKleGame.StateSystem.SwitchState("stateTwo", null);
                 }
             }
 
@@ -219,7 +219,8 @@ namespace Demo.Domain
 
         protected override void Activated(StateSwitchData data)
         {
-            MonoKleGame.Console.WriteLine("State one activated! Message: " + (string)data.Data);
+            stateSwitchMessage = (string)data.Data ?? string.Empty;
+            MonoKleGame.Console.WriteLine($"State one activated! Message: {stateSwitchMessage}");
             MonoKleGame.Console.WriteLine(MonoKleGame.TextureStorage.LoadFromManifest() + " textures loaded.");
             MonoKleGame.Console.WriteLine(MonoKleGame.FontStorage.LoadFromManifest() + " fonts loaded.");
             MonoKleGame.Console.WriteLine(MonoKleGame.EffectStorage.LoadFromManifest() + " effects loaded.");

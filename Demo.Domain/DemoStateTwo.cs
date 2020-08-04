@@ -1,6 +1,8 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoKle;
+using MonoKle.Asset;
 using MonoKle.Engine;
 using MonoKle.Graphics;
 using MonoKle.State;
@@ -12,9 +14,11 @@ namespace Demo.Domain
     {
         private PrimitiveBatch3D primitive3D;
         private PrimitiveBatch2D primitiveBatch2D;
+        private SpriteBatch spriteBatch;
 
         private Vector3 camPos = new Vector3(0f, 0f, 500f);
         private RenderingArea2D renderingArea;
+        private string tapString = "";
 
         public DemoStateTwo()
             : base("stateTwo")
@@ -38,6 +42,10 @@ namespace Demo.Domain
             primitiveBatch2D.Begin();
             primitiveBatch2D.DrawRenderingArea(renderingArea);
             primitiveBatch2D.End();
+
+            spriteBatch.Begin();
+            spriteBatch.DrawString(MonoKleGame.FontStorage.DefaultValue, tapString, Vector2.Zero, Color.White);
+            spriteBatch.End();
         }
 
         public override void Update(TimeSpan time)
@@ -68,12 +76,23 @@ namespace Demo.Domain
             {
                 MonoKleGame.StateSystem.SwitchState("stateOne", "HELLO!");
             }
+
+            if (MonoKleGame.TouchScreen.Tap.TryGetCoordinate(out var tapCoordinate))
+            {
+                tapString = tapCoordinate.ToString();
+            }
+
+            if (MonoKleGame.TouchScreen.Hold.TryGetCoordinate(out var holdCoordinate))
+            {
+                MonoKleGame.StateSystem.SwitchState("stateOne", $"You switched on: {holdCoordinate}");
+            }
         }
 
         protected override void Activated(StateSwitchData data)
         {
             Console.WriteLine("State two activated! Message: " + (string)data.Data);
             primitive3D = new PrimitiveBatch3D(MonoKleGame.GraphicsManager.GraphicsDevice);
+            spriteBatch = new SpriteBatch(MonoKleGame.GraphicsManager.GraphicsDevice);
             primitiveBatch2D = new PrimitiveBatch2D(MonoKleGame.GraphicsManager.GraphicsDevice);
             renderingArea = new RenderingArea2D(new MPoint2(320, 200), MonoKleGame.GraphicsManager.Resolution);
             MonoKleGame.GraphicsManager.ResolutionChanged += GraphicsManager_ResolutionChanged;

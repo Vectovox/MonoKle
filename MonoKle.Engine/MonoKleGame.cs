@@ -5,6 +5,7 @@ using MonoKle.Graphics;
 using MonoKle.Input.Gamepad;
 using MonoKle.Input.Keyboard;
 using MonoKle.Input.Mouse;
+using MonoKle.Input.Touch;
 using MonoKle.Logging;
 using MonoKle.State;
 using System;
@@ -25,6 +26,7 @@ namespace MonoKle.Engine
         private static Mouse mouse;
         private static readonly MonoKleSettings settings = new MonoKleSettings();
         private static StateSystem stateSystem;
+        private static TouchScreen touchScreen = new TouchScreen();
 
         /// <summary>
         /// Gets the game console, printing logs and accepting input.
@@ -90,6 +92,11 @@ namespace MonoKle.Engine
         /// Gets the current mouse.
         /// </summary>
         public static IMouse Mouse => MonoKleGame.mouse;
+
+        /// <summary>
+        /// Gets the touch screen.
+        /// </summary>
+        public static ITouchScreen TouchScreen => touchScreen;
 
         /// <summary>
         /// Gets the state system, which keeps track of the states and switches between them.
@@ -229,6 +236,11 @@ namespace MonoKle.Engine
                 if (MonoKleGame.settings.MouseEnabled)
                 {
                     MonoKleGame.mouse.Update(deltaTime);
+                }
+
+                if (MonoKleGame.settings.TouchEnabled)
+                {
+                    touchScreen.Update(deltaTime);
                 }
 
                 GraphicsManager.Update(Window.ClientBounds.Size);

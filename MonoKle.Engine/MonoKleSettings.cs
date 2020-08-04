@@ -23,6 +23,12 @@ namespace MonoKle.Engine
         public bool MouseEnabled { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether mouse is enabled.
+        /// </summary>
+        [PropertyVariable("g_touch_enabled")]
+        public bool TouchEnabled { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether console is enabled.
         /// </summary>
         [PropertyVariableAttribute("console_enabled")]

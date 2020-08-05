@@ -21,4 +21,4 @@ For full information see the documentation within the repository.
 As this is still a personal project that grows organically, the code is in constant flux and each version may, and likely does, break compatibility. Expect changes!
 
 ## License
-MonoKle is under the Microsoft Public License (MS-PL), see [the license file](LICENSE.txt) for more details. Third-party libraries used by MonoKle are under their own licenses.
+MonoKle is under the Microsoft Public License (MS-PL) license, see [the license file](LICENSE.txt) for more details. Third-party libraries used by MonoKle are under their own licenses.

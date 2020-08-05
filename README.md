@@ -1,7 +1,7 @@
 ## Description
 MonoKle is an open-source library for [MonoGame](https://github.com/MonoGame/MonoGame). Its main purpose is to make development and prototyping both easier and faster by implementing common functionality for reuse across projects, regardless of platform or game idea.
 
-A lot of the functionality is an abstraction on MonoGame but as the project has grown, it is now more opinionated with regards to how to structure your game project. Therefore, it is split into <b>MonoKle</b> with the core classes and <b>MonoKle.Engine</b> that owns the background scaffolding and leaves you free to work on your idea.
+A lot of the functionality is an abstraction on MonoGame but as the project has grown, it is now more opinionated with regards to how to structure your game project. Therefore, it is split into **MonoKle** with the core classes and **MonoKle.Engine** that owns the background scaffolding and leaves you free to work on your idea.
 
 ## Requirements
 To use MonoKle, your project needs to support or reference the following:

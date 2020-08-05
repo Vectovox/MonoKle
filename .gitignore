@@ -124,3 +124,6 @@ ModelManifest.xml
 
 # More VS stuff
 .vs
+
+# Nuget config
+nuget.config

@@ -2,20 +2,26 @@ MonoKle
 =======
 
 <H3>Description</H3>
-MonoKle is an open source game development library for MonoGame, and it is designed for easier and faster development by having commonly desired functionality implemented for the developer.
+MonoKle is an open-source library for [MonoGame](https://github.com/MonoGame/MonoGame). Its main purpose is to make development and prototyping both easier and faster by implementing common functionality for reuse across projects, regardless of platform or game idea.
 
-It is originally based on the source of a private XNA project by Robert Kaufmann, but it has since changed a lot in features and design.
+A lot of the functionality is an abstraction on MonoGame but as the project has grown, it is now more opinionated with regards to how to structure your game project. Therefore, it is split into <b>MonoKle</b> with the core classes and <b>MonoKle.Engine</b> that owns the background scaffolding and leaves you free to work on your idea.
+
+<H3>Requirements</H3>
+To use MonoKle, your project needs to support or reference the following:
+
+* [MonoGame](https://github.com/MonoGame/MonoGame)
+* [.NET Standard 2.1](https://github.com/dotnet/standard)
+* [MoreLINQ](https://github.com/morelinq/MoreLINQ)
 
 <H3>Usage</H3>
-It is quite easy to get started using MonoKle. Just reference the DLL in your game and you are up and running. Do not forget to copy the .XML documentation file to the same folder as the library since it provides documentation within Visual Studio.
+It is quite easy to get started using MonoKle. Just reference the DLL in your game and you are up and running. Do not forget to copy the .XML documentation file to the same folder as the library!
 
-If you want to contribute to MonoKle or fork it you need to have MonoGame installed (along with OpenAL). After that you just clone the repository and open the project file. It is as easy as that!
+If you want to contribute to MonoKle or fork it you need to have MonoGame installed (nuget recommended). After that you just clone the repository and open the project file. It is as easy as that!
 
 For full information see the documentation within the repository.
 
-<H3>Copyright</H3>
-For a list of contributors, see COPYRIGHT.txt
+<H3>State of code</H3>
+As this is still a personal project that grows organically, the code is in constant flux and each version may, and likely does, break compatibility. Expect changes!
 
 <H3>License</H3>
-Microsoft Public License (Ms-PL)
-For the complete license, see LICENSE.txt
+MonoKle is under the Microsoft Public License (MS-PL), see the LICENSE.txt file for more details. Third-party libraries used by MonoKle are under their own licenses.

@@ -25,7 +25,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoKle.Engine.Android", "M
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DevUtils", "DevUtils", "{52F7830E-2293-4FC2-8E01-43C6E941639C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SettingsLister", "SettingsLister\SettingsLister.csproj", "{3DFA9187-4180-4EFF-9936-F5EC662D3CF8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SettingsLister", "SettingsLister\SettingsLister.csproj", "{3DFA9187-4180-4EFF-9936-F5EC662D3CF8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

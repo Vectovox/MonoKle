@@ -85,16 +85,16 @@ namespace MonoKle.Input.Touch
         {
             if (_mouse.Left.IsHeldForOnce(TimeSpan.FromSeconds(1)))
             {
-                _pressActions[GestureType.Hold].Set(_mouse.Position.Value);
+                _pressActions[GestureType.Hold].Set(_mouse.Position.Coordinate);
             }
             else if (_mouse.Left.IsPressed)
             {
-                _pressActions[GestureType.Tap].Set(_mouse.Position.Value);
+                _pressActions[GestureType.Tap].Set(_mouse.Position.Coordinate);
             }
 
             if (_mouse.Right.IsHeldFor(TimeSpan.FromMilliseconds(50)))
             {
-                _dragActions[GestureType.FreeDrag].Set(_mouse.Position.Value, _mouse.Position.DeltaValue);
+                _dragActions[GestureType.FreeDrag].Set(_mouse.Position.Coordinate, _mouse.Position.Delta);
             }
         }
     }

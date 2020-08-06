@@ -11,7 +11,7 @@
         /// <value>
         /// The delta value.
         /// </value>
-        MPoint2 DeltaValue { get; }
+        MPoint2 Delta { get; }
 
         /// <summary>
         /// Gets the previous value.
@@ -19,7 +19,7 @@
         /// <value>
         /// The previous value.
         /// </value>
-        MPoint2 PreviousValue { get; }
+        MPoint2 PreviousCoordinate { get; }
 
         /// <summary>
         /// Gets the value.
@@ -27,6 +27,6 @@
         /// <value>
         /// The value.
         /// </value>
-        MPoint2 Value { get; }
+        MPoint2 Coordinate { get; }
     }
 }

@@ -40,7 +40,7 @@ namespace Demo.Domain
             sb.Draw(MGame.TextureStorage.White, new Vector2(150, 50), Color.Red);
 
             var testBoxRect = new MRectangleInt(250, 250, 64, 64);
-            bool testBoxMouseWithin = testBoxRect.Contains(camera.TransformInv(MGame.Mouse.Position.Value.ToMVector2()).ToMPoint2());
+            bool testBoxMouseWithin = testBoxRect.Contains(camera.TransformInv(MGame.Mouse.Position.Coordinate.ToMVector2()).ToMPoint2());
             sb.Draw(MGame.TextureStorage.GetAsset("textures/testbox.png"), testBoxRect, testBoxMouseWithin ? Color.Red : Color.White);
 
             Font font = MGame.FontStorage.GetAsset("Fonts/testfont.mfnt");
@@ -109,7 +109,7 @@ namespace Demo.Domain
             sb.End();
 
             sb.Begin();
-            sb.Draw(MGame.TextureStorage.White, new Rectangle(MGame.Mouse.Position.Value.X, MGame.Mouse.Position.Value.Y, 3, 3), Color.Black);
+            sb.Draw(MGame.TextureStorage.White, new Rectangle(MGame.Mouse.Position.Coordinate.X, MGame.Mouse.Position.Coordinate.Y, 3, 3), Color.Black);
             sb.End();
         }
 

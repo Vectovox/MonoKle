@@ -9,13 +9,13 @@ namespace MonoKle.Input.Mouse
     /// </summary>
     public class Mouse : IMouse, IUpdateable
     {
-        private Button left = new Button();
-        private Button middle = new Button();
-        private InputPosition position = new InputPosition();
-        private int previousScrollValue = 0;
-        private Button right = new Button();
-        private Button x1 = new Button();
-        private Button x2 = new Button();
+        private readonly Button _left = new Button();
+        private readonly Button _middle = new Button();
+        private readonly InputPosition _position = new InputPosition();
+        private int _previousScrollValue = 0;
+        private readonly Button _right = new Button();
+        private readonly Button _x1 = new Button();
+        private readonly Button _x2 = new Button();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Mouse"/> class.
@@ -34,7 +34,7 @@ namespace MonoKle.Input.Mouse
         /// <value>
         /// The left button.
         /// </value>
-        public IPressable Left => left;
+        public IPressable Left => _left;
 
         /// <summary>
         /// Gets the middle button.
@@ -42,7 +42,7 @@ namespace MonoKle.Input.Mouse
         /// <value>
         /// The middle button.
         /// </value>
-        public IPressable Middle => middle;
+        public IPressable Middle => _middle;
 
         /// <summary>
         /// Gets the position relative the upper left corner of the game window.
@@ -50,7 +50,7 @@ namespace MonoKle.Input.Mouse
         /// <value>
         /// The position.
         /// </value>
-        public IInputPosition Position => position;
+        public IInputPosition Position => _position;
 
         /// <summary>
         /// Gets the right button.
@@ -58,7 +58,7 @@ namespace MonoKle.Input.Mouse
         /// <value>
         /// The right button.
         /// </value>
-        public IPressable Right => right;
+        public IPressable Right => _right;
 
         /// <summary>
         /// Gets the scroll direction.
@@ -91,14 +91,14 @@ namespace MonoKle.Input.Mouse
         /// <value>
         /// The first extra button.
         /// </value>
-        public IPressable X1 => x1;
+        public IPressable X1 => _x1;
 
         /// <summary>
         /// Gets the second extra button.</summary>
         /// <value>
         /// The second extra button.
         /// </value>
-        public IPressable X2 => x2;
+        public IPressable X2 => _x2;
 
         /// <summary>
         /// Gets the provided mouse button.
@@ -111,19 +111,19 @@ namespace MonoKle.Input.Mouse
             switch (button)
             {
                 case MouseButton.Left:
-                    return left;
+                    return _left;
 
                 case MouseButton.Middle:
-                    return middle;
+                    return _middle;
 
                 case MouseButton.Right:
-                    return right;
+                    return _right;
 
                 case MouseButton.XButton1:
-                    return x1;
+                    return _x1;
 
                 case MouseButton.XButton2:
-                    return x2;
+                    return _x2;
 
                 default:
                     throw new ArgumentException("Non supported mouse button value provided.");
@@ -135,17 +135,17 @@ namespace MonoKle.Input.Mouse
             MouseState currentState = Microsoft.Xna.Framework.Input.Mouse.GetState();
 
             // Buttons
-            left.Update(currentState.LeftButton == ButtonState.Pressed, timeDelta);
-            middle.Update(currentState.MiddleButton == ButtonState.Pressed, timeDelta);
-            right.Update(currentState.RightButton == ButtonState.Pressed, timeDelta);
-            x1.Update(currentState.XButton1 == ButtonState.Pressed, timeDelta);
-            x2.Update(currentState.XButton2 == ButtonState.Pressed, timeDelta);
+            _left.Update(currentState.LeftButton == ButtonState.Pressed, timeDelta);
+            _middle.Update(currentState.MiddleButton == ButtonState.Pressed, timeDelta);
+            _right.Update(currentState.RightButton == ButtonState.Pressed, timeDelta);
+            _x1.Update(currentState.XButton1 == ButtonState.Pressed, timeDelta);
+            _x2.Update(currentState.XButton2 == ButtonState.Pressed, timeDelta);
 
             // Scroll wheel
             var scrollValue = currentState.ScrollWheelValue;
-            ScrollDirection = scrollValue > previousScrollValue ? MouseScrollDirection.Up :
-                (scrollValue < previousScrollValue ? MouseScrollDirection.Down : MouseScrollDirection.None);
-            previousScrollValue = scrollValue;
+            ScrollDirection = scrollValue > _previousScrollValue ? MouseScrollDirection.Up :
+                (scrollValue < _previousScrollValue ? MouseScrollDirection.Down : MouseScrollDirection.None);
+            _previousScrollValue = scrollValue;
 
             // Mouse position
             var mousePosition = new MPoint2(currentState.X, currentState.Y);
@@ -153,11 +153,11 @@ namespace MonoKle.Input.Mouse
             {
                 // Update the virtual mouse using the mouse movement from the region center and center the actual mouse again
                 var center = VirtualRegion.Center.ToMPoint2();
-                mousePosition = position.Value + (mousePosition - center);
+                mousePosition = _position.Coordinate + (mousePosition - center);
                 mousePosition = VirtualRegion.Clamp(mousePosition);
                 Microsoft.Xna.Framework.Input.Mouse.SetPosition(center.X, center.Y);
             }
-            position.Update(mousePosition, timeDelta);
+            _position.Update(mousePosition);
         }
     }
 }

@@ -1,5 +1,3 @@
-using System;
-
 namespace MonoKle.Input
 {
     /// <summary>
@@ -8,46 +6,30 @@ namespace MonoKle.Input
     /// <seealso cref="IInputPosition" />
     public class InputPosition : IInputPosition
     {
-        private MPoint2 current;
-
-        private MPoint2 delta;
-
-        private MPoint2 previous;
+        /// <summary>
+        /// Gets the change in position since last update.
+        /// </summary>
+        public MPoint2 Delta { get; private set; }
 
         /// <summary>
-        /// Gets the delta value.
+        /// Gets the previous <see cref="Coordinate"/>.
         /// </summary>
-        /// <value>
-        /// The delta value.
-        /// </value>
-        public MPoint2 DeltaValue => delta;
+        public MPoint2 PreviousCoordinate { get; private set; }
 
         /// <summary>
-        /// Gets the previous value.
+        /// Gets the current coordinate.
         /// </summary>
-        /// <value>
-        /// The previous value.
-        /// </value>
-        public MPoint2 PreviousValue => previous;
+        public MPoint2 Coordinate { get; private set; }
 
         /// <summary>
-        /// Gets the value.
+        /// Updates the current coordinate.
         /// </summary>
-        /// <value>
-        /// The value.
-        /// </value>
-        public MPoint2 Value => current;
-
-        /// <summary>
-        /// Updates the current position.
-        /// </summary>
-        /// <param name="position">The current position.</param>
-        /// <param name="timeDelta">The delta time since last update.</param>
-        public void Update(MPoint2 position, TimeSpan timeDelta)
+        /// <param name="coordinate">The current coordinate.</param>
+        public void Update(MPoint2 coordinate)
         {
-            previous = current;
-            current = position;
-            delta = current - previous;
+            PreviousCoordinate = Coordinate;
+            Coordinate = coordinate;
+            Delta = Coordinate - PreviousCoordinate;
         }
     }
 }

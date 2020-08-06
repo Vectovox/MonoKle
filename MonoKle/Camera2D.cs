@@ -10,65 +10,63 @@ namespace MonoKle
     public class Camera2D
     {
         // TODO: Add desired position and a method that travels to a given position from the current one. private Vector2 desiredPosition;
-        // TODO: Calculate matrixes when properties are read to not have to call Update + get lazy evaluation
-        // TODO: Movable camera as a subclass?
-        private float desiredRotation;
-        private float desiredRotationSpeed = 0;
-        private float desiredScale;
-        private float desiredScaleSpeed = 0;
-        private bool matrixNeedsUpdate = true;
-        private MVector2 position;
-        private float rotation;
-        private float scale = 1f;
-        private MPoint2 size;
-        private Matrix transformMatrix;
-        private Matrix transformMatrixInv;
+        private float _desiredRotation;
+        private float _desiredRotationSpeed = 0;
+        private float _desiredScale;
+        private float _desiredScaleSpeed = 0;
+        private bool _matrixNeedsUpdate = true;
+        private MVector2 _position;
+        private float _rotation;
+        private float _scale = 1f;
+        private MPoint2 _size;
+        private Matrix _transformMatrix;
+        private Matrix _transformMatrixInv;
 
         /// <summary>
         /// Initiates a new instance of <see cref="Camera2D"/>.
         /// </summary>
         /// <param name="size">The <see cref="MPoint2"/> represenetation of the camera size.</param>
-        public Camera2D(MPoint2 size) => this.size = size;
+        public Camera2D(MPoint2 size) => _size = size;
 
         /// <summary>
         /// Gets the size of the camera. 
         /// </summary>
         public MPoint2 Size
         {
-            get => size;
-            set { size = value; matrixNeedsUpdate = true; }
+            get => _size;
+            set { _size = value; _matrixNeedsUpdate = true; }
         }
 
         /// <summary>
         /// Returns the current camera center position.
         /// </summary>
-        public MVector2 Position => position;
+        public MVector2 Position => _position;
 
         /// <summary>
         /// Returns the current rotation.
         /// </summary>
-        public float Rotation => rotation;
+        public float Rotation => _rotation;
 
         /// <summary>
         /// Returns the current scale factor.
         /// </summary>
-        public float Scale => scale;
+        public float Scale => _scale;
 
         /// <summary>
         /// Gets the transformation matrix representation.
         /// </summary>
-        public Matrix TransformMatrix => transformMatrix;
+        public Matrix TransformMatrix => _transformMatrix;
 
         /// <summary>
         /// Gets the inverse transformation matrix representation.
         /// </summary>
-        public Matrix TransformMatrixInv => transformMatrixInv;
+        public Matrix TransformMatrixInv => _transformMatrixInv;
 
         /// <summary>
         /// Moves the current camera center by the provided amount.
         /// </summary>
         /// <param name="delta">The amount to move the camera by.</param>
-        public void Translate(MVector2 delta) => SetPosition(position + delta);
+        public void Translate(MVector2 delta) => SetPosition(_position + delta);
 
         /// <summary>
         /// Sets the current camera center position to the given coordinate.
@@ -76,8 +74,8 @@ namespace MonoKle
         /// <param name="position">The Vector2 coordinate to set to.</param>
         public void SetPosition(MVector2 position)
         {
-            this.position = position;
-            matrixNeedsUpdate = true;
+            _position = position;
+            _matrixNeedsUpdate = true;
         }
 
         /// <summary>
@@ -86,9 +84,9 @@ namespace MonoKle
         /// <param name="rotation">The value to set rotation to.</param>
         public void SetRotation(float rotation)
         {
-            this.rotation = MathHelper.WrapAngle(rotation);
-            desiredRotationSpeed = 0;
-            matrixNeedsUpdate = true;
+            _rotation = MathHelper.WrapAngle(rotation);
+            _desiredRotationSpeed = 0;
+            _matrixNeedsUpdate = true;
         }
 
         /// <summary>
@@ -98,16 +96,16 @@ namespace MonoKle
         /// <param name="speed">The delta rotation, in radians, per second.</param>
         public void SetRotation(float rotation, float speed)
         {
-            desiredRotation = MathHelper.WrapAngle(rotation);
-            if (desiredRotation != this.rotation)
+            _desiredRotation = MathHelper.WrapAngle(rotation);
+            if (_desiredRotation != _rotation)
             {
-                float a = desiredRotation - this.rotation;
+                float a = _desiredRotation - _rotation;
                 if (a > Math.PI)
                     a -= 2 * (float)Math.PI;
                 if (a < -Math.PI)
                     a += 2 * (float)Math.PI;
 
-                desiredRotationSpeed = a < 0 ? -speed : speed;
+                _desiredRotationSpeed = a < 0 ? -speed : speed;
             }
         }
 
@@ -117,9 +115,9 @@ namespace MonoKle
         /// <param name="scale">The scale factor to set to.</param>
         public void SetScale(float scale)
         {
-            this.scale = scale;
-            desiredScaleSpeed = 0;
-            matrixNeedsUpdate = true;
+            _scale = scale;
+            _desiredScaleSpeed = 0;
+            _matrixNeedsUpdate = true;
         }
 
         /// <summary>
@@ -129,8 +127,8 @@ namespace MonoKle
         /// <param name="speed">The delta scale per second.</param>
         public void SetScale(float scale, float speed)
         {
-            desiredScale = scale;
-            desiredScaleSpeed = (scale - this.scale) < 0 ? -speed : speed;
+            _desiredScale = scale;
+            _desiredScaleSpeed = (scale - _scale) < 0 ? -speed : speed;
         }
 
         /// <summary>
@@ -138,14 +136,14 @@ namespace MonoKle
         /// </summary>
         /// <param name="coordinate">The coordinate to transform.</param>
         /// <returns>Transformed coordinate.</returns>
-        public MVector2 Transform(MVector2 coordinate) => Vector2.Transform(coordinate, transformMatrix);
+        public MVector2 Transform(MVector2 coordinate) => Vector2.Transform(coordinate, _transformMatrix);
 
         /// <summary>
         /// Inversely transforms a given coordinate, effectively untransforming camera space to world space.
         /// </summary>
         /// <param name="coordinate">The coordinate to transform.</param>
         /// <returns>Transformed coordinate.</returns>
-        public MVector2 TransformInv(MVector2 coordinate) => Vector2.Transform(coordinate, transformMatrixInv);
+        public MVector2 TransformInv(MVector2 coordinate) => Vector2.Transform(coordinate, _transformMatrixInv);
 
         /// <summary>
         /// Updates camera composition with the given amount of delta time.
@@ -158,54 +156,54 @@ namespace MonoKle
             UpdateScale(seconds);
             UpdateRotation(seconds);
 
-            if (matrixNeedsUpdate)
+            if (_matrixNeedsUpdate)
             {
-                MVector2 center = size.ToMVector2() * 0.5f;
-                transformMatrix = Matrix.CreateTranslation(-new Vector3(position - center, 0f))
+                MVector2 center = _size.ToMVector2() * 0.5f;
+                _transformMatrix = Matrix.CreateTranslation(-new Vector3(_position - center, 0f))
                 * Matrix.CreateTranslation(-new Vector3(center, 0f))
-                * Matrix.CreateRotationZ(-rotation)
-                * Matrix.CreateScale(scale)
+                * Matrix.CreateRotationZ(-_rotation)
+                * Matrix.CreateScale(_scale)
                 * Matrix.CreateTranslation(new Vector3(center, 0f));
 
-                transformMatrixInv = Matrix.Invert(transformMatrix);
+                _transformMatrixInv = Matrix.Invert(_transformMatrix);
             }
         }
 
         private void UpdateRotation(double seconds)
         {
-            if (desiredRotationSpeed != 0)
+            if (_desiredRotationSpeed != 0)
             {
-                float delta = (float)(desiredRotationSpeed * seconds);
-                rotation = MathHelper.WrapAngle(rotation + delta);
-                double distance = Math.Atan2(Math.Sin(desiredRotation - rotation), Math.Cos(desiredRotation - rotation));
+                float delta = (float)(_desiredRotationSpeed * seconds);
+                _rotation = MathHelper.WrapAngle(_rotation + delta);
+                double distance = Math.Atan2(Math.Sin(_desiredRotation - _rotation), Math.Cos(_desiredRotation - _rotation));
 
                 // Check if we turned past the desired rotation
                 if (Math.Abs(distance) < Math.Abs(delta))
                 {
-                    desiredRotationSpeed = 0f;
-                    rotation = desiredRotation;
+                    _desiredRotationSpeed = 0f;
+                    _rotation = _desiredRotation;
                 }
 
-                matrixNeedsUpdate = true;
+                _matrixNeedsUpdate = true;
             }
         }
 
         private void UpdateScale(double seconds)
         {
-            if (desiredScaleSpeed != 0)
+            if (_desiredScaleSpeed != 0)
             {
-                float delta = (float)(desiredScaleSpeed * seconds);
-                if (Math.Abs(scale - desiredScale) < Math.Abs(delta))
+                float delta = (float)(_desiredScaleSpeed * seconds);
+                if (Math.Abs(_scale - _desiredScale) < Math.Abs(delta))
                 {
-                    desiredScaleSpeed = 0;
-                    scale = desiredScale;
+                    _desiredScaleSpeed = 0;
+                    _scale = _desiredScale;
                 }
                 else
                 {
-                    scale += delta;
+                    _scale += delta;
                 }
 
-                matrixNeedsUpdate = true;
+                _matrixNeedsUpdate = true;
             }
         }
     }

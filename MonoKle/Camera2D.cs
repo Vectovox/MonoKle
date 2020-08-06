@@ -65,6 +65,12 @@ namespace MonoKle
         public Matrix TransformMatrixInv => transformMatrixInv;
 
         /// <summary>
+        /// Moves the current camera center by the provided amount.
+        /// </summary>
+        /// <param name="delta">The amount to move the camera by.</param>
+        public void Translate(MVector2 delta) => SetPosition(position + delta);
+
+        /// <summary>
         /// Sets the current camera center position to the given coordinate.
         /// </summary>
         /// <param name="position">The Vector2 coordinate to set to.</param>

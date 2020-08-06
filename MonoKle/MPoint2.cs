@@ -72,6 +72,13 @@ namespace MonoKle
         public static MPoint2 operator -(MPoint2 a, MPoint2 b) => new MPoint2(a.X - b.X, a.Y - b.Y);
 
         /// <summary>
+        /// Unary operator for negating the components of the <see cref="MPoint2"/>.
+        /// </summary>
+        /// <param name="a">The operand.</param>
+        /// <returns>Negated result.</returns>
+        public static MPoint2 operator -(MPoint2 a) => Zero - a;
+
+        /// <summary>
         /// Logic operator for non-equality.
         /// </summary>
         /// <param name="a">Left operand.</param>

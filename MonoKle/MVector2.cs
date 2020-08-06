@@ -86,6 +86,13 @@ namespace MonoKle
         public static MVector2 operator -(MVector2 a, MVector2 b) => new MVector2(a.X - b.X, a.Y - b.Y);
 
         /// <summary>
+        /// Unary operator for negating the components of the <see cref="MVector2"/>.
+        /// </summary>
+        /// <param name="a">The operand.</param>
+        /// <returns>Negated result.</returns>
+        public static MVector2 operator -(MVector2 a) => Zero - a;
+
+        /// <summary>
         /// Logic operator for non-equality.
         /// </summary>
         /// <param name="a">Left operand.</param>

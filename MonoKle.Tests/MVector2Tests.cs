@@ -49,5 +49,8 @@ namespace MonoKle.Tests
             Assert.AreEqual(point.ClosestPoint(points), point.ClosestPoint(points, out distance));
             Assert.AreEqual((float)(point - expected).Length, distance);
         }
+
+        [TestMethod]
+        public void TestUnaryOperatorMinus() => Assert.AreEqual(new MVector2(1, -3), -new MVector2(-1, 3));
     }
 }

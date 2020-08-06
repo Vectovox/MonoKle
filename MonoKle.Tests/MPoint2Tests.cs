@@ -96,6 +96,9 @@ namespace MonoKle.Tests
         public void TestOperatorMinus() => Assert.AreEqual(new MPoint2(-1, 10), new MPoint2(1, 3) - new MPoint2(2, -7));
 
         [TestMethod]
+        public void TestUnaryOperatorMinus() => Assert.AreEqual(new MPoint2(1, -3), -new MPoint2(-1, 3));
+
+        [TestMethod]
         public void TestOperatorMultiply()
         {
             Assert.AreEqual(new MPoint2(5, 15), new MPoint2(1, 3) * 5);

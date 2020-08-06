@@ -20,6 +20,8 @@ namespace MonoKle
         private float _desiredScaleSpeed = 0;
 
         private MVector2 _position;
+        private MVector2 _desiredPosition;
+        private float _desiredPositionSpeed;
 
         private Matrix _transformMatrix;
         private Matrix _transformMatrixInv;
@@ -74,11 +76,24 @@ namespace MonoKle
         /// <summary>
         /// Sets the current camera center position to the given coordinate.
         /// </summary>
-        /// <param name="position">The Vector2 coordinate to set to.</param>
+        /// <param name="position">The coordinate to set to.</param>
         public void SetPosition(MVector2 position)
         {
             _position = position;
+            _desiredPositionSpeed = 0;
             _matrixNeedsUpdate = true;
+        }
+
+        /// <summary>
+        /// Sets the current camera center position to the given coordinate, moving it there
+        /// over time with the provided speed.
+        /// </summary>
+        /// <param name="position">The coordinate to set to.</param>
+        /// <param name="speed">The delta translation per second.</param>
+        public void SetPosition(MVector2 position, float speed)
+        {
+            _desiredPosition = position;
+            _desiredPositionSpeed = speed;
         }
 
         /// <summary>
@@ -158,6 +173,7 @@ namespace MonoKle
         {
             UpdateScale(seconds);
             UpdateRotation(seconds);
+            UpdatePosition(seconds);
 
             if (_matrixNeedsUpdate)
             {
@@ -174,17 +190,19 @@ namespace MonoKle
 
         private void UpdatePosition(double seconds)
         {
-            if (_desiredRotationSpeed != 0)
+            if (_desiredPositionSpeed != 0)
             {
-                float delta = (float)(_desiredRotationSpeed * seconds);
-                _rotation = MathHelper.WrapAngle(_rotation + delta);
-                double distance = Math.Atan2(Math.Sin(_desiredRotation - _rotation), Math.Cos(_desiredRotation - _rotation));
+                var direction = _desiredPosition - _position;
+                var delta = direction.Normalized * (float)seconds * _desiredPositionSpeed;
 
-                // Check if we turned past the desired rotation
-                if (Math.Abs(distance) < Math.Abs(delta))
+                if (float.IsNaN(delta.X) || direction.LengthSquared < delta.LengthSquared)
                 {
-                    _desiredRotationSpeed = 0f;
-                    _rotation = _desiredRotation;
+                    _desiredPositionSpeed = 0;
+                    _position = _desiredPosition;
+                }
+                else
+                {
+                    _position += delta;
                 }
 
                 _matrixNeedsUpdate = true;

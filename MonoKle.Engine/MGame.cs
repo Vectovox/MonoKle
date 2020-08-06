@@ -219,6 +219,7 @@ namespace MonoKle.Engine
             Variables.Variables.BindProperties(Console);
             Variables.Variables.BindProperties(Settings);
             Variables.Variables.BindProperties(Mouse);
+            Variables.Variables.BindProperties(TouchScreen);
         }
 
         private static void InitializeConsole()

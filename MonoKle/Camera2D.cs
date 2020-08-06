@@ -58,6 +58,11 @@ namespace MonoKle
         public float Scale => _scale;
 
         /// <summary>
+        /// Returns the minimum amount of scaling possible for the camera.
+        /// </summary>
+        public float MinScale { get; set; }
+
+        /// <summary>
         /// Gets the transformation matrix representation.
         /// </summary>
         public Matrix TransformMatrix => _transformMatrix;
@@ -133,7 +138,7 @@ namespace MonoKle
         /// <param name="scale">The scale factor to set to.</param>
         public void SetScale(float scale)
         {
-            _scale = scale;
+            _scale = Math.Max(scale, MinScale);
             _desiredScaleSpeed = 0;
             _matrixNeedsUpdate = true;
         }
@@ -147,6 +152,25 @@ namespace MonoKle
         {
             _desiredScale = scale;
             _desiredScaleSpeed = (scale - _scale) < 0 ? -speed : speed;
+        }
+
+        /// <summary>
+        /// Scales seamlessly towards to given coordinate by keeping the given camera coordinate
+        /// in the same world coordinate after the scaling.
+        /// </summary>
+        /// <param name="cameraCoordinate">The coordiante to scale towards.</param>
+        /// <param name="scaling">The amount of scaling to add.</param>
+        public void ScaleTo(MVector2 cameraCoordinate, float scaling)
+        {
+            // Calculate where in the game plane to scale towards
+            var previousWorldCoordinate = TransformInv(cameraCoordinate);
+            // Update to the new scale
+            SetScale(_scale + scaling);
+            // Calculate where in the game plane the camera coordinate is now
+            var matrix = CalculateMatrices(_position, _rotation, _scale, _size).TransformInv;
+            MVector2 newWorldCoordinate = Vector2.Transform(cameraCoordinate, matrix);
+            // Move the camera back such that the camera coordinate is back on the same world coordinate
+            Translate(previousWorldCoordinate - newWorldCoordinate);
         }
 
         /// <summary>
@@ -177,15 +201,19 @@ namespace MonoKle
 
             if (_matrixNeedsUpdate)
             {
-                MVector2 center = _size.ToMVector2() * 0.5f;
-                _transformMatrix = Matrix.CreateTranslation(-new Vector3(_position - center, 0f))
-                * Matrix.CreateTranslation(-new Vector3(center, 0f))
-                * Matrix.CreateRotationZ(-_rotation)
-                * Matrix.CreateScale(_scale)
-                * Matrix.CreateTranslation(new Vector3(center, 0f));
-
-                _transformMatrixInv = Matrix.Invert(_transformMatrix);
+                (_transformMatrix, _transformMatrixInv) = CalculateMatrices(_position, _rotation, _scale, _size);
             }
+        }
+
+        private static (Matrix Transform, Matrix TransformInv) CalculateMatrices(MVector2 position, float rotation, float scale, MPoint2 size)
+        {
+            MVector2 center = size.ToMVector2() * 0.5f;
+            var transform = Matrix.CreateTranslation(-new Vector3(position - center, 0f))
+            * Matrix.CreateTranslation(-new Vector3(center, 0f))
+            * Matrix.CreateRotationZ(-rotation)
+            * Matrix.CreateScale(scale)
+            * Matrix.CreateTranslation(new Vector3(center, 0f));
+            return (Transform: transform, TransformInv: Matrix.Invert(transform));
         }
 
         private void UpdatePosition(double seconds)
@@ -232,11 +260,12 @@ namespace MonoKle
         {
             if (_desiredScaleSpeed != 0)
             {
-                float delta = (float)(_desiredScaleSpeed * seconds);
-                if (Math.Abs(_scale - _desiredScale) < Math.Abs(delta))
+                var delta = (float)(_desiredScaleSpeed * seconds);
+                var nextScale = _scale - _desiredScale;
+                if (Math.Abs(nextScale) < Math.Abs(delta) || nextScale < MinScale)
                 {
                     _desiredScaleSpeed = 0;
-                    _scale = _desiredScale;
+                    _scale = Math.Max(_desiredScale, MinScale);
                 }
                 else
                 {

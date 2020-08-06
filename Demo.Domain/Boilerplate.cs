@@ -10,7 +10,7 @@ namespace Demo.Domain
             MGame.StateSystem.AddState(new DemoStateOne());
             MGame.StateSystem.AddState(new DemoStateTwo());
             MGame.StateSystem.SwitchState("stateOne", null);
-            TouchPanel.EnabledGestures = GestureType.Tap | GestureType.DoubleTap | GestureType.FreeDrag | GestureType.Hold;
+            MGame.TouchScreen.EnabledGestures = GestureType.Tap | GestureType.DoubleTap | GestureType.FreeDrag | GestureType.Hold | GestureType.Pinch;
         }
     }
 }

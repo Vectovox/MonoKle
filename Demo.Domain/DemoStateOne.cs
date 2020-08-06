@@ -19,7 +19,7 @@ namespace Demo.Domain
     {
         private SpriteBatch sb;
         private Timer timer = new Timer(TimeSpan.FromSeconds(5));
-        private Camera2D camera = new Camera2D(new MPoint2(800, 600));
+        private Camera2D camera = new Camera2D(new MPoint2(800, 600)) { MinScale = 0.5f };
         private PrimitiveBatch2D primitive2D;
         private string stateSwitchMessage = string.Empty;
 
@@ -137,11 +137,6 @@ namespace Demo.Domain
                     MGame.Console.WriteLine("Any shift held.");
                 }
 
-                if (MGame.TouchScreen.Drag.TryGetDelta(out var dragDelta))
-                {
-                    camera.Translate(-dragDelta.ToMVector2());
-                }
-
                 if (MGame.Keyboard.IsKeyHeld(Keys.I))
                 {
                     camera.SetPosition(camera.Position + new MVector2(0, -3));
@@ -173,6 +168,15 @@ namespace Demo.Domain
                 if (MGame.Keyboard.IsKeyHeld(Keys.H))
                 {
                     camera.SetScale(camera.Scale - 0.01f);
+                }
+
+                if (MGame.TouchScreen.Pinch.TryGetValues(out var pinchOrigin, out var pinchFactor))
+                {
+                    camera.ScaleTo(pinchOrigin.ToMVector2(), pinchFactor * 10);
+                }
+                else if (MGame.TouchScreen.Drag.TryGetDelta(out var dragDelta))
+                {
+                    camera.TranslateCameraSpace(-dragDelta.ToMVector2());
                 }
 
                 if (MGame.Keyboard.IsKeyPressed(Keys.F2))

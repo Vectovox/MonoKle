@@ -1,3 +1,17 @@
- dotnet build MonoKle -c Release
- dotnet build MonoKle.Engine -c Release
- dotnet build MonoKle.Utilities -c Release
+if ! dotnet build MonoKle -c Release
+then
+	echo "Build error! Aborting..."
+	exit 1
+fi
+
+if ! dotnet build MonoKle.Engine -c Release
+then
+	echo "Build error! Aborting..."
+	exit 1
+fi
+
+if ! dotnet build MonoKle.Utilities -c Release
+then
+	echo "Build error! Aborting..."
+	exit 1
+fi

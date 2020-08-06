@@ -42,7 +42,11 @@ echo "Cleaning..."
 
 echo 
 echo "Building..."
-./build_projects.sh
+if ! ./build_projects.sh
+then
+    echo "Error when building projects! Aborting..."
+    exit 3
+fi
 
 echo 
 echo "Pushing..."

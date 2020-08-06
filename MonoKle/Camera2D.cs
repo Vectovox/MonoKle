@@ -58,9 +58,14 @@ namespace MonoKle
         public float Scale => _scale;
 
         /// <summary>
-        /// Returns the minimum amount of scaling possible for the camera.
+        /// Gets or sets the minimum allowed scaling.
         /// </summary>
-        public float MinScale { get; set; }
+        public float MinScale { get; set; } = 0.5f;
+
+        /// <summary>
+        /// Gets or sets the maximum allowed scaling.
+        /// </summary>
+        public float MaxScale { get; set; } = 2f;
 
         /// <summary>
         /// Gets the transformation matrix representation.
@@ -151,7 +156,7 @@ namespace MonoKle
         /// <param name="scale">The scale factor to set to.</param>
         public void SetScale(float scale)
         {
-            _scale = Math.Max(scale, MinScale);
+            AssignScale(scale);
             _desiredScaleSpeed = 0;
             _matrixNeedsUpdate = true;
         }
@@ -274,19 +279,22 @@ namespace MonoKle
             if (_desiredScaleSpeed != 0)
             {
                 var delta = (float)(_desiredScaleSpeed * seconds);
-                var nextScale = _scale - _desiredScale;
-                if (Math.Abs(nextScale) < Math.Abs(delta) || nextScale < MinScale)
+                var scalingLeft = _scale - _desiredScale;
+                var nextScale = _scale + delta;
+                if (Math.Abs(scalingLeft) < Math.Abs(delta) || nextScale < MinScale)
                 {
                     _desiredScaleSpeed = 0;
-                    _scale = Math.Max(_desiredScale, MinScale);
+                    AssignScale(_desiredScale);
                 }
                 else
                 {
-                    _scale += delta;
+                    AssignScale(nextScale);
                 }
 
                 _matrixNeedsUpdate = true;
             }
         }
+
+        private void AssignScale(float scale) => _scale = Math.Clamp(scale, MinScale, MaxScale);
     }
 }

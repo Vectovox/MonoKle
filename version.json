@@ -1,6 +1,9 @@
 {
   "$schema": "https://raw.githubusercontent.com/dotnet/Nerdbank.GitVersioning/master/src/NerdBank.GitVersioning/version.schema.json",
-  "version": "0.3.0-alpha.00001",
+  "version": "0.4.0",
+  "nuGetPackageVersion": {
+    "semVer": 2.0
+  },
   "publicReleaseRefSpec": [
     "^refs/heads/master$",
     "^refs/heads/v\\d+(?:\\.\\d+)?$"
@@ -9,8 +12,5 @@
     "buildNumber": {
       "enabled": true
     }
-  },
-  "nugetPackageVersion": {
-    "semVer": 2
   }
 }

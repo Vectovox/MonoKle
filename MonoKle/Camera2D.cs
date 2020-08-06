@@ -9,18 +9,21 @@ namespace MonoKle
     [Serializable]
     public class Camera2D
     {
-        // TODO: Add desired position and a method that travels to a given position from the current one. private Vector2 desiredPosition;
+        private MPoint2 _size;
+
+        private float _rotation;
         private float _desiredRotation;
         private float _desiredRotationSpeed = 0;
+
+        private float _scale = 1f;
         private float _desiredScale;
         private float _desiredScaleSpeed = 0;
-        private bool _matrixNeedsUpdate = true;
+
         private MVector2 _position;
-        private float _rotation;
-        private float _scale = 1f;
-        private MPoint2 _size;
+
         private Matrix _transformMatrix;
         private Matrix _transformMatrixInv;
+        private bool _matrixNeedsUpdate = true;
 
         /// <summary>
         /// Initiates a new instance of <see cref="Camera2D"/>.
@@ -166,6 +169,25 @@ namespace MonoKle
                 * Matrix.CreateTranslation(new Vector3(center, 0f));
 
                 _transformMatrixInv = Matrix.Invert(_transformMatrix);
+            }
+        }
+
+        private void UpdatePosition(double seconds)
+        {
+            if (_desiredRotationSpeed != 0)
+            {
+                float delta = (float)(_desiredRotationSpeed * seconds);
+                _rotation = MathHelper.WrapAngle(_rotation + delta);
+                double distance = Math.Atan2(Math.Sin(_desiredRotation - _rotation), Math.Cos(_desiredRotation - _rotation));
+
+                // Check if we turned past the desired rotation
+                if (Math.Abs(distance) < Math.Abs(delta))
+                {
+                    _desiredRotationSpeed = 0f;
+                    _rotation = _desiredRotation;
+                }
+
+                _matrixNeedsUpdate = true;
             }
         }
 

@@ -191,6 +191,10 @@ namespace Demo.Domain
                     Logger.Global.Log("I am logging");
                 }
 
+                if (MGame.Keyboard.IsKeyPressed(Keys.R))
+                {
+                    camera.SetPosition(MVector2.Zero, 100);
+                }
 
                 ti.Update();
                 if (MGame.TouchScreen.Hold.IsTriggered)

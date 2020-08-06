@@ -137,6 +137,11 @@ namespace Demo.Domain
                     MGame.Console.WriteLine("Any shift held.");
                 }
 
+                if (MGame.TouchScreen.Drag.TryGetDelta(out var dragDelta))
+                {
+                    camera.Translate(-dragDelta.ToMVector2());
+                }
+
                 if (MGame.Keyboard.IsKeyHeld(Keys.I))
                 {
                     camera.SetPosition(camera.Position + new MVector2(0, -3));

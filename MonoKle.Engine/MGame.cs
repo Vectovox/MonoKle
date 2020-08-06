@@ -61,16 +61,16 @@ namespace MonoKle.Engine
         private static readonly Keyboard keyboard = new Keyboard();
 
         /// <summary>
-        /// Gets the touch screen input.
-        /// </summary>
-        public static ITouchScreen TouchScreen => touchScreen;
-        private static readonly TouchScreen touchScreen = new TouchScreen();
-
-        /// <summary>
         /// Gets the current mouse input.
         /// </summary>
         public static IMouse Mouse => mouse;
         private static readonly Mouse mouse = new Mouse();
+
+        /// <summary>
+        /// Gets the touch screen input.
+        /// </summary>
+        public static ITouchScreen TouchScreen => touchScreen;
+        private static readonly TouchScreen touchScreen = new TouchScreen(mouse);
 
         /// <summary>
         /// Gets the state system, which keeps track of the states and switches between them.
@@ -195,7 +195,7 @@ namespace MonoKle.Engine
 
                 if (Settings.TouchEnabled)
                 {
-                    touchScreen.Update(deltaTime);
+                    touchScreen.Update();
                 }
 
                 GraphicsManager.Update(Window.ClientBounds.Size);

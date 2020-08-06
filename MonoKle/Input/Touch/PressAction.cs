@@ -2,7 +2,7 @@
 
 namespace MonoKle.Input.Touch
 {
-    public class TouchAction : ITouchAction
+    public class PressAction : IPressAction
     {
         public bool IsTriggered { get; private set; }
         public MPoint2 Coordinate

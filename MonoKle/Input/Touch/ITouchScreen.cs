@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework.Input.Touch;
-using System;
 
 namespace MonoKle.Input.Touch
 {
@@ -12,29 +11,32 @@ namespace MonoKle.Input.Touch
         /// <summary>
         /// Gets the <see cref="GestureType.Tap"/> action.
         /// </summary>
-        ITouchAction Tap { get; }
+        IPressAction Tap { get; }
 
         /// <summary>
         /// Gets the <see cref="GestureType.DoubleTap"/> action.
         /// </summary>
-        ITouchAction DoubleTap { get; }
+        IPressAction DoubleTap { get; }
 
         /// <summary>
         /// Gets the <see cref="GestureType.Hold"/> action.
         /// </summary>
-        ITouchAction Hold { get; }
+        IPressAction Hold { get; }
 
         /// <summary>
-        /// Returns the action associated with the provided <see cref="GestureType"/>.
+        /// Gets the <see cref="GestureType.FreeDrag"/> action.
         /// </summary>
-        /// <param name="gestureType">The gesture type to return.</param>
-        /// <exception cref="ArgumentException">Thrown on unsupported gestures.</exception>
-        ITouchAction GetAction(GestureType gestureType);
+        IDragAction Drag { get; }
 
         /// <summary>
         /// Gets or sets whether mouse input can generate touch actions.
         /// Primarily intended for development purposes and may not support all actions.
         /// </summary>
         bool VirtualTouch { get; set; }
+
+        /// <summary>
+        /// Gets or sets the enabled touch gestures. Use bitmasking to select multiple gestures.
+        /// </summary>
+        GestureType EnabledGestures { get; set; }
     }
 }

@@ -73,10 +73,23 @@ namespace MonoKle
         public Matrix TransformMatrixInv => _transformMatrixInv;
 
         /// <summary>
-        /// Moves the current camera center by the provided amount.
+        /// Moves the current camera center by the provided delta vector.
         /// </summary>
         /// <param name="delta">The amount to move the camera by.</param>
         public void Translate(MVector2 delta) => SetPosition(_position + delta);
+
+        /// <summary>
+        /// Moves the current camera center in world-space by the provided camera-space delta vector.
+        /// Useful for movement based on screen-dragging.
+        /// </summary>
+        /// <param name="cameraSpaceDelta">The amount to move the camera by.</param>
+        public void TranslateCameraSpace(MVector2 cameraSpaceDelta)
+        {
+            var currentCameraSpacePosition = Transform(_position);
+            var nextCameraSpacePosition = currentCameraSpacePosition + cameraSpaceDelta;
+            var nextWorldSpacePosition = TransformInv(nextCameraSpacePosition);
+            SetPosition(nextWorldSpacePosition);
+        }
 
         /// <summary>
         /// Sets the current camera center position to the given coordinate.

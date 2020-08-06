@@ -46,4 +46,4 @@ echo "Building..."
 
 echo 
 echo "Pushing..."
-# ./push-nuget-version.sh
+./push-nuget-version.sh

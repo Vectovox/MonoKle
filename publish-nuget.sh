@@ -33,7 +33,7 @@ VERSION=${VERSION_LINE:30}
 
 echo
 echo "Nuget version will be: $VERSION"
-echo "Is this REALLY what you want to publish?"
+echo "Is this REALLY what you want to build and publish?"
 assert_yes
 
 echo 
@@ -46,4 +46,4 @@ echo "Building..."
 
 echo 
 echo "Pushing..."
-./push-nuget-version.sh
+./push-nuget-version.sh $VERSION

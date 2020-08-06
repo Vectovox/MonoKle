@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input.Touch;
 using MonoKle.Attributes;
 using MonoKle.Input.Mouse;
@@ -22,7 +22,12 @@ namespace MonoKle.Input.Touch
             { GestureType.FreeDrag, new DragAction() },
         };
 
-        private IMouse _mouse;
+        private readonly Dictionary<GestureType, PinchAction> _pinchActions = new Dictionary<GestureType, PinchAction>
+        {
+            { GestureType.Pinch, new PinchAction() },
+        };
+
+        private readonly IMouse _mouse;
 
         public TouchScreen(IMouse mouse)
         {
@@ -40,6 +45,8 @@ namespace MonoKle.Input.Touch
 
         public IDragAction Drag => _dragActions[GestureType.FreeDrag];
 
+        public IPinchAction Pinch => _pinchActions[GestureType.Pinch];
+
         public GestureType EnabledGestures
         {
             get { return TouchPanel.EnabledGestures; }
@@ -51,6 +58,7 @@ namespace MonoKle.Input.Touch
             // Reset all actions
             _pressActions.Values.ForEach(action => action.Reset());
             _dragActions.Values.ForEach(action => action.Reset());
+            _pinchActions.Values.ForEach(action => action.Reset());
 
             // Set actions again if their conditions are met
             UpdateTouchInput();
@@ -78,6 +86,22 @@ namespace MonoKle.Input.Touch
                 {
                     dragAction.Set(gesture.Position.ToPoint(), gesture.Delta.ToPoint());
                 }
+                else if (_pinchActions.TryGetValue(gesture.GestureType, out var pinchAction))
+                {
+                    // Current position
+                    float currentDistance = Vector2.Distance(gesture.Position, gesture.Position2);
+
+                    // Previous position
+                    Vector2 firstPrevious = gesture.Position - gesture.Delta;
+                    Vector2 secondPrevious = gesture.Position2 - gesture.Delta2;
+                    float previousDistance = Vector2.Distance(firstPrevious, secondPrevious);
+
+                    // Calculate origin and factor
+                    var coordinate = (firstPrevious + secondPrevious) * 0.5f;
+                    var factor = (currentDistance - previousDistance) / previousDistance;
+
+                    pinchAction.Set(coordinate.ToPoint(), factor);
+                }
             }
         }
 
@@ -95,6 +119,15 @@ namespace MonoKle.Input.Touch
             if (_mouse.Right.IsHeldFor(TimeSpan.FromMilliseconds(50)))
             {
                 _dragActions[GestureType.FreeDrag].Set(_mouse.Position.Coordinate, _mouse.Position.Delta);
+            }
+
+            if (_mouse.ScrollDirection == MouseScrollDirection.Down)
+            {
+                _pinchActions[GestureType.Pinch].Set(_mouse.Position.Coordinate, -0.01f);
+            }
+            else if (_mouse.ScrollDirection == MouseScrollDirection.Up)
+            {
+                _pinchActions[GestureType.Pinch].Set(_mouse.Position.Coordinate, 0.01f);
             }
         }
     }

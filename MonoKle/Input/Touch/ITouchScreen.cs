@@ -29,6 +29,11 @@ namespace MonoKle.Input.Touch
         IDragAction Drag { get; }
 
         /// <summary>
+        /// Gets the <see cref="GestureType.Pinch"/> action.
+        /// </summary>
+        IPinchAction Pinch { get; }
+
+        /// <summary>
         /// Gets or sets whether mouse input can generate touch actions.
         /// Primarily intended for development purposes and may not support all actions.
         /// </summary>

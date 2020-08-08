@@ -20,11 +20,12 @@ namespace MonoKle.Asset
 
         public bool Bake(string fontPath, string outputPath)
         {
+            FileInfo fontPathInfo = new FileInfo(fontPath);
             FontFile fontFile = new FontFile();
 
             try
             {
-                using FileStream fontFileStream = File.OpenRead(fontPath);
+                using FileStream fontFileStream = File.OpenRead(fontPathInfo.FullName);
                 fontFile = FontLoader.Load(fontFileStream);
             }
             catch (Exception e)
@@ -40,7 +41,7 @@ namespace MonoKle.Asset
             {
                 try
                 {
-                    var image = Image.FromFile(p.File);
+                    var image = Image.FromFile(Path.Combine(fontPathInfo.DirectoryName, p.File));
                     dataList.Add(isr.ImageToBytes(image));
                 }
                 catch (Exception e)

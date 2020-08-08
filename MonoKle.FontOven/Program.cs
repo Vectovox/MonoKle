@@ -11,14 +11,14 @@ namespace MonoKle.FontOven
     {
         private static void Main(string[] args)
         {
-            if (args.Length < 2)
+            if (args.Length < 1)
             {
                 DisplayUsage();
                 return;
             }
 
             string input = args[0];
-            string output = args[1];
+            string output = args.Length > 1 ? args[1] : args[0];
             bool detailed = args.Length > 2 && args[2].Equals("--detailed");
 
             if (output.EndsWith(".mfnt") == false)

@@ -8,6 +8,10 @@ using MonoKle.Utilities;
 
 namespace MonoKle.Asset
 {
+    /// <summary>
+    /// Bakes MonoKle fonts using data from the BMFont tool.
+    /// https://www.angelcode.com/products/bmfont/
+    /// </summary>
     public class FontBaker
     {
         public string ErrorMessage { get; private set; }

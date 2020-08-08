@@ -9,20 +9,21 @@ using MonoKle.Utilities;
 namespace MonoKle.Asset
 {
     /// <summary>
-    /// Bakes MonoKle fonts using data from the BMFont tool.
+    /// Bakes MonoKle fonts using the output from the BMFont tool.
     /// https://www.angelcode.com/products/bmfont/
     /// </summary>
     public class FontBaker
     {
-        public string ErrorMessage { get; private set; }
+        public string ErrorMessage { get; private set; } = string.Empty;
 
-        public string DetailedError { get; private set; }
+        public string DetailedError { get; private set; } = string.Empty;
 
         public bool Bake(string fontPath, string outputPath)
         {
             FileInfo fontPathInfo = new FileInfo(fontPath);
             FontFile fontFile = new FontFile();
 
+            // Open the font XML
             try
             {
                 using FileStream fontFileStream = File.OpenRead(fontPathInfo.FullName);
@@ -35,14 +36,15 @@ namespace MonoKle.Asset
                 return false;
             }
 
+            // Read XML data and load the referenced image data
             var dataList = new List<byte[]>();
-            var isr = new ImageSerializer(ImageFormat.Png);
+            var imageSerializer = new ImageSerializer(ImageFormat.Png);
             foreach (FontPage p in fontFile.Pages)
             {
                 try
                 {
                     var image = Image.FromFile(Path.Combine(fontPathInfo.DirectoryName, p.File));
-                    dataList.Add(isr.ImageToBytes(image));
+                    dataList.Add(imageSerializer.ImageToBytes(image));
                 }
                 catch (Exception e)
                 {
@@ -52,15 +54,17 @@ namespace MonoKle.Asset
                 }
             }
 
-            var baked = new BakedFont();
-            baked.FontFile = fontFile;
-            baked.ImageList = dataList;
-
+            // Serialized the baked font into the output file
+            var baked = new BakedFont
+            {
+                FontFile = fontFile,
+                ImageList = dataList
+            };
             try
             {
                 using FileStream bakeStream = File.OpenWrite(outputPath);
-                var xx = new XmlSerializer(typeof(BakedFont));
-                xx.Serialize(bakeStream, baked);
+                var xmlSerializer = new XmlSerializer(typeof(BakedFont));
+                xmlSerializer.Serialize(bakeStream, baked);
             }
             catch (Exception e)
             {

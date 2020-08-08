@@ -4,7 +4,7 @@ using MonoKle.Asset;
 namespace MonoKle.FontOven
 {
     /// <summary>
-    /// Tool to bake MonoKle fonts using data from the BMFont tool.
+    /// Tool to bake MonoKle fonts using the output from the BMFont tool.
     /// https://www.angelcode.com/products/bmfont/
     /// </summary>
     internal class Program

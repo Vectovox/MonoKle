@@ -46,10 +46,11 @@ namespace MonoKle.FontOven
         {
             System.Console.WriteLine("Welcome to FontOven!");
             System.Console.WriteLine("");
-            System.Console.WriteLine("## Requirements");
             System.Console.WriteLine("This tool uses the output from the BMFont tool" +
-                " (see https://www.angelcode.com/products/bmfont/).");
-            System.Console.WriteLine("Remember to select .png and .xml as output!");
+                ", see https://www.angelcode.com/products/bmfont/, and bakes it into one single file" +
+                " for consumption in MonoKle.");
+            System.Console.WriteLine("");
+            System.Console.WriteLine("Remember to select .png and .xml as output in BMFont before baking!");
             System.Console.WriteLine("");
             System.Console.WriteLine("## Usage");
             System.Console.WriteLine("> fontoven <inputPath> [outputPath] [--detailed]");

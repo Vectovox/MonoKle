@@ -42,6 +42,19 @@ namespace MonoKle.FontOven
             }
         }
 
-        private static void DisplayUsage() => System.Console.WriteLine("Usage: fontoven <inputPath> <outputPath> [--detailed]");
+        private static void DisplayUsage()
+        {
+            System.Console.WriteLine("Welcome to FontOven!");
+            System.Console.WriteLine("");
+            System.Console.WriteLine("## Requirements");
+            System.Console.WriteLine("This tool uses the output from the BMFont tool" +
+                " (see https://www.angelcode.com/products/bmfont/).");
+            System.Console.WriteLine("Remember to select .png and .xml as output!");
+            System.Console.WriteLine("");
+            System.Console.WriteLine("## Usage");
+            System.Console.WriteLine("> fontoven <inputPath> [outputPath] [--detailed]");
+            System.Console.WriteLine("If outputPath is not provided the input path will be used," +
+                " appending the new file extension.");
+        }
     }
 }

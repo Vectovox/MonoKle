@@ -13,7 +13,7 @@ namespace MonoKle.FontOven
         {
             if (args.Length < 2)
             {
-                Program.DisplayUsage();
+                DisplayUsage();
                 return;
             }
 
@@ -23,7 +23,7 @@ namespace MonoKle.FontOven
 
             if (output.EndsWith(".mfnt") == false)
             {
-                output = output + ".mfnt";
+                output += ".mfnt";
             }
 
             var baker = new FontBaker();

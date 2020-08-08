@@ -20,14 +20,12 @@ namespace MonoKle.Asset
 
         public bool Bake(string fontPath, string outputPath)
         {
-            FontFile fontFile = null;
+            FontFile fontFile = new FontFile();
 
             try
             {
-                using (FileStream fontFileStream = File.OpenRead(fontPath))
-                {
-                    fontFile = FontLoader.Load(fontFileStream);
-                }
+                using FileStream fontFileStream = File.OpenRead(fontPath);
+                fontFile = FontLoader.Load(fontFileStream);
             }
             catch (Exception e)
             {
@@ -59,11 +57,9 @@ namespace MonoKle.Asset
 
             try
             {
-                using (FileStream bakeStream = File.OpenWrite(outputPath))
-                {
-                    var xx = new XmlSerializer(typeof(BakedFont));
-                    xx.Serialize(bakeStream, baked);
-                }
+                using FileStream bakeStream = File.OpenWrite(outputPath);
+                var xx = new XmlSerializer(typeof(BakedFont));
+                xx.Serialize(bakeStream, baked);
             }
             catch (Exception e)
             {

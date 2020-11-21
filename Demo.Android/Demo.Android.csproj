@@ -62,14 +62,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="..\Demo.Domain\Assets\assets.manifest">
-      <Link>Assets\assets.manifest</Link>
-    </AndroidAsset>
-    <AndroidAsset Include="..\Demo.Domain\Assets\Fonts\testfont.mfnt">
-      <Link>Assets\Fonts\testfont.mfnt</Link>
-    </AndroidAsset>
-    <AndroidAsset Include="..\Demo.Domain\Assets\Textures\TestBox.png">
-      <Link>Assets\Textures\TestBox.png</Link>
+    <AndroidAsset Include="..\Demo.Domain\Data\**\*.*">
+      <Link>Assets\Data\%(RecursiveDir)%(FileName)%(Extension)</Link>
     </AndroidAsset>
   </ItemGroup>
   <ItemGroup>

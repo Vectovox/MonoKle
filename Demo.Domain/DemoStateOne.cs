@@ -1,13 +1,11 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Input.Touch;
 using MonoKle;
 using MonoKle.Asset;
 using MonoKle.Engine;
 using MonoKle.Graphics;
 using MonoKle.Input.Keyboard;
-using MonoKle.Input.Touch;
 using MonoKle.Logging;
 using MonoKle.Messaging;
 using MonoKle.State;
@@ -41,9 +39,9 @@ namespace Demo.Domain
 
             var testBoxRect = new MRectangleInt(250, 250, 64, 64);
             bool testBoxMouseWithin = testBoxRect.Contains(camera.TransformInv(MGame.Mouse.Position.Coordinate.ToMVector2()).ToMPoint2());
-            sb.Draw(MGame.TextureStorage.GetAsset("textures/testbox.png"), testBoxRect, testBoxMouseWithin ? Color.Red : Color.White);
+            sb.Draw(MGame.TextureStorage.GetAsset("data/textures/testbox.png"), testBoxRect, testBoxMouseWithin ? Color.Red : Color.White);
 
-            Font font = MGame.FontStorage.GetAsset("Fonts/testfont.mfnt");
+            Font font = MGame.FontStorage.GetAsset("data/Fonts/testfont.mfnt");
 
             // Test timer
             sb.DrawString(font, "Timer: " + timer.TimeLeft + " (" + timer.Duration + ") Done? " + timer.IsDone,
@@ -234,9 +232,9 @@ namespace Demo.Domain
         {
             stateSwitchMessage = (string)data.Data ?? string.Empty;
             MGame.Console.WriteLine($"State one activated! Message: {stateSwitchMessage}");
-            MGame.Console.WriteLine(MGame.TextureStorage.LoadFromManifest() + " textures loaded.");
-            MGame.Console.WriteLine(MGame.FontStorage.LoadFromManifest() + " fonts loaded.");
-            MGame.Console.WriteLine(MGame.EffectStorage.LoadFromManifest() + " effects loaded.");
+            MGame.Console.WriteLine(MGame.TextureStorage.LoadFromManifest("Data/assets.manifest") + " textures loaded.");
+            MGame.Console.WriteLine(MGame.FontStorage.LoadFromManifest("Data/assets.manifest") + " fonts loaded.");
+            MGame.Console.WriteLine(MGame.EffectStorage.LoadFromManifest("Data/assets.manifest") + " effects loaded.");
             sb = new SpriteBatch(MGame.GraphicsManager.GraphicsDevice);
             timer.Reset();
             primitive2D = new PrimitiveBatch2D(MGame.GraphicsManager.GraphicsDevice);

@@ -18,7 +18,14 @@
     <ProjectReference Include="..\MonoKle.Engine\MonoKle.Engine.csproj" />
     <ProjectReference Include="..\MonoKle\MonoKle.csproj" />
   </ItemGroup>
-
+  
+  <ItemGroup>
+    <None Include="..\Demo.Domain\Data\**\*.*">
+      <Link>Data\%(RecursiveDir)%(FileName)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  
   <ItemGroup>
     <None Update="settings.ini">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

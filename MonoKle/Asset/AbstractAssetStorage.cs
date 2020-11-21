@@ -91,29 +91,34 @@ namespace MonoKle.Asset
         public IEnumerable<string> GetGroups() => groupDictionary.Keys.ToList();
 
         /// <summary>
-        /// Load the asset manifest file.
+        /// Load the asset default manifest file (./assets.manifest).
         /// </summary>
-        public int LoadFromManifest()
+        public int LoadFromManifest() => LoadFromManifest("assets.manifest");
+
+        /// <summary>
+        /// Load assets from the manifest in the provided path.
+        /// </summary>
+        /// <remarks>Case sensitive on some platforms.</remarks>
+        public int LoadFromManifest(string manifestPath)
         {
             int counter = 0;
             try
             {
-                (var manifestStream, var prefix) = GetManifest();
-                using StreamReader reader = new StreamReader(manifestStream);
+                //(var manifestStream, var prefix) = GetManifest();
+                using StreamReader reader = new StreamReader(TitleContainer.OpenStream(manifestPath));
                 while (!reader.EndOfStream)
                 {
-                    var line = reader.ReadLine();
-                    var path = GetAssetPath(prefix, line);
+                    var path = reader.ReadLine();
 
                     if (FileSupported(new FileInfo(path).Extension))
                     {
-                        if (Load(path, line, null))
+                        if (Load(path, path, null))
                         {
                             counter++;
                         }
                         else
                         {
-                            Logger.Global.Log($"Could not load asset '{line}' from manifest", LogLevel.Error);
+                            Logger.Global.Log($"Could not load asset '{path}' from manifest", LogLevel.Error);
                         }
                     }
                 }
@@ -124,28 +129,6 @@ namespace MonoKle.Asset
             }
 
             return counter;
-        }
-
-        // Like Path.Combine() but with forward slash to be compatible with android (possible *nix too?)
-        private string GetAssetPath(string prefix, string assetPath) =>
-            prefix.Length == 0
-            ? assetPath
-            : $"{prefix}/{assetPath}";
-
-        // Loads expected manifest file and returns the stream to it + the expected asset prefix
-        private (Stream, string) GetManifest()
-        {
-            // Android
-            try
-            {
-                return (TitleContainer.OpenStream("assets.manifest"), string.Empty);
-            }
-            catch (IOException)
-            {
-            }
-
-            // PC
-            return (TitleContainer.OpenStream("Assets/assets.manifest"), "Assets");
         }
 
         /// <summary>

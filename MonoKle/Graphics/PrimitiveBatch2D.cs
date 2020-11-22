@@ -37,6 +37,12 @@ namespace MonoKle.Graphics
             DrawRectangle(renderingArea.ScreenLogicRectangle.PositionCenter(renderingArea.ScreenRectangle), Color.Green);
         }
 
+        public void DrawCross(MVector2 position, float size, Color color)
+        {
+            DrawLine(position.Translate(-size / 2f, 0), position.Translate(size / 2f, 0), color);
+            DrawLine(position.Translate(0, -size / 2f), position.Translate(0, size / 2f), color);
+        }
+
         protected override Matrix GetPostTransformationMatrix(Viewport viewport) =>
             Matrix.CreateOrthographicOffCenter(0, viewport.Width, viewport.Height, 0, 0, 1);
     }

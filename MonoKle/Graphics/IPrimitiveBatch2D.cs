@@ -37,5 +37,13 @@ namespace MonoKle.Graphics
         /// <param name="renderingArea">The rendering area to draw.</param>
         /// <remarks>Intended usage is for deugging.</remarks>
         void DrawRenderingArea(RenderingArea2D renderingArea);
+
+        /// <summary>
+        /// Draws a cross to screen.
+        /// </summary>
+        /// <param name="position">The position of the cross.</param>
+        /// <param name="size">The size of the cross, in pixels.</param>
+        /// <param name="color">The color of the cross.</param>
+        void DrawCross(MVector2 position, float size, Color color);
     }
 }

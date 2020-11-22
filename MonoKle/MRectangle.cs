@@ -312,7 +312,7 @@ namespace MonoKle
                 && coordinate.Y >= TopLeft.Y && coordinate.Y <= BottomRight.Y;
 
         /// <summary>
-        /// Checks if envelops, contains with a marigin to all borders, the provided <see cref="MRectangle"/>.
+        /// Checks if envelops, contains with a margin to all borders, the provided <see cref="MRectangle"/>.
         /// </summary>
         /// <param name="area">The <see cref="MRectangle"/> to check if enveloped.</param>
         /// <returns>True if the specified <see cref="MRectangle"/> is enveloped, otherwise false.</returns>
@@ -321,7 +321,7 @@ namespace MonoKle
                 && Envelops(area.BottomLeft) && Envelops(area.BottomRight);
 
         /// <summary>
-        /// Checks if envelops, contains with a marigin to all borders, the provided <see cref="MRectangleInt"/>.
+        /// Checks if envelops, contains with a margin to all borders, the provided <see cref="MRectangleInt"/>.
         /// </summary>
         /// <param name="area">The <see cref="MRectangleInt"/> to check if enveloped.</param>
         /// <returns>True if the specified <see cref="MRectangleInt"/> is enveloped, otherwise false.</returns>
@@ -330,7 +330,7 @@ namespace MonoKle
                 && Envelops(area.BottomLeft) && Envelops(area.BottomRight);
 
         /// <summary>
-        /// Checks if envelops, contains with a marigin to all borders, the provided <see cref="MVector2"/>.
+        /// Checks if envelops, contains with a margin to all borders, the provided <see cref="MVector2"/>.
         /// </summary>
         /// <param name="coordinate">The <see cref="MVector2"/> to check if enveloped.</param>
         /// <returns>True if the <see cref="MVector2"/> is enveloped, otherwise false.</returns>
@@ -339,7 +339,7 @@ namespace MonoKle
                 && coordinate.Y > TopLeft.Y && coordinate.Y < BottomRight.Y;
 
         /// <summary>
-        /// Checks if envelops, contains with a marigin to all borders, the provided <see cref="MPoint2"/>.
+        /// Checks if envelops, contains with a margin to all borders, the provided <see cref="MPoint2"/>.
         /// </summary>
         /// <param name="coordinate">The <see cref="MPoint2"/> to check if enveloped.</param>
         /// <returns>True if the <see cref="MPoint2"/> is enveloped, otherwise false.</returns>
@@ -400,24 +400,52 @@ namespace MonoKle
         }
 
         /// <summary>
+        /// Scales the <see cref="MRectangle"/> around <see cref="Center"/> with the given factor.
+        /// </summary>
+        /// <param name="factor">The factor with which to scale.</param>
+        /// <returns>Scaled <see cref="MRectangle"/>.</returns>
+        public MRectangle Scale(float factor)
+        {
+            var newDimensions = Dimensions * factor;
+            var deltaDimensions = newDimensions - Dimensions;
+            var newTopLeft = TopLeft - deltaDimensions * 0.5f;
+            return new MRectangle(newTopLeft.X, newTopLeft.Y, newDimensions.X, newDimensions.Y);
+        }
+
+        /// <summary>
         /// Translates the <see cref="MRectangle"/> with the given translation and returns the result.
         /// </summary>
         /// <param name="translation">The translation to make.</param>
-        /// <returns>Translated <see cref="MRectangle"/></returns>
-        public MRectangle Translate(MVector2 translation) => new MRectangle(TopLeft.X + translation.X, TopLeft.Y + translation.Y, BottomRight.X - TopLeft.X, BottomRight.Y - TopLeft.Y);
+        /// <returns>Translated <see cref="MRectangle"/>.</returns>
+        public MRectangle Translate(MVector2 translation) => Translate(translation.X, translation.Y);
 
         /// <summary>
         /// Translates the <see cref="MRectangle"/> with the given X-translation and returns the result.
         /// </summary>
-        /// <param name="x">The translation along the X-axis.</param>
-        /// <returns>Translated <see cref="MRectangle"/></returns>
-        public MRectangle TranslateX(float x) => new MRectangle(TopLeft.X + x, TopLeft.Y, BottomRight.X - TopLeft.X, BottomRight.Y - TopLeft.Y);
+        /// <param name="dx">The translation along the X-axis.</param>
+        /// <returns>Translated <see cref="MRectangle"/>.</returns>
+        public MRectangle TranslateX(float dx) => Translate(dx, 0);
 
         /// <summary>
         /// Translates the <see cref="MRectangle"/> with the given Y-translation and returns the result.
         /// </summary>
-        /// <param name="y">The translation along the Y-axis.</param>
-        /// <returns>Translated <see cref="MRectangle"/></returns>
-        public MRectangle TranslateY(float y) => new MRectangle(TopLeft.X, TopLeft.Y + y, BottomRight.X - TopLeft.X, BottomRight.Y - TopLeft.Y);
+        /// <param name="dy">The translation along the Y-axis.</param>
+        /// <returns>Translated <see cref="MRectangle"/>.</returns>
+        public MRectangle TranslateY(float dy) => Translate(0, dy);
+
+        /// <summary>
+        /// Translates the <see cref="MRectangle"/> with the given translation and returns the result.
+        /// </summary>
+        /// <param name="dx">The translation along the X-axis.</param>
+        /// <param name="dy">The translation along the Y-axis.</param>
+        /// <returns>Translated <see cref="MRectangle"/>.</returns>
+        public MRectangle Translate(float dx, float dy) =>
+            new MRectangle(TopLeft.X + dx, TopLeft.Y + dy, BottomRight.X - TopLeft.X, BottomRight.Y - TopLeft.Y);
+
+        /// <summary>
+        /// Converts the <see cref="MRectangle"/> to an <see cref="MRectangleInt"/> by cutting of the factions,
+        /// basically a float -> int conversion.
+        /// </summary>
+        public MRectangleInt ToMRectangleInt() => new MRectangleInt(TopLeft.ToMPoint2(), BottomRight.ToMPoint2());
     }
 }

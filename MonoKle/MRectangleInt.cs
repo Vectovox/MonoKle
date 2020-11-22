@@ -122,6 +122,11 @@ namespace MonoKle
         public MPoint2 TopRight => new MPoint2(BottomRight.X, TopLeft.Y);
 
         /// <summary>
+        /// Gets the <see cref="MPoint2"/> representing width and height.
+        /// </summary>
+        public MPoint2 Dimensions => new MPoint2(Width, Height);
+
+        /// <summary>
         /// Gets the height.
         /// </summary>
         public int Width => BottomRight.X - TopLeft.X;
@@ -323,21 +328,30 @@ namespace MonoKle
         /// Translates the <see cref="MRectangleInt"/> with the given translation and returns the result.
         /// </summary>
         /// <param name="translation">The translation to make.</param>
-        /// <returns>Translated <see cref="MRectangleInt"/></returns>
-        public MRectangleInt Translate(MPoint2 translation) => new MRectangleInt(TopLeft.X + translation.X, TopLeft.Y + translation.Y, BottomRight.X - TopLeft.X, BottomRight.Y - TopLeft.Y);
+        /// <returns>Translated <see cref="MRectangleInt"/>.</returns>
+        public MRectangleInt Translate(MPoint2 translation) => Translate(translation.X, translation.Y);
 
         /// <summary>
         /// Translates the <see cref="MRectangleInt"/> with the given X-translation and returns the result.
         /// </summary>
-        /// <param name="x">The translation along the X-axis.</param>
-        /// <returns>Translated <see cref="MRectangleInt"/></returns>
-        public MRectangleInt TranslateX(int x) => new MRectangleInt(TopLeft.X + x, TopLeft.Y, BottomRight.X - TopLeft.X, BottomRight.Y - TopLeft.Y);
+        /// <param name="dx">The translation along the X-axis.</param>
+        /// <returns>Translated <see cref="MRectangleInt"/>.</returns>
+        public MRectangleInt TranslateX(int dx) => Translate(dx, 0);
 
         /// <summary>
         /// Translates the <see cref="MRectangleInt"/> with the given Y-translation and returns the result.
         /// </summary>
-        /// <param name="x">The translation along the Y-axis.</param>
-        /// <returns>Translated <see cref="MRectangleInt"/></returns>
-        public MRectangleInt TranslateY(int y) => new MRectangleInt(TopLeft.X, TopLeft.Y + y, BottomRight.X - TopLeft.X, BottomRight.Y - TopLeft.Y);
+        /// <param name="dy">The translation along the Y-axis.</param>
+        /// <returns>Translated <see cref="MRectangleInt"/>.</returns>
+        public MRectangleInt TranslateY(int dy) => Translate(0, dy);
+
+        /// <summary>
+        /// Translates the <see cref="MRectangleInt"/> with the given translation and returns the result.
+        /// </summary>
+        /// <param name="dx">The translation along the X-axis.</param>
+        /// <param name="dy">The translation along the Y-axis.</param>
+        /// <returns>Translated <see cref="MRectangleInt"/>.</returns>
+        public MRectangleInt Translate(int dx, int dy) =>
+            new MRectangleInt(TopLeft.X + dx, TopLeft.Y + dy, BottomRight.X - TopLeft.X, BottomRight.Y - TopLeft.Y);
     }
 }

@@ -7,12 +7,12 @@ namespace MonoKle.Tests
     [TestClass]
     public class MRectangleTests
     {
-        private const int RANDOM_TEST_AMOUNT = 100;
+        private const int RANDOM_TEST_AMOUNT = 25;
 
         private readonly Random random = new Random();
 
         [TestMethod]
-        public void TestClampArea()
+        public void Clamp_Area()
         {
             Assert.AreEqual(new MRectangle(-1, -1, 2, 2), new MRectangle(-5, -5, 10, 10).Clamp(new MRectangle(-1, -1, 2, 2)));
             Assert.AreEqual(new MRectangle(-5, -5, 10, 10), new MRectangle(-5, -5, 10, 10).Clamp(new MRectangle(-5, -5, 10, 10)));
@@ -25,7 +25,7 @@ namespace MonoKle.Tests
         }
 
         [TestMethod]
-        public void TestClampCoordinate()
+        public void Clamp_Coordinate()
         {
             Assert.AreEqual(new MVector2(0, 0), new MRectangle(-5, -5, 10, 10).Clamp(new MVector2(0, 0)));
             Assert.AreEqual(new MVector2(-5, -5), new MRectangle(-5, -5, 10, 10).Clamp(new MVector2(-5, -5)));
@@ -38,7 +38,7 @@ namespace MonoKle.Tests
         }
 
         [TestMethod]
-        public void TestConstructors()
+        public void Constructors()
         {
             // Test that all constructors work the same
             var a = new MRectangle(new MRectangleInt(-5, -5, 5, 5));
@@ -63,7 +63,7 @@ namespace MonoKle.Tests
         }
 
         [TestMethod]
-        public void TestContainsArea()
+        public void Contains_Area()
         {
             Assert.IsTrue(new MRectangle(50, 51, 50, 50).Contains(new MRectangle(50, 51, 50, 50)));
             Assert.IsTrue(new MRectangle(50, 51, 50, 50).Contains(new MRectangle(60, 60, 20, 20)));
@@ -77,7 +77,7 @@ namespace MonoKle.Tests
         }
 
         [TestMethod]
-        public void TestContainsAreaInt()
+        public void Contains_AreaInt()
         {
             Assert.IsTrue(new MRectangle(50, 51, 50, 50).Contains(new MRectangleInt(50, 51, 50, 50)));
             Assert.IsTrue(new MRectangle(50, 51, 50, 50).Contains(new MRectangleInt(60, 60, 20, 20)));
@@ -91,7 +91,7 @@ namespace MonoKle.Tests
         }
 
         [TestMethod]
-        public void TestContainsCoordinateFloat()
+        public void Contains_CoordinateFloat()
         {
             Assert.IsTrue(new MRectangle(50, 51, 50, 50).Contains(new Vector2(50, 51)));
             Assert.IsTrue(new MRectangle(50, 51, 50, 50).Contains(new Vector2(100, 101)));
@@ -119,7 +119,7 @@ namespace MonoKle.Tests
         }
 
         [TestMethod]
-        public void TestContainsCoordinateInt()
+        public void Contains_CoordinateInt()
         {
             Assert.IsTrue(new MRectangle(50, 51, 50, 50).Contains(new MPoint2(50, 51)));
             Assert.IsTrue(new MRectangle(50, 51, 50, 50).Contains(new MPoint2(100, 101)));
@@ -147,7 +147,7 @@ namespace MonoKle.Tests
         }
 
         [TestMethod]
-        public void TestEnvelopsArea()
+        public void Envelops_Area()
         {
             Assert.IsTrue(new MRectangle(50, 51, 50, 50).Envelops(new MRectangle(60, 60, 20, 20)));
             Assert.IsTrue(new MRectangle(-10, -10, 20, 20).Envelops(new MRectangle(-5, -5, 10, 10)));
@@ -165,7 +165,7 @@ namespace MonoKle.Tests
         }
 
         [TestMethod]
-        public void TestEnvelopsAreaInt()
+        public void Envelops_AreaInt()
         {
             Assert.IsTrue(new MRectangle(50, 51, 50, 50).Envelops(new MRectangleInt(60, 60, 20, 20)));
             Assert.IsTrue(new MRectangle(-10, -10, 20, 20).Envelops(new MRectangleInt(-5, -5, 10, 10)));
@@ -183,7 +183,7 @@ namespace MonoKle.Tests
         }
 
         [TestMethod]
-        public void TestEnvelopsCoordinateFloat()
+        public void Envelops_CoordinateFloat()
         {
             Assert.IsFalse(new MRectangle(50, 51, 50, 50).Envelops(new Vector2(50, 75)));
             Assert.IsFalse(new MRectangle(50, 51, 50, 50).Envelops(new Vector2(100, 75)));
@@ -211,7 +211,7 @@ namespace MonoKle.Tests
         }
 
         [TestMethod]
-        public void TestEnvelopsCoordinateInt()
+        public void Envelops_CoordinateInt()
         {
             Assert.IsFalse(new MRectangle(50, 51, 50, 50).Envelops(new MPoint2(50, 75)));
             Assert.IsFalse(new MRectangle(50, 51, 50, 50).Envelops(new MPoint2(100, 75)));
@@ -239,7 +239,7 @@ namespace MonoKle.Tests
         }
 
         [TestMethod]
-        public void TestEqualsArea()
+        public void Equals_Area()
         {
             Assert.IsTrue(new MRectangle(0, 1, 2, 3).Equals(new MRectangle(0, 1, 2, 3)));
             Assert.IsFalse(new MRectangle(0, 1, -2, 3).Equals(new MRectangle(0, 1, 2, 3)));
@@ -247,7 +247,7 @@ namespace MonoKle.Tests
         }
 
         [TestMethod]
-        public void TestEqualsObject()
+        public void Equals_Object()
         {
             Assert.IsTrue(new MRectangle(0, 1, 2, 3).Equals((object)new MRectangle(0, 1, 2, 3)));
             Assert.IsFalse(new MRectangle(0, 1, -2, 3).Equals((object)new MRectangle(0, 1, 2, 3)));
@@ -255,7 +255,7 @@ namespace MonoKle.Tests
         }
 
         [TestMethod]
-        public void TestGetBottom()
+        public void Bottom()
         {
             Assert.AreEqual(6f, new MRectangle(1, 2, 3, 4).Bottom);
             Assert.AreEqual(2f, new MRectangle(-1, -2, 3, 4).Bottom);
@@ -263,7 +263,7 @@ namespace MonoKle.Tests
         }
 
         [TestMethod]
-        public void TestGetBottomLeft()
+        public void BottomLeft()
         {
             Assert.AreEqual(new MVector2(1, 6), new MRectangle(1, 2, 3, 4).BottomLeft);
             Assert.AreEqual(new MVector2(-1, 2), new MRectangle(-1, -2, 3, 4).BottomLeft);
@@ -271,7 +271,7 @@ namespace MonoKle.Tests
         }
 
         [TestMethod]
-        public void TestGetBottomRight()
+        public void BottomRight()
         {
             Assert.AreEqual(new MVector2(4, 6), new MRectangle(1, 2, 3, 4).BottomRight);
             Assert.AreEqual(new MVector2(2, 2), new MRectangle(-1, -2, 3, 4).BottomRight);
@@ -279,7 +279,7 @@ namespace MonoKle.Tests
         }
 
         [TestMethod]
-        public void TestGetLeft()
+        public void Left()
         {
             Assert.AreEqual(1f, new MRectangle(1, 2, 3, 4).Left);
             Assert.AreEqual(-1f, new MRectangle(-1, -2, 3, 4).Left);
@@ -287,7 +287,7 @@ namespace MonoKle.Tests
         }
 
         [TestMethod]
-        public void TestGetRight()
+        public void Right()
         {
             Assert.AreEqual(4f, new MRectangle(1, 2, 3, 4).Right);
             Assert.AreEqual(2f, new MRectangle(-1, -2, 3, 4).Right);
@@ -295,7 +295,7 @@ namespace MonoKle.Tests
         }
 
         [TestMethod]
-        public void TestGetTop()
+        public void Top()
         {
             Assert.AreEqual(2f, new MRectangle(1, 2, 3, 4).Top);
             Assert.AreEqual(-2f, new MRectangle(-1, -2, 3, 4).Top);
@@ -303,7 +303,7 @@ namespace MonoKle.Tests
         }
 
         [TestMethod]
-        public void TestGetTopLeft()
+        public void TopLeft()
         {
             Assert.AreEqual(new MVector2(1, 2), new MRectangle(1, 2, 3, 4).TopLeft);
             Assert.AreEqual(new MVector2(-1, -2), new MRectangle(-1, -2, 3, 4).TopLeft);
@@ -311,7 +311,7 @@ namespace MonoKle.Tests
         }
 
         [TestMethod]
-        public void TestGetTopRight()
+        public void TopRight()
         {
             Assert.AreEqual(new MVector2(4, 2), new MRectangle(1, 2, 3, 4).TopRight);
             Assert.AreEqual(new MVector2(2, -2), new MRectangle(-1, -2, 3, 4).TopRight);
@@ -319,7 +319,7 @@ namespace MonoKle.Tests
         }
 
         [TestMethod]
-        public void TestOperatorEquals()
+        public void OperatorEquals()
         {
             Assert.IsTrue(new MRectangle(0, 1, 2, 3) == new MRectangle(0, 1, 2, 3));
             Assert.IsFalse(new MRectangle(0, 1, -2, 3) == new MRectangle(0, 1, 2, 3));
@@ -327,7 +327,7 @@ namespace MonoKle.Tests
         }
 
         [TestMethod]
-        public void TestOperatorNotEquals()
+        public void OperatorNotEquals()
         {
             Assert.IsFalse(new MRectangle(0, 1, 2, 3) != new MRectangle(0, 1, 2, 3));
             Assert.IsTrue(new MRectangle(0, 1, -2, 3) != new MRectangle(0, 1, 2, 3));
@@ -335,40 +335,44 @@ namespace MonoKle.Tests
         }
 
         [TestMethod]
-        public void TestTranslate()
+        public void Translate_CorrectTranslation()
         {
-            for (int i = 0; i < MRectangleTests.RANDOM_TEST_AMOUNT; i++)
+            for (int i = 0; i < RANDOM_TEST_AMOUNT; i++)
             {
                 float x = random.Next(-100, 100);
                 float y = random.Next(-100, 100);
-                float w = random.Next(0, 100);
-                float h = random.Next(0, 100);
+                float width = random.Next(0, 100);
+                float height = random.Next(0, 100);
 
-                float tx = random.Next(-100, 100);
-                float ty = random.Next(-100, 100);
+                float dx = random.Next(-100, 100);
+                float dy = random.Next(-100, 100);
 
-                var a = new MRectangle(x, y, w, h);
-                Assert.AreEqual(new MRectangle(x + tx, y + ty, w, h), a.Translate(new Vector2(tx, ty)));
+                var sut = new MRectangle(x, y, width, height);
+                var expected = new MRectangle(x + dx, y + dy, width, height);
 
-                // Assert X Y methods
-                Assert.AreEqual(a.Translate(new Vector2(tx, 0)), a.TranslateX(tx));
-                Assert.AreEqual(a.Translate(new Vector2(0, ty)), a.TranslateY(ty));
+                // Assert translation methods                
+                Assert.AreEqual(expected, sut.Translate(new MVector2(dx, dy)));
+                Assert.AreEqual(expected, sut.TranslateX(dx).TranslateY(dy));
+                Assert.AreEqual(expected, sut.Translate(dx, dy));
             }
         }
 
         [TestMethod]
-        public void TestWidthHeight()
+        public void Dimensions_Correct()
         {
-            for (int i = 0; i < MRectangleTests.RANDOM_TEST_AMOUNT; i++)
+            for (int i = 0; i < RANDOM_TEST_AMOUNT; i++)
             {
                 float x = random.Next(-100, 100);
                 float y = random.Next(-100, 100);
                 float x2 = random.Next(-100, 100);
                 float y2 = random.Next(-100, 100);
 
-                var a = new MRectangle(x, y, x2 - x, y2 - y);
-                Assert.AreEqual(Math.Abs(y2 - y), a.Height);
-                Assert.AreEqual(Math.Abs(x2 - x), a.Width);
+                var sut = new MRectangle(x, y, x2 - x, y2 - y);
+                var expected = new MVector2(Math.Abs(x2 - x), Math.Abs(y2 - y));
+
+                Assert.AreEqual(expected.X, sut.Width);
+                Assert.AreEqual(expected.Y, sut.Height);
+                Assert.AreEqual(expected, sut.Dimensions);
             }
         }
 
@@ -540,13 +544,6 @@ namespace MonoKle.Tests
             var boundingRectangle = new MRectangle(10, 10, 32, 18);
             var result = testRectangle.PositionCenter(boundingRectangle);
             Assert.AreEqual(new MRectangle(26 - 8, 19 - 4.5f, testRectangle.Width, testRectangle.Height), result);
-        }
-
-        [TestMethod]
-        public void Dimensions()
-        {
-            var testRectangle = new MRectangle(12, 13, 14, 15);
-            Assert.AreEqual(new MVector2(14, 15), testRectangle.Dimensions);
         }
     }
 }

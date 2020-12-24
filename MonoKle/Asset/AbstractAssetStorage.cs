@@ -101,31 +101,34 @@ namespace MonoKle.Asset
         /// <remarks>Case sensitive on some platforms.</remarks>
         public int LoadFromManifest(string manifestPath)
         {
-            int counter = 0;
+            // Open manifest
+            StreamReader reader;
             try
             {
-                //(var manifestStream, var prefix) = GetManifest();
-                using StreamReader reader = new StreamReader(TitleContainer.OpenStream(manifestPath));
-                while (!reader.EndOfStream)
-                {
-                    var path = reader.ReadLine();
-
-                    if (FileSupported(new FileInfo(path).Extension))
-                    {
-                        if (Load(path, path, null))
-                        {
-                            counter++;
-                        }
-                        else
-                        {
-                            Logger.Global.Log($"Could not load asset '{path}' from manifest", LogLevel.Error);
-                        }
-                    }
-                }
+                reader = new StreamReader(TitleContainer.OpenStream(manifestPath));
             }
             catch (IOException e)
             {
-                Logger.Global.Log($"Error loading from manifest {e.Message}", LogLevel.Error);
+                throw new IOException($"Manifest file could not be read at '{manifestPath}'", e);
+            }
+
+            // Load manifest files
+            int counter = 0;
+            while (!reader.EndOfStream)
+            {
+                var path = reader.ReadLine();
+
+                if (FileSupported(new FileInfo(path).Extension))
+                {
+                    if (Load(path, path, null))
+                    {
+                        counter++;
+                    }
+                    else
+                    {
+                        Logger.Global.Log($"Could not load asset '{path}' from manifest", LogLevel.Error);
+                    }
+                }
             }
 
             return counter;

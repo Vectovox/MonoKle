@@ -353,5 +353,10 @@ namespace MonoKle
         /// <returns>Translated <see cref="MRectangleInt"/>.</returns>
         public MRectangleInt Translate(int dx, int dy) =>
             new MRectangleInt(TopLeft.X + dx, TopLeft.Y + dy, BottomRight.X - TopLeft.X, BottomRight.Y - TopLeft.Y);
+
+        /// <summary>
+        /// Converts the <see cref="MRectangleInt"/> to an <see cref="MRectangle"/> by int -> float conversion.
+        /// </summary>
+        public MRectangle ToMRectangle() => new MRectangle(this);
     }
 }

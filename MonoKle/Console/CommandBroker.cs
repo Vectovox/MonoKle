@@ -8,21 +8,21 @@ using System.Reflection;
 namespace MonoKle.Console
 {
     /// <summary>
-    /// Broker for console commands.
+    /// Broker for console command registration and execution.
     /// </summary>
-    public class CommandBroker
+    public sealed class CommandBroker
     {
-        private readonly IGameConsole console;
-        private readonly Dictionary<string, Type> typeCommands = new Dictionary<string, Type>();
+        private readonly IGameConsole _console;
+        private readonly Dictionary<string, IConsoleCommand> _typeCommands = new Dictionary<string, IConsoleCommand>();
 
         /// <summary>
         /// Gets the registered commands.
         /// </summary>
-        public IEnumerable<string> Commands => typeCommands.Keys;
+        public IEnumerable<string> Commands => _typeCommands.Keys;
 
         public CommandBroker(IGameConsole console)
         {
-            this.console = console;
+            _console = console;
         }
 
         /// <summary>
@@ -36,23 +36,23 @@ namespace MonoKle.Console
             // Check that the command exists
             if (instance == null)
             {
-                console.WriteError($"{commandString.Command} is not a recognized command.");
+                _console.WriteError($"{commandString.Command} is not a recognized command.");
                 return false;
             }
 
             if (!AssignArguments(instance, commandString))
             {
-                console.WriteError($"Arguments not provided correctly.");
+                _console.WriteError($"Arguments not provided correctly.");
                 return false;
             }
 
             try
             {
-                instance.Call(console);
+                instance.Call(_console);
             }
             catch (Exception e)
             {
-                console.WriteError($"Command {commandString.Command} returned an error: {e.Message}");
+                _console.WriteError($"Command {commandString.Command} returned an error: {e.Message}");
                 return false;
             }
 
@@ -62,13 +62,13 @@ namespace MonoKle.Console
         /// <summary>
         /// Clears all registered commands.
         /// </summary>
-        public void Clear() => typeCommands.Clear();
+        public void Clear() => _typeCommands.Clear();
 
         /// <summary>
         /// Returns whether the provided command has been registered.
         /// </summary>
         /// <param name="command">The command to check for.</param>
-        public bool Contains(string command) => typeCommands.ContainsKey(command);
+        public bool Contains(string command) => _typeCommands.ContainsKey(command);
 
         /// <summary>
         /// Gets the specified command if it exists, otherwise null.
@@ -91,22 +91,37 @@ namespace MonoKle.Console
 
             var type = instance.GetType();
 
-            return new CommandInformation(GetCommandAttribute(type), GetPositionals(type).Select(p => p.Argument).ToList(), GetFlags(type).Select(p => p.Argument).ToList(), GetArguments(type).Select(p => p.Argument).ToList());
+            return new CommandInformation(GetCommandAttribute(type), GetPositionals(type).Select(p => p.Argument).ToList(),
+                GetFlags(type).Select(p => p.Argument).ToList(), GetArguments(type).Select(p => p.Argument).ToList());
         }
 
         /// <summary>
-        /// Registers all <see cref="IConsoleCommand"/> types in the calling assembly.
+        /// Registers all <see cref="IConsoleCommand"/> types in the calling assembly for execution.
         /// </summary>
         public void RegisterCallingAssembly() => Assembly.GetCallingAssembly().GetTypes().Where(IsValidType).ForEach(Register);
 
         /// <summary>
-        /// Registers the specified command. Type must be of <see cref="IConsoleCommand"/>.
+        /// Registers the specified command for execution. Type must be of <see cref="IConsoleCommand"/>.
         /// </summary>
         /// <param name="type">The type to register.</param>
         public void Register(Type type)
         {
             AssertType(type);
+            var commandInstance = (IConsoleCommand)Activator.CreateInstance(type);
+            Register(commandInstance);
+        }
 
+        /// <summary>
+        /// Registers the specified command for execution. Type must be of <see cref="IConsoleCommand"/>.
+        /// </summary>
+        public void Register<T>() where T : IConsoleCommand, new() => Register(typeof(T));
+
+        /// <summary>
+        /// Registers the specified command for execution.
+        /// </summary>
+        public void Register(IConsoleCommand command)
+        {
+            var type = command.GetType();
             var commandAttribute = GetCommandAttribute(type);
 
             // Sanity check command
@@ -133,18 +148,13 @@ namespace MonoKle.Console
                 wasRequired = positional.Argument.IsRequired;
             }
 
-            if (typeCommands.ContainsKey(commandAttribute.Name))
+            if (_typeCommands.ContainsKey(commandAttribute.Name))
             {
                 throw new ArgumentException($"A command already exists with the name {commandAttribute.Name}.");
             }
 
-            typeCommands.Add(commandAttribute.Name, type);
+            _typeCommands.Add(commandAttribute.Name, command);
         }
-
-        /// <summary>
-        /// Registers the specified command. Type must be of <see cref="IConsoleCommand"/>.
-        /// </summary>
-        public void Register<T>() where T : IConsoleCommand, new() => Register(typeof(T));
 
         /// <summary>
         /// Unregisters the provided command type.
@@ -162,7 +172,7 @@ namespace MonoKle.Console
                 throw new ArgumentException($"Tried to unregister command {type.Name} without the {nameof(ConsoleCommandAttribute)} attribute.");
             }
 
-            return typeCommands.Remove(commandAttribute.Name);
+            return _typeCommands.Remove(commandAttribute.Name);
         }
 
         private void AssertType(Type type)
@@ -181,8 +191,8 @@ namespace MonoKle.Console
         /// <returns>True if unregistered, otherwise false.</returns>
         public bool Unregister<T>() where T : IConsoleCommand, new() => Unregister(typeof(T));
 
-        private IConsoleCommand? GetCommandInstance(string command) => typeCommands.ContainsKey(command)
-            ? (IConsoleCommand?)Activator.CreateInstance(typeCommands[command])
+        private IConsoleCommand? GetCommandInstance(string command) => _typeCommands.ContainsKey(command)
+            ? _typeCommands[command]
             : null;
 
         private ConsoleCommandAttribute GetCommandAttribute(Type type) => (ConsoleCommandAttribute)type.GetCustomAttributes(typeof(ConsoleCommandAttribute), false)
@@ -212,13 +222,13 @@ namespace MonoKle.Console
 
                 if (!argumentExists && positional.Argument.IsRequired)
                 {
-                    console.WriteError($"Required argument on position '{positional.Argument.Position}' not found.");
+                    _console.WriteError($"Required argument on position '{positional.Argument.Position}' not found.");
                     return false;
                 }
 
                 if (argumentExists && !AssignArgument(command, positional.Property, commandString.PositionalArguments[positional.Argument.Position]))
                 {
-                    console.WriteError($"Could not assign '{commandString.PositionalArguments[positional.Argument.Position]}' to argument on position '{positional.Argument.Position}'.");
+                    _console.WriteError($"Could not assign '{commandString.PositionalArguments[positional.Argument.Position]}' to argument on position '{positional.Argument.Position}'.");
                     return false;
                 }
             }
@@ -233,13 +243,13 @@ namespace MonoKle.Console
 
                 if (!namedArgumentExists && argument.Argument.IsRequired)
                 {
-                    console.WriteError($"Required argument '{argument.Argument.Name}' not found.");
+                    _console.WriteError($"Required argument '{argument.Argument.Name}' not found.");
                     return false;
                 }
 
                 if (namedArgumentExists && !AssignArgument(command, argument.Property, commandString.NamedArguments[argument.Argument.Name]))
                 {
-                    console.WriteError($"Could not assign '{commandString.NamedArguments[argument.Argument.Name]}' to '{argument.Argument.Name}'.");
+                    _console.WriteError($"Could not assign '{commandString.NamedArguments[argument.Argument.Name]}' to '{argument.Argument.Name}'.");
                     return false;
                 }
             }
@@ -249,7 +259,7 @@ namespace MonoKle.Console
                 commandString.Flags.Any(name => !flags.Any(prop => prop.Argument.Name == name)) ||
                 positionals.Any() && commandString.PositionalArguments.Count > positionals.Max(pos => pos.Argument.Position) + 1)
             {
-                console.WriteError("Unknown arguments provided.");
+                _console.WriteError("Unknown arguments provided.");
                 return false;
             }
 

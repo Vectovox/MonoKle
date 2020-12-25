@@ -10,6 +10,16 @@ namespace MonoKle.Console.Tests
     public class CommandBrokerTests
     {
         [TestMethod]
+        public void Register_CommandInstance_CommandFound()
+        {
+            var console = new Mock<IGameConsole>();
+            var commandBroker = new CommandBroker(console.Object);
+            var command = new InstanceTestCommand(25);
+            commandBroker.Register(command);
+            CollectionAssert.Contains(commandBroker.Commands.ToList(), "instanceTestCommand");
+        }
+
+        [TestMethod]
         public void Register_NewCommand_CommandFound()
         {
             var console = new Mock<IGameConsole>();
@@ -106,6 +116,18 @@ namespace MonoKle.Console.Tests
             var console = new Mock<IGameConsole>();
             var commandBroker = new CommandBroker(console.Object);
             Assert.ThrowsException<ArgumentException>(() => commandBroker.GetInformation("typeTestCommand"));
+        }
+
+        [TestMethod]
+        public void Call_CommandInstance_CommandCalled()
+        {
+            var console = new Mock<IGameConsole>();
+            var commandBroker = new CommandBroker(console.Object);
+            var command = new InstanceTestCommand(25);
+            commandBroker.Register(command);
+            CommandString.TryParse("instanceTestCommand", out var commandString);
+            commandBroker.Call(commandString);
+            Assert.AreEqual(25, command.WasCalledWith);
         }
 
         [TestMethod]
@@ -227,9 +249,6 @@ namespace MonoKle.Console.Tests
         [ConsoleCommand("NoInterfaceTestCommand")]
         private class NoInterfaceTestCommand
         {
-            public void Call(IGameConsole console) => throw new NotImplementedException();
-
-            public ICollection<string> GetArgumentSuggestions(int index) => throw new NotImplementedException();
         }
 
         private class NoAttributeTestCommand : IConsoleCommand
@@ -400,6 +419,25 @@ namespace MonoKle.Console.Tests
             public void Call(IGameConsole console)
             {
                 WasCalled = true;
+            }
+
+            public ICollection<string> GetPositionalSuggestions() => new string[0];
+        }
+
+        [ConsoleCommand("instanceTestCommand", Description = "emptyDescription")]
+        private class InstanceTestCommand : IConsoleCommand
+        {
+            public int WasCalledWith { get; set; }
+            private readonly int _toCallWith;
+
+            public InstanceTestCommand(int callWith)
+            {
+                _toCallWith = callWith;
+            }
+
+            public void Call(IGameConsole console)
+            {
+                WasCalledWith = _toCallWith;
             }
 
             public ICollection<string> GetPositionalSuggestions() => new string[0];

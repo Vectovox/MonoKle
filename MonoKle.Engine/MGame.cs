@@ -19,13 +19,18 @@ namespace MonoKle.Engine
     /// </summary>
     public class MGame : Game
     {
-        private static bool initializing = true;
+        private static bool _initializing = true;
 
         /// <summary>
         /// Gets the game console, printing logs and accepting input.
         /// </summary>
-        public static IGameConsole Console => console;
-        private static GameConsole console;
+        public static IGameConsole Console => _console;
+        private static GameConsole _console;
+
+        /// <summary>
+        /// Gets the audio storage, loading and providing sound effects.
+        /// </summary>
+        public static AudioStorage AudioStorage { get; private set; }
 
         /// <summary>
         /// Gets the effect storage, loading and providing effects.
@@ -51,32 +56,32 @@ namespace MonoKle.Engine
         /// <summary>
         /// Gets the hub for gamepad input.
         /// </summary>
-        public static IGamePadHub GamePad => gamepad;
-        private static readonly GamePadHub gamepad = new GamePadHub();
+        public static IGamePadHub GamePad => _gamepad;
+        private static readonly GamePadHub _gamepad = new GamePadHub();
 
         /// <summary>
         /// Gets the keyboard input.
         /// </summary>
-        public static IKeyboard Keyboard => keyboard;
-        private static readonly Keyboard keyboard = new Keyboard();
+        public static IKeyboard Keyboard => _keyboard;
+        private static readonly Keyboard _keyboard = new Keyboard();
 
         /// <summary>
         /// Gets the current mouse input.
         /// </summary>
-        public static IMouse Mouse => mouse;
-        private static readonly Mouse mouse = new Mouse();
+        public static IMouse Mouse => _mouse;
+        private static readonly Mouse _mouse = new Mouse();
 
         /// <summary>
         /// Gets the touch screen input.
         /// </summary>
-        public static ITouchScreen TouchScreen => touchScreen;
-        private static readonly TouchScreen touchScreen = new TouchScreen(mouse);
+        public static ITouchScreen TouchScreen => _touchScreen;
+        private static readonly TouchScreen _touchScreen = new TouchScreen(_mouse);
 
         /// <summary>
         /// Gets the state system, which keeps track of the states and switches between them.
         /// </summary>
-        public static IStateSystem StateSystem => stateSystem;
-        private static readonly StateSystem stateSystem = new StateSystem();
+        public static IStateSystem StateSystem => _stateSystem;
+        private static readonly StateSystem _stateSystem = new StateSystem();
 
         /// <summary>
         /// Gets the running game instance.
@@ -139,40 +144,45 @@ namespace MonoKle.Engine
         {
             base.LoadContent();
 
-            InitializeTextureStorage();
-            InitializeFontStorage();
+            // Initialize storages
+            TextureStorage = new TextureStorage(GraphicsManager.GraphicsDevice);
+            AudioStorage = new AudioStorage();
             EffectStorage = new EffectStorage(GraphicsManager.GraphicsDevice);
+            InitializeFontStorage();
             InitializeConsole();
+
+            // Set up commands and settings
             Console.CommandBroker.RegisterCallingAssembly();
             BindSettings();
 
-            mouse.VirtualRegion = new MRectangleInt(GraphicsManager.Resolution);
+            // Set up virtual mouse
+            _mouse.VirtualRegion = new MRectangleInt(GraphicsManager.Resolution);
 
             // Done initializing
-            console.WriteLine("MonoKle Engine initialized!", Console.CommandTextColour);
-            console.WriteLine("Running version: " + Assembly.GetAssembly(typeof(MGame)).GetName().Version, Console.CommandTextColour);
-            initializing = false;
+            _console.WriteLine("MonoKle Engine initialized!", Console.CommandTextColour);
+            _console.WriteLine("Running version: " + Assembly.GetAssembly(typeof(MGame)).GetName().Version, Console.CommandTextColour);
+            _initializing = false;
         }
 
         protected override void Draw(GameTime time)
         {
-            if (initializing == false)
+            if (_initializing == false)
             {
                 var deltaTime = time.ElapsedGameTime;
 
                 GraphicsManager.GraphicsDevice.Clear(Color.CornflowerBlue);
-                stateSystem.Draw(deltaTime);
+                _stateSystem.Draw(deltaTime);
 
                 if (Settings.ConsoleEnabled)
                 {
-                    console.Draw(deltaTime);
+                    _console.Draw(deltaTime);
                 }
             }
         }
 
         protected override void Update(GameTime time)
         {
-            if (initializing == false)
+            if (_initializing == false)
             {
                 var deltaTime = time.ElapsedGameTime;
                 IsRunningSlowly = time.IsRunningSlowly;
@@ -180,34 +190,34 @@ namespace MonoKle.Engine
 
                 if (Settings.GamePadEnabled)
                 {
-                    gamepad.Update(deltaTime);
+                    _gamepad.Update(deltaTime);
                 }
 
                 if (Settings.KeyboardEnabled)
                 {
-                    keyboard.Update(deltaTime);
+                    _keyboard.Update(deltaTime);
                 }
 
                 if (Settings.MouseEnabled)
                 {
-                    mouse.Update(deltaTime);
+                    _mouse.Update(deltaTime);
                 }
 
                 if (Settings.TouchEnabled)
                 {
-                    touchScreen.Update();
+                    _touchScreen.Update();
                 }
 
                 GraphicsManager.Update(Window.ClientBounds.Size);
 
                 if (Console.IsOpen == false)
                 {
-                    stateSystem.Update(deltaTime);
+                    _stateSystem.Update(deltaTime);
                 }
 
                 if (Settings.ConsoleEnabled)
                 {
-                    console.Update(deltaTime);
+                    _console.Update(deltaTime);
                 }
             }
         }
@@ -224,9 +234,9 @@ namespace MonoKle.Engine
 
         private static void InitializeConsole()
         {
-            console = new GameConsole(new Rectangle(0, 0, GraphicsManager.Resolution.X, GraphicsManager.Resolution.Y / 3),
+            _console = new GameConsole(new Rectangle(0, 0, GraphicsManager.Resolution.X, GraphicsManager.Resolution.Y / 3),
                 GraphicsManager.GraphicsDevice,
-                keyboard,
+                _keyboard,
                 TextureStorage.White,
                 FontStorage.DefaultValue,
                 Logger);
@@ -241,8 +251,6 @@ namespace MonoKle.Engine
             FontStorage.Load(ms, "default");
             FontStorage.DefaultValue = FontStorage.GetAsset("default");
         }
-
-        private static void InitializeTextureStorage() => TextureStorage = new TextureStorage(GraphicsManager.GraphicsDevice);
 
         private static void InitializeVariables()
         {

@@ -123,6 +123,7 @@ namespace Demo.Domain
                 if (MGame.Keyboard.IsKeyPressed(Keys.Space))
                 {
                     MGame.StateSystem.SwitchState("stateTwo", null);
+                    MGame.AudioStorage.GetAsset("Data/Sounds/santa.wav").Play(1f, 0f, 0f);
                 }
 
                 if (MGame.Keyboard.AreKeysHeld(new Keys[] { Keys.R, Keys.T }, MonoKle.Input.CollectionQueryBehavior.All))
@@ -235,6 +236,7 @@ namespace Demo.Domain
             MGame.Console.WriteLine(MGame.TextureStorage.LoadFromManifest("Data/assets.manifest") + " textures loaded.");
             MGame.Console.WriteLine(MGame.FontStorage.LoadFromManifest("Data/assets.manifest") + " fonts loaded.");
             MGame.Console.WriteLine(MGame.EffectStorage.LoadFromManifest("Data/assets.manifest") + " effects loaded.");
+            MGame.Console.WriteLine(MGame.AudioStorage.LoadFromManifest("Data/assets.manifest") + " sounds loaded.");
             sb = new SpriteBatch(MGame.GraphicsManager.GraphicsDevice);
             timer.Reset();
             primitive2D = new PrimitiveBatch2D(MGame.GraphicsManager.GraphicsDevice);

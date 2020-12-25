@@ -59,7 +59,6 @@ namespace MonoKle.Configuration
         /// <param name="assignOld">If set to true, assigns any existing value to the bound instance.</param>
         public void Bind(ICVar instance, string identifier, bool assignOld)
         {
-            identifier = identifier.ToLower();
             if (_variables.ContainsKey(identifier))
             {
                 object oldValue = GetValue(identifier);
@@ -148,7 +147,6 @@ namespace MonoKle.Configuration
         /// <returns>True if a variable was removed; otherwise false.</returns>
         public bool Remove(string identifier)
         {
-            identifier = identifier.ToLower();
             Log("Removed occurences of variable: " + identifier, LogLevel.Debug);
             return _variables.Remove(identifier);
         }
@@ -160,7 +158,6 @@ namespace MonoKle.Configuration
         /// <param name="value">The value to assign.</param>
         public bool SetValue(string identifier, object value)
         {
-            identifier = identifier.ToLower();
             if (_variables.ContainsKey(identifier))
             {
                 if (_variables[identifier].SetValue(value) == false)
@@ -200,7 +197,6 @@ namespace MonoKle.Configuration
 
         private ICVar GetVariable(string identifier, bool generateWarning)
         {
-            identifier = identifier.ToLower();
             if (_variables.ContainsKey(identifier))
             {
                 return _variables[identifier];

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input.Touch;
-using MonoKle.Attributes;
+using MonoKle.Configuration;
 using MonoKle.Input.Mouse;
 using MoreLinq;
 using System;
@@ -34,7 +34,7 @@ namespace MonoKle.Input.Touch
             _mouse = mouse;
         }
 
-        [Variable("touch_virtual")]
+        [CVar("touch_virtual")]
         public bool VirtualTouch { get; set; }
 
         public IPressAction Tap => _pressActions[GestureType.Tap];

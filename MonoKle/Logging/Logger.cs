@@ -1,4 +1,4 @@
-using MonoKle.Attributes;
+using MonoKle.Configuration;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -55,7 +55,7 @@ namespace MonoKle.Logging
         /// <summary>
         /// The maximum amount of logs to be stored.
         /// </summary>
-        [Variable("log_size")]
+        [CVar("log_size")]
         public short Size
         {
             get => size;

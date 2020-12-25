@@ -1,5 +1,4 @@
-﻿using MonoKle.Attributes;
-using MonoKle.Logging;
+﻿using MonoKle.Logging;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -11,7 +10,7 @@ namespace MonoKle.Configuration
     /// </summary>
     public class CVarSystem : ILogged
     {
-        private Dictionary<string, ICVar> variables = new Dictionary<string, ICVar>();
+        private Dictionary<string, ICVar> _variables = new Dictionary<string, ICVar>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CVarSystem"/> class.
@@ -35,7 +34,7 @@ namespace MonoKle.Configuration
         /// <value>
         /// The variable identifiers.
         /// </value>
-        public ICollection<string> Identifiers => variables.Keys;
+        public ICollection<string> Identifiers => _variables.Keys;
 
         /// <summary>
         /// Gets or sets the logger instance.
@@ -61,10 +60,10 @@ namespace MonoKle.Configuration
         public void Bind(ICVar instance, string identifier, bool assignOld)
         {
             identifier = identifier.ToLower();
-            if (variables.ContainsKey(identifier))
+            if (_variables.ContainsKey(identifier))
             {
                 object oldValue = GetValue(identifier);
-                variables[identifier] = instance;
+                _variables[identifier] = instance;
 
                 if (assignOld)
                 {
@@ -73,13 +72,13 @@ namespace MonoKle.Configuration
             }
             else
             {
-                variables.Add(identifier, instance);
+                _variables.Add(identifier, instance);
             }
             Log("Bound variable instance to identifier: " + identifier, LogLevel.Debug);
         }
 
         /// <summary>
-        /// Binds the properties of the provided object to variables. Only properties declared with <see cref="VariableAttribute"/> are bound.
+        /// Binds the properties of the provided object to variables. Only properties declared with <see cref="CVarAttribute"/> are bound.
         /// </summary>
         /// <param name="o">The object.</param>
         public void BindProperties(object o)
@@ -89,8 +88,7 @@ namespace MonoKle.Configuration
             {
                 foreach (object a in p.GetCustomAttributes(true))
                 {
-                    var attribute = a as VariableAttribute;
-                    if (attribute != null)
+                    if (a is CVarAttribute attribute)
                     {
                         Bind(new PropertyCVar(p, o), attribute.Identifier);
                     }
@@ -118,7 +116,7 @@ namespace MonoKle.Configuration
         /// </summary>
         public void Clear()
         {
-            variables.Clear();
+            _variables.Clear();
             Log("Cleared variables", LogLevel.Debug);
         }
 
@@ -133,7 +131,6 @@ namespace MonoKle.Configuration
         /// Gets the specified variable.
         /// </summary>
         /// <param name="identifier">The identifier variable to get.</param>
-        /// <returns>Setting value.</returns>
         public object GetValue(string identifier)
         {
             ICVar variable = GetVariable(identifier);
@@ -153,7 +150,7 @@ namespace MonoKle.Configuration
         {
             identifier = identifier.ToLower();
             Log("Removed occurences of variable: " + identifier, LogLevel.Debug);
-            return variables.Remove(identifier);
+            return _variables.Remove(identifier);
         }
 
         /// <summary>
@@ -164,9 +161,9 @@ namespace MonoKle.Configuration
         public bool SetValue(string identifier, object value)
         {
             identifier = identifier.ToLower();
-            if (variables.ContainsKey(identifier))
+            if (_variables.ContainsKey(identifier))
             {
-                if (variables[identifier].SetValue(value) == false)
+                if (_variables[identifier].SetValue(value) == false)
                 {
                     Log("Could not set variable '" + identifier + "' to " + value, LogLevel.Error);
                     return false;
@@ -175,7 +172,7 @@ namespace MonoKle.Configuration
             else
             {
                 Log("Added new variable: " + identifier, LogLevel.Trace);
-                variables.Add(identifier, new ValueCVar(value));
+                _variables.Add(identifier, new ValueCVar(value));
             }
             Log("Set value of variable '" + identifier + "' to " + value, LogLevel.Trace);
             return true;
@@ -204,9 +201,9 @@ namespace MonoKle.Configuration
         private ICVar GetVariable(string identifier, bool generateWarning)
         {
             identifier = identifier.ToLower();
-            if (variables.ContainsKey(identifier))
+            if (_variables.ContainsKey(identifier))
             {
-                return variables[identifier];
+                return _variables[identifier];
             }
             else if (generateWarning)
             {

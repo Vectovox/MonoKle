@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoKle.Asset;
-using MonoKle.Attributes;
+using MonoKle.Configuration;
 using MonoKle.Input.Keyboard;
 using MonoKle.Logging;
 using MoreLinq;
@@ -67,17 +67,17 @@ namespace MonoKle.Console
 
         public Color ErrorTextColour { get; set; } = Color.Red;
 
-        [Variable("c_isopen")]
+        [CVar("c_isopen")]
         public bool IsOpen { get; set; }
 
-        [Variable("c_size")]
+        [CVar("c_size")]
         public uint Size { get; set; } = byte.MaxValue;
 
         public int TabLength { get; set; } = 4;
 
         public Font TextFont { get; set; }
 
-        [Variable("c_textscale")]
+        [CVar("c_textscale")]
         public float TextScale { get; set; } = 0.5f;
 
         public Keys ToggleKey { get; set; } = Keys.F1;

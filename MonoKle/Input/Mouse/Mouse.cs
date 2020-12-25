@@ -1,6 +1,6 @@
-using MonoKle.Attributes;
 using Microsoft.Xna.Framework.Input;
 using System;
+using MonoKle.Configuration;
 
 namespace MonoKle.Input.Mouse
 {
@@ -71,7 +71,7 @@ namespace MonoKle.Input.Mouse
         /// <summary>
         /// Gets or sets whether the virtual mouse is enabled.
         /// </summary>
-        [Variable("mouse_isvirtual")]
+        [CVar("mouse_isvirtual")]
         public bool IsVirtual
         {
             get;

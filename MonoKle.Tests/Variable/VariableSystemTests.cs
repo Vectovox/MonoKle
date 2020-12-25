@@ -1,5 +1,4 @@
-﻿using MonoKle.Attributes;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
 namespace MonoKle.Configuration.Tests
@@ -147,12 +146,12 @@ namespace MonoKle.Configuration.Tests
 
         private class BoundClass
         {
-            [VariableAttribute("x")]
+            [CVarAttribute("x")]
             public int X { get; set; }
 
             public int Y { get; set; }
 
-            [VariableAttribute("z")]
+            [CVarAttribute("z")]
             public int Z { get; set; }
         }
 

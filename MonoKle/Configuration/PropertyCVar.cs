@@ -42,11 +42,11 @@ namespace MonoKle.Configuration
             {
                 throw new ArgumentException("Not a valid property.");
             }
-            if (property.GetGetMethod().IsStatic && owner != null)
+            if (owner != null && property.GetGetMethod(true).IsStatic)
             {
                 throw new ArgumentException("Static properties must have null owner.");
             }
-            if (property.GetGetMethod().IsStatic == false && owner == null)
+            if (owner == null && property.GetGetMethod(true).IsStatic == false)
             {
                 throw new ArgumentNullException("Non-static properties must have non-null owner.");
             }

@@ -6,27 +6,27 @@ namespace MonoKle.Configuration.Tests
     [TestClass]
     public class VariableSystemTests
     {
-        private CVarSystem system;
+        private CVarSystem _cvarSystem;
 
         [TestMethod]
         public void Clear_Cleared()
         {
-            system.SetValue("a", 1);
-            system.SetValue("b", 2);
-            system.SetValue("c", 3);
-            system.Clear();
-            Assert.AreEqual(0, system.Identifiers.Count);
-            Assert.AreEqual(null, system.GetValue("a"));
-            Assert.AreEqual(null, system.GetValue("b"));
-            Assert.AreEqual(null, system.GetValue("c"));
+            _cvarSystem.SetValue("a", 1);
+            _cvarSystem.SetValue("b", 2);
+            _cvarSystem.SetValue("c", 3);
+            _cvarSystem.Clear();
+            Assert.AreEqual(0, _cvarSystem.Identifiers.Count);
+            Assert.AreEqual(null, _cvarSystem.GetValue("a"));
+            Assert.AreEqual(null, _cvarSystem.GetValue("b"));
+            Assert.AreEqual(null, _cvarSystem.GetValue("c"));
         }
 
         [TestMethod]
         public void GetValue_BoundVariable_Called()
         {
             var b = new MockVariable(true);
-            system.Bind(b, "a");
-            system.GetValue("a");
+            _cvarSystem.Bind(b, "a");
+            _cvarSystem.GetValue("a");
             Assert.IsTrue(b.getCalled);
             Assert.IsFalse(b.setCalled);
         }
@@ -36,15 +36,15 @@ namespace MonoKle.Configuration.Tests
         {
             string id = "abc";
             int value = 17;
-            system.SetValue(id, value);
-            Assert.AreEqual(value, system.GetValue(id));
+            _cvarSystem.SetValue(id, value);
+            Assert.AreEqual(value, _cvarSystem.GetValue(id));
         }
 
         [TestMethod]
         public void GetValue_Nonexisting_Null()
         {
-            system.SetValue("abcd", 8);
-            Assert.AreEqual(null, system.GetValue("abc"));
+            _cvarSystem.SetValue("abcd", 8);
+            Assert.AreEqual(null, _cvarSystem.GetValue("abc"));
         }
 
         [TestMethod]
@@ -54,36 +54,36 @@ namespace MonoKle.Configuration.Tests
             string id2 = "def";
             int value = 17;
             int value2 = 7;
-            system.SetValue(id, value);
-            system.SetValue(id2, value2);
-            Assert.AreEqual(value2, system.GetValue(id2));
+            _cvarSystem.SetValue(id, value);
+            _cvarSystem.SetValue(id2, value2);
+            Assert.AreEqual(value2, _cvarSystem.GetValue(id2));
         }
 
         [TestInitialize]
-        public void Init() => this.system = new CVarSystem();
+        public void Init() => _cvarSystem = new CVarSystem();
 
         [TestMethod]
-        public void NewSystem_NoVariables() => Assert.AreEqual(0, system.Identifiers.Count);
+        public void NewSystem_NoVariables() => Assert.AreEqual(0, _cvarSystem.Identifiers.Count);
 
         [TestMethod]
         public void Remove_Removed()
         {
-            system.SetValue("a", 1);
-            system.SetValue("b", 2);
-            system.SetValue("c", 3);
-            system.Remove("b");
-            Assert.AreEqual(2, system.Identifiers.Count);
-            Assert.AreEqual(1, system.GetValue("a"));
-            Assert.AreEqual(null, system.GetValue("b"));
-            Assert.AreEqual(3, system.GetValue("c"));
+            _cvarSystem.SetValue("a", 1);
+            _cvarSystem.SetValue("b", 2);
+            _cvarSystem.SetValue("c", 3);
+            _cvarSystem.Remove("b");
+            Assert.AreEqual(2, _cvarSystem.Identifiers.Count);
+            Assert.AreEqual(1, _cvarSystem.GetValue("a"));
+            Assert.AreEqual(null, _cvarSystem.GetValue("b"));
+            Assert.AreEqual(3, _cvarSystem.GetValue("c"));
         }
 
         [TestMethod]
         public void SetValue_BoundVariable_Called()
         {
             var b = new MockVariable(true);
-            system.Bind(b, "a");
-            system.SetValue("a", 5);
+            _cvarSystem.Bind(b, "a");
+            _cvarSystem.SetValue("a", 5);
             Assert.IsFalse(b.getCalled);
             Assert.IsTrue(b.setCalled);
         }
@@ -92,16 +92,16 @@ namespace MonoKle.Configuration.Tests
         public void SetValue_BoundVariable_FalseReturn()
         {
             var b = new MockVariable(false);
-            system.Bind(b, "a");
-            Assert.IsFalse(system.SetValue("a", 5));
+            _cvarSystem.Bind(b, "a");
+            Assert.IsFalse(_cvarSystem.SetValue("a", 5));
         }
 
         [TestMethod]
         public void SetValue_BoundVariable_MockNotUpdated()
         {
             var b = new MockVariable(false);
-            system.SetValue("a", 5);
-            system.Bind(b, "a", false);
+            _cvarSystem.SetValue("a", 5);
+            _cvarSystem.Bind(b, "a", false);
             Assert.AreEqual(null, b.var);
             Assert.IsFalse(b.getCalled);
             Assert.IsFalse(b.setCalled);
@@ -111,8 +111,8 @@ namespace MonoKle.Configuration.Tests
         public void SetValue_BoundVariable_MockUpdated()
         {
             var b = new MockVariable(false);
-            system.SetValue("a", 5);
-            system.Bind(b, "a", true);
+            _cvarSystem.SetValue("a", 5);
+            _cvarSystem.Bind(b, "a", true);
             Assert.AreEqual(5, b.var);
             Assert.IsFalse(b.getCalled);
             Assert.IsTrue(b.setCalled);
@@ -126,33 +126,68 @@ namespace MonoKle.Configuration.Tests
             for (int i = 0; i < amount; i++)
             {
                 s += s;
-                system.SetValue(s, 7);
+                _cvarSystem.SetValue(s, 7);
             }
-            Assert.AreEqual(5, system.Identifiers.Count);
+            Assert.AreEqual(5, _cvarSystem.Identifiers.Count);
         }
 
         [TestMethod]
         public void BindProperties_CorrectlyBound()
         {
             var b = new BoundClass() { X = 1, Y = 2, Z = 3 };
-            this.system.BindProperties(b);
-            this.system.SetValue("z", 17);
-            Assert.AreEqual(2, this.system.Identifiers.Count);
+            _cvarSystem.BindProperties(b);
+            _cvarSystem.SetValue("z", 17);
+            Assert.AreEqual(2, _cvarSystem.Identifiers.Count);
             Assert.AreEqual(b.X, 1);
             Assert.AreEqual(b.Z, 17);
-            Assert.AreEqual(b.X, this.system.GetValue("x"));
-            Assert.AreEqual(b.Z, this.system.GetValue("z"));
+            Assert.AreEqual(b.X, _cvarSystem.GetValue("x"));
+            Assert.AreEqual(b.Z, _cvarSystem.GetValue("z"));
+        }
+
+        [TestMethod]
+        public void BindProperties_PrivateProperty_Assigned()
+        {
+            var sut = new PrivateTest();
+            _cvarSystem.BindProperties(sut);
+            Assert.AreEqual(1, _cvarSystem.Identifiers.Count);
+            Assert.AreEqual(sut.PrivateValue, 0);
+            _cvarSystem.SetValue("private", 99);
+            Assert.AreEqual(sut.PrivateValue, 99);
+        }
+
+        [TestMethod]
+        public void BindProperties_StaticProperty_Assigned()
+        {
+            var sut = new StaticTest();
+            _cvarSystem.BindProperties(sut);
+            Assert.AreEqual(1, _cvarSystem.Identifiers.Count);
+            Assert.AreEqual(StaticTest.Static, 0);
+            _cvarSystem.SetValue("static", 78);
+            Assert.AreEqual(StaticTest.Static, 78);
         }
 
         private class BoundClass
         {
-            [CVarAttribute("x")]
+            [CVar("x")]
             public int X { get; set; }
 
             public int Y { get; set; }
 
-            [CVarAttribute("z")]
+            [CVar("z")]
             public int Z { get; set; }
+        }
+
+        private class PrivateTest
+        {
+            [CVar("private")]
+            private int Private { get; set; }
+            public int PrivateValue => Private;
+        }
+
+        private class StaticTest
+        {
+            [CVar("static")]
+            public static int Static { get; set; }
         }
 
         private class MockVariable : ICVar
@@ -164,7 +199,7 @@ namespace MonoKle.Configuration.Tests
 
             public MockVariable(bool toReturnOnSet)
             {
-                this.toReturnOnSet = toReturnOnSet;
+                toReturnOnSet = toReturnOnSet;
             }
 
             public Type Type => throw new NotImplementedException();
@@ -173,15 +208,15 @@ namespace MonoKle.Configuration.Tests
 
             public object GetValue()
             {
-                this.getCalled = true;
-                return this.var;
+                getCalled = true;
+                return var;
             }
 
             public bool SetValue(object value)
             {
-                this.setCalled = true;
-                this.var = value;
-                return this.toReturnOnSet;
+                setCalled = true;
+                var = value;
+                return toReturnOnSet;
             }
         }
     }

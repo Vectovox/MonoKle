@@ -1,6 +1,7 @@
 ﻿using MonoKle.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace MonoKle.Configuration
@@ -79,18 +80,22 @@ namespace MonoKle.Configuration
         /// <summary>
         /// Binds the properties of the provided object to variables. Only properties declared with <see cref="CVarAttribute"/> are bound.
         /// </summary>
-        /// <param name="o">The object.</param>
-        public void BindProperties(object o)
+        /// <param name="instance">The object instance to bind.</param>
+        public void BindProperties(object instance)
         {
-            Type type = o.GetType();
-            foreach (PropertyInfo p in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            Type type = instance.GetType();
+            foreach (PropertyInfo property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic))
             {
-                foreach (object a in p.GetCustomAttributes(true))
+                foreach (CVarAttribute attribute in property.GetCustomAttributes(typeof(CVarAttribute)))
                 {
-                    if (a is CVarAttribute attribute)
-                    {
-                        Bind(new PropertyCVar(p, o), attribute.Identifier);
-                    }
+                    Bind(new PropertyCVar(property, instance), attribute.Identifier);
+                }
+            }
+            foreach (PropertyInfo property in type.GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic))
+            {
+                foreach (CVarAttribute attribute in property.GetCustomAttributes(typeof(CVarAttribute)))
+                {
+                    Bind(new PropertyCVar(property, null), attribute.Identifier);
                 }
             }
         }

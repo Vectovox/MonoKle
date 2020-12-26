@@ -1,6 +1,5 @@
 ﻿# This is a commented out line
 # identifier | path atlasRectangle (- to use full texture) | frameCount | frameRate
-testbox Data/Textures/TestBox.png
 animation Data/Textures/animation.png - 3 5
 orange Data/Textures/atlas.png 0,0,16,16
 green Data/Textures/atlas.png 16,0,16,16

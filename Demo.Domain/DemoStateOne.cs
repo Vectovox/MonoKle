@@ -15,133 +15,88 @@ namespace Demo.Domain
 {
     public class DemoStateOne : GameState
     {
-        private SpriteBatch sb;
-        private Timer timer = new Timer(TimeSpan.FromSeconds(5));
-        private Camera2D camera = new Camera2D(new MPoint2(800, 600)) { MinScale = 0.5f };
-        private PrimitiveBatch2D primitive2D;
-        private string stateSwitchMessage = string.Empty;
+        private SpriteBatch _spriteBatch;
+        private Timer _timer = new Timer(TimeSpan.FromSeconds(5));
+        private Camera2D _camera = new Camera2D(new MPoint2(800, 600)) { MinScale = 0.3f };
+        private PrimitiveBatch2D _primitive2D;
+        private string _stateSwitchMessage = string.Empty;
 
-        public DemoStateOne() : base("stateOne")
-        {
-        }
-
-        public class AnimationInstance
-        {
-            Texture2D Texture;
-            public int framesPerSecond;
-            public int frameSize;
-
-            public void GetSource()
-            {
-                // TODO:
-                // Gör manifest till 1st class citizen
-                // # FIL #
-                // myPony textures/atlas2.png 50,50,500,50 10 20 
-                //
-                // # KOD #
-                // TextureStorage.GetTexture("myPony") ->
-                // { Texture2D 'atlas2', SourceRectangle '50,50,500,50', Frames: 10, FPS, 20 } 
-                //    .Animate(frameNumber)
-                //    .Animate(timeSpent)
-                // { Texture2D 'atlas2', SourceRectangle 250, 50, 50, 50}
-                //
-                // 
-            }
-        }
+        public DemoStateOne() : base("stateOne") { }
 
         public override void Draw(TimeSpan deltaTime)
         {
-            primitive2D.Begin(camera.TransformMatrix);
-            primitive2D.DrawLine(new Vector2(80, 200), new Vector2(200, 80), Color.Red, Color.Blue);
-            primitive2D.DrawLine(new Vector2(380, 500), new Vector2(500, 380), Color.Red, Color.Blue);
-            primitive2D.End();
+            _primitive2D.Begin(_camera.TransformMatrix);
+            _primitive2D.DrawLine(new Vector2(80, 200), new Vector2(200, 80), Color.Red, Color.Blue);
+            _primitive2D.DrawLine(new Vector2(380, 500), new Vector2(500, 380), Color.Red, Color.Blue);
+            _primitive2D.End();
 
-            sb.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullCounterClockwise, null, camera.TransformMatrix);
+            _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullCounterClockwise, null, _camera.TransformMatrix);
 
-            sb.Draw(MGame.TextureStorage.Error, new Vector2(50, 50), Color.White);
-            sb.Draw(MGame.TextureStorage.White, new Vector2(150, 50), Color.Red);
 
-            var testBoxRect = new MRectangleInt(250, 250, 64, 64);
-            bool testBoxMouseWithin = testBoxRect.Contains(camera.TransformInv(MGame.Mouse.Position.Coordinate.ToMVector2()).ToMPoint2());
-            sb.Draw(MGame.TextureStorage["testbox"].TextureData, testBoxRect, testBoxMouseWithin ? Color.Red : Color.White);
+            _spriteBatch.Draw(MGame.TextureStorage["animation"].TextureData, new Vector2(0, -20),
+                MGame.TextureStorage["animation"].Animate(_timer.Elapsed).AtlasRectangle, Color.White);
 
-            sb.Draw(MGame.TextureStorage["animation"].TextureData, new Vector2(340, 0),
-                MGame.TextureStorage["animation"].Animate(timer.Elapsed).AtlasRectangle, Color.White);
-
-            // TODO: Overload for sb that can take in a MTexture and do this automatically
-            sb.Draw(MGame.TextureStorage["orange"].TextureData, new Vector2(540, 0), MGame.TextureStorage["orange"].AtlasRectangle, Color.White);
-            sb.Draw(MGame.TextureStorage["red"].TextureData, new Vector2(640, 0), MGame.TextureStorage["red"].AtlasRectangle, Color.White);
-            sb.Draw(MGame.TextureStorage["green"].TextureData, new Vector2(640, -50), MGame.TextureStorage["green"].AtlasRectangle, Color.White);
-            sb.Draw(MGame.TextureStorage["blue"].TextureData, new Vector2(690, -100), MGame.TextureStorage["blue"].AtlasRectangle, Color.White);
+            _spriteBatch.Draw(MGame.TextureStorage.Error, new Vector2(0, 50), Color.White);
+            _spriteBatch.Draw(MGame.TextureStorage.White, new Vector2(50, 50), Color.Red);
+            _spriteBatch.Draw(MGame.TextureStorage["orange"].TextureData, new Vector2(100, 50), MGame.TextureStorage["orange"].AtlasRectangle, Color.White);
+            _spriteBatch.Draw(MGame.TextureStorage["red"].TextureData, new Vector2(150, 50), MGame.TextureStorage["red"].AtlasRectangle, Color.White);
+            _spriteBatch.Draw(MGame.TextureStorage["green"].TextureData, new Vector2(200, 50), MGame.TextureStorage["green"].AtlasRectangle, Color.White);
+            _spriteBatch.Draw(MGame.TextureStorage["blue"].TextureData, new Vector2(250, 50), MGame.TextureStorage["blue"].AtlasRectangle, Color.White);
 
             Font font = MGame.FontStorage.GetAsset("data/Fonts/testfont.mfnt");
 
             // Test timer
-            sb.DrawString(font, "Timer: " + timer.TimeLeft + " (" + timer.Duration + ") Done? " + timer.IsDone,
+            _spriteBatch.DrawString(font, "Timer: " + _timer.TimeLeft + " (" + _timer.Duration + ") Done? " + _timer.IsDone,
                 new Vector2(50, 150), Color.Green);
 
             // Test linebreak
-            sb.DrawString(font, "ABCDEF\nabcdef",
+            _spriteBatch.DrawString(font, "LINE\nbreak",
                  new Vector2(50, 250), Color.Green);
 
             // Test scale
-            sb.DrawString(font, "ABCDEF\nabcdef",
+            _spriteBatch.DrawString(font, "Scaled text",
                  new Vector2(250, 250), Color.Green, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
 
             // Test rotation
-            sb.DrawString(font, "Rotating",
+            _spriteBatch.DrawString(font, "Rotating text",
                  new Vector2(50, 350), Color.Green, (float)MGame.TotalGameTime.TotalSeconds, Vector2.Zero, 1f, SpriteEffects.None, 0f);
 
-            // Test rotation
-            sb.DrawString(font, "Rotating",
-                 new Vector2(0, 0), Color.Green, (float)MGame.TotalGameTime.TotalSeconds, Vector2.Zero, 1f, SpriteEffects.None, 0f);
-
             // Rotation with scale
-            sb.DrawString(font, "Rotating scale",
+            _spriteBatch.DrawString(font, "Rotating scaled text",
                  new Vector2(350, 350), Color.Green, (float)MGame.TotalGameTime.TotalSeconds, Vector2.Zero, 2f, SpriteEffects.None, 0f);
 
             // Rotation with scale and origin
             Vector2 orig = font.MeasureString("Rotating origin scale") * 0.5f;
-            sb.DrawString(font, "Rotating origin scale",
+            _spriteBatch.DrawString(font, "Rotating origin scale",
                  new Vector2(550, 150), Color.Green, (float)MGame.TotalGameTime.TotalSeconds, orig, 2f, SpriteEffects.None, 0f);
 
-            // XXX
-            Vector2 o = font.MeasureString(ti.Text) * 0.5f;
-            sb.DrawString(font, ti.Text, new Vector2(400, 300), Color.Green, (float)MGame.TotalGameTime.TotalSeconds, o, 1f, SpriteEffects.None, 0f);
+            // Text input test
+            Vector2 o = font.MeasureString(_textInput.Text) * 0.5f;
+            _spriteBatch.DrawString(font, _textInput.Text, new Vector2(000, 600), Color.Green, 0f, o, 1f, SpriteEffects.None, 0f);
 
-            string s = "Testin size";
-            sb.DrawString(MGame.FontStorage.DefaultValue, s, new Vector2(450, 350), Color.Green);
-            sb.DrawString(MGame.FontStorage.DefaultValue, s, new Vector2(450, 350 + MGame.FontStorage.DefaultValue.MeasureString(s).Y), Color.Green);
-            sb.DrawString(MGame.FontStorage.DefaultValue, s, new Vector2(450, 350 + 2 * MGame.FontStorage.DefaultValue.MeasureString(s).Y), Color.Green);
-
-            string s2 = "Testin size\nLol";
-            sb.DrawString(MGame.FontStorage.DefaultValue, s2, new Vector2(0, 0), Color.Green);
-            sb.DrawString(MGame.FontStorage.DefaultValue, s2, new Vector2(0, 0 + MGame.FontStorage.DefaultValue.MeasureString(s2).Y), Color.Green);
-            sb.DrawString(MGame.FontStorage.DefaultValue, s2, new Vector2(0, 0 + 2 * MGame.FontStorage.DefaultValue.MeasureString(s2).Y), Color.Green);
-
-            sb.DrawString(MGame.FontStorage.DefaultValue, stateSwitchMessage, new Vector2(0, 700), Color.Green);
+            _spriteBatch.DrawString(MGame.FontStorage.DefaultValue, _stateSwitchMessage, new Vector2(0, 700), Color.Green);
 
             // Test size measurements.
             var pos = new Vector2(50, 450);
-            sb.DrawString(font, "One-", pos, Color.Green);
+            _spriteBatch.DrawString(font, "One-", pos, Color.Green);
             pos.X += font.MeasureString("One-").X;
 
-            sb.DrawString(font, "Two", pos, Color.Red);
+            _spriteBatch.DrawString(font, "Two", pos, Color.Red);
 
             pos.Y -= font.MeasureString("Three").Y;
-            sb.DrawString(font, "Three", pos, Color.Orange);
+            _spriteBatch.DrawString(font, "Three", pos, Color.Orange);
 
             pos.X += font.MeasureString("Three").X;
-            sb.DrawString(font, "Four", pos, Color.Blue, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
+            _spriteBatch.DrawString(font, "Four", pos, Color.Blue, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
 
             pos.X += font.MeasureString("Four", 2f).X;
-            sb.DrawString(font, "Five", pos, Color.Black);
+            _spriteBatch.DrawString(font, "Five", pos, Color.Black);
 
-            sb.End();
+            _spriteBatch.End();
 
-            sb.Begin();
-            sb.Draw(MGame.TextureStorage.White, new Rectangle(MGame.Mouse.Position.Coordinate.X, MGame.Mouse.Position.Coordinate.Y, 3, 3), Color.Black);
-            sb.End();
+            _spriteBatch.Begin();
+            _spriteBatch.Draw(MGame.TextureStorage.White, new Rectangle(MGame.Mouse.Position.Coordinate.X, MGame.Mouse.Position.Coordinate.Y, 3, 3), Color.Black);
+            _spriteBatch.End();
         }
 
         public override void Update(TimeSpan deltaTime)
@@ -171,44 +126,44 @@ namespace Demo.Domain
 
                 if (MGame.Keyboard.IsKeyHeld(Keys.I))
                 {
-                    camera.SetPosition(camera.Position + new MVector2(0, -3));
+                    _camera.SetPosition(_camera.Position + new MVector2(0, -3));
                 }
                 if (MGame.Keyboard.IsKeyHeld(Keys.K))
                 {
-                    camera.SetPosition(camera.Position + new MVector2(0, 3));
+                    _camera.SetPosition(_camera.Position + new MVector2(0, 3));
                 }
                 if (MGame.Keyboard.IsKeyHeld(Keys.J))
                 {
-                    camera.SetPosition(camera.Position + new MVector2(-3, 0));
+                    _camera.SetPosition(_camera.Position + new MVector2(-3, 0));
                 }
                 if (MGame.Keyboard.IsKeyHeld(Keys.L))
                 {
-                    camera.SetPosition(camera.Position + new MVector2(3, 0));
+                    _camera.SetPosition(_camera.Position + new MVector2(3, 0));
                 }
                 if (MGame.Keyboard.IsKeyHeld(Keys.U))
                 {
-                    camera.SetRotation(camera.Rotation + 0.05f);
+                    _camera.SetRotation(_camera.Rotation + 0.05f);
                 }
                 if (MGame.Keyboard.IsKeyHeld(Keys.O))
                 {
-                    camera.SetRotation(camera.Rotation - 0.05f);
+                    _camera.SetRotation(_camera.Rotation - 0.05f);
                 }
                 if (MGame.Keyboard.IsKeyHeld(Keys.Y))
                 {
-                    camera.SetScale(camera.Scale + 0.01f);
+                    _camera.SetScale(_camera.Scale + 0.01f);
                 }
                 if (MGame.Keyboard.IsKeyHeld(Keys.H))
                 {
-                    camera.SetScale(camera.Scale - 0.01f);
+                    _camera.SetScale(_camera.Scale - 0.01f);
                 }
 
                 if (MGame.TouchScreen.Pinch.TryGetValues(out var pinchOrigin, out var pinchFactor))
                 {
-                    camera.ScaleTo(pinchOrigin.ToMVector2(), pinchFactor * 10);
+                    _camera.ScaleTo(pinchOrigin.ToMVector2(), pinchFactor * 10);
                 }
                 else if (MGame.TouchScreen.Drag.TryGetDelta(out var dragDelta))
                 {
-                    camera.TranslateCameraSpace(-dragDelta.ToMVector2());
+                    _camera.TranslateCameraSpace(-dragDelta.ToMVector2());
                 }
 
                 if (MGame.Keyboard.IsKeyPressed(Keys.F2))
@@ -234,21 +189,21 @@ namespace Demo.Domain
 
                 if (MGame.Keyboard.IsKeyPressed(Keys.R))
                 {
-                    camera.SetPosition(MVector2.Zero, 100);
+                    _camera.SetPosition(MVector2.Zero, 100);
                 }
 
-                ti.Update();
+                _textInput.Update();
                 if (MGame.TouchScreen.Hold.IsTriggered)
                 {
                     MGame.StateSystem.SwitchState("stateTwo", null);
                 }
             }
 
-            camera.Update(deltaTime);
-            timer.Update(deltaTime);
+            _camera.Update(deltaTime);
+            _timer.Update(deltaTime);
         }
 
-        KeyboardTextInput ti = new KeyboardTextInput(new KeyboardCharacterInput(new KeyboardTyper(MGame.Keyboard, TimeSpan.FromSeconds(0.5), TimeSpan.FromMilliseconds(50))));
+        KeyboardTextInput _textInput = new KeyboardTextInput(new KeyboardCharacterInput(new KeyboardTyper(MGame.Keyboard, TimeSpan.FromSeconds(0.5), TimeSpan.FromMilliseconds(50))));
 
         public void Test(object sender, MessageEventArgs args) => Console.WriteLine(args.Data as string);
 
@@ -258,21 +213,21 @@ namespace Demo.Domain
 
             if (data.Equals("reset timer"))
             {
-                timer.Reset();
+                _timer.Reset();
             }
         }
 
         protected override void Activated(StateSwitchData data)
         {
-            stateSwitchMessage = (string)data.Data ?? string.Empty;
-            MGame.Console.WriteLine($"State one activated! Message: {stateSwitchMessage}");
+            _stateSwitchMessage = (string)data.Data ?? string.Empty;
+            MGame.Console.WriteLine($"State one activated! Message: {_stateSwitchMessage}");
             MGame.Console.WriteLine(MGame.TextureStorage.LoadFromManifest("Data/assets.manifest") + " textures loaded.");
             MGame.Console.WriteLine(MGame.FontStorage.LoadFromManifest("Data/assets.manifest") + " fonts loaded.");
             MGame.Console.WriteLine(MGame.EffectStorage.LoadFromManifest("Data/assets.manifest") + " effects loaded.");
             MGame.Console.WriteLine(MGame.AudioStorage.LoadFromManifest("Data/assets.manifest") + " sounds loaded.");
-            sb = new SpriteBatch(MGame.GraphicsManager.GraphicsDevice);
-            timer.Reset();
-            primitive2D = new PrimitiveBatch2D(MGame.GraphicsManager.GraphicsDevice);
+            _spriteBatch = new SpriteBatch(MGame.GraphicsManager.GraphicsDevice);
+            _timer.Reset();
+            _primitive2D = new PrimitiveBatch2D(MGame.GraphicsManager.GraphicsDevice);
         }
     }
 }

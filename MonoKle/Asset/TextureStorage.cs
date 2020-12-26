@@ -28,6 +28,17 @@ namespace MonoKle.Asset
         public Texture2D Error { get; }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="TextureStorageNew"/> class.
+        /// </summary>
+        /// <param name="graphicsDevice">The graphics device.</param>
+        public TextureStorage(GraphicsDevice graphicsDevice)
+        {
+            _graphicsDevice = graphicsDevice;
+            Error = new Texture2D(graphicsDevice, 16, 16).Fill(Color.Purple);
+            White = new Texture2D(graphicsDevice, 16, 16).Fill(Color.White);
+        }
+
+        /// <summary>
         /// Accesses the texture with the given identifier. If the texture does not exist
         /// the <see cref="Error"/> texture will be returned.
         /// </summary>
@@ -48,15 +59,9 @@ namespace MonoKle.Asset
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TextureStorageNew"/> class.
+        /// Gets the available texture identifiers.
         /// </summary>
-        /// <param name="graphicsDevice">The graphics device.</param>
-        public TextureStorage(GraphicsDevice graphicsDevice)
-        {
-            _graphicsDevice = graphicsDevice;
-            Error = new Texture2D(graphicsDevice, 16, 16).Fill(Color.Purple);
-            White = new Texture2D(graphicsDevice, 16, 16).Fill(Color.White);
-        }
+        public IEnumerable<string> Identifiers => _textureDataByIdentifier.Keys;
 
         protected override bool FileSupported(string extension) =>
             extension.Equals(".png", StringComparison.InvariantCultureIgnoreCase)
@@ -117,6 +122,9 @@ namespace MonoKle.Asset
             return true;
         }
 
+        /// <summary>
+        /// Unloads all textures, returning the amount of texture identifiers unloaded.
+        /// </summary>
         public int Unload()
         {
             int amountUnloaded = _textureDataByIdentifier.Count;
@@ -131,6 +139,9 @@ namespace MonoKle.Asset
             public MRectangleInt? AtlasRectangle = null;
         }
 
+        /// <summary>
+        /// Texture asset data.
+        /// </summary>
         public struct MTexture
         {
             public readonly Texture2D Texture;
@@ -143,72 +154,6 @@ namespace MonoKle.Asset
                 Texture = texture;
                 AtlasRectangle = atlasRectangle;
             }
-        }
-    }
-
-    public abstract class AbstractAssetStorage
-    {
-        protected abstract bool FileSupported(string extension);
-        protected abstract bool Load(string path, string identifier, params string[] args);
-
-        public bool Load(string path, string identifier)
-        {
-            if (FileSupported(new FileInfo(path).Extension))
-            {
-                return Load(path, identifier, Array.Empty<string>());
-            }
-
-            Logger.Global.Log($"File not supported '{path}'.", LogLevel.Error);
-            return false;
-        }
-
-        /// <summary>
-        /// Load assets from the manifest in the provided path.
-        /// </summary>
-        /// <remarks>Case sensitive on some platforms.</remarks>
-        public int LoadFromManifest(string manifestPath)
-        {
-            // Open manifest
-            StreamReader reader;
-            try
-            {
-                reader = new StreamReader(TitleContainer.OpenStream(manifestPath));
-            }
-            catch (IOException e)
-            {
-                throw new IOException($"Manifest file could not be read at '{manifestPath}'", e);
-            }
-
-            // Load manifest files
-            int counter = 0;
-            while (!reader.EndOfStream)
-            {
-                var line = reader.ReadLine();
-                var lineParts = line.Split(' ');
-
-                if (lineParts.Length < 2)
-                {
-                    Logger.Global.Log($"Manifest line '{line}' does not contain path and identifier", LogLevel.Error);
-                    continue;
-                }
-
-                var identifier = lineParts[0];
-                var path = lineParts[1];
-
-                if (FileSupported(new FileInfo(path).Extension))
-                {
-                    if (Load(path, identifier, lineParts.Length > 2 ? lineParts[2..] : Array.Empty<string>()))
-                    {
-                        counter++;
-                    }
-                    else
-                    {
-                        Logger.Global.Log($"Could not load asset '{line}' from manifest", LogLevel.Error);
-                    }
-                }
-            }
-
-            return counter;
         }
     }
 }

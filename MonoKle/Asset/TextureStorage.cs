@@ -81,7 +81,7 @@ namespace MonoKle.Asset
             MRectangleInt? atlasRectangle = null;
             if (args.Length > 0 && args[0] != "-")
             {
-                var rectangleParts = args[0].Split(',');
+                var rectangleParts = args[0].Split(',', StringSplitOptions.RemoveEmptyEntries);
                 if (rectangleParts.Length == 4 &&
                     int.TryParse(rectangleParts[0], out var x) &&
                     int.TryParse(rectangleParts[1], out var y) &&

@@ -52,16 +52,16 @@ namespace MonoKle.Asset
             int counter = 0;
             while (!reader.EndOfStream)
             {
-                var line = reader.ReadLine();
+                var line = reader.ReadLine().Trim();
 
                 // Skip commented lines
-                if (line.StartsWith("#"))
+                if (line.Length == 0 || line.StartsWith("#"))
                 {
                     continue;
                 }
 
                 // Read identifier and path
-                var lineParts = line.Split(' ');
+                var lineParts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
                 if (lineParts.Length < 2)
                 {
                     Logger.Global.Log($"Manifest line '{line}' does not contain path and identifier", LogLevel.Error);
@@ -198,9 +198,9 @@ namespace MonoKle.Asset
             int counter = 0;
             while (!reader.EndOfStream)
             {
-                var path = reader.ReadLine();
+                var path = reader.ReadLine().Trim();
 
-                if (FileSupported(new FileInfo(path).Extension))
+                if (path.Length > 0 && !path.StartsWith("#") && FileSupported(new FileInfo(path).Extension))
                 {
                     if (Load(path, path, null))
                     {

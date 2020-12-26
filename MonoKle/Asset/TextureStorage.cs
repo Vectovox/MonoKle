@@ -51,8 +51,8 @@ namespace MonoKle.Asset
                 {
                     var data = _textureDataByIdentifier[identifier];
                     return data.AtlasRectangle == null
-                        ? new MTexture(_textureByPath[data.Path])
-                        : new MTexture(_textureByPath[data.Path], data.AtlasRectangle.Value);
+                        ? new MTexture(_textureByPath[data.Path], data.FrameCount, data.FrameRate)
+                        : new MTexture(_textureByPath[data.Path], data.AtlasRectangle.Value, data.FrameCount, data.FrameRate);
                 }
                 return new MTexture(Error);
             }
@@ -79,7 +79,7 @@ namespace MonoKle.Asset
 
             // Parse atlas rectangle
             MRectangleInt? atlasRectangle = null;
-            if (args.Length > 0)
+            if (args.Length > 0 && args[0] != "-")
             {
                 var rectangleParts = args[0].Split(',');
                 if (rectangleParts.Length == 4 &&
@@ -93,6 +93,19 @@ namespace MonoKle.Asset
                 else
                 {
                     Logger.Global.Log($"Error reading atlas rectangle for identifier '{identifier}'. Skipping.", LogLevel.Error);
+                    return false;
+                }
+            }
+
+            // Parse animation data
+            int frameCount = 1;
+            int frameRate = 1;
+            if (args.Length > 2)
+            {
+                if (!int.TryParse(args[1], out frameCount) ||
+                    !int.TryParse(args[2], out frameRate))
+                {
+                    Logger.Global.Log($"Error reading animation data for identifier '{identifier}'. Skipping.", LogLevel.Error);
                     return false;
                 }
             }
@@ -117,6 +130,8 @@ namespace MonoKle.Asset
             {
                 Path = path,
                 AtlasRectangle = atlasRectangle,
+                FrameCount = frameCount,
+                FrameRate = frameRate,
             });
 
             return true;
@@ -137,23 +152,8 @@ namespace MonoKle.Asset
         {
             public string Path = string.Empty;
             public MRectangleInt? AtlasRectangle = null;
-        }
-
-        /// <summary>
-        /// Texture asset data.
-        /// </summary>
-        public struct MTexture
-        {
-            public readonly Texture2D Texture;
-            public readonly MRectangleInt AtlasRectangle;
-
-            public MTexture(Texture2D texture) : this(texture, new MRectangleInt(0, 0, texture.Width, texture.Height)) { }
-
-            public MTexture(Texture2D texture, MRectangleInt atlasRectangle)
-            {
-                Texture = texture;
-                AtlasRectangle = atlasRectangle;
-            }
+            public int FrameCount = 1;
+            public int FrameRate = 1;
         }
     }
 }

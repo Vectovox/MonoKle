@@ -48,24 +48,31 @@ namespace MonoKle.Asset
                 throw new IOException($"Manifest file could not be read at '{manifestPath}'", e);
             }
 
-            // Load manifest files
+            // Read manifest and load the files
             int counter = 0;
             while (!reader.EndOfStream)
             {
                 var line = reader.ReadLine();
-                var lineParts = line.Split(' ');
 
+                // Skip commented lines
+                if (line.StartsWith("#"))
+                {
+                    continue;
+                }
+
+                // Read identifier and path
+                var lineParts = line.Split(' ');
                 if (lineParts.Length < 2)
                 {
                     Logger.Global.Log($"Manifest line '{line}' does not contain path and identifier", LogLevel.Error);
                     continue;
                 }
-
                 var identifier = lineParts[0];
                 var path = lineParts[1];
 
                 if (FileSupported(new FileInfo(path).Extension))
                 {
+                    // Load file and send remaining parts as arguments
                     if (Load(path, identifier, lineParts.Length > 2 ? lineParts[2..] : Array.Empty<string>()))
                     {
                         counter++;

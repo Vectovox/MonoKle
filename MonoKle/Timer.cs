@@ -32,6 +32,11 @@ namespace MonoKle
         public bool IsDone => TimeLeft == TimeSpan.Zero;
 
         /// <summary>
+        /// Gets the elapsed time.
+        /// </summary>
+        public TimeSpan Elapsed => Duration - TimeLeft;
+
+        /// <summary>
         /// Resets the time left to <see cref="Duration"/>.
         /// </summary>
         public void Reset() => TimeLeft = Duration;

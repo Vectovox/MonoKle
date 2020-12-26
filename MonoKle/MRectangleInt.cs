@@ -325,6 +325,31 @@ namespace MonoKle
         }
 
         /// <summary>
+        /// Resizes the <see cref="MRectangleInt"/> dimensions to the provided values.
+        /// </summary>
+        /// <param name="dimensions">The new width and height.</param>
+        public MRectangleInt Redimension(MPoint2 dimensions) => Redimension(dimensions.X, dimensions.Y);
+
+        /// <summary>
+        /// Resizes the width of the <see cref="MRectangleInt"/> to the provided value.
+        /// </summary>
+        /// <param name="width">The new width.</param>
+        public MRectangleInt RedimensionWidth(int width) => Redimension(width, Height);
+
+        /// <summary>
+        /// Resizes the height of the <see cref="MRectangleInt"/> to the provided value.
+        /// </summary>
+        /// <param name="height">The new height.</param>
+        public MRectangleInt RedimensionHeight(int height) => Redimension(Width, height);
+
+        /// <summary>
+        /// Resizes the <see cref="MRectangleInt"/> dimensions to the provided values.
+        /// </summary>
+        /// <param name="width">The new width.</param>
+        /// <param name="height">The new height.</param>
+        public MRectangleInt Redimension(int width, int height) => new MRectangleInt(TopLeft.X, TopLeft.Y, width, height);
+
+        /// <summary>
         /// Resizes the <see cref="MRectangleInt"/> width the provide delta values.
         /// </summary>
         /// <param name="delta">The change in width and height.</param>

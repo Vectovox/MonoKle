@@ -9,20 +9,37 @@ namespace MonoKle.Tests
     {
         private const int RANDOM_TEST_AMOUNT = 25;
 
-        private readonly Random random = new Random();
+        private readonly Random _random = new Random();
+
+        [TestMethod]
+        public void Redimension_CorrectlySet()
+        {
+            int x = 5;
+            int y = 7;
+            int width = 11;
+            int height = 31;
+            int newWidth = 50;
+            int newHeight = 70;
+            MRectangleInt sut = new MRectangleInt(x, y, width, height);
+            MRectangleInt expected = new MRectangleInt(x, y, newWidth, newHeight);
+
+            Assert.AreEqual(expected, sut.Redimension(newWidth, newHeight));
+            Assert.AreEqual(expected, sut.Redimension(new MPoint2(newWidth, newHeight)));
+            Assert.AreEqual(expected, sut.RedimensionWidth(newWidth).RedimensionHeight(newHeight));
+        }
 
         [TestMethod]
         public void Resize_CorrectResizing()
         {
             for (int i = 0; i < RANDOM_TEST_AMOUNT; i++)
             {
-                int x = random.Next(-100, 100);
-                int y = random.Next(-100, 100);
-                int width = random.Next(0, 100);
-                int height = random.Next(0, 100);
+                int x = _random.Next(-100, 100);
+                int y = _random.Next(-100, 100);
+                int width = _random.Next(0, 100);
+                int height = _random.Next(0, 100);
 
-                int dWidth = random.Next(-100, 100);
-                int dHeight = random.Next(-100, 100);
+                int dWidth = _random.Next(-100, 100);
+                int dHeight = _random.Next(-100, 100);
 
                 var sut = new MRectangleInt(x, y, width, height);
                 var expected = new MRectangleInt(x, y, width + dWidth, height + dHeight);
@@ -39,13 +56,13 @@ namespace MonoKle.Tests
         {
             for (int i = 0; i < RANDOM_TEST_AMOUNT; i++)
             {
-                int x = random.Next(-100, 100);
-                int y = random.Next(-100, 100);
-                int width = random.Next(0, 100);
-                int height = random.Next(0, 100);
+                int x = _random.Next(-100, 100);
+                int y = _random.Next(-100, 100);
+                int width = _random.Next(0, 100);
+                int height = _random.Next(0, 100);
 
-                int dx = random.Next(-100, 100);
-                int dy = random.Next(-100, 100);
+                int dx = _random.Next(-100, 100);
+                int dy = _random.Next(-100, 100);
 
                 var sut = new MRectangleInt(x, y, width, height);
                 var expected = new MRectangleInt(x + dx, y + dy, width, height);
@@ -62,10 +79,10 @@ namespace MonoKle.Tests
         {
             for (int i = 0; i < RANDOM_TEST_AMOUNT; i++)
             {
-                int x = random.Next(-100, 100);
-                int y = random.Next(-100, 100);
-                int x2 = random.Next(-100, 100);
-                int y2 = random.Next(-100, 100);
+                int x = _random.Next(-100, 100);
+                int y = _random.Next(-100, 100);
+                int x2 = _random.Next(-100, 100);
+                int y2 = _random.Next(-100, 100);
 
                 var sut = new MRectangleInt(x, y, x2 - x, y2 - y);
                 var expected = new MPoint2(Math.Abs(x2 - x), Math.Abs(y2 - y));

@@ -335,6 +335,23 @@ namespace MonoKle.Tests
         }
 
         [TestMethod]
+        public void Redimension_CorrectlySet()
+        {
+            float x = 5;
+            float y = 7;
+            float width = 11;
+            float height = 31;
+            float newWidth = 50;
+            float newHeight = 70;
+            MRectangle sut = new MRectangle(x, y, width, height);
+            MRectangle expected = new MRectangle(x, y, newWidth, newHeight);
+
+            Assert.AreEqual(expected, sut.Redimension(newWidth, newHeight));
+            Assert.AreEqual(expected, sut.Redimension(new MVector2(newWidth, newHeight)));
+            Assert.AreEqual(expected, sut.RedimensionWidth(newWidth).RedimensionHeight(newHeight));
+        }
+
+        [TestMethod]
         public void Resize_CorrectResizing()
         {
             for (int i = 0; i < RANDOM_TEST_AMOUNT; i++)

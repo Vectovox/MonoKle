@@ -400,6 +400,32 @@ namespace MonoKle
         }
 
         /// <summary>
+        /// Resizes the <see cref="MRectangle"/> with the provide delta values.
+        /// </summary>
+        /// <param name="delta">The change in width and height.</param>
+        public MRectangle Resize(MVector2 delta) => Resize(delta.X, delta.Y);
+
+        /// <summary>
+        /// Resizes the width of the <see cref="MRectangle"/>.
+        /// </summary>
+        /// <param name="deltaWidth">The change in width.</param>
+        public MRectangle ResizeWidth(float deltaWidth) => Resize(deltaWidth, 0);
+
+        /// <summary>
+        /// Resizes the height of the <see cref="MRectangle"/>.
+        /// </summary>
+        /// <param name="deltaHeight">The change in height.</param>
+        public MRectangle ResizeHeight(float deltaHeight) => Resize(0, deltaHeight);
+
+        /// <summary>
+        /// Resizes the <see cref="MRectangle"/> with the provide delta values.
+        /// </summary>
+        /// <param name="deltaWidth">The change in width.</param>
+        /// <param name="deltaHeight">The change in height.</param>
+        public MRectangle Resize(float deltaWidth, float deltaHeight) =>
+            new MRectangle(TopLeft.X, TopLeft.Y, Width + deltaWidth, Height + deltaHeight);
+
+        /// <summary>
         /// Scales the <see cref="MRectangle"/> around <see cref="Center"/> with the given factor.
         /// </summary>
         /// <param name="factor">The factor with which to scale.</param>

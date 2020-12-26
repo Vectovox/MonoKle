@@ -335,6 +335,29 @@ namespace MonoKle.Tests
         }
 
         [TestMethod]
+        public void Resize_CorrectResizing()
+        {
+            for (int i = 0; i < RANDOM_TEST_AMOUNT; i++)
+            {
+                float x = random.Next(-100, 100);
+                float y = random.Next(-100, 100);
+                float width = random.Next(0, 100);
+                float height = random.Next(0, 100);
+
+                float dWidth = random.Next(-100, 100);
+                float dHeight = random.Next(-100, 100);
+
+                var sut = new MRectangle(x, y, width, height);
+                var expected = new MRectangle(x, y, width + dWidth, height + dHeight);
+
+                // Assert translation methods                
+                Assert.AreEqual(expected, sut.Resize(new MVector2(dWidth, dHeight)));
+                Assert.AreEqual(expected, sut.ResizeWidth(dWidth).ResizeHeight(dHeight));
+                Assert.AreEqual(expected, sut.Resize(dWidth, dHeight));
+            }
+        }
+
+        [TestMethod]
         public void Translate_CorrectTranslation()
         {
             for (int i = 0; i < RANDOM_TEST_AMOUNT; i++)

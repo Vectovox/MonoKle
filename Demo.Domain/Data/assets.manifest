@@ -1,3 +1,8 @@
-﻿Data/Textures/TestBox.png
+﻿testbox Data/Textures/TestBox.png
+animation Data/Textures/animation.png
+orange Data/Textures/atlas.png 0,0,16,16
+green Data/Textures/atlas.png 16,0,16,16
+red Data/Textures/atlas.png 0,16,16,16
+blue Data/Textures/atlas.png 16,16,16,16
 Data/Fonts/testfont.mfnt
 Data/Sounds/santa.wav

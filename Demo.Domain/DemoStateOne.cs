@@ -25,6 +25,30 @@ namespace Demo.Domain
         {
         }
 
+        public class AnimationInstance
+        {
+            Texture2D Texture;
+            public int framesPerSecond;
+            public int frameSize;
+
+            public void GetSource()
+            {
+                // TODO:
+                // Gör manifest till 1st class citizen
+                // # FIL #
+                // myPony textures/atlas2.png 50,50,500,50 10 20 
+                //
+                // # KOD #
+                // TextureStorage.GetTexture("myPony") ->
+                // { Texture2D 'atlas2', SourceRectangle '50,50,500,50', Frames: 10, FPS, 20 } 
+                //    .Animate(frameNumber)
+                //    .Animate(timeSpent)
+                // { Texture2D 'atlas2', SourceRectangle 250, 50, 50, 50}
+                //
+                // 
+            }
+        }
+
         public override void Draw(TimeSpan deltaTime)
         {
             primitive2D.Begin(camera.TransformMatrix);
@@ -32,14 +56,22 @@ namespace Demo.Domain
             primitive2D.DrawLine(new Vector2(380, 500), new Vector2(500, 380), Color.Red, Color.Blue);
             primitive2D.End();
 
-            sb.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullCounterClockwise, null, camera.TransformMatrix);
+            sb.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullCounterClockwise, null, camera.TransformMatrix);
 
-            sb.Draw(MGame.TextureStorage.DefaultValue, new Vector2(50, 50), Color.White);
+            sb.Draw(MGame.TextureStorage.Error, new Vector2(50, 50), Color.White);
             sb.Draw(MGame.TextureStorage.White, new Vector2(150, 50), Color.Red);
 
             var testBoxRect = new MRectangleInt(250, 250, 64, 64);
             bool testBoxMouseWithin = testBoxRect.Contains(camera.TransformInv(MGame.Mouse.Position.Coordinate.ToMVector2()).ToMPoint2());
-            sb.Draw(MGame.TextureStorage.GetAsset("data/textures/testbox.png"), testBoxRect, testBoxMouseWithin ? Color.Red : Color.White);
+            sb.Draw(MGame.TextureStorage["testbox"].Texture, testBoxRect, testBoxMouseWithin ? Color.Red : Color.White);
+
+            sb.Draw(MGame.TextureStorage["animation"].Texture, new Vector2(340, 0), Color.White);
+
+            // TODO: Overload for sb that can take in a MTexture and do this automatically
+            sb.Draw(MGame.TextureStorage["orange"].Texture, new Vector2(540, 0), MGame.TextureStorage["orange"].AtlasRectangle, Color.White);
+            sb.Draw(MGame.TextureStorage["red"].Texture, new Vector2(640, 0), MGame.TextureStorage["red"].AtlasRectangle, Color.White);
+            sb.Draw(MGame.TextureStorage["green"].Texture, new Vector2(640, -50), MGame.TextureStorage["green"].AtlasRectangle, Color.White);
+            sb.Draw(MGame.TextureStorage["blue"].Texture, new Vector2(690, -100), MGame.TextureStorage["blue"].AtlasRectangle, Color.White);
 
             Font font = MGame.FontStorage.GetAsset("data/Fonts/testfont.mfnt");
 

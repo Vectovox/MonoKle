@@ -71,6 +71,13 @@ namespace MonoKle.Graphics
             Camera.TransformInv(RenderingArea.TransformDisplayToRender(displayCoordinate));
 
         /// <summary>
+        /// Transforms the given display coordinate to UI rendering coordinate space.
+        /// This differs from game space in that the camera is not taken into consideration.
+        /// </summary>
+        /// <param name="displayCoordinate">The display coordinate.</param>
+        public MVector2 TransformToUISpace(MVector2 displayCoordinate) => RenderingArea.TransformDisplayToRender(displayCoordinate);
+
+        /// <summary>
         /// Transforms the given game rendering coordinate to display coordinate space.
         /// </summary>
         /// <param name="gameCoordinate">The game space coordinate.</param>

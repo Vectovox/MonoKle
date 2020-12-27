@@ -9,7 +9,7 @@ namespace MonoKle.Graphics
     /// </summary>
     public class GraphicsManager
     {
-        private readonly GraphicsDeviceManager graphicsDeviceManager;
+        private readonly GraphicsDeviceManager _graphicsDeviceManager;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GraphicsManager"/> class.
@@ -17,7 +17,7 @@ namespace MonoKle.Graphics
         /// <param name="graphicsDeviceManager">The graphics device manager.</param>
         public GraphicsManager(GraphicsDeviceManager graphicsDeviceManager)
         {
-            this.graphicsDeviceManager = graphicsDeviceManager;
+            _graphicsDeviceManager = graphicsDeviceManager;
         }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace MonoKle.Graphics
         /// <value>
         /// The graphics device.
         /// </value>
-        public GraphicsDevice GraphicsDevice => graphicsDeviceManager.GraphicsDevice;
+        public GraphicsDevice GraphicsDevice => _graphicsDeviceManager.GraphicsDevice;
 
         /// <summary>
         /// Gets or sets the resolution.
@@ -42,7 +42,7 @@ namespace MonoKle.Graphics
         [CVar("g_res")]
         public MPoint2 Resolution
         {
-            get { return new MPoint2(graphicsDeviceManager.PreferredBackBufferWidth, graphicsDeviceManager.PreferredBackBufferHeight); }
+            get { return new MPoint2(_graphicsDeviceManager.PreferredBackBufferWidth, _graphicsDeviceManager.PreferredBackBufferHeight); }
             set { SetResolution(value); }
         }
 
@@ -83,7 +83,7 @@ namespace MonoKle.Graphics
         [CVar("g_fullscreen")]
         public bool IsFullscreen
         {
-            get { return graphicsDeviceManager.IsFullScreen; }
+            get { return _graphicsDeviceManager.IsFullScreen; }
             set { SetFullscreenEnabled(value); }
         }
 
@@ -101,15 +101,15 @@ namespace MonoKle.Graphics
         /// </summary>
         public void ToggleFullscren()
         {
-            graphicsDeviceManager.ToggleFullScreen();
-            graphicsDeviceManager.ApplyChanges();
+            _graphicsDeviceManager.ToggleFullScreen();
+            _graphicsDeviceManager.ApplyChanges();
         }
 
         private void SetResolution(MPoint2 resolution)
         {
-            graphicsDeviceManager.PreferredBackBufferWidth = resolution.X;
-            graphicsDeviceManager.PreferredBackBufferHeight = resolution.Y;
-            graphicsDeviceManager.ApplyChanges();
+            _graphicsDeviceManager.PreferredBackBufferWidth = resolution.X;
+            _graphicsDeviceManager.PreferredBackBufferHeight = resolution.Y;
+            _graphicsDeviceManager.ApplyChanges();
             OnResolutionChanged(resolution);
         }
 

@@ -17,12 +17,11 @@ namespace Demo.Domain
     {
         private SpriteBatch _spriteBatch;
         private readonly Timer _timer = new Timer(TimeSpan.FromSeconds(5));
-        private readonly Camera2D _camera = new Camera2D(new MPoint2(800, 600)) { MinScale = 0.3f };
+        private GameDisplay2D _gameDisplay;
         private PrimitiveBatch2D _primitive2D;
         private string _stateSwitchMessage = string.Empty;
         private MVector2 _lastInversionPosition;
-        private RenderTarget2D _sceneRenderTarget;
-        private RenderTarget2D _inverterRenderTarget;
+        private MVector2 _errorBoxPosition = new Vector2(50, 50);
         private readonly KeyboardTextInput _textInput = new KeyboardTextInput(new KeyboardCharacterInput(new KeyboardTyper(MGame.Keyboard, TimeSpan.FromSeconds(0.5), TimeSpan.FromMilliseconds(50))));
 
         public DemoStateOne() : base("stateOne") { }
@@ -30,20 +29,20 @@ namespace Demo.Domain
         public override void Draw(TimeSpan deltaTime)
         {
             // Draw scene to render target
-            MGame.GraphicsManager.GraphicsDevice.SetRenderTarget(_sceneRenderTarget);
+            MGame.GraphicsManager.GraphicsDevice.SetRenderTarget(_gameDisplay.RenderTarget);
 
-            _primitive2D.Begin(_camera.TransformMatrix);
+            _primitive2D.Begin(_gameDisplay.Camera.TransformMatrix);
             _primitive2D.DrawLine(new Vector2(80, 200), new Vector2(200, 80), Color.Red, Color.Blue);
             _primitive2D.DrawLine(new Vector2(380, 500), new Vector2(500, 380), Color.Red, Color.Blue);
             _primitive2D.End();
 
             _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.Default,
-                RasterizerState.CullCounterClockwise, null, _camera.TransformMatrix);
+                RasterizerState.CullCounterClockwise, null, _gameDisplay.Camera.TransformMatrix);
 
             _spriteBatch.Draw(MGame.TextureStorage["animation"].Animate(_timer.Elapsed), new Vector2(0, -20), Color.White);
 
             _spriteBatch.Draw(MGame.TextureStorage.Error, new Vector2(0, 50), Color.White);
-            _spriteBatch.Draw(MGame.TextureStorage.White, new Vector2(50, 50), Color.Red);
+            _spriteBatch.Draw(MGame.TextureStorage.White, _errorBoxPosition, Color.Red);
             _spriteBatch.Draw(MGame.TextureStorage["orange"], new Vector2(100, 50), Color.White);
             _spriteBatch.Draw(MGame.TextureStorage["red"], new Vector2(150, 50), Color.White);
             _spriteBatch.Draw(MGame.TextureStorage["green"], new Vector2(200, 50), Color.White);
@@ -99,7 +98,15 @@ namespace Demo.Domain
             _spriteBatch.DrawString(font, "Five", pos, Color.Black);
             _spriteBatch.End();
 
+            // Draw "UI"
+            _spriteBatch.Begin();
+            var boxLocation = _gameDisplay.TransformToDisplaySpace(_errorBoxPosition);
+            _spriteBatch.DrawString(font, "  <- Error box", boxLocation);
+            _spriteBatch.End();
+
             // Render inverting stuff 
+            using RenderTarget2D _inverterRenderTarget =
+                new RenderTarget2D(MGame.GraphicsManager.GraphicsDevice, MGame.GraphicsManager.ResolutionWidth, MGame.GraphicsManager.ResolutionHeight);
             MGame.GraphicsManager.GraphicsDevice.SetRenderTarget(_inverterRenderTarget);
 
             _spriteBatch.Begin();
@@ -115,8 +122,12 @@ namespace Demo.Domain
             effect.Parameters["inverterTexture"].SetValue(_inverterRenderTarget);
             
             _spriteBatch.Begin(effect: effect);
-            _spriteBatch.Draw(_sceneRenderTarget, Vector2.Zero, Color.White);
+            _spriteBatch.Draw(_gameDisplay.RenderTarget, _gameDisplay.RenderingArea.Display.ToMRectangleInt(), Color.White);
             _spriteBatch.End();
+
+            _primitive2D.Begin();
+            _primitive2D.DrawRenderingArea(_gameDisplay.RenderingArea);
+            _primitive2D.End();
         }
 
         public override void Update(TimeSpan deltaTime)
@@ -146,48 +157,53 @@ namespace Demo.Domain
 
                 if (MGame.Keyboard.IsKeyHeld(Keys.I))
                 {
-                    _camera.SetPosition(_camera.Position + new MVector2(0, -3));
+                    _gameDisplay.Camera.SetPosition(_gameDisplay.Camera.Position + new MVector2(0, -3));
                 }
                 if (MGame.Keyboard.IsKeyHeld(Keys.K))
                 {
-                    _camera.SetPosition(_camera.Position + new MVector2(0, 3));
+                    _gameDisplay.Camera.SetPosition(_gameDisplay.Camera.Position + new MVector2(0, 3));
                 }
                 if (MGame.Keyboard.IsKeyHeld(Keys.J))
                 {
-                    _camera.SetPosition(_camera.Position + new MVector2(-3, 0));
+                    _gameDisplay.Camera.SetPosition(_gameDisplay.Camera.Position + new MVector2(-3, 0));
                 }
                 if (MGame.Keyboard.IsKeyHeld(Keys.L))
                 {
-                    _camera.SetPosition(_camera.Position + new MVector2(3, 0));
+                    _gameDisplay.Camera.SetPosition(_gameDisplay.Camera.Position + new MVector2(3, 0));
                 }
                 if (MGame.Keyboard.IsKeyHeld(Keys.U))
                 {
-                    _camera.SetRotation(_camera.Rotation + 0.05f);
+                    _gameDisplay.Camera.SetRotation(_gameDisplay.Camera.Rotation + 0.05f);
                 }
                 if (MGame.Keyboard.IsKeyHeld(Keys.O))
                 {
-                    _camera.SetRotation(_camera.Rotation - 0.05f);
+                    _gameDisplay.Camera.SetRotation(_gameDisplay.Camera.Rotation - 0.05f);
                 }
                 if (MGame.Keyboard.IsKeyHeld(Keys.Y))
                 {
-                    _camera.SetScale(_camera.Scale + 0.01f);
+                    _gameDisplay.Camera.SetScale(_gameDisplay.Camera.Scale + 0.01f);
                 }
                 if (MGame.Keyboard.IsKeyHeld(Keys.H))
                 {
-                    _camera.SetScale(_camera.Scale - 0.01f);
+                    _gameDisplay.Camera.SetScale(_gameDisplay.Camera.Scale - 0.01f);
                 }
 
                 if (MGame.TouchScreen.Pinch.TryGetValues(out var pinchOrigin, out var pinchFactor))
                 {
-                    _camera.ScaleTo(pinchOrigin.ToMVector2(), pinchFactor * 10);
+                    _gameDisplay.Camera.ScaleTo(pinchOrigin.ToMVector2(), pinchFactor * 10);
                 }
                 else if (MGame.TouchScreen.Drag.TryGetDelta(out var dragDelta))
                 {
-                    _camera.TranslateCameraSpace(-dragDelta.ToMVector2());
+                    _gameDisplay.Camera.TranslateCameraSpace(-dragDelta.ToMVector2());
                 }
                 else if (MGame.TouchScreen.Tap.TryGetCoordinate(out var tapCoordinate))
                 {
                     _lastInversionPosition = tapCoordinate.ToMVector2();
+                }
+
+                if (MGame.Mouse.Right.IsPressed)
+                {
+                    _errorBoxPosition = _gameDisplay.TransformToGameSpace(MGame.Mouse.Position.Coordinate.ToMVector2());
                 }
 
                 if (MGame.Keyboard.IsKeyPressed(Keys.F2))
@@ -213,7 +229,7 @@ namespace Demo.Domain
 
                 if (MGame.Keyboard.IsKeyPressed(Keys.R))
                 {
-                    _camera.SetPosition(MVector2.Zero, 100);
+                    _gameDisplay.Camera.SetPosition(MVector2.Zero, 100);
                 }
 
                 _textInput.Update();
@@ -223,11 +239,9 @@ namespace Demo.Domain
                 }
             }
 
-            _camera.Update(deltaTime);
+            _gameDisplay.Camera.Update(deltaTime);
             _timer.Update(deltaTime);
         }
-
-        public void Test(object sender, MessageEventArgs args) => Console.WriteLine(args.Data as string);
 
         public void ConsoleMessage(object sender, MessageEventArgs args)
         {
@@ -242,8 +256,8 @@ namespace Demo.Domain
         protected override void BeforeFirstActivation(StateSwitchData data)
         {
             base.BeforeFirstActivation(data);
-            _sceneRenderTarget = new RenderTarget2D(MGame.GraphicsManager.GraphicsDevice, MGame.GraphicsManager.ResolutionWidth, MGame.GraphicsManager.ResolutionHeight);
-            _inverterRenderTarget = new RenderTarget2D(MGame.GraphicsManager.GraphicsDevice, MGame.GraphicsManager.ResolutionWidth, MGame.GraphicsManager.ResolutionHeight);
+            _gameDisplay = new GameDisplay2D(MGame.GraphicsManager, new MPoint2(800, 600));
+            _gameDisplay.Camera.MinScale = 0.3f;
         }
 
         protected override void Activated(StateSwitchData data)

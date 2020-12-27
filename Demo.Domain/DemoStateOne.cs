@@ -16,22 +16,29 @@ namespace Demo.Domain
     public class DemoStateOne : GameState
     {
         private SpriteBatch _spriteBatch;
-        private Timer _timer = new Timer(TimeSpan.FromSeconds(5));
-        private Camera2D _camera = new Camera2D(new MPoint2(800, 600)) { MinScale = 0.3f };
+        private readonly Timer _timer = new Timer(TimeSpan.FromSeconds(5));
+        private readonly Camera2D _camera = new Camera2D(new MPoint2(800, 600)) { MinScale = 0.3f };
         private PrimitiveBatch2D _primitive2D;
         private string _stateSwitchMessage = string.Empty;
+        private MVector2 _lastInversionPosition;
+        private RenderTarget2D _sceneRenderTarget;
+        private RenderTarget2D _inverterRenderTarget;
+        private readonly KeyboardTextInput _textInput = new KeyboardTextInput(new KeyboardCharacterInput(new KeyboardTyper(MGame.Keyboard, TimeSpan.FromSeconds(0.5), TimeSpan.FromMilliseconds(50))));
 
         public DemoStateOne() : base("stateOne") { }
 
         public override void Draw(TimeSpan deltaTime)
         {
+            // Draw scene to render target
+            MGame.GraphicsManager.GraphicsDevice.SetRenderTarget(_sceneRenderTarget);
+
             _primitive2D.Begin(_camera.TransformMatrix);
             _primitive2D.DrawLine(new Vector2(80, 200), new Vector2(200, 80), Color.Red, Color.Blue);
             _primitive2D.DrawLine(new Vector2(380, 500), new Vector2(500, 380), Color.Red, Color.Blue);
             _primitive2D.End();
 
-            _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullCounterClockwise, null, _camera.TransformMatrix);
-
+            _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.Default,
+                RasterizerState.CullCounterClockwise, null, _camera.TransformMatrix);
 
             _spriteBatch.Draw(MGame.TextureStorage["animation"].Animate(_timer.Elapsed), new Vector2(0, -20), Color.White);
 
@@ -90,11 +97,25 @@ namespace Demo.Domain
 
             pos.X += font.MeasureString("Four", 2f).X;
             _spriteBatch.DrawString(font, "Five", pos, Color.Black);
-
             _spriteBatch.End();
 
+            // Render inverting stuff 
+            MGame.GraphicsManager.GraphicsDevice.SetRenderTarget(_inverterRenderTarget);
+
             _spriteBatch.Begin();
-            _spriteBatch.Draw(MGame.TextureStorage.White, new Rectangle(MGame.Mouse.Position.Coordinate.X, MGame.Mouse.Position.Coordinate.Y, 3, 3), Color.Black);
+            _spriteBatch.Draw(MGame.TextureStorage.White,
+                new MRectangle(100, 100)
+                    .PositionCenter(_lastInversionPosition)
+                    .ToMRectangleInt(), new Color(1f, 1f, 1f, 0.5f));
+            _spriteBatch.End();
+
+            // Combine scene and inverting stuff to backbuffer
+            MGame.GraphicsManager.GraphicsDevice.SetRenderTarget(null);
+            var effect = MGame.EffectStorage.GetAsset("Data/Effects/inversion.mfx");
+            effect.Parameters["inverterTexture"].SetValue(_inverterRenderTarget);
+            
+            _spriteBatch.Begin(effect: effect);
+            _spriteBatch.Draw(_sceneRenderTarget, Vector2.Zero, Color.White);
             _spriteBatch.End();
         }
 
@@ -164,6 +185,10 @@ namespace Demo.Domain
                 {
                     _camera.TranslateCameraSpace(-dragDelta.ToMVector2());
                 }
+                else if (MGame.TouchScreen.Tap.TryGetCoordinate(out var tapCoordinate))
+                {
+                    _lastInversionPosition = tapCoordinate.ToMVector2();
+                }
 
                 if (MGame.Keyboard.IsKeyPressed(Keys.F2))
                 {
@@ -202,8 +227,6 @@ namespace Demo.Domain
             _timer.Update(deltaTime);
         }
 
-        KeyboardTextInput _textInput = new KeyboardTextInput(new KeyboardCharacterInput(new KeyboardTyper(MGame.Keyboard, TimeSpan.FromSeconds(0.5), TimeSpan.FromMilliseconds(50))));
-
         public void Test(object sender, MessageEventArgs args) => Console.WriteLine(args.Data as string);
 
         public void ConsoleMessage(object sender, MessageEventArgs args)
@@ -214,6 +237,13 @@ namespace Demo.Domain
             {
                 _timer.Reset();
             }
+        }
+
+        protected override void BeforeFirstActivation(StateSwitchData data)
+        {
+            base.BeforeFirstActivation(data);
+            _sceneRenderTarget = new RenderTarget2D(MGame.GraphicsManager.GraphicsDevice, MGame.GraphicsManager.ResolutionWidth, MGame.GraphicsManager.ResolutionHeight);
+            _inverterRenderTarget = new RenderTarget2D(MGame.GraphicsManager.GraphicsDevice, MGame.GraphicsManager.ResolutionWidth, MGame.GraphicsManager.ResolutionHeight);
         }
 
         protected override void Activated(StateSwitchData data)

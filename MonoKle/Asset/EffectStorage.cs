@@ -27,6 +27,6 @@ namespace MonoKle.Asset
             return effect;
         }
 
-        protected override bool FileSupported(string extension) => extension.Equals(".fx");
+        protected override bool FileSupported(string extension) => extension.Equals(".mfx");
     }
 }

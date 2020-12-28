@@ -1,1 +1,0 @@
-﻿mgfxc inversion.fx ../Data/Effects/inversion.mfx /Profile:OpenGL

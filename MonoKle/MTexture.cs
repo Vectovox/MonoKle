@@ -37,6 +37,9 @@ namespace MonoKle
 
         public MTexture(Texture2D texture, MRectangleInt atlasRectangle, int frameCount, int frameRate)
         {
+            if (frameCount < 1) {
+                throw new ArgumentException($"Invalid framecount {frameCount}. Must be greater than 0.");
+            }
             TextureData = texture;
             AtlasRectangle = atlasRectangle;
             FrameCount = frameCount;

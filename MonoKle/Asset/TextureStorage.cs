@@ -125,8 +125,8 @@ namespace MonoKle.Asset
             }
 
             // Parse animation data
-            int frameCount = default;
-            int frameRate = default;
+            int frameCount = 1;
+            int frameRate = 1;
             if (args.Length > 2)
             {
                 if (!int.TryParse(args[1], out frameCount) ||

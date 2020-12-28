@@ -63,12 +63,12 @@ namespace MonoKle.Asset
         /// </summary>
         public IEnumerable<string> Identifiers => _textureDataByIdentifier.Keys;
 
-        protected override bool FileSupported(string extension) =>
-            extension.Equals(".png", StringComparison.InvariantCultureIgnoreCase)
-            || extension.Equals(".jpg", StringComparison.InvariantCultureIgnoreCase)
-            || extension.Equals(".gif", StringComparison.InvariantCultureIgnoreCase);
-
-        protected override bool Load(string path, string identifier, params string[] args)
+        /// <summary>
+        /// Loads a texture using the provided <see cref="TextureData"/> and identifier.
+        /// </summary>
+        /// <param name="identifier">The unique identifier for the texture.</param>
+        /// <param name="data">The texture data.</param>
+        public bool Load(string identifier, TextureData data)
         {
             // Do not allow duplicate identifiers
             if (_textureDataByIdentifier.ContainsKey(identifier))
@@ -77,6 +77,33 @@ namespace MonoKle.Asset
                 return false;
             }
 
+            // Load texture if it wasn't already loaded
+            if (!_textureByPath.ContainsKey(data.Path))
+            {
+                try
+                {
+                    using var stream = File.OpenRead(data.Path);
+                    var texture = Texture2D.FromStream(_graphicsDevice, stream);
+                    _textureByPath.Add(data.Path, texture);
+                }
+                catch (Exception e)
+                {
+                    Logger.Global.Log($"Error reading texture '{e.Message}'. Skipping.", LogLevel.Error);
+                    return false;
+                }
+            }
+
+            _textureDataByIdentifier.Add(identifier, data);
+            return true;
+        }
+
+        protected override bool FileSupported(string extension) =>
+            extension.Equals(".png", StringComparison.InvariantCultureIgnoreCase)
+            || extension.Equals(".jpg", StringComparison.InvariantCultureIgnoreCase)
+            || extension.Equals(".gif", StringComparison.InvariantCultureIgnoreCase);
+
+        protected override bool Load(string path, string identifier, params string[] args)
+        {
             // Parse atlas rectangle
             MRectangleInt? atlasRectangle = null;
             if (args.Length > 0 && args[0] != "-")
@@ -98,8 +125,8 @@ namespace MonoKle.Asset
             }
 
             // Parse animation data
-            int frameCount = 1;
-            int frameRate = 1;
+            int frameCount = default;
+            int frameRate = default;
             if (args.Length > 2)
             {
                 if (!int.TryParse(args[1], out frameCount) ||
@@ -110,31 +137,13 @@ namespace MonoKle.Asset
                 }
             }
 
-            // Load texture if it wasn't already loaded
-            if (!_textureByPath.ContainsKey(path))
-            {
-                try
-                {
-                    using var stream = File.OpenRead(path);
-                    var texture = Texture2D.FromStream(_graphicsDevice, stream);
-                    _textureByPath.Add(path, texture);
-                }
-                catch (Exception e)
-                {
-                    Logger.Global.Log($"Error reading texture '{e.Message}'. Skipping.", LogLevel.Error);
-                    return false;
-                }
-            }
-
-            _textureDataByIdentifier.Add(identifier, new TextureData
+            return Load(identifier, new TextureData
             {
                 Path = path,
                 AtlasRectangle = atlasRectangle,
                 FrameCount = frameCount,
                 FrameRate = frameRate,
             });
-
-            return true;
         }
 
         /// <summary>
@@ -148,7 +157,7 @@ namespace MonoKle.Asset
             return amountUnloaded;
         }
 
-        private class TextureData
+        public class TextureData
         {
             public string Path = string.Empty;
             public MRectangleInt? AtlasRectangle = null;

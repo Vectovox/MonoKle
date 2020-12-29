@@ -78,7 +78,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Demo.Domain\Demo.Domain.csproj">
-      <Project>{6844944f-bfe6-481a-b309-9d145260ca11}</Project>
+      <Project>{24ff969a-8646-4529-9196-8b6b310b37e7}</Project>
       <Name>Demo.Domain</Name>
     </ProjectReference>
     <ProjectReference Include="..\MonoKle.Engine.Android\MonoKle.Engine.Android.csproj">
@@ -86,11 +86,11 @@
       <Name>MonoKle.Engine.Android</Name>
     </ProjectReference>
     <ProjectReference Include="..\MonoKle.Engine\MonoKle.Engine.csproj">
-      <Project>{4fcd63a6-4b48-4610-b697-f968decf8093}</Project>
+      <Project>{3b90bbed-a921-4b70-ab4d-c5c898c75c03}</Project>
       <Name>MonoKle.Engine</Name>
     </ProjectReference>
     <ProjectReference Include="..\MonoKle\MonoKle.csproj">
-      <Project>{9639c5e0-58d8-40de-bb35-2912d2d3e82f}</Project>
+      <Project>{6f706ddc-3ec2-4776-b47f-da1625da7993}</Project>
       <Name>MonoKle</Name>
     </ProjectReference>
   </ItemGroup>

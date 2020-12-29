@@ -4,16 +4,6 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
-
-  <ItemGroup>
-    <MonoGameContentReference Include="**\*.mgcb" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Demo.Domain\Demo.Domain.csproj" />
-    <ProjectReference Include="..\MonoKle.Engine\MonoKle.Engine.csproj" />
-    <ProjectReference Include="..\MonoKle\MonoKle.csproj" />
-  </ItemGroup>
   
   <ItemGroup>
     <None Include="..\Demo.Domain\Data\**\*.*">
@@ -24,6 +14,10 @@
   
   <ItemGroup>
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\Demo.Domain\Demo.Domain.csproj" />
   </ItemGroup>
   
   <ItemGroup>

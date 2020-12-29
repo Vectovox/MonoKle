@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace MonoKle.Asset
@@ -8,7 +9,7 @@ namespace MonoKle.Asset
     /// </summary>
     public class EffectStorage : AbstractAssetStorage<Effect>
     {
-        private readonly GraphicsDevice graphicsDevice;
+        private readonly GraphicsDevice _graphicsDevice;
 
         /// <summary>
         /// Initializes a new instance of <see cref="EffectStorage"/>.
@@ -16,14 +17,19 @@ namespace MonoKle.Asset
         /// <param name="graphicsDevice">Graphics device.</param>
         public EffectStorage(GraphicsDevice graphicsDevice)
         {
-            this.graphicsDevice = graphicsDevice;
+            _graphicsDevice = graphicsDevice;
         }
 
         protected override Effect DoLoadStream(Stream stream)
         {
-            var br = new BinaryReader(stream);
-            byte[] byteCode = br.ReadBytes((int)stream.Length);
-            var effect = new Effect(graphicsDevice, byteCode);
+            int val = stream.ReadByte();
+            List<byte> bytes = new List<byte>();
+            while (val != -1)
+            {
+                bytes.Add((byte)val);
+                val = stream.ReadByte();
+            }
+            var effect = new Effect(_graphicsDevice, bytes.ToArray());
             return effect;
         }
 

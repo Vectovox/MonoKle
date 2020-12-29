@@ -58,15 +58,15 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MonoKle.Engine\MonoKle.Engine.csproj">
-      <Project>{4fcd63a6-4b48-4610-b697-f968decf8093}</Project>
+      <Project>{3b90bbed-a921-4b70-ab4d-c5c898c75c03}</Project>
       <Name>MonoKle.Engine</Name>
     </ProjectReference>
     <ProjectReference Include="..\MonoKle.Utilities\MonoKle.Utilities.csproj">
-      <Project>{ff4079f5-007b-485e-9680-4443167643f5}</Project>
+      <Project>{cb141cba-d3c5-441d-81f8-e0c294135e93}</Project>
       <Name>MonoKle.Utilities</Name>
     </ProjectReference>
     <ProjectReference Include="..\MonoKle\MonoKle.csproj">
-      <Project>{9639c5e0-58d8-40de-bb35-2912d2d3e82f}</Project>
+      <Project>{6f706ddc-3ec2-4776-b47f-da1625da7993}</Project>
       <Name>MonoKle</Name>
     </ProjectReference>
   </ItemGroup>

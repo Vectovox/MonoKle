@@ -1,5 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -8,19 +7,15 @@
     <RepositoryUrl>https://github.com/Vectovox/MonoKle</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\$(Configuration)\MonoKle.Engine.xml</DocumentationFile>
-  </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
-
   <ItemGroup>
+    <ProjectReference Include="..\MonoKle.Utilities\MonoKle.Utilities.csproj" />
     <ProjectReference Include="..\MonoKle\MonoKle.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <Compile Update="Resources\FontResources.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -28,12 +23,10 @@
       <DependentUpon>FontResources.resx</DependentUpon>
     </Compile>
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Update="Resources\FontResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>FontResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-
 </Project>

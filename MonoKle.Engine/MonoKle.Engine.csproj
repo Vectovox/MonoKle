@@ -11,7 +11,7 @@
     <DocumentationFile></DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>C:\Robert\MonoKle\MonoKle.Engine\MonoKle.Engine.xml</DocumentationFile>
+    <DocumentationFile>C:\Robert\MonoKle\MonoKle.Engine\bin\Release\MonoKle.Engine.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641">

@@ -12,7 +12,7 @@
     <DocumentationFile></DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>C:\Robert\MonoKle\MonoKle\MonoKle.xml</DocumentationFile>
+    <DocumentationFile>C:\Robert\MonoKle\MonoKle\bin\Release\MonoKle.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641">

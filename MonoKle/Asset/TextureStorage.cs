@@ -82,7 +82,7 @@ namespace MonoKle.Asset
             {
                 try
                 {
-                    using var stream = File.OpenRead(data.Path);
+                    using var stream = TitleContainer.OpenStream(data.Path);
                     var texture = Texture2D.FromStream(_graphicsDevice, stream);
                     _textureByPath.Add(data.Path, texture);
                 }

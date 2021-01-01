@@ -161,5 +161,31 @@ namespace MonoKle.Tests
             Assert.IsTrue(timer.IsDone);
             Assert.AreEqual(TimeSpan.Zero, timer.TimeLeft);
         }
+
+        [TestMethod]
+        public void UpdateDone_Done_OnlyTrueOnFirstCall()
+        {
+            var span = TimeSpan.FromSeconds(10);
+            var spanToUpdate = TimeSpan.FromSeconds(100);
+            var timer = new Timer(span);
+
+            Assert.IsTrue(timer.UpdateDone(spanToUpdate));
+            Assert.IsFalse(timer.UpdateDone(spanToUpdate));
+        }
+
+        [TestMethod]
+        public void Trigger_LogicWorks()
+        {
+            var span = TimeSpan.FromSeconds(123);
+            var spanToUpdate = TimeSpan.FromSeconds(10);
+            var timer = new Timer(span);
+
+            Assert.IsFalse(timer.IsTriggered);
+            timer.Trigger();
+            Assert.IsTrue(timer.IsTriggered);
+            Assert.IsTrue(timer.IsTriggered);
+            timer.Update(spanToUpdate);
+            Assert.IsFalse(timer.IsTriggered);
+        }
     }
 }

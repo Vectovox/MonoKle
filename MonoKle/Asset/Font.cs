@@ -115,34 +115,26 @@ namespace MonoKle.Asset
         public string WrapString(string text, float maximumWidth, float scale)
         {
             float width = MeasureString(text, scale).X;
+            string newText = text;
             if (width > maximumWidth)
             {
-                int startPtr = 0;
-                for (int i = 1; i < text.Length - startPtr; i++)
+                for (int i = 1; i < text.Length; i++)
                 {
-                    if (text[startPtr + i].Equals('\n'))
+                    float newWidth = MeasureString(newText.Substring(0, i), scale).X;
+                    if (newWidth > maximumWidth)
                     {
-                        startPtr += i;
-                        i = 0;
-                    }
-                    else
-                    {
-                        float length = MeasureString(text.Substring(startPtr, i), scale).X;
-                        if (length > maximumWidth)
+                        int lastPlaceToCut = newText.LastIndexOfAny(new char[] { ' ', '.', ',' }, i, i);
+                        if (lastPlaceToCut == -1)
                         {
-                            int index = text.LastIndexOfAny(new char[] { ' ', '.', ',' }, startPtr + i - 1, i);
-                            if (index != -1)
-                            {
-                                text = text.Remove(index, 1).Insert(index, "\n");
-                            }
-                            startPtr = index + 1;
-                            i = 0;
+                            // No good place to cut the text so end it here already
+                            break;
                         }
+                        newText = newText.Remove(lastPlaceToCut, 1).Insert(lastPlaceToCut, "\n");
                     }
                 }
             }
 
-            return text;
+            return newText;
         }
     }
 }

@@ -58,6 +58,12 @@ namespace Demo.Domain
             _spriteBatch.DrawString(font, "LINE\nbreak",
                  new Vector2(50, 250), Color.Green);
 
+            // Test wrapping strings
+            const int wrapLength = 120;
+            _spriteBatch.Draw(MGame.TextureStorage.White, new MRectangleInt(50, 650, wrapLength, 100), Color.White);
+            _spriteBatch.DrawString(font, font.WrapString("This is a too long string that should be wrapper appropriately", wrapLength, 1),
+                 new Vector2(50, 650), Color.Green);
+
             // Test scale
             _spriteBatch.DrawString(font, "Scaled text",
                  new Vector2(250, 250), Color.Green, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);

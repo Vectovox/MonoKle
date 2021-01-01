@@ -42,6 +42,16 @@ namespace MonoKle
         public void Reset() => TimeLeft = Duration;
 
         /// <summary>
+        /// Gets the fraction of how much time has elapsed.
+        /// </summary>
+        public double FractionDone => Elapsed.TotalSeconds / Duration.TotalSeconds;
+
+        /// <summary>
+        /// Gets the fraction of how much time is left.
+        /// </summary>
+        public double FractionLeft => 1.0 - FractionDone;
+
+        /// <summary>
         /// Sets the timer to the given duration. Reset the timer as a side effect.
         /// </summary>
         /// <param name="duration">The duration to set to.</param>

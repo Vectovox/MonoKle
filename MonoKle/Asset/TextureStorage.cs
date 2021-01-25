@@ -20,12 +20,12 @@ namespace MonoKle.Asset
         /// <summary>
         /// Gets a square white texture.
         /// </summary>
-        public Texture2D White { get; }
+        public MTexture White { get; }
 
         /// <summary>
         /// Gets a default error texture.
         /// </summary>
-        public Texture2D Error { get; }
+        public MTexture Error { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TextureStorageNew"/> class.
@@ -34,8 +34,8 @@ namespace MonoKle.Asset
         public TextureStorage(GraphicsDevice graphicsDevice)
         {
             _graphicsDevice = graphicsDevice;
-            Error = new Texture2D(graphicsDevice, 16, 16).Fill(Color.Purple);
-            White = new Texture2D(graphicsDevice, 16, 16).Fill(Color.White);
+            Error = new MTexture(new Texture2D(graphicsDevice, 1, 1).Fill(Color.Purple));
+            White = new MTexture(new Texture2D(graphicsDevice, 1, 1).Fill(Color.White));
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace MonoKle.Asset
                         ? new MTexture(_textureByPath[data.Path], data.FrameCount, data.FrameRate)
                         : new MTexture(_textureByPath[data.Path], data.AtlasRectangle.Value, data.FrameCount, data.FrameRate);
                 }
-                return new MTexture(Error);
+                return Error;
             }
         }
 

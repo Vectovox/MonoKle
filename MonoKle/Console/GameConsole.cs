@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoKle.Asset;
 using MonoKle.Configuration;
+using MonoKle.Graphics;
 using MonoKle.Input.Keyboard;
 using MonoKle.Logging;
 using MoreLinq;
@@ -21,13 +22,13 @@ namespace MonoKle.Console
         private static readonly TimeSpan TypingActivationDelay = TimeSpan.FromMilliseconds(400);
         private static readonly TimeSpan TypingCycleDelay = TimeSpan.FromMilliseconds(2);
 
-        private readonly InputField inputField;
-        private readonly KeyboardTyper keyboard;
-        private readonly LinkedList<TextEntry> textEntries = new LinkedList<TextEntry>();
-        private readonly SpriteBatch spriteBatch;
-        private readonly Texture2D whiteTexture;
+        private readonly InputField _inputField;
+        private readonly KeyboardTyper _keyboard;
+        private readonly LinkedList<TextEntry> _textEntries = new LinkedList<TextEntry>();
+        private readonly SpriteBatch _spriteBatch;
+        private readonly MTexture _whiteTexture;
 
-        private int scrollOffset = 0;
+        private int _scrollOffset = 0;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameConsole"/> class.
@@ -37,15 +38,15 @@ namespace MonoKle.Console
         /// <param name="keyboardInput">The keyboard input.</param>
         /// <param name="whiteTexture">The background texture.</param>
         /// <param name="logger">The logger to use.</param>
-        public GameConsole(MRectangleInt area, GraphicsDevice graphicsDevice, IKeyboard keyboardInput, Texture2D whiteTexture, Font font, Logger logger)
+        public GameConsole(MRectangleInt area, GraphicsDevice graphicsDevice, IKeyboard keyboardInput, MTexture whiteTexture, Font font, Logger logger)
         {
-            spriteBatch = new SpriteBatch(graphicsDevice);
-            keyboard = new KeyboardTyper(keyboardInput, TypingActivationDelay, TypingCycleDelay);
-            inputField = new InputField("-", "$ ", TimeSpan.FromSeconds(0.25), 10, new KeyboardCharacterInput(keyboard));
+            _spriteBatch = new SpriteBatch(graphicsDevice);
+            _keyboard = new KeyboardTyper(keyboardInput, TypingActivationDelay, TypingCycleDelay);
+            _inputField = new InputField("-", "$ ", TimeSpan.FromSeconds(0.25), 10, new KeyboardCharacterInput(_keyboard));
 
             Area = area;
             TextFont = font;
-            this.whiteTexture = whiteTexture;
+            _whiteTexture = whiteTexture;
             logger.LogAddedEvent += LogAdded;
             logger.Log("GameConsole activated.", LogLevel.Debug);
 
@@ -84,28 +85,28 @@ namespace MonoKle.Console
 
         public Color WarningTextColour { get; set; } = Color.Yellow;
 
-        public void Clear() => textEntries.Clear();
+        public void Clear() => _textEntries.Clear();
 
         public void Draw(TimeSpan timeDelta)
         {
             if (IsOpen)
             {
-                spriteBatch.Begin();
+                _spriteBatch.Begin();
 
                 // Draw background
-                spriteBatch.Draw(whiteTexture, Area, BackgroundColor);
+                _spriteBatch.Draw(_whiteTexture, Area, BackgroundColor);
 
                 // Draw input field
-                var textPosition = new Vector2(Area.Left, Area.Bottom - TextFont.MeasureString(inputField.CursorDisplayText, TextScale).Y);
-                spriteBatch.DrawString(TextFont, inputField.CursorDisplayText, textPosition, CommandTextColour, 0f, Vector2.Zero, TextScale, SpriteEffects.None, 0f);
+                var textPosition = new Vector2(Area.Left, Area.Bottom - TextFont.MeasureString(_inputField.CursorDisplayText, TextScale).Y);
+                _spriteBatch.DrawString(TextFont, _inputField.CursorDisplayText, textPosition, CommandTextColour, 0f, Vector2.Zero, TextScale, SpriteEffects.None, 0f);
 
                 // Draw all lines
-                foreach (var line in textEntries.Skip(scrollOffset))
+                foreach (var line in _textEntries.Skip(_scrollOffset))
                 {
                     string stringToDraw = TextFont.WrapString(line.Text, Area.Width, TextScale);
                     var stringHeight = TextFont.MeasureString(stringToDraw, TextScale).Y;
                     textPosition.Y -= stringHeight;
-                    spriteBatch.DrawString(TextFont, stringToDraw, textPosition, line.Color, 0f, Vector2.Zero, TextScale, SpriteEffects.None, 0f);
+                    _spriteBatch.DrawString(TextFont, stringToDraw, textPosition, line.Color, 0f, Vector2.Zero, TextScale, SpriteEffects.None, 0f);
 
                     if (textPosition.Y + stringHeight < 0)
                     {
@@ -113,13 +114,13 @@ namespace MonoKle.Console
                     }
                 }
 
-                spriteBatch.End();
+                _spriteBatch.End();
             }
         }
 
         public void Update(TimeSpan timeDelta)
         {
-            if (keyboard.Keyboard.IsKeyPressed(ToggleKey))
+            if (_keyboard.Keyboard.IsKeyPressed(ToggleKey))
             {
                 IsOpen = !IsOpen;
             }
@@ -127,7 +128,7 @@ namespace MonoKle.Console
             if (IsOpen)
             {
                 UpdateKeyboard();
-                inputField.Update(timeDelta);
+                _inputField.Update(timeDelta);
             }
         }
 
@@ -162,18 +163,18 @@ namespace MonoKle.Console
                     }
                 }
 
-                textEntries.AddFirst(new TextEntry(entryBuilder.ToString(), color));
+                _textEntries.AddFirst(new TextEntry(entryBuilder.ToString(), color));
 
-                while (textEntries.Count > Size)
+                while (_textEntries.Count > Size)
                 {
-                    textEntries.RemoveLast();
+                    _textEntries.RemoveLast();
                 }
             }
         }
 
         private void AutoComplete()
         {
-            string commandLine = inputField.Text.Trim();
+            string commandLine = _inputField.Text.Trim();
             var commandParts = commandLine.Split(new char[] { ' ' });
             string commandString = commandParts.First();
             string argumentString = commandParts.Last();
@@ -197,26 +198,26 @@ namespace MonoKle.Console
             var completionText = LongestCommonStartString(completions);
             if (completionText.Any())
             {
-                inputField.Text = commandLine[..(commandLine.Length - argumentString.Length)] + completionText;
+                _inputField.Text = commandLine[..(commandLine.Length - argumentString.Length)] + completionText;
             }
 
             // Print possible continuations
             if (completions.Count > 1)
             {
-                WriteLine(inputField.DisplayText, CommandTextColour);
+                WriteLine(_inputField.DisplayText, CommandTextColour);
                 completions.ForEach(completion => WriteLine("\t" + completion));
             }
         }
 
         private void CallCommand()
         {
-            WriteLine(inputField.DisplayText, CommandTextColour);
+            WriteLine(_inputField.DisplayText, CommandTextColour);
 
-            if (inputField.Text.Any())
+            if (_inputField.Text.Any())
             {
-                inputField.RememberCurrent();
+                _inputField.RememberCurrent();
 
-                if (CommandString.TryParse(inputField.Text, out var commandString))
+                if (CommandString.TryParse(_inputField.Text, out var commandString))
                 {
                     CommandBroker.Call(commandString);
                 }
@@ -226,28 +227,28 @@ namespace MonoKle.Console
                 }
             }
 
-            inputField.Clear();
-            scrollOffset = 0;
+            _inputField.Clear();
+            _scrollOffset = 0;
         }
 
         private void UpdateKeyboard()
         {
-            if (keyboard.IsTyped(Keys.Enter))
+            if (_keyboard.IsTyped(Keys.Enter))
             {
                 CallCommand();
             }
 
-            if (keyboard.IsTyped(Keys.Tab))
+            if (_keyboard.IsTyped(Keys.Tab))
             {
                 AutoComplete();
             }
 
-            if (keyboard.IsTyped(Keys.PageUp))
+            if (_keyboard.IsTyped(Keys.PageUp))
             {
                 ScrollUp();
             }
 
-            if (keyboard.IsTyped(Keys.PageDown))
+            if (_keyboard.IsTyped(Keys.PageDown))
             {
                 ScrollDown();
             }
@@ -286,7 +287,7 @@ namespace MonoKle.Console
 
         private int ScrollHeight => (int)(Area.Height / TextFont.MeasureString("M", TextScale).Y) / 2;
 
-        private void Scroll(int delta) => scrollOffset = MathHelper.Clamp(scrollOffset + delta, 0, textEntries.Count - 1);
+        private void Scroll(int delta) => _scrollOffset = MathHelper.Clamp(_scrollOffset + delta, 0, _textEntries.Count - 1);
 
         /// <summary>
         /// Class representing a text entry in the console.

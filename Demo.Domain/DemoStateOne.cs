@@ -41,8 +41,8 @@ namespace Demo.Domain
 
             _spriteBatch.Draw(MGame.TextureStorage["animation"].Animate(_timer.Elapsed), new Vector2(0, -20), Color.White);
 
-            _spriteBatch.Draw(MGame.TextureStorage.Error, new Vector2(0, 50), Color.White);
-            _spriteBatch.Draw(MGame.TextureStorage.White, _errorBoxPosition, Color.Red);
+            _spriteBatch.Draw(MGame.TextureStorage.Error, new MRectangleInt(0, 50, 16, 16), Color.White);
+            _spriteBatch.Draw(MGame.TextureStorage.White, new MRectangleInt(16, 16).Translate(_errorBoxPosition.ToMPoint2()), Color.Red);
             _spriteBatch.Draw(MGame.TextureStorage["orange"], new Vector2(100, 50), Color.White);
             _spriteBatch.Draw(MGame.TextureStorage["red"], new Vector2(150, 50), Color.White);
             _spriteBatch.Draw(MGame.TextureStorage["green"], new Vector2(200, 50), Color.White);

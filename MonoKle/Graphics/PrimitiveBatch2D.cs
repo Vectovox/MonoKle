@@ -31,10 +31,10 @@ namespace MonoKle.Graphics
 
         public void DrawRenderingArea(RenderingArea2D renderingArea)
         {
-            DrawRectangle(renderingArea.Desired.PositionCenter(renderingArea.Display), Color.White);
-            DrawRectangle(renderingArea.Render.PositionCenter(renderingArea.Display), Color.Yellow);
-            DrawRectangle(renderingArea.Display.PositionCenter(renderingArea.Display), Color.Red);
-            DrawRectangle(renderingArea.DisplayLogic.PositionCenter(renderingArea.Display), Color.Green);
+            DrawRectangle(renderingArea.Desired.ToMRectangle().PositionCenter(renderingArea.Display.ToMRectangle()), Color.White);
+            DrawRectangle(renderingArea.Render.ToMRectangle().PositionCenter(renderingArea.Display.ToMRectangle()), Color.Yellow);
+            DrawRectangle(renderingArea.Display.ToMRectangle().PositionCenter(renderingArea.Display.ToMRectangle()), Color.Red);
+            DrawRectangle(renderingArea.DisplayLogic.ToMRectangle().PositionCenter(renderingArea.Display.ToMRectangle()), Color.Green);
         }
 
         public void DrawCross(MVector2 position, float size, Color color)

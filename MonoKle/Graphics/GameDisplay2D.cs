@@ -12,23 +12,76 @@ namespace MonoKle.Graphics
         private readonly GraphicsManager _graphicsManager;
 
         public GraphicsDevice GraphicsDevice { get; }
-        public MPoint2 TargetResolution { get; }
-        public MPoint2 DisplayResolution { get; private set; }
-        public RenderingArea2D RenderingArea { get; private set; }
+
+        public MPoint2 WorldTargetResolution { get; }
+        public MPoint2 UiTargetResolution { get; }
+
+        /// <summary>
+        /// Gets the camera for the world rendering.
+        /// </summary>
         public Camera2D Camera { get; }
-        public RenderTarget2D RenderTarget { get; private set; }
+
+        /// <summary>
+        /// Gets the resolution of the display.
+        /// </summary>
+        public MPoint2 DisplayResolution { get; private set; }
+
+        /// <summary>
+        /// Gets the rendering area for the game.
+        /// </summary>
+        public RenderingArea2D WorldRenderingArea { get; private set; }
+
+        /// <summary>
+        /// Gets the rendering area for the UI.
+        /// </summary>
+        public RenderingArea2D UiRenderingArea { get; private set; }
+
+        /// <summary>
+        /// Gets the render target for the world.
+        /// </summary>
+        public RenderTarget2D WorldRenderTarget { get; private set; }
+
+        /// <summary>
+        /// Gets the render target for the UI.
+        /// </summary>
+        public RenderTarget2D UiRenderTarget { get; private set; }
+
         public bool MipMap { get; set; }
         public SurfaceFormat SurfaceFormat { get; set; }
         public DepthFormat DepthFormat { get; set; }
 
-        public GameDisplay2D(GraphicsManager graphicsManager, MPoint2 targetResolution)
+        /// <summary>
+        /// Creates and initializes a new <see cref="GameDisplay2D"/>,
+        /// having the same resolution for the world as the UI.
+        /// </summary>
+        /// <param name="graphicsManager">Graphics manager to use.</param>
+        /// <param name="targetResolution">The target resolution of the rendering.</param>
+        public GameDisplay2D(GraphicsManager graphicsManager, MPoint2 targetResolution) :
+            this(graphicsManager, targetResolution, targetResolution)
+        { }
+
+        /// <summary>
+        /// Creates and initializes a new <see cref="GameDisplay2D"/>.
+        /// </summary>
+        /// <param name="graphicsManager">Graphics manager to use.</param>
+        /// <param name="targetWorldResolution">The target resolution of the world rendering.</param>
+        /// <param name="targetUiResolution">The target resolution of the UI rendering.</param>
+        public GameDisplay2D(GraphicsManager graphicsManager, MPoint2 targetWorldResolution, MPoint2 targetUiResolution)
         {
+            // Create camera with temporary size
+            Camera = new Camera2D(MPoint2.One);
+
+            // Graphics manager stuff
             _graphicsManager = graphicsManager;
             _graphicsManager.ResolutionChanged += ResolutionChanged;
             GraphicsDevice = _graphicsManager.GraphicsDevice;
-            TargetResolution = targetResolution;
             DisplayResolution = graphicsManager.Resolution;
-            Camera = new Camera2D(MPoint2.One);
+
+            // Set the targets
+            WorldTargetResolution = targetWorldResolution;
+            UiTargetResolution = targetUiResolution;
+
+            // Update
             Apply();
         }
 
@@ -37,12 +90,23 @@ namespace MonoKle.Graphics
         /// </summary>
         public void Apply()
         {
-            RenderingArea = new RenderingArea2D(TargetResolution, DisplayResolution);
-            Camera.Size = RenderingArea.Render.BottomRight.ToMPoint2();
-            RenderTarget?.Dispose();    // Make sure to dispose or we get a memory leak
-            RenderTarget = new RenderTarget2D(GraphicsDevice,
-                (int)RenderingArea.Render.Width,
-                (int)RenderingArea.Render.Height,
+            // World setup
+            WorldRenderingArea = new RenderingArea2D(WorldTargetResolution, DisplayResolution);
+            Camera.Size = WorldRenderingArea.Render.BottomRight;
+            WorldRenderTarget?.Dispose();    // Make sure to dispose or we get a memory leak
+            WorldRenderTarget = new RenderTarget2D(GraphicsDevice,
+                WorldRenderingArea.Render.Width,
+                WorldRenderingArea.Render.Height,
+                MipMap,
+                SurfaceFormat,
+                DepthFormat);
+
+            // UI setup
+            UiRenderingArea = new RenderingArea2D(UiTargetResolution, DisplayResolution);
+            UiRenderTarget?.Dispose();
+            UiRenderTarget = new RenderTarget2D(GraphicsDevice,
+                UiRenderingArea.Render.Width,
+                UiRenderingArea.Render.Height,
                 MipMap,
                 SurfaceFormat,
                 DepthFormat);
@@ -53,7 +117,8 @@ namespace MonoKle.Graphics
         /// </summary>
         public void Dispose()
         {
-            RenderTarget.Dispose();
+            WorldRenderTarget.Dispose();
+            UiRenderTarget.Dispose();
             _graphicsManager.ResolutionChanged -= ResolutionChanged;
         }
 
@@ -64,23 +129,39 @@ namespace MonoKle.Graphics
         }
 
         /// <summary>
-        /// Transforms the given display coordinate to game rendering coordinate space.
+        /// Transforms the given display coordinate (screen pixel) to world coordinate space.
         /// </summary>
+        /// <remarks>
+        /// E.g. for converting display click to game actions.
+        /// </remarks>
         /// <param name="displayCoordinate">The display coordinate.</param>
-        public MVector2 TransformToGameSpace(MVector2 displayCoordinate) =>
-            Camera.TransformInv(RenderingArea.TransformDisplayToRender(displayCoordinate));
+        public MVector2 DisplayToWorld(MVector2 displayCoordinate) =>
+            Camera.TransformInv(WorldRenderingArea.TransformDisplayToRender(displayCoordinate));
 
         /// <summary>
-        /// Transforms the given display coordinate to UI rendering coordinate space.
-        /// This differs from game space in that the camera is not taken into consideration.
+        /// Transforms the given world coordinate to display space (screen pixel).
         /// </summary>
-        /// <param name="displayCoordinate">The display coordinate.</param>
-        public MVector2 TransformToUISpace(MVector2 displayCoordinate) => RenderingArea.TransformDisplayToRender(displayCoordinate);
+        /// <param name="worldCoordinate">The world coordinate to transform.</param>
+        public MPoint2 WorldToDisplay(MVector2 worldCoordinate) =>
+            WorldRenderingArea.TransformRenderToDisplay(Camera.Transform(worldCoordinate)).ToMPoint2();
 
         /// <summary>
-        /// Transforms the given game rendering coordinate to display coordinate space.
+        /// Transforms the given display coordinate (screen pixel) to UI rendering coordinate space.
         /// </summary>
-        /// <param name="gameCoordinate">The game space coordinate.</param>
-        public MVector2 TransformToDisplaySpace(MVector2 gameCoordinate) => Camera.Transform(gameCoordinate);
+        /// <remarks>
+        /// E.g. for converting display click to UI actions.
+        /// </remarks>
+        /// <param name="displayCoordinate">The display coordinate.</param>
+        public MPoint2 DisplayToUi(MPoint2 displayCoordinate) =>
+            UiRenderingArea.TransformDisplayToRender(displayCoordinate.ToMVector2()).ToMPoint2();
+
+        /// <summary>
+        /// Transforms the given world coordinate to UI space.
+        /// </summary>
+        /// <remarks>
+        /// E.g. a HUD drawing UI markers over world entities.
+        /// </remarks>
+        /// <param name="worldCoordinate">The world coordinate to transform.</param>
+        public MPoint2 WorldToUi(MVector2 worldCoordinate) => DisplayToUi(WorldToDisplay(worldCoordinate));
     }
 }

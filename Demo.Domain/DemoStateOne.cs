@@ -29,7 +29,7 @@ namespace Demo.Domain
         public override void Draw(TimeSpan deltaTime)
         {
             // Draw scene to render target
-            MGame.GraphicsManager.GraphicsDevice.SetRenderTarget(_gameDisplay.RenderTarget);
+            MGame.GraphicsManager.GraphicsDevice.SetRenderTarget(_gameDisplay.WorldRenderTarget);
 
             _primitive2D.Begin(_gameDisplay.Camera.TransformMatrix);
             _primitive2D.DrawLine(new Vector2(80, 200), new Vector2(200, 80), Color.Red, Color.Blue);
@@ -68,8 +68,8 @@ namespace Demo.Domain
 
             // Test wrapping strings
             int wrapLength = (int)_errorBoxPosition.X;
-            DrawTextBox(font.WrapString("This is a too long string that should be wrapped appropriately", wrapLength, 1), new MVector2(50, 650));
-            _spriteBatch.Draw(MGame.TextureStorage.White, new MRectangleInt(50, 650, wrapLength, 100), new Color(1f, 1f, 1f, 0.3f));
+            DrawTextBox(font.WrapString("This is a too long string that should be wrapped appropriately", wrapLength, 1), new MVector2(0, 650));
+            _spriteBatch.Draw(MGame.TextureStorage.White, new MRectangleInt(0, 650, wrapLength, 100), new Color(1f, 1f, 1f, 0.3f));
 
             // Test scale
             _spriteBatch.DrawString(font, "Scaled text",
@@ -106,9 +106,14 @@ namespace Demo.Domain
             _spriteBatch.End();
 
             // Draw "UI"
+            MGame.GraphicsManager.GraphicsDevice.SetRenderTarget(_gameDisplay.UiRenderTarget);
+            MGame.GraphicsManager.GraphicsDevice.Clear(Color.Transparent);
             _spriteBatch.Begin();
-            var boxLocation = _gameDisplay.TransformToDisplaySpace(_errorBoxPosition);
-            _spriteBatch.DrawString(font, "  <- Error box", boxLocation);
+            var boxLocation = _gameDisplay.WorldToUi(_errorBoxPosition);
+            _spriteBatch.DrawString(font, "  <- Error box", boxLocation.ToMVector2());
+            _spriteBatch.Draw(MGame.TextureStorage.White,
+                new MRectangleInt(64, 64).Translate(_gameDisplay.UiRenderingArea.Render.Width - 64, _gameDisplay.UiRenderingArea.Render.Height - 64),
+                _gameDisplay.DisplayToUi(MGame.Mouse.Position.Coordinate).X >= _gameDisplay.UiRenderingArea.Render.Width - 64 ? Color.Tan : Color.Teal);
             _spriteBatch.End();
 
             // Render inverting stuff 
@@ -129,11 +134,15 @@ namespace Demo.Domain
             effect.Parameters["inverterTexture"].SetValue(_inverterRenderTarget);
             
             _spriteBatch.Begin(effect: effect);
-            _spriteBatch.Draw(_gameDisplay.RenderTarget, _gameDisplay.RenderingArea.Display.ToMRectangleInt(), Color.White);
+            _spriteBatch.Draw(_gameDisplay.WorldRenderTarget, _gameDisplay.WorldRenderingArea.Display, Color.White);
+            _spriteBatch.End();
+
+            _spriteBatch.Begin();
+            _spriteBatch.Draw(_gameDisplay.UiRenderTarget, _gameDisplay.WorldRenderingArea.Display, Color.White);
             _spriteBatch.End();
 
             _primitive2D.Begin();
-            _primitive2D.DrawRenderingArea(_gameDisplay.RenderingArea);
+            _primitive2D.DrawRenderingArea(_gameDisplay.WorldRenderingArea);
             _primitive2D.End();
         }
 
@@ -210,7 +219,7 @@ namespace Demo.Domain
 
                 if (MGame.Mouse.Right.IsPressed)
                 {
-                    _errorBoxPosition = _gameDisplay.TransformToGameSpace(MGame.Mouse.Position.Coordinate.ToMVector2());
+                    _errorBoxPosition = _gameDisplay.DisplayToWorld(MGame.Mouse.Position.Coordinate.ToMVector2());
                 }
 
                 if (MGame.Keyboard.IsKeyPressed(Keys.F2))
@@ -263,7 +272,7 @@ namespace Demo.Domain
         protected override void BeforeFirstActivation(StateSwitchData data)
         {
             base.BeforeFirstActivation(data);
-            _gameDisplay = new GameDisplay2D(MGame.GraphicsManager, new MPoint2(800, 600));
+            _gameDisplay = new GameDisplay2D(MGame.GraphicsManager, new MPoint2(900, 600), new MPoint2(1500, 768));
             _gameDisplay.Camera.MinScale = 0.3f;
         }
 

@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,14 +11,14 @@ namespace MonoKle.Asset
     /// </summary>
     public class Font
     {
-        private readonly FontFile data;
-        private readonly Dictionary<char, FontChar> fontCharByChar;
-        private readonly List<Texture2D> pageList;
+        private readonly FontFile _data;
+        private readonly Dictionary<char, FontChar> _fontCharByChar;
+        private readonly List<Texture2D> _pageList;
 
         /// <summary>
         /// Gets the line height of the font.
         /// </summary>
-        public int LineHeight => data.Common.LineHeight;
+        public int LineHeight => _data.Common.LineHeight;
 
         /// <summary>
         /// Creates a new instance of <see cref="Font"/>
@@ -26,9 +27,9 @@ namespace MonoKle.Asset
         /// <param name="pageList">The image representations.</param>
         public Font(FontFile data, List<Texture2D> pageList)
         {
-            this.data = data;
-            this.pageList = pageList;
-            fontCharByChar = data.Chars.ToDictionary(ch => (char)ch.ID);
+            _data = data;
+            _pageList = pageList;
+            _fontCharByChar = data.Chars.ToDictionary(ch => (char)ch.ID);
         }
 
         /// <summary>
@@ -38,21 +39,21 @@ namespace MonoKle.Asset
         /// <param name="value">When this method returns, contains the associated value of the provided character</param>
         /// <returns>True if there was an associated value with the provided character</returns>
         // TODO: Do not expose internal data. New type please!
-        public bool TryGetChar(char character, out FontChar value) => fontCharByChar.TryGetValue(character, out value);
+        public bool TryGetChar(char character, out FontChar value) => _fontCharByChar.TryGetValue(character, out value);
 
         /// <summary>
         /// Gets the <see cref="Texture2D"/> for the given page.
         /// </summary>
         /// <param name="page">The page to get.</param>
         /// <returns>A texture for the given page.</returns>
-        public Texture2D GetPage(int page) => pageList[page];
+        public Texture2D GetPage(int page) => _pageList[page];
 
         /// <summary>
         /// Returns the size of the given string.
         /// </summary>
         /// <param name="text">The text to measure.</param>
         /// <returns>A Vector2 representing the size.</returns>
-        public Vector2 MeasureString(string text) => MeasureString(text, 1f);
+        public MVector2 MeasureString(string text) => MeasureString(text, 1f);
 
         /// <summary>
         /// Returns the size of the given string with the specified scale.
@@ -60,40 +61,35 @@ namespace MonoKle.Asset
         /// <param name="text">The text to measure.</param>
         /// <param name="scale">The scale.</param>
         /// <returns>A vector2 representing the size.</returns>
-        public Vector2 MeasureString(string text, float scale)
+        public MVector2 MeasureString(string text, float scale)
         {
             Vector2 rowSize = Vector2.Zero;
             Vector2 totalSize = Vector2.Zero;
 
-            foreach (char c in text)
+            foreach (char character in text)
             {
-                if (c == '\n')
+                // Update totals on linebreak
+                if (character == '\n')
                 {
-                    if (totalSize.X < rowSize.X)
-                    {
-                        totalSize.X = rowSize.X;
-                    }
+                    // X-component
+                    totalSize.X = Math.Max(totalSize.X, rowSize.X);
                     rowSize.X = 0;
-                    totalSize.Y += data.Info.Size;
+
+                    // Y-component
+                    totalSize.Y += rowSize.Y;
+                    rowSize.Y = 0;
                 }
-                else
+                else if (_fontCharByChar.TryGetValue(character, out FontChar fontCharacter))
                 {
-                    if (fontCharByChar.TryGetValue(c, out FontChar fc))
-                    {
-                        if (fc.Height > rowSize.Y)
-                        {
-                            rowSize.Y = fc.Height;
-                        }
-                        rowSize.X += fc.XAdvance;
-                    }
+                    // Measure character and set the line size
+                    rowSize.Y = Math.Max(rowSize.Y, fontCharacter.Height);
+                    rowSize.X += fontCharacter.XAdvance;
                 }
             }
 
-            if (totalSize.X < rowSize.X)
-            {
-                totalSize.X = rowSize.X;
-            }
-            totalSize.Y += data.Info.Size;
+            // Final update to total size
+            totalSize.X = Math.Max(totalSize.X, rowSize.X);
+            totalSize.Y += rowSize.Y;
             return totalSize * scale;
         }
 

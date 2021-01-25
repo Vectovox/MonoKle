@@ -63,8 +63,8 @@ namespace MonoKle.Asset
         /// <returns>A vector2 representing the size.</returns>
         public MVector2 MeasureString(string text, float scale)
         {
-            Vector2 rowSize = Vector2.Zero;
-            Vector2 totalSize = Vector2.Zero;
+            float rowSize = 0f;
+            Vector2 totalSize = new Vector2(0f, LineHeight);
 
             foreach (char character in text)
             {
@@ -72,24 +72,21 @@ namespace MonoKle.Asset
                 if (character == '\n')
                 {
                     // X-component
-                    totalSize.X = Math.Max(totalSize.X, rowSize.X);
-                    rowSize.X = 0;
+                    totalSize.X = Math.Max(totalSize.X, rowSize);
+                    rowSize = 0;
 
                     // Y-component
-                    totalSize.Y += rowSize.Y;
-                    rowSize.Y = 0;
+                    totalSize.Y += LineHeight;
                 }
                 else if (_fontCharByChar.TryGetValue(character, out FontChar fontCharacter))
                 {
                     // Measure character and set the line size
-                    rowSize.Y = Math.Max(rowSize.Y, fontCharacter.Height);
-                    rowSize.X += fontCharacter.XAdvance;
+                    rowSize += fontCharacter.XAdvance;
                 }
             }
 
             // Final update to total size
-            totalSize.X = Math.Max(totalSize.X, rowSize.X);
-            totalSize.Y += rowSize.Y;
+            totalSize.X = Math.Max(totalSize.X, rowSize);
             return totalSize * scale;
         }
 

@@ -46,22 +46,23 @@ namespace MonoKle.Asset
         public static void DrawString(this SpriteBatch spriteBatch, Font font, string text, Vector2 position, Color color,
             float rotation, Vector2 origin, float scale, SpriteEffects effect, float depth)
         {
-            Vector2 drawPos = position; // Cursor
-            foreach (char c in text)
+            Vector2 drawPosition = position;
+            foreach (char character in text)
             {
-                // Set cursor to next line
-                if (c == '\n')
+                if (character == '\n')
                 {
-                    drawPos.Y += font.LineHeight * scale;
-                    drawPos.X = position.X;
+                    // Move to next line
+                    drawPosition.Y += font.LineHeight * scale;
+                    drawPosition.X = position.X;
                 }
-                else
+                else if (font.TryGetChar(character, out FontChar fontCharacter))
                 {
-                    if (font.TryGetChar(c, out FontChar character))
-                    {
-                        var sourceRectangle = new Rectangle(character.X, character.Y, character.Width, character.Height);
-                        var destinationVector = new Vector2(drawPos.X, drawPos.Y + (character.YOffset * scale));
+                    var sourceRectangle = new Rectangle(fontCharacter.X, fontCharacter.Y, fontCharacter.Width, fontCharacter.Height);
+                    var destinationVector = new Vector2(drawPosition.X, drawPosition.Y + (fontCharacter.YOffset * scale));
 
+                    // Apply rotation
+                    if (rotation != 0)
+                    {
                         double xd = destinationVector.X - origin.X - position.X;
                         double yd = destinationVector.Y - origin.Y - position.Y;
 
@@ -71,11 +72,11 @@ namespace MonoKle.Asset
                         // Translate back
                         destinationVector.X = (float)x + position.X;
                         destinationVector.Y = (float)y + position.Y;
-
-                        spriteBatch.Draw(font.GetPage(character.Page), destinationVector, sourceRectangle, color,
-                            rotation, Vector2.Zero, scale, effect, depth);
-                        drawPos.X += character.XAdvance * scale;
                     }
+
+                    spriteBatch.Draw(font.GetPage(fontCharacter.Page), destinationVector, sourceRectangle, color,
+                        rotation, Vector2.Zero, scale, effect, depth);
+                    drawPosition.X += fontCharacter.XAdvance * scale;
                 }
             }
         }

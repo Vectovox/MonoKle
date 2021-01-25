@@ -109,6 +109,9 @@ namespace MonoKle.Asset
         /// <summary>
         /// Wraps a text to fit in a given width, placing linebreaks where applicable.
         /// </summary>
+        /// <remarks>
+        /// Wrapping logic will fail (weird results) if text is not wrappable at all within the width.
+        /// </remarks>
         /// <param name="text">The text to wrap</param>
         /// <param name="maximumWidth">The maximum width allowed for the wrapped text</param>
         /// <param name="scale">Scale of font to adjust for.</param>
@@ -119,21 +122,27 @@ namespace MonoKle.Asset
             string newText = text;
             if (width > maximumWidth)
             {
-                int lastCutIndex = 0;
+                int lastWrappedIndex = 0;
+                int lineStartIndex = 0;
                 for (int i = 1; i <= text.Length; i++)
                 {
-                    var subString = newText.Substring(0, i);
-                    float newWidth = MeasureString(subString, scale).X;
-                    if (newWidth > maximumWidth)
+                    // Measure the current line to the pointer index
+                    var lineSubString = newText.Substring(lineStartIndex, i - lineStartIndex);
+                    float lineWidth = MeasureString(lineSubString, scale).X;
+                    if (lineWidth > maximumWidth)
                     {
-                        int lastPlaceToCut = newText.LastIndexOfAny(new char[] { ' ' }, i - 1, i - lastCutIndex);
+                        // Too wide so put a newline in the last previous space
+                        int lastPlaceToCut = newText.LastIndexOfAny(new char[] { ' ' }, i - 1, i - lastWrappedIndex);
                         if (lastPlaceToCut == -1)
                         {
                             // No good place to cut the text so end it here already
                             break;
                         }
-                        lastCutIndex = lastPlaceToCut;
                         newText = newText.Remove(lastPlaceToCut, 1).Insert(lastPlaceToCut, "\n");
+
+                        // Update indices
+                        lastWrappedIndex = lastPlaceToCut;
+                        lineStartIndex = i;
                     }
                 }
             }

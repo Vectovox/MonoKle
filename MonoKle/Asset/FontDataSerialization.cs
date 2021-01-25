@@ -257,6 +257,9 @@ namespace MonoKle.Asset
     [Serializable]
     public class FontChar
     {
+        /// <summary>
+        /// Id of the character.
+        /// </summary>
         [XmlAttribute("id")]
         public int ID
         {
@@ -264,6 +267,9 @@ namespace MonoKle.Asset
             set;
         }
 
+        /// <summary>
+        /// The left pixel position of the character in its texture.
+        /// </summary>
         [XmlAttribute("x")]
         public int X
         {
@@ -271,6 +277,9 @@ namespace MonoKle.Asset
             set;
         }
 
+        /// <summary>
+        /// The top pixel position of the character in its texture.
+        /// </summary>
         [XmlAttribute("y")]
         public int Y
         {
@@ -278,6 +287,9 @@ namespace MonoKle.Asset
             set;
         }
 
+        /// <summary>
+        /// The pixel width of the character in its texture.
+        /// </summary>
         [XmlAttribute("width")]
         public int Width
         {
@@ -285,12 +297,16 @@ namespace MonoKle.Asset
             set;
         }
 
+        /// <summary>
+        /// The pixel height of the character in its texture.
+        /// </summary>
         [XmlAttribute("height")]
         public int Height
         {
             get;
             set;
         }
+
 
         [XmlAttribute("xoffset")]
         public int XOffset
@@ -299,6 +315,9 @@ namespace MonoKle.Asset
             set;
         }
 
+        /// <summary>
+        /// The Y offset required to align the character vertically with the line.
+        /// </summary>
         [XmlAttribute("yoffset")]
         public int YOffset
         {
@@ -306,6 +325,9 @@ namespace MonoKle.Asset
             set;
         }
 
+        /// <summary>
+        /// How much to advance the currrent X position after drawing the character.
+        /// </summary>
         [XmlAttribute("xadvance")]
         public int XAdvance
         {
@@ -313,6 +335,9 @@ namespace MonoKle.Asset
             set;
         }
 
+        /// <summary>
+        /// The texture page where the character is located.
+        /// </summary>
         [XmlAttribute("page")]
         public int Page
         {
@@ -320,6 +345,14 @@ namespace MonoKle.Asset
             set;
         }
 
+        /// <summary>
+        /// The texture channel where the character is found.
+        /// 1 = blue;
+        /// 2 = green;
+        /// 4 = red;
+        /// 8 = alpha;
+        /// 15 = all
+        /// </summary>
         [XmlAttribute("chnl")]
         public int Channel
         {

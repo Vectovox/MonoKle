@@ -54,15 +54,22 @@ namespace Demo.Domain
             _spriteBatch.DrawString(font, "Timer: " + _timer.TimeLeft + " (" + _timer.Duration + ") Done? " + _timer.IsDone,
                 new Vector2(50, 150), Color.Green);
 
+            Vector2 DrawTextBox(string text, MVector2 position, float scale = 1f)
+            {
+                var size = font.MeasureString(text, scale);
+                _spriteBatch.Draw(MGame.TextureStorage.White, new MRectangle(position, position + size).ToMRectangleInt(), Color.Gray);
+                _spriteBatch.DrawString(font, text, position, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0);
+                return size;
+            }
+
             // Test linebreak
             _spriteBatch.DrawString(font, "LINE\nbreak",
                  new Vector2(50, 250), Color.Green);
 
             // Test wrapping strings
-            const int wrapLength = 120;
-            _spriteBatch.Draw(MGame.TextureStorage.White, new MRectangleInt(50, 650, wrapLength, 100), Color.White);
-            _spriteBatch.DrawString(font, font.WrapString("This is a too long string that should be wrapped appropriately", wrapLength, 1),
-                 new Vector2(50, 650), Color.Green);
+            int wrapLength = (int)_errorBoxPosition.X;
+            DrawTextBox(font.WrapString("This is a too long string that should be wrapped appropriately", wrapLength, 1), new MVector2(50, 650));
+            _spriteBatch.Draw(MGame.TextureStorage.White, new MRectangleInt(50, 650, wrapLength, 100), new Color(1f, 1f, 1f, 0.3f));
 
             // Test scale
             _spriteBatch.DrawString(font, "Scaled text",
@@ -89,13 +96,6 @@ namespace Demo.Domain
 
             // Test size measurements.
             var sizeTestPos = new Vector2(50, 450);
-            Vector2 DrawTextBox(string text, MVector2 position, float scale = 1f)
-            {
-                var size = font.MeasureString(text, scale);
-                _spriteBatch.Draw(MGame.TextureStorage.White, new MRectangle(position, position + size).ToMRectangleInt(), Color.Gray);
-                _spriteBatch.DrawString(font, text, position, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0);
-                return size;
-            }
             sizeTestPos.X += DrawTextBox("One", sizeTestPos).X;
             DrawTextBox("Two", sizeTestPos);
             const string threeString = "Three";

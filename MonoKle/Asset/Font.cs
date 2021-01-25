@@ -49,18 +49,26 @@ namespace MonoKle.Asset
         public Texture2D GetPage(int page) => _pageList[page];
 
         /// <summary>
-        /// Returns the size of the given string.
+        /// Returns the size of the given string with no applied scaling.
         /// </summary>
+        /// <remarks>
+        /// The result will encompass an area that will fit the given string completely.
+        /// The letter sizes are used to determine width and line height is used for height.
+        /// </remarks>
         /// <param name="text">The text to measure.</param>
-        /// <returns>A Vector2 representing the size.</returns>
+        /// <returns>An <see cref="MVector2"/> representing the size.</returns>
         public MVector2 MeasureString(string text) => MeasureString(text, 1f);
 
         /// <summary>
         /// Returns the size of the given string with the specified scale.
         /// </summary>
+        /// <remarks>
+        /// The result will encompass an area that will fit the given string completely.
+        /// The letter sizes are used to determine width and line height is used for height.
+        /// </remarks>
         /// <param name="text">The text to measure.</param>
         /// <param name="scale">The scale.</param>
-        /// <returns>A vector2 representing the size.</returns>
+        /// <returns>An <see cref="MVector2"/> representing the size.</returns>
         public MVector2 MeasureString(string text, float scale)
         {
             float rowSize = 0f;
@@ -111,17 +119,20 @@ namespace MonoKle.Asset
             string newText = text;
             if (width > maximumWidth)
             {
-                for (int i = 1; i < text.Length; i++)
+                int lastCutIndex = 0;
+                for (int i = 1; i <= text.Length; i++)
                 {
-                    float newWidth = MeasureString(newText.Substring(0, i), scale).X;
+                    var subString = newText.Substring(0, i);
+                    float newWidth = MeasureString(subString, scale).X;
                     if (newWidth > maximumWidth)
                     {
-                        int lastPlaceToCut = newText.LastIndexOfAny(new char[] { ' ', '.', ',' }, i, i);
+                        int lastPlaceToCut = newText.LastIndexOfAny(new char[] { ' ' }, i - 1, i - lastCutIndex);
                         if (lastPlaceToCut == -1)
                         {
                             // No good place to cut the text so end it here already
                             break;
                         }
+                        lastCutIndex = lastPlaceToCut;
                         newText = newText.Remove(lastPlaceToCut, 1).Insert(lastPlaceToCut, "\n");
                     }
                 }

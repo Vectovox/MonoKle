@@ -61,7 +61,7 @@ namespace Demo.Domain
             // Test wrapping strings
             const int wrapLength = 120;
             _spriteBatch.Draw(MGame.TextureStorage.White, new MRectangleInt(50, 650, wrapLength, 100), Color.White);
-            _spriteBatch.DrawString(font, font.WrapString("This is a too long string that should be wrapper appropriately", wrapLength, 1),
+            _spriteBatch.DrawString(font, font.WrapString("This is a too long string that should be wrapped appropriately", wrapLength, 1),
                  new Vector2(50, 650), Color.Green);
 
             // Test scale
@@ -88,20 +88,21 @@ namespace Demo.Domain
             _spriteBatch.DrawString(MGame.FontStorage.DefaultValue, _stateSwitchMessage, new Vector2(0, 700), Color.Green);
 
             // Test size measurements.
-            var pos = new Vector2(50, 450);
-            _spriteBatch.DrawString(font, "One-", pos, Color.Green);
-            pos.X += font.MeasureString("One-").X;
-
-            _spriteBatch.DrawString(font, "Two", pos, Color.Red);
-
-            pos.Y -= font.MeasureString("Three").Y;
-            _spriteBatch.DrawString(font, "Three", pos, Color.Orange);
-
-            pos.X += font.MeasureString("Three").X;
-            _spriteBatch.DrawString(font, "Four", pos, Color.Blue, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
-
-            pos.X += font.MeasureString("Four", 2f).X;
-            _spriteBatch.DrawString(font, "Five", pos, Color.Black);
+            var sizeTestPos = new Vector2(50, 450);
+            Vector2 DrawTextBox(string text, MVector2 position, float scale = 1f)
+            {
+                var size = font.MeasureString(text, scale);
+                _spriteBatch.Draw(MGame.TextureStorage.White, new MRectangle(position, position + size).ToMRectangleInt(), Color.Gray);
+                _spriteBatch.DrawString(font, text, position, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0);
+                return size;
+            }
+            sizeTestPos.X += DrawTextBox("One", sizeTestPos).X;
+            DrawTextBox("Two", sizeTestPos);
+            const string threeString = "Three";
+            sizeTestPos.Y -= font.MeasureString(threeString).Y;
+            sizeTestPos.X += DrawTextBox(threeString, sizeTestPos).X;
+            sizeTestPos.X += DrawTextBox("Four", sizeTestPos, 2f).X;
+            DrawTextBox("Five", sizeTestPos);
             _spriteBatch.End();
 
             // Draw "UI"

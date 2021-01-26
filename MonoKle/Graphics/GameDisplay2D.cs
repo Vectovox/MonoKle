@@ -19,7 +19,7 @@ namespace MonoKle.Graphics
         /// <summary>
         /// Gets the camera for the world rendering.
         /// </summary>
-        public Camera2D Camera { get; }
+        public LinearCamera2D Camera { get; }
 
         /// <summary>
         /// Gets the resolution of the display.
@@ -69,7 +69,7 @@ namespace MonoKle.Graphics
         public GameDisplay2D(GraphicsManager graphicsManager, MPoint2 targetWorldResolution, MPoint2 targetUiResolution)
         {
             // Create camera with temporary size
-            Camera = new Camera2D(MPoint2.One);
+            Camera = new LinearCamera2D(MPoint2.One);
 
             // Graphics manager stuff
             _graphicsManager = graphicsManager;

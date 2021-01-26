@@ -173,40 +173,41 @@ namespace Demo.Domain
 
                 if (MGame.Keyboard.IsKeyHeld(Keys.I))
                 {
-                    _gameDisplay.Camera.SetPosition(_gameDisplay.Camera.Position + new MVector2(0, -3));
+                    _gameDisplay.Camera.Position = _gameDisplay.Camera.Position + new MVector2(0, -3);
                 }
                 if (MGame.Keyboard.IsKeyHeld(Keys.K))
                 {
-                    _gameDisplay.Camera.SetPosition(_gameDisplay.Camera.Position + new MVector2(0, 3));
+                    _gameDisplay.Camera.Position = _gameDisplay.Camera.Position + new MVector2(0, 3);
                 }
                 if (MGame.Keyboard.IsKeyHeld(Keys.J))
                 {
-                    _gameDisplay.Camera.SetPosition(_gameDisplay.Camera.Position + new MVector2(-3, 0));
+                    _gameDisplay.Camera.Position = _gameDisplay.Camera.Position + new MVector2(-3, 0);
                 }
                 if (MGame.Keyboard.IsKeyHeld(Keys.L))
                 {
-                    _gameDisplay.Camera.SetPosition(_gameDisplay.Camera.Position + new MVector2(3, 0));
+                    _gameDisplay.Camera.Position = _gameDisplay.Camera.Position + new MVector2(3, 0);
                 }
                 if (MGame.Keyboard.IsKeyHeld(Keys.U))
                 {
-                    _gameDisplay.Camera.SetRotation(_gameDisplay.Camera.Rotation + 0.05f);
+                    _gameDisplay.Camera.Rotation += 0.05f;
                 }
                 if (MGame.Keyboard.IsKeyHeld(Keys.O))
                 {
-                    _gameDisplay.Camera.SetRotation(_gameDisplay.Camera.Rotation - 0.05f);
+                    _gameDisplay.Camera.Rotation -= 0.05f;
                 }
                 if (MGame.Keyboard.IsKeyHeld(Keys.Y))
                 {
-                    _gameDisplay.Camera.SetScale(_gameDisplay.Camera.Scale + 0.01f);
+                    _gameDisplay.Camera.Scale += 0.01f;
                 }
                 if (MGame.Keyboard.IsKeyHeld(Keys.H))
                 {
-                    _gameDisplay.Camera.SetScale(_gameDisplay.Camera.Scale - 0.01f);
+                    _gameDisplay.Camera.Scale -= 0.01f;
                 }
 
                 if (MGame.TouchScreen.Pinch.TryGetValues(out var pinchOrigin, out var pinchFactor))
                 {
-                    _gameDisplay.Camera.ScaleTo(pinchOrigin.ToMVector2(), pinchFactor * 10);
+                    var worldCoordinate = _gameDisplay.DisplayToWorld(pinchOrigin.ToMVector2());
+                    _gameDisplay.Camera.ScaleAround(worldCoordinate, pinchFactor * 10);
                 }
                 else if (MGame.TouchScreen.Drag.TryGetDelta(out var dragDelta))
                 {
@@ -245,7 +246,7 @@ namespace Demo.Domain
 
                 if (MGame.Keyboard.IsKeyPressed(Keys.R))
                 {
-                    _gameDisplay.Camera.SetPosition(MVector2.Zero, 100);
+                    _gameDisplay.Camera.MoveTo(MVector2.Zero, 100);
                 }
 
                 _textInput.Update();

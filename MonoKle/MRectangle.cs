@@ -348,6 +348,20 @@ namespace MonoKle
                 && coordinate.Y > TopLeft.Y && coordinate.Y < BottomRight.Y;
 
         /// <summary>
+        /// Intersects the <see cref="MRectangle"/> with another <see cref="MRectangle"/>,
+        /// returning the intersecting area.
+        /// </summary>
+        /// <param name="other">The rectangle to intersect with.</param>
+        public MRectangle Intersect(MRectangle other)
+        {
+            var left = Math.Max(Left, other.Left);
+            var top = Math.Max(Top, other.Top);
+            var right = Math.Min(Right, other.Right);
+            var bottom = Math.Min(Bottom, other.Bottom);
+            return new MRectangle(left, top, Math.Max(right - left, 0), Math.Max(bottom - top, 0));
+        }
+
+        /// <summary>
         /// Returns whether this is equal to the provided object.
         /// </summary>
         /// <param name="obj">The object to check for equality with.</param>

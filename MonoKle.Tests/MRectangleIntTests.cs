@@ -361,5 +361,22 @@ namespace MonoKle.Tests
             MRectangleInt back = conv;
             Assert.AreEqual(original, back);
         }
+
+        [DataTestMethod]
+        [DataRow(9, 9, 5, 5, 10, 10, 4, 4, DisplayName = "Top left corner")]
+        [DataRow(24, 9, 5, 5, 24, 10, 1, 4, DisplayName = "Top right corner")]
+        [DataRow(9, 24, 5, 5, 10, 24, 4, 1, DisplayName = "Bottom left corner")]
+        [DataRow(24, 24, 5, 5, 24, 24, 1, 1, DisplayName = "Bottom right corner")]
+        [DataRow(9, 9, 20, 20, 10, 10, 15, 15, DisplayName = "Enveloped")]
+        [DataRow(9, 11, 20, 5, 10, 11, 15, 5, DisplayName = "Horizontal cross")]
+        public void Intersect_CorrectValueCommutative(int x, int y, int w, int h, int ex, int ey, int ew, int eh)
+        {
+            var testRectangle = new MRectangleInt(10, 10, 15, 15);
+            var intersectRectangle = new MRectangleInt(x, y, w, h);
+            var expectedRectangle = new MRectangleInt(ex, ey, ew, eh);
+            // Assert we get the expected rectangle commutatively
+            Assert.AreEqual(expectedRectangle, testRectangle.Intersect(intersectRectangle));
+            Assert.AreEqual(expectedRectangle, intersectRectangle.Intersect(testRectangle));
+        }
     }
 }

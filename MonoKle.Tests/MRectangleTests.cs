@@ -585,5 +585,22 @@ namespace MonoKle.Tests
             var result = testRectangle.PositionCenter(boundingRectangle);
             Assert.AreEqual(new MRectangle(26 - 8, 19 - 4.5f, testRectangle.Width, testRectangle.Height), result);
         }
+
+        [DataTestMethod]
+        [DataRow(9, 9, 5, 5, 10, 10, 4, 4, DisplayName = "Top left corner")]
+        [DataRow(24, 9, 5, 5, 24, 10, 1, 4, DisplayName = "Top right corner")]
+        [DataRow(9, 24, 5, 5, 10, 24, 4, 1, DisplayName = "Bottom left corner")]
+        [DataRow(24, 24, 5, 5, 24, 24, 1, 1, DisplayName = "Bottom right corner")]
+        [DataRow(9, 9, 20, 20, 10, 10, 15, 15, DisplayName = "Enveloped")]
+        [DataRow(9, 11, 20, 5, 10, 11, 15, 5, DisplayName = "Horizontal cross")]
+        public void Intersect_CorrectValueCommutative(float x, float y, float w, float h, float ex, float ey, float ew, float eh)
+        {
+            var testRectangle = new MRectangle(10, 10, 15, 15);
+            var intersectRectangle = new MRectangle(x, y, w, h);
+            var expectedRectangle = new MRectangle(ex, ey, ew, eh);
+            // Assert we get the expected rectangle commutatively
+            Assert.AreEqual(expectedRectangle, testRectangle.Intersect(intersectRectangle));
+            Assert.AreEqual(expectedRectangle, intersectRectangle.Intersect(testRectangle));
+        }
     }
 }

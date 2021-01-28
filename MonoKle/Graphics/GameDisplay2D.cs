@@ -139,6 +139,16 @@ namespace MonoKle.Graphics
             Camera.TransformInv(WorldRenderingArea.TransformDisplayToRender(displayCoordinate));
 
         /// <summary>
+        /// Transforms the given display delta vector to world coordinate space.
+        /// </summary>
+        /// <remarks>
+        /// E.g. for converting display dragging to game dragging.
+        /// </remarks>
+        /// <param name="displayCoordinate">The display coordinate.</param>
+        public MVector2 DisplayToWorldDelta(MVector2 displayDelta) =>
+            DisplayToWorld(displayDelta) - DisplayToWorld(MVector2.Zero);
+
+        /// <summary>
         /// Transforms the given world coordinate to display space (screen pixel).
         /// </summary>
         /// <param name="worldCoordinate">The world coordinate to transform.</param>

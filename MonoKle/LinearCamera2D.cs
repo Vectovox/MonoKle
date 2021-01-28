@@ -9,14 +9,14 @@ namespace MonoKle
     [Serializable]
     public class LinearCamera2D : Camera2D
     {
-        private float _desiredRotation;
+        public float DesiredRotation { get; private set; }
         private float _rotationSpeed;
 
-        private float _desiredScale;
+        public float DesiredScale { get; private set; }
         private float _scalingSpeed;
 
-        private MVector2 _desiredPosition;
-        private float _movementSpeed;
+        public MVector2 DesiredPosition { get; private set; }
+        private float _translationSpeed;
 
         /// <summary>
         /// Initiates a new instance of <see cref="LinearCamera2D"/>.
@@ -25,28 +25,28 @@ namespace MonoKle
         public LinearCamera2D(MPoint2 size) : base(size) { }
 
         /// <summary>
-        /// Sets the current camera center position to the given coordinate, moving it there
+        /// Moves the current camera center position to the given coordinate
         /// over time with the provided speed.
         /// </summary>
         /// <param name="position">The coordinate to set to.</param>
         /// <param name="speed">The delta translation per second.</param>
         public void MoveTo(MVector2 position, float speed)
         {
-            _desiredPosition = position;
-            _movementSpeed = speed;
+            DesiredPosition = position;
+            _translationSpeed = speed;
         }
 
         /// <summary>
-        /// Sets the current rotation, in radians, to the given value over a period of time determined by the given speed.
+        /// Rotates the camera, in radians, to the given value over time with the provided speed.
         /// </summary>
         /// <param name="rotation">The rotation, in radians, to set to.</param>
         /// <param name="speed">The delta rotation, in radians, per second.</param>
         public void RotateTo(float rotation, float speed)
         {
-            _desiredRotation = MathHelper.WrapAngle(rotation);
-            if (_desiredRotation != Rotation)
+            DesiredRotation = MathHelper.WrapAngle(rotation);
+            if (DesiredRotation != Rotation)
             {
-                float diff = _desiredRotation - Rotation;
+                float diff = DesiredRotation - Rotation;
 
                 if (diff > Math.PI)
                 {
@@ -64,13 +64,13 @@ namespace MonoKle
         }
 
         /// <summary>
-        /// Sets the current scale factor to the given value over a period of time determined by the given speed.
+        /// Scales the camera to the given value over time with the provided speed.
         /// </summary>
         /// <param name="scale">The scale factor to set to.</param>
         /// <param name="speed">The delta scale per second.</param>
         public void ScaleTo(float scale, float speed)
         {
-            _desiredScale = scale;
+            DesiredScale = scale;
             _scalingSpeed = (scale - Scale) < 0 ? -speed : speed;
         }
 
@@ -88,15 +88,15 @@ namespace MonoKle
 
         private void UpdatePosition(TimeSpan timeDelta)
         {
-            if (_movementSpeed != 0)
+            if (_translationSpeed != 0)
             {
-                var direction = _desiredPosition - Position;
-                var delta = direction.Normalized * (float)timeDelta.TotalSeconds * _movementSpeed;
+                var direction = DesiredPosition - Position;
+                var delta = direction.Normalized * (float)timeDelta.TotalSeconds * _translationSpeed;
 
                 if (float.IsNaN(delta.X) || direction.LengthSquared < delta.LengthSquared)
                 {
-                    _movementSpeed = 0;
-                    Position = _desiredPosition;
+                    _translationSpeed = 0;
+                    Position = DesiredPosition;
                 }
                 else
                 {
@@ -114,11 +114,11 @@ namespace MonoKle
                 Rotation = MathHelper.WrapAngle(Rotation + delta);
 
                 // Check if we turned past the desired rotation and therefore are done
-                double remainingDistance = Math.Atan2(Math.Sin(_desiredRotation - Rotation), Math.Cos(_desiredRotation - Rotation));
+                double remainingDistance = Math.Atan2(Math.Sin(DesiredRotation - Rotation), Math.Cos(DesiredRotation - Rotation));
                 if (Math.Abs(remainingDistance) < Math.Abs(delta))
                 {
                     _rotationSpeed = 0f;
-                    Rotation = _desiredRotation;
+                    Rotation = DesiredRotation;
                 }
             }
         }
@@ -129,11 +129,11 @@ namespace MonoKle
             {
                 var deltaScaling = _scalingSpeed * (float)timeDelta.TotalSeconds;
                 var nextScale = Scale + deltaScaling;
-                var remainingScaling = Scale - _desiredScale;
+                var remainingScaling = Scale - DesiredScale;
                 if (Math.Abs(remainingScaling) < Math.Abs(deltaScaling) || nextScale < MinScale)
                 {
                     _scalingSpeed = 0;
-                    Scale = _desiredScale;
+                    Scale = DesiredScale;
                 }
                 else
                 {

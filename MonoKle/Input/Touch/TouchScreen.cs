@@ -88,19 +88,18 @@ namespace MonoKle.Input.Touch
                 }
                 else if (_pinchActions.TryGetValue(gesture.GestureType, out var pinchAction))
                 {
-                    // Current position
-                    float currentDistance = Vector2.Distance(gesture.Position, gesture.Position2);
+                    // Current
+                    var currentDistance = Vector2.Distance(gesture.Position, gesture.Position2);
 
-                    // Previous position
-                    Vector2 firstPrevious = gesture.Position - gesture.Delta;
-                    Vector2 secondPrevious = gesture.Position2 - gesture.Delta2;
-                    float previousDistance = Vector2.Distance(firstPrevious, secondPrevious);
+                    // Previous
+                    var previousTouchA = gesture.Position - gesture.Delta;
+                    var previousTouchB = gesture.Position2 - gesture.Delta2;
+                    var previousDistance = Vector2.Distance(previousTouchA, previousTouchB);
 
                     // Calculate origin and factor
-                    var coordinate = (firstPrevious + secondPrevious) * 0.5f;
-                    var factor = (currentDistance - previousDistance) / previousDistance;
-
-                    pinchAction.Set(coordinate.ToPoint(), factor);
+                    var origin = (previousTouchA + previousTouchB) * 0.5f;
+                    var deltaFactor = 2 * (currentDistance - previousDistance) / previousDistance;   // Multiplied by two to get the full change
+                    pinchAction.Set(origin.ToPoint(), deltaFactor);
                 }
             }
         }
@@ -123,11 +122,11 @@ namespace MonoKle.Input.Touch
 
             if (_mouse.ScrollDirection == MouseScrollDirection.Down)
             {
-                _pinchActions[GestureType.Pinch].Set(_mouse.Position.Coordinate, -0.01f);
+                _pinchActions[GestureType.Pinch].Set(_mouse.Position.Coordinate, -0.1f);
             }
             else if (_mouse.ScrollDirection == MouseScrollDirection.Up)
             {
-                _pinchActions[GestureType.Pinch].Set(_mouse.Position.Coordinate, 0.01f);
+                _pinchActions[GestureType.Pinch].Set(_mouse.Position.Coordinate, 0.1f);
             }
         }
     }

@@ -16,6 +16,10 @@ namespace MonoKle.Input.Touch
         /// <summary>
         /// Gets the pinch factor.
         /// </summary>
+        /// <remarks>
+        /// A factor that is 0 if no change was made, negative if pinching
+        /// inwards, and positive if pinching outwards.
+        /// </remarks>
         float PinchFactor { get; }
 
         /// <summary>

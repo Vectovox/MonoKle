@@ -207,11 +207,11 @@ namespace Demo.Domain
                 if (MGame.TouchScreen.Pinch.TryGetValues(out var pinchOrigin, out var pinchFactor))
                 {
                     var worldCoordinate = _gameDisplay.DisplayToWorld(pinchOrigin.ToMVector2());
-                    _gameDisplay.Camera.ScaleAround(worldCoordinate, pinchFactor * 10);
+                    _gameDisplay.Camera.ScaleAround(worldCoordinate, pinchFactor);
                 }
                 else if (MGame.TouchScreen.Drag.TryGetDelta(out var dragDelta))
                 {
-                    _gameDisplay.Camera.TranslateCameraSpace(-dragDelta.ToMVector2());
+                    _gameDisplay.Camera.Position -= _gameDisplay.DisplayToWorldDelta(dragDelta.ToMVector2());
                 }
                 else if (MGame.TouchScreen.Tap.TryGetCoordinate(out var tapCoordinate))
                 {

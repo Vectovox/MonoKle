@@ -119,19 +119,6 @@ namespace MonoKle
         public Matrix TransformMatrixInv => _transformMatrixInv;
 
         /// <summary>
-        /// Moves the current camera center in world-space by the provided camera-space delta vector.
-        /// Useful for movement based on screen-dragging.
-        /// </summary>
-        /// <param name="cameraSpaceDelta">The amount to move the camera by.</param>
-        public void TranslateCameraSpace(MVector2 cameraSpaceDelta)
-        {
-            var currentCameraSpacePosition = Transform(_position);
-            var nextCameraSpacePosition = currentCameraSpacePosition + cameraSpaceDelta;
-            var nextWorldSpacePosition = TransformInv(nextCameraSpacePosition);
-            Position = nextWorldSpacePosition;
-        }
-
-        /// <summary>
         /// Scales seamlessly towards the given coordinate by keeping it in the same spot in
         /// camera space.
         /// </summary>
@@ -148,6 +135,14 @@ namespace MonoKle
             // Move camera with how much the scaling changed the world coordinate location
             Position -= newWorldCoordinate - worldCoordinate;
         }
+
+        /// <summary>
+        /// Zooms seamlessly towards/from the given coordinate by keeping it in the same spot in
+        /// camera space.
+        /// </summary>
+        /// <param name="worldCoordinate">The camera space coordiante to scale towards.</param>
+        /// <param name="zoomFactor">The zoom factor, either negative or positive, to apply.</param>
+        public void ZoomAround(MVector2 worldCoordinate, float zoomFactor) => ScaleAround(worldCoordinate, Scale * zoomFactor);
 
         /// <summary>
         /// Transforms a given coordinate from world space to camera space.

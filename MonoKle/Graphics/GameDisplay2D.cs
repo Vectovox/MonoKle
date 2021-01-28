@@ -135,8 +135,8 @@ namespace MonoKle.Graphics
         /// E.g. for converting display click to game actions.
         /// </remarks>
         /// <param name="displayCoordinate">The display coordinate.</param>
-        public MVector2 DisplayToWorld(MVector2 displayCoordinate) =>
-            Camera.TransformInv(WorldRenderingArea.TransformDisplayToRender(displayCoordinate));
+        public MVector2 DisplayToWorld(MPoint2 displayCoordinate) =>
+            Camera.TransformInv(WorldRenderingArea.TransformDisplayToRender(displayCoordinate.ToMVector2()));
 
         /// <summary>
         /// Transforms the given display delta vector to world coordinate space.
@@ -145,8 +145,8 @@ namespace MonoKle.Graphics
         /// E.g. for converting display dragging to game dragging.
         /// </remarks>
         /// <param name="displayCoordinate">The display coordinate.</param>
-        public MVector2 DisplayToWorldDelta(MVector2 displayDelta) =>
-            DisplayToWorld(displayDelta) - DisplayToWorld(MVector2.Zero);
+        public MVector2 DisplayToWorldDelta(MPoint2 displayDelta) =>
+            DisplayToWorld(displayDelta) - DisplayToWorld(MPoint2.Zero);
 
         /// <summary>
         /// Transforms the given world coordinate to display space (screen pixel).

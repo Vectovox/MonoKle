@@ -206,12 +206,12 @@ namespace Demo.Domain
 
                 if (MGame.TouchScreen.Pinch.TryGetValues(out var pinchOrigin, out var pinchFactor))
                 {
-                    var worldCoordinate = _gameDisplay.DisplayToWorld(pinchOrigin.ToMVector2());
+                    var worldCoordinate = _gameDisplay.DisplayToWorld(pinchOrigin);
                     _gameDisplay.Camera.ScaleAround(worldCoordinate, pinchFactor);
                 }
                 else if (MGame.TouchScreen.Drag.TryGetDelta(out var dragDelta))
                 {
-                    _gameDisplay.Camera.Position -= _gameDisplay.DisplayToWorldDelta(dragDelta.ToMVector2());
+                    _gameDisplay.Camera.Position -= _gameDisplay.DisplayToWorldDelta(dragDelta);
                 }
                 else if (MGame.TouchScreen.Tap.TryGetCoordinate(out var tapCoordinate))
                 {
@@ -220,7 +220,7 @@ namespace Demo.Domain
 
                 if (MGame.Mouse.Right.IsPressed)
                 {
-                    _errorBoxPosition = _gameDisplay.DisplayToWorld(MGame.Mouse.Position.Coordinate.ToMVector2());
+                    _errorBoxPosition = _gameDisplay.DisplayToWorld(MGame.Mouse.Position.Coordinate);
                 }
 
                 if (MGame.Keyboard.IsKeyPressed(Keys.F2))

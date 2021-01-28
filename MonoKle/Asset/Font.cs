@@ -122,7 +122,6 @@ namespace MonoKle.Asset
             string newText = text;
             if (width > maximumWidth)
             {
-                int lastWrappedIndex = 0;
                 int lineStartIndex = 0;
                 for (int i = 1; i <= text.Length; i++)
                 {
@@ -132,7 +131,7 @@ namespace MonoKle.Asset
                     if (lineWidth > maximumWidth)
                     {
                         // Too wide so put a newline in the last previous space
-                        int lastPlaceToCut = newText.LastIndexOfAny(new char[] { ' ' }, i - 1, i - lastWrappedIndex);
+                        int lastPlaceToCut = newText.LastIndexOfAny(new char[] { ' ' }, i - 1, i - lineStartIndex);
                         if (lastPlaceToCut == -1)
                         {
                             // No good place to cut the text so end it here already
@@ -141,8 +140,7 @@ namespace MonoKle.Asset
                         newText = newText.Remove(lastPlaceToCut, 1).Insert(lastPlaceToCut, "\n");
 
                         // Update indices
-                        lastWrappedIndex = lastPlaceToCut;
-                        lineStartIndex = i;
+                        lineStartIndex = lastPlaceToCut;
                     }
                 }
             }

@@ -465,10 +465,10 @@ namespace MonoKle
             new MRectangle(TopLeft.X, TopLeft.Y, Width + deltaWidth, Height + deltaHeight);
 
         /// <summary>
-        /// Scales the <see cref="MRectangle"/> around <see cref="Center"/> with the given factor.
+        /// Uniformly scales the <see cref="MRectangle"/> around <see cref="Center"/> with the given factor.
         /// </summary>
         /// <param name="factor">The factor with which to scale.</param>
-        /// <returns>Scaled <see cref="MRectangle"/>.</returns>
+        /// <returns>Scaled rectangle positioned such that the origin is the same as the initial rectangle.</returns>
         public MRectangle Scale(float factor)
         {
             var newDimensions = Dimensions * factor;

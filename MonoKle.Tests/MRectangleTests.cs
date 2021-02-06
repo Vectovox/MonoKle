@@ -569,6 +569,51 @@ namespace MonoKle.Tests
         }
 
         [TestMethod]
+        public void Scale_Growing_OriginZero_Correct()
+        {
+            var testRectangle = new MRectangle(-5, -5, 10, 10);
+            var result = testRectangle.Scale(2f);
+            var expected = new MRectangle(-10, -10, 20, 20);
+            Assert.AreEqual(expected, result);
+        }
+
+        [TestMethod]
+        public void Scale_Shrinking_OriginZero_Correct()
+        {
+            var testRectangle = new MRectangle(-5, -5, 10, 10);
+            var result = testRectangle.Scale(0.5f);
+            var expected = new MRectangle(-2.5f, -2.5f, 5, 5);
+            Assert.AreEqual(expected, result);
+        }
+
+        [TestMethod]
+        public void Scale_Growing_Correct()
+        {
+            var testRectangle = new MRectangle(0, 0, 10, 10);
+            var result = testRectangle.Scale(2f);
+            var expected = new MRectangle(-5, -5, 20, 20);
+            Assert.AreEqual(expected, result);
+        }
+
+        [TestMethod]
+        public void Scale_Shrinking_Correct()
+        {
+            var testRectangle = new MRectangle(0, 0, 10, 10);
+            var result = testRectangle.Scale(0.5f);
+            var expected = new MRectangle(2.5f, 2.5f, 5, 5);
+            Assert.AreEqual(expected, result);
+        }
+
+        [TestMethod]
+        public void Scale_Uniform()
+        {
+            var testRectangle = new MRectangle(0, 0, 10, 15);
+            var result = testRectangle.Scale(2f);
+            var expected = new MRectangle(-5, -7.5f, 20, 30);
+            Assert.AreEqual(expected, result);
+        }
+
+        [TestMethod]
         public void PositionCenter_Point()
         {
             var testRectangle = new MRectangle(16, 9);

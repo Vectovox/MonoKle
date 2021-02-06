@@ -102,7 +102,7 @@ namespace MonoKle.Asset
             || extension.Equals(".jpg", StringComparison.InvariantCultureIgnoreCase)
             || extension.Equals(".gif", StringComparison.InvariantCultureIgnoreCase);
 
-        protected override bool Load(string path, string identifier, params string[] args)
+        protected override bool Load(string path, string identifier, string[] args)
         {
             // Parse atlas rectangle
             MRectangleInt? atlasRectangle = null;

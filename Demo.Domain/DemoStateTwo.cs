@@ -44,7 +44,7 @@ namespace Demo.Domain
             primitiveBatch2D.End();
 
             spriteBatch.Begin();
-            spriteBatch.DrawString(MGame.FontStorage.DefaultValue, tapString, Vector2.Zero, Color.White);
+            spriteBatch.DrawString(MGame.FontStorage.Default, tapString, Vector2.Zero, Color.White);
             spriteBatch.End();
         }
 

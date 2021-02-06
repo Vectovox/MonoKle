@@ -238,10 +238,10 @@ namespace MonoKle.Engine
                 GraphicsManager.GraphicsDevice,
                 _keyboard,
                 TextureStorage.White,
-                FontStorage.DefaultValue,
+                FontStorage.Default,
                 Logger);
             Console.ToggleKey = Microsoft.Xna.Framework.Input.Keys.F1;
-            Console.TextFont = FontStorage.DefaultValue;
+            Console.TextFont = FontStorage.Default;
         }
 
         private static void InitializeFontStorage()
@@ -249,7 +249,7 @@ namespace MonoKle.Engine
             FontStorage = new FontStorage(GraphicsManager.GraphicsDevice);
             using var ms = new MemoryStream(Resources.FontResources.DefaultFont);
             FontStorage.Load(ms, "default");
-            FontStorage.DefaultValue = FontStorage.GetAsset("default");
+            FontStorage.Default = FontStorage["default"];
         }
 
         private static void InitializeVariables()

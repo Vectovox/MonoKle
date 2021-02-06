@@ -48,7 +48,7 @@ namespace Demo.Domain
             _spriteBatch.Draw(MGame.TextureStorage["green"], new Vector2(200, 50), Color.White);
             _spriteBatch.Draw(MGame.TextureStorage["blue"], new Vector2(250, 50), Color.White);
 
-            Font font = MGame.FontStorage.GetAsset("data/Fonts/testfont.mfnt");
+            Font font = MGame.FontStorage["testfont"];
 
             // Test timer
             _spriteBatch.DrawString(font, "Timer: " + _timer.TimeLeft + " (" + _timer.Duration + ") Done? " + _timer.IsDone,
@@ -92,7 +92,7 @@ namespace Demo.Domain
             Vector2 o = font.MeasureString(_textInput.Text) * 0.5f;
             _spriteBatch.DrawString(font, _textInput.Text, new Vector2(000, 600), Color.Green, 0f, o, 1f, SpriteEffects.None, 0f);
 
-            _spriteBatch.DrawString(MGame.FontStorage.DefaultValue, _stateSwitchMessage, new Vector2(0, 700), Color.Green);
+            _spriteBatch.DrawString(MGame.FontStorage.Default, _stateSwitchMessage, new Vector2(0, 700), Color.Green);
 
             // Test size measurements.
             var sizeTestPos = new Vector2(50, 450);

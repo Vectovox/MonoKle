@@ -10,6 +10,7 @@ namespace MonoKle.Graphics
     public class GameDisplay2D : IDisposable
     {
         private readonly GraphicsManager _graphicsManager;
+        private DynamicCamera2D _camera = new DynamicCamera2D(MPoint2.One);
 
         public GraphicsDevice GraphicsDevice { get; }
 
@@ -17,9 +18,20 @@ namespace MonoKle.Graphics
         public MPoint2 UiTargetResolution { get; }
 
         /// <summary>
-        /// Gets the camera for the world rendering.
+        /// Gets or sets the camera for the world rendering.
         /// </summary>
-        public DynamicCamera2D Camera { get; }
+        /// <remarks>
+        /// Setting the camera will automatically update its size to conform to the rendering resolution.
+        /// </remarks>
+        public DynamicCamera2D Camera
+        {
+            get => _camera;
+            set
+            {
+                _camera = value;
+                SetCameraSize();
+            }
+        }
 
         /// <summary>
         /// Gets the resolution of the display.
@@ -68,9 +80,6 @@ namespace MonoKle.Graphics
         /// <param name="targetUiResolution">The target resolution of the UI rendering.</param>
         public GameDisplay2D(GraphicsManager graphicsManager, MPoint2 targetWorldResolution, MPoint2 targetUiResolution)
         {
-            // Create camera with temporary size
-            Camera = new DynamicCamera2D(MPoint2.One);
-
             // Graphics manager stuff
             _graphicsManager = graphicsManager;
             _graphicsManager.ResolutionChanged += ResolutionChanged;
@@ -92,7 +101,6 @@ namespace MonoKle.Graphics
         {
             // World setup
             WorldRenderingArea = new RenderingArea2D(WorldTargetResolution, DisplayResolution);
-            Camera.Size = WorldRenderingArea.Render.BottomRight;
             WorldRenderTarget?.Dispose();    // Make sure to dispose or we get a memory leak
             WorldRenderTarget = new RenderTarget2D(GraphicsDevice,
                 WorldRenderingArea.Render.Width,
@@ -110,7 +118,11 @@ namespace MonoKle.Graphics
                 MipMap,
                 SurfaceFormat,
                 DepthFormat);
+
+            SetCameraSize();
         }
+
+        private void SetCameraSize() => Camera.Size = WorldRenderingArea.Render.BottomRight;
 
         /// <summary>
         /// Call to dispose.

@@ -4,10 +4,10 @@ using System;
 namespace MonoKle
 {
     /// <summary>
-    /// Serializable class representing a 2D environment camera providing transformation capabilities.
+    /// Serializable class representing a 2D environment camera with capabilities over time.
     /// </summary>
     [Serializable]
-    public class LinearCamera2D : Camera2D
+    public class DynamicCamera2D : Camera2D
     {
         public float DesiredRotation { get; private set; }
         private float _rotationSpeed;
@@ -19,10 +19,10 @@ namespace MonoKle
         private float _translationSpeed;
 
         /// <summary>
-        /// Initiates a new instance of <see cref="LinearCamera2D"/>.
+        /// Initiates a new instance of <see cref="DynamicCamera2D"/>.
         /// </summary>
         /// <param name="size">The <see cref="MPoint2"/> represenetation of the camera size.</param>
-        public LinearCamera2D(MPoint2 size) : base(size) { }
+        public DynamicCamera2D(MPoint2 size) : base(size) { }
 
         /// <summary>
         /// Moves the current camera center position to the given coordinate

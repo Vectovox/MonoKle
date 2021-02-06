@@ -11,26 +11,39 @@ namespace MonoKle.Asset
     /// </summary>
     public class Font
     {
-        private readonly FontFile _data;
         private readonly Dictionary<char, FontChar> _fontCharByChar;
         private readonly List<Texture2D> _pageList;
 
         /// <summary>
         /// Gets the line height of the font.
         /// </summary>
-        public int LineHeight => _data.Common.LineHeight;
+        public int LineHeight { get; private set; }
 
         /// <summary>
         /// Creates a new instance of <see cref="Font"/>
         /// </summary>
         /// <param name="data">The data representation.</param>
         /// <param name="pageList">The image representations.</param>
-        public Font(FontFile data, List<Texture2D> pageList)
+        public Font(FontFile data, List<Texture2D> pageList) : this(pageList, data.Chars.ToDictionary(ch => (char)ch.ID))
         {
-            _data = data;
-            _pageList = pageList;
-            _fontCharByChar = data.Chars.ToDictionary(ch => (char)ch.ID);
+            LineHeight = data.Common.LineHeight;
         }
+
+        private Font(List<Texture2D> pageList, Dictionary<char, FontChar> fontCharByChar)
+        {
+            _pageList = pageList;
+            _fontCharByChar = fontCharByChar;
+        }
+
+        /// <summary>
+        /// Returns a new font with the given line height.
+        /// </summary>
+        /// <param name="height">The line height.</param>
+        /// <returns>A new <see cref="Font"/> instance with the same data but different line height.</returns>
+        public Font WithLineHeight(int height) => new Font(_pageList, _fontCharByChar)
+        {
+            LineHeight = height
+        };
 
         /// <summary>
         /// Gets the font character associated with the provided character.

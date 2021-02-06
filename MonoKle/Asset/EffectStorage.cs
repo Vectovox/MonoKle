@@ -7,7 +7,7 @@ namespace MonoKle.Asset
     /// <summary>
     /// Class storing and loading effect files.
     /// </summary>
-    public class EffectStorage : AbstractAssetStorage<Effect>
+    public class EffectStorage : BasicAssetStorage<Effect>
     {
         private readonly GraphicsDevice _graphicsDevice;
 
@@ -20,7 +20,9 @@ namespace MonoKle.Asset
             _graphicsDevice = graphicsDevice;
         }
 
-        protected override Effect DoLoadStream(Stream stream)
+        protected override bool FileSupported(string extension) => extension.Equals(".mfx");
+
+        protected override bool Load(Stream stream, out Effect result)
         {
             int val = stream.ReadByte();
             List<byte> bytes = new List<byte>();
@@ -29,10 +31,17 @@ namespace MonoKle.Asset
                 bytes.Add((byte)val);
                 val = stream.ReadByte();
             }
-            var effect = new Effect(_graphicsDevice, bytes.ToArray());
-            return effect;
-        }
 
-        protected override bool FileSupported(string extension) => extension.Equals(".mfx");
+            try
+            {
+                result = new Effect(_graphicsDevice, bytes.ToArray());
+                return true;
+            }
+            catch
+            {
+                result = null;
+                return false;
+            }
+        }
     }
 }

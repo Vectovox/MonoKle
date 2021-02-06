@@ -130,7 +130,7 @@ namespace Demo.Domain
 
             // Combine scene and inverting stuff to backbuffer
             MGame.GraphicsManager.GraphicsDevice.SetRenderTarget(null);
-            var effect = MGame.EffectStorage.GetAsset("Data/Effects/inversion.mfx");
+            var effect = MGame.EffectStorage["inversion"];
             effect.Parameters["inverterTexture"].SetValue(_inverterRenderTarget);
             
             _spriteBatch.Begin(effect: effect);
@@ -158,7 +158,7 @@ namespace Demo.Domain
                 if (MGame.Keyboard.IsKeyPressed(Keys.Space))
                 {
                     MGame.StateSystem.SwitchState("stateTwo", null);
-                    MGame.AudioStorage.GetAsset("Data/Sounds/santa.wav").Play(1f, 0f, 0f);
+                    MGame.AudioStorage["santa"].Play(1f, 0f, 0f);
                 }
 
                 if (MGame.Keyboard.AreKeysHeld(new Keys[] { Keys.R, Keys.T }, MonoKle.Input.CollectionQueryBehavior.All))

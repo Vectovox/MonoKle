@@ -13,11 +13,23 @@ namespace MonoKle.Asset
     ///     4-bit compressed IMA/ADPCM(IMA4),
     ///     4-bit compressed
     /// </summary>
-    public class AudioStorage : AbstractAssetStorage<SoundEffect>
+    public class AudioStorage : BasicAssetStorage<SoundEffect>
     {
         protected override bool FileSupported(string extension) =>
             extension.Equals(".wav", StringComparison.InvariantCultureIgnoreCase);
 
-        protected override SoundEffect DoLoadStream(Stream stream) => SoundEffect.FromStream(stream);
+        protected override bool Load(Stream stream, out SoundEffect result)
+        {
+            try
+            {
+                result = SoundEffect.FromStream(stream);
+                return true;
+            }
+            catch
+            {
+                result = null;
+                return false;
+            }
+        }
     }
 }

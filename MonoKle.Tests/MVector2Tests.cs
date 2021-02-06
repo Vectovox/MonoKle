@@ -51,6 +51,23 @@ namespace MonoKle.Tests
         }
 
         [TestMethod]
-        public void TestUnaryOperatorMinus() => Assert.AreEqual(new MVector2(1, -3), -new MVector2(-1, 3));
+        public void UnaryOperatorMinus_Correct() => Assert.AreEqual(new MVector2(1, -3), -new MVector2(-1, 3));
+
+        [TestMethod]
+        public void MemberwiseProduct_Correct() => Assert.AreEqual(new MVector2(2, -6), new MVector2(1, -2) * new MVector2(2, 3));
+
+        [TestMethod]
+        public void MemberwiseDivision_Correct() => Assert.AreEqual(new MVector2(5, -2), new MVector2(10, -6) / new MVector2(2, 3));
+
+        [TestMethod]
+        public void MemberwiseAddition_Correct() => Assert.AreEqual(new MVector2(3, -6), new MVector2(1, 5) + new MVector2(2, -11));
+
+        [TestMethod]
+        public void MemberwiseSubtraction_LikeNegativeAddition()
+        {
+            MVector2 a = new MVector2(10, -7);
+            MVector2 b = new MVector2(-3, 28);
+            Assert.AreEqual(a + -b, a - b);
+        }
     }
 }

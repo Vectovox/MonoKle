@@ -133,6 +133,22 @@ namespace MonoKle
         public static MVector2 operator +(MVector2 a, MVector2 b) => new MVector2(a.X + b.X, a.Y + b.Y);
 
         /// <summary>
+        /// Operator for memberwise multiplication with another <see cref="MVector2"/>.
+        /// </summary>
+        /// <param name="a">Left operand.</param>
+        /// <param name="b">Right operand.</param>
+        /// <returns>Multiplied result.</returns>
+        public static MVector2 operator *(MVector2 a, MVector2 b) => new MVector2(a.X * b.X, a.Y * b.Y);
+
+        /// <summary>
+        /// Operator for memberwise division with another <see cref="MVector2"/>.
+        /// </summary>
+        /// <param name="a">Left operand.</param>
+        /// <param name="b">Right operand.</param>
+        /// <returns>Division result.</returns>
+        public static MVector2 operator /(MVector2 a, MVector2 b) => new MVector2(a.X / b.X, a.Y / b.Y);
+
+        /// <summary>
         /// Logic operator for equality.
         /// </summary>
         /// <param name="a">Left operand.</param>

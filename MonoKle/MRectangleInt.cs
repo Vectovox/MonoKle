@@ -390,6 +390,20 @@ namespace MonoKle
             new MRectangleInt(TopLeft.X, TopLeft.Y, Width + deltaWidth, Height + deltaHeight);
 
         /// <summary>
+        /// Uniformly scales the <see cref="MRectangleInt"/> around <see cref="Center"/> with the given factor.
+        /// </summary>
+        /// <remarks>
+        /// Will apply integer cast rounding for fractional results.
+        /// </remarks>
+        /// <param name="factor">The factor with which to scale.</param>
+        /// <returns>Scaled rectangle positioned such that the origin is the same as the initial rectangle.</returns>
+        public MRectangleInt Scale(float factor)
+        {
+            var scaled = new MRectangle(Left, Top, Width * factor, Height * factor).ToMRectangleInt();
+            return scaled.Translate((Width - scaled.Width) / 2, (Height - scaled.Height) / 2);
+        }
+
+        /// <summary>
         /// Translates the <see cref="MRectangleInt"/> with the given translation and returns the result.
         /// </summary>
         /// <param name="translation">The translation to make.</param>

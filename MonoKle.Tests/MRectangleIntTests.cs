@@ -378,5 +378,50 @@ namespace MonoKle.Tests
             Assert.AreEqual(expectedRectangle, testRectangle.Intersect(intersectRectangle));
             Assert.AreEqual(expectedRectangle, intersectRectangle.Intersect(testRectangle));
         }
+
+        [TestMethod]
+        public void Scale_Growing_OriginZero_Correct()
+        {
+            var testRectangle = new MRectangleInt(-5, -5, 10, 10);
+            var result = testRectangle.Scale(2f);
+            var expected = new MRectangleInt(-10, -10, 20, 20);
+            Assert.AreEqual(expected, result);
+        }
+
+        [TestMethod]
+        public void Scale_Shrinking_OriginZero_Correct()
+        {
+            var testRectangle = new MRectangleInt(-5, -5, 10, 10);
+            var result = testRectangle.Scale(0.5f);
+            var expected = new MRectangleInt(-3, -3, 5, 5);
+            Assert.AreEqual(expected, result);
+        }
+
+        [TestMethod]
+        public void Scale_Growing_Correct()
+        {
+            var testRectangle = new MRectangleInt(0, 0, 10, 10);
+            var result = testRectangle.Scale(2f);
+            var expected = new MRectangleInt(-5, -5, 20, 20);
+            Assert.AreEqual(expected, result);
+        }
+
+        [TestMethod]
+        public void Scale_Shrinking_Correct()
+        {
+            var testRectangle = new MRectangleInt(0, 0, 10, 10);
+            var result = testRectangle.Scale(0.5f);
+            var expected = new MRectangleInt(2, 2, 5, 5);
+            Assert.AreEqual(expected, result);
+        }
+
+        [TestMethod]
+        public void Scale_Uniform()
+        {
+            var testRectangle = new MRectangleInt(0, 0, 10, 15);
+            var result = testRectangle.Scale(2f);
+            var expected = new MRectangleInt(-5, -7, 20, 30);
+            Assert.AreEqual(expected, result);
+        }
     }
 }

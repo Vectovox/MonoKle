@@ -75,10 +75,11 @@ namespace MonoKle
             get => _scale;
             set
             {
-                _scale = Math.Clamp(value, MinScale, MaxScale);
+                _scale = ClampScale(value);
                 _matrixNeedsUpdate = true;
             }
         }
+        private float ClampScale(float scale) => Math.Clamp(scale, MinScale, MaxScale);
 
         /// <summary>
         /// Gets or sets the minimum allowed scaling.
@@ -124,16 +125,25 @@ namespace MonoKle
         /// </summary>
         /// <param name="worldCoordinate">The camera space coordiante to scale towards.</param>
         /// <param name="deltaScaling">The amount of scaling to add.</param>
-        public void ScaleAround(MVector2 worldCoordinate, float deltaScaling)
+        public void ScaleAround(MVector2 worldCoordinate, float deltaScaling) =>
+            (Scale, Position) = GetScaleAroundTranslation(worldCoordinate, deltaScaling);
+
+        protected (float Scale, MVector2 Position) GetScaleAroundTranslation(MVector2 worldCoordinate, float deltaScaling)
         {
             // Store the camera space of the world coordinate
             var cameraCoordinate = Transform(worldCoordinate);
             // Apply scaling
-            Scale += deltaScaling;
+            var newScale = ClampScale(Scale + deltaScaling);
+            // Terminate early if no scaling was done
+            if (Scale == newScale)
+            {
+                return (Scale, Position);
+            }
             // Calculate where in the world space the camera coordinate is now
-            MVector2 newWorldCoordinate = Vector2.Transform(cameraCoordinate, CalculateMatrices(Position, Rotation, Scale, Size).TransformInv);
+            MVector2 newWorldCoordinate = Vector2.Transform(cameraCoordinate, CalculateMatrices(Position, Rotation, newScale, Size).TransformInv);
             // Move camera with how much the scaling changed the world coordinate location
-            Position -= newWorldCoordinate - worldCoordinate;
+            var newPosition = Position - (newWorldCoordinate - worldCoordinate);
+            return (newScale, newPosition);
         }
 
         /// <summary>

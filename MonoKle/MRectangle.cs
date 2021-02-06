@@ -469,13 +469,7 @@ namespace MonoKle
         /// </summary>
         /// <param name="factor">The factor with which to scale.</param>
         /// <returns>Scaled rectangle positioned such that the origin is the same as the initial rectangle.</returns>
-        public MRectangle Scale(float factor)
-        {
-            var newDimensions = Dimensions * factor;
-            var deltaDimensions = newDimensions - Dimensions;
-            var newTopLeft = TopLeft - deltaDimensions * 0.5f;
-            return new MRectangle(newTopLeft.X, newTopLeft.Y, newDimensions.X, newDimensions.Y);
-        }
+        public MRectangle Scale(float factor) => new MRectangle(Dimensions * factor).PositionCenter(this);
 
         /// <summary>
         /// Translates the <see cref="MRectangle"/> with the given translation and returns the result.

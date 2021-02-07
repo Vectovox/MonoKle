@@ -5,32 +5,39 @@ using System.IO;
 
 namespace MonoKle.Asset
 {
-    public abstract class BasicAssetStorage<T> : AbstractAssetStorage
+    public abstract class BasicAssetStorage<T> : BasicAssetStorage<T, T>
     {
-        private readonly Dictionary<string, T> _assetStorage = new Dictionary<string, T>();
+        protected override T GetInstance(T data) => data;
+    }
+
+    public abstract class BasicAssetStorage<TData, TInstance> : AbstractAssetStorage
+    {
+        private readonly Dictionary<string, TData> _assetStorage = new Dictionary<string, TData>();
 
         /// <summary>
         /// Gets or sets the default asset.
         /// </summary>
-        public T Default { get; set; }
+        public TInstance Default { get; set; }
 
         /// <summary>
         /// Accesses the asset with the given identifier. If the asset does not exist
         /// the <see cref="Default"/> asset will be returned.
         /// </summary>
         /// <param name="identifier">The identifier of the asset to get.</param>
-        public T this[string identifier]
+        public TInstance this[string identifier]
         {
             get
             {
-                if (_assetStorage.TryGetValue(identifier, out T value))
+                if (_assetStorage.TryGetValue(identifier, out TData value))
                 {
-                    return value;
+                    return GetInstance(value);
                 }
                 Logger.Global.Log($"Tried to access non-existing identifier '{identifier}'.", LogLevel.Warning);
                 return Default;
             }
         }
+
+        protected abstract TInstance GetInstance(TData data);
 
         /// <summary>
         /// Gets the available identifiers.
@@ -61,7 +68,7 @@ namespace MonoKle.Asset
             return Load(TitleContainer.OpenStream(path), identifier);
         }
 
-        protected abstract bool Load(Stream stream, out T result);
+        protected abstract bool Load(Stream stream, out TData result);
 
         /// <summary>
         /// Unloads all assets, returning the amount of asset identifiers unloaded.

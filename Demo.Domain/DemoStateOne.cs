@@ -64,7 +64,7 @@ namespace Demo.Domain
             }
 
             // Test linebreak
-            font.Draw(_spriteBatch, "LINE\nbreak", new Vector2(50, 250), Color.Green);
+            font.WithLinePadding(-20).Draw(_spriteBatch, "LINE break\nwith padding", new Vector2(50, 250), Color.Green);
 
             // Test wrapping strings
             int wrapLength = (int)_errorBoxPosition.X;

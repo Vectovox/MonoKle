@@ -15,7 +15,7 @@ namespace MonoKle.Asset
         /// <summary>
         /// Gets the pixel height of the font text.
         /// </summary>
-        public int Size { get; private set; }
+        public int Size { get; }
 
         /// <summary>
         /// Creates a new instance of <see cref="FontData"/>.

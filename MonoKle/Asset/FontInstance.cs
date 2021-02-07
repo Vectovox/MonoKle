@@ -13,7 +13,7 @@ namespace MonoKle.Asset
 
         /// <summary>
         /// Initializes a new instance of <see cref="FontInstance"/> class with the default <see cref="Size"/>
-        /// assigned from the font data.
+        /// and <see cref="LineHeight"/> assigned from the font data.
         /// </summary>
         /// <param name="fontData"></param>
         public FontInstance(FontData fontData)
@@ -27,13 +27,25 @@ namespace MonoKle.Asset
         /// </summary>
         /// <param name="size">The font size to use.</param>
         /// <returns>New instance of <see cref="FontInstance"/> with the provided size.</returns>
-        public FontInstance WithSize(int size) => new FontInstance(_fontData) { Size = size };
+        public FontInstance WithSize(int size) => new FontInstance(_fontData) { Size = size, LinePadding = LinePadding };
 
         /// <summary>
-        /// Gets the size of the font.
+        /// Returns a new instance of the same font with the given line height padding.
+        /// </summary>
+        /// <param name="padding">The line height padding to use.</param>
+        /// <returns>New instance of <see cref="FontInstance"/> with the provided line height padding.</returns>
+        public FontInstance WithLinePadding(int padding) => new FontInstance(_fontData) { LinePadding = padding, Size = Size };
+
+        /// <summary>
+        /// Gets or sets the size, in pixels.
         /// </summary>
         public int Size { get; set; }
         private float ScaleFactor => Size / (float)_fontData.Size;
+
+        /// <summary>
+        /// Gets or sets the line height padding, in pixels.
+        /// </summary>
+        public int LinePadding { get; set; }
 
         /// <summary>
         /// Returns the size of the given text.
@@ -47,7 +59,7 @@ namespace MonoKle.Asset
         public MVector2 Measure(string text)
         {
             float rowSize = 0f;
-            Vector2 totalSize = new Vector2(0f, _fontData.Size);
+            Vector2 totalSize = new Vector2(0f, Size + LinePadding);
 
             foreach (char character in text)
             {
@@ -59,7 +71,7 @@ namespace MonoKle.Asset
                     rowSize = 0;
 
                     // Y-component
-                    totalSize.Y += _fontData.Size;
+                    totalSize.Y += Size + LinePadding;
                 }
                 else if (_fontData.TryGetChar(character, out FontChar fontCharacter))
                 {
@@ -69,8 +81,8 @@ namespace MonoKle.Asset
             }
 
             // Final update to total size
-            totalSize.X = Math.Max(totalSize.X, rowSize);
-            return totalSize * ScaleFactor;
+            totalSize.X = Math.Max(totalSize.X, rowSize) * ScaleFactor;
+            return totalSize;
         }
 
         /// <summary>
@@ -162,20 +174,20 @@ namespace MonoKle.Asset
         public void Draw(SpriteBatch spriteBatch, string text, Vector2 position, Color color,
             float rotation, Vector2 origin, float layerDepth, SpriteEffects effect)
         {
-            float scale = ScaleFactor;
+            float scaleFactor = ScaleFactor;    // Precompute for efficiency
             Vector2 drawPosition = position;
             foreach (char character in text)
             {
                 if (character == '\n')
                 {
                     // Move to next line
-                    drawPosition.Y += _fontData.Size * scale;
+                    drawPosition.Y += Size + LinePadding;
                     drawPosition.X = position.X;
                 }
                 else if (_fontData.TryGetChar(character, out FontChar fontCharacter))
                 {
                     var sourceRectangle = new Rectangle(fontCharacter.X, fontCharacter.Y, fontCharacter.Width, fontCharacter.Height);
-                    var destinationVector = new Vector2(drawPosition.X, drawPosition.Y + (fontCharacter.YOffset * scale));
+                    var destinationVector = new Vector2(drawPosition.X, drawPosition.Y + (fontCharacter.YOffset * scaleFactor));
 
                     // Apply rotation
                     if (rotation != 0)
@@ -192,8 +204,8 @@ namespace MonoKle.Asset
                     }
 
                     spriteBatch.Draw(_fontData.GetPage(fontCharacter.Page), destinationVector, sourceRectangle, color,
-                        rotation, Vector2.Zero, scale, effect, layerDepth);
-                    drawPosition.X += fontCharacter.XAdvance * scale;
+                        rotation, Vector2.Zero, scaleFactor, effect, layerDepth);
+                    drawPosition.X += fontCharacter.XAdvance * scaleFactor;
                 }
             }
         }

@@ -1,6 +1,5 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
@@ -8,9 +7,9 @@ using System.Xml.Serialization;
 namespace MonoKle.Asset
 {
     /// <summary>
-    /// Manages drawable fonts.
+    /// Stores drawable fonts.
     /// </summary>
-    public class FontStorage : BasicAssetStorage<Font>
+    public class FontStorage : BasicAssetStorage<FontData, FontInstance>
     {
         private readonly GraphicsDevice _graphicsDevice;
 
@@ -22,7 +21,9 @@ namespace MonoKle.Asset
 
         protected override bool FileSupported(string extension) => extension.Equals(".mfnt", StringComparison.InvariantCultureIgnoreCase);
 
-        protected override bool Load(Stream stream, out Font result)
+        protected override FontInstance GetInstance(FontData data) => new FontInstance(data);
+
+        protected override bool Load(Stream stream, out FontData result)
         {
             var serializer = new XmlSerializer(typeof(BakedFont));
             object o = serializer.Deserialize(stream);
@@ -46,7 +47,7 @@ namespace MonoKle.Asset
                 }
             }).ToList();
 
-            result = new Font(baked.FontFile, texList);
+            result = new FontData(baked.FontFile, texList);
             return true;
         }
     }

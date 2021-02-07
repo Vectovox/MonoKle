@@ -38,7 +38,7 @@ namespace MonoKle.Console
         /// <param name="keyboardInput">The keyboard input.</param>
         /// <param name="whiteTexture">The background texture.</param>
         /// <param name="logger">The logger to use.</param>
-        public GameConsole(MRectangleInt area, GraphicsDevice graphicsDevice, IKeyboard keyboardInput, MTexture whiteTexture, Font font, Logger logger)
+        public GameConsole(MRectangleInt area, GraphicsDevice graphicsDevice, IKeyboard keyboardInput, MTexture whiteTexture, FontInstance font, Logger logger)
         {
             _spriteBatch = new SpriteBatch(graphicsDevice);
             _keyboard = new KeyboardTyper(keyboardInput, TypingActivationDelay, TypingCycleDelay);
@@ -46,6 +46,7 @@ namespace MonoKle.Console
 
             Area = area;
             TextFont = font;
+            TextSize = 16;
             _whiteTexture = whiteTexture;
             logger.LogAddedEvent += LogAdded;
             logger.Log("GameConsole activated.", LogLevel.Debug);
@@ -76,10 +77,10 @@ namespace MonoKle.Console
 
         public int TabLength { get; set; } = 4;
 
-        public Font TextFont { get; set; }
+        public FontInstance TextFont { get; set; }
 
-        [CVar("c_textscale")]
-        public float TextScale { get; set; } = 0.5f;
+        [CVar("c_textsize")]
+        public int TextSize { get => TextFont.Size; set => TextFont.Size = value; }
 
         public Keys ToggleKey { get; set; } = Keys.F1;
 
@@ -97,16 +98,16 @@ namespace MonoKle.Console
                 _spriteBatch.Draw(_whiteTexture, Area, BackgroundColor);
 
                 // Draw input field
-                var textPosition = new Vector2(Area.Left, Area.Bottom - TextFont.MeasureString(_inputField.CursorDisplayText, TextScale).Y);
-                _spriteBatch.DrawString(TextFont, _inputField.CursorDisplayText, textPosition, CommandTextColour, 0f, Vector2.Zero, TextScale, SpriteEffects.None, 0f);
+                var textPosition = new Vector2(Area.Left, Area.Bottom - TextFont.Measure(_inputField.CursorDisplayText).Y);
+                TextFont.Draw(_spriteBatch, _inputField.CursorDisplayText, textPosition, CommandTextColour);
 
                 // Draw all lines
                 foreach (var line in _textEntries.Skip(_scrollOffset))
                 {
-                    string stringToDraw = TextFont.WrapString(line.Text, Area.Width, TextScale);
-                    var stringHeight = TextFont.MeasureString(stringToDraw, TextScale).Y;
+                    string stringToDraw = TextFont.Wrap(line.Text, Area.Width);
+                    var stringHeight = TextFont.Measure(stringToDraw).Y;
                     textPosition.Y -= stringHeight;
-                    _spriteBatch.DrawString(TextFont, stringToDraw, textPosition, line.Color, 0f, Vector2.Zero, TextScale, SpriteEffects.None, 0f);
+                    TextFont.Draw(_spriteBatch, stringToDraw, textPosition, line.Color);
 
                     if (textPosition.Y + stringHeight < 0)
                     {
@@ -285,7 +286,7 @@ namespace MonoKle.Console
 
         private void ScrollUp() => Scroll(ScrollHeight);
 
-        private int ScrollHeight => (int)(Area.Height / TextFont.MeasureString("M", TextScale).Y) / 2;
+        private int ScrollHeight => (int)(Area.Height / TextFont.Measure("M").Y) / 2;
 
         private void Scroll(int delta) => _scrollOffset = MathHelper.Clamp(_scrollOffset + delta, 0, _textEntries.Count - 1);
 

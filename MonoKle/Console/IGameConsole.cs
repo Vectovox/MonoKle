@@ -100,16 +100,16 @@ namespace MonoKle.Console
         /// <summary>
         /// Gets or sets the string identifier of the text font.
         /// </summary>
-        Font TextFont
+        FontInstance TextFont
         {
             get;
             set;
         }
 
         /// <summary>
-        /// Gets or sets the scale for the font.
+        /// Gets or sets the size of the font.
         /// </summary>
-        float TextScale
+        int TextSize
         {
             get;
             set;

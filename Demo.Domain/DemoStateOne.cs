@@ -48,60 +48,60 @@ namespace Demo.Domain
             _spriteBatch.Draw(MGame.TextureStorage["green"], new Vector2(200, 50), Color.White);
             _spriteBatch.Draw(MGame.TextureStorage["blue"], new Vector2(250, 50), Color.White);
 
-            Font font = MGame.FontStorage["testfont"];
+            FontInstance font = MGame.FontStorage["testfont"];
 
             // Test timer
-            _spriteBatch.DrawString(font, "Timer: " + _timer.TimeLeft + " (" + _timer.Duration + ") Done? " + _timer.IsDone,
+            font.Draw(_spriteBatch, "Timer: " + _timer.TimeLeft + " (" + _timer.Duration + ") Done? " + _timer.IsDone,
                 new Vector2(50, 150), Color.Green);
 
-            Vector2 DrawTextBox(string text, MVector2 position, float scale = 1f)
+            Vector2 DrawTextBox(string text, MVector2 position, int fontSize = 32)
             {
-                var size = font.MeasureString(text, scale);
+                FontInstance newInstance = font.WithSize(fontSize);
+                var size = newInstance.Measure(text);
                 _spriteBatch.Draw(MGame.TextureStorage.White, new MRectangle(position, position + size).ToMRectangleInt(), Color.Gray);
-                _spriteBatch.DrawString(font, text, position, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0);
+                newInstance.Draw(_spriteBatch, text, position, Color.White);
                 return size;
             }
 
             // Test linebreak
-            _spriteBatch.DrawString(font, "LINE\nbreak",
-                 new Vector2(50, 250), Color.Green);
+            font.Draw(_spriteBatch, "LINE\nbreak", new Vector2(50, 250), Color.Green);
 
             // Test wrapping strings
             int wrapLength = (int)_errorBoxPosition.X;
-            DrawTextBox(font.WrapString("This is a too long string that should be wrapped appropriately", wrapLength, 1), new MVector2(0, 650));
+            DrawTextBox(font.Wrap("This is a too long string that should be wrapped appropriately", wrapLength), new MVector2(0, 650));
             _spriteBatch.Draw(MGame.TextureStorage.White, new MRectangleInt(0, 650, wrapLength, 100), new Color(1f, 1f, 1f, 0.3f));
 
-            // Test scale
-            _spriteBatch.DrawString(font, "Scaled text",
-                 new Vector2(250, 250), Color.Green, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
+            // Test size
+            _spriteBatch.Draw(MGame.TextureStorage.White, new MRectangleInt(500, 250, 100, 64), Color.DarkGray);
+            font.WithSize(64).Draw(_spriteBatch, "Text size test", new Vector2(500, 250), Color.Green);
 
             // Test rotation
-            _spriteBatch.DrawString(font, "Rotating text",
-                 new Vector2(50, 350), Color.Green, (float)MGame.TotalGameTime.TotalSeconds, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+            font.Draw(_spriteBatch, "Rotating text",
+                 new Vector2(50, 350), Color.Green, (float)MGame.TotalGameTime.TotalSeconds, Vector2.Zero);
 
-            // Rotation with scale
-            _spriteBatch.DrawString(font, "Rotating scaled text",
-                 new Vector2(350, 350), Color.Green, (float)MGame.TotalGameTime.TotalSeconds, Vector2.Zero, 2f, SpriteEffects.None, 0f);
+            // Rotation with sizing change
+            font.WithSize(64).Draw(_spriteBatch, "Rotating scaled text",
+                 new Vector2(350, 350), Color.Green, (float)MGame.TotalGameTime.TotalSeconds, Vector2.Zero);
 
             // Rotation with scale and origin
-            Vector2 orig = font.MeasureString("Rotating origin scale") * 0.5f;
-            _spriteBatch.DrawString(font, "Rotating origin scale",
-                 new Vector2(550, 150), Color.Green, (float)MGame.TotalGameTime.TotalSeconds, orig, 2f, SpriteEffects.None, 0f);
+            Vector2 orig = font.WithSize(64).Measure("Rotating origin scale") * 0.5f;
+            font.WithSize(64).Draw(_spriteBatch, "Rotating origin scale",
+                 new Vector2(550, 150), Color.Green, (float)MGame.TotalGameTime.TotalSeconds, orig);
 
             // Text input test
-            Vector2 o = font.MeasureString(_textInput.Text) * 0.5f;
-            _spriteBatch.DrawString(font, _textInput.Text, new Vector2(000, 600), Color.Green, 0f, o, 1f, SpriteEffects.None, 0f);
+            Vector2 o = font.Measure(_textInput.Text) * 0.5f;
+            font.Draw(_spriteBatch, _textInput.Text, new Vector2(000, 600), Color.Green, 0f, o);
 
-            _spriteBatch.DrawString(MGame.FontStorage.Default, _stateSwitchMessage, new Vector2(0, 700), Color.Green);
+            MGame.FontStorage.Default.Draw(_spriteBatch, _stateSwitchMessage, new Vector2(0, 700), Color.Green);
 
             // Test size measurements.
             var sizeTestPos = new Vector2(50, 450);
             sizeTestPos.X += DrawTextBox("One", sizeTestPos).X;
             DrawTextBox("Two", sizeTestPos);
             const string threeString = "Three";
-            sizeTestPos.Y -= font.MeasureString(threeString).Y;
+            sizeTestPos.Y -= font.Measure(threeString).Y;
             sizeTestPos.X += DrawTextBox(threeString, sizeTestPos).X;
-            sizeTestPos.X += DrawTextBox("Four", sizeTestPos, 2f).X;
+            sizeTestPos.X += DrawTextBox("Four", sizeTestPos, 64).X;
             DrawTextBox("Five", sizeTestPos);
             _spriteBatch.End();
 
@@ -110,7 +110,7 @@ namespace Demo.Domain
             MGame.GraphicsManager.GraphicsDevice.Clear(Color.Transparent);
             _spriteBatch.Begin();
             var boxLocation = _gameDisplay.WorldToUi(_errorBoxPosition);
-            _spriteBatch.DrawString(font, "  <- Error box", boxLocation.ToMVector2());
+            font.Draw(_spriteBatch, "  <- Error box", boxLocation.ToMVector2(), Color.White);
             _spriteBatch.Draw(MGame.TextureStorage.White,
                 new MRectangleInt(64, 64).Translate(_gameDisplay.UiRenderingArea.Render.Width - 64, _gameDisplay.UiRenderingArea.Render.Height - 64),
                 _gameDisplay.DisplayToUi(MGame.Mouse.Position.Coordinate).X >= _gameDisplay.UiRenderingArea.Render.Width - 64 ? Color.Tan : Color.Teal);

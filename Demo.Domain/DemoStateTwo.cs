@@ -12,13 +12,13 @@ namespace Demo.Domain
 {
     public class DemoStateTwo : GameState
     {
-        private PrimitiveBatch3D primitive3D;
-        private PrimitiveBatch2D primitiveBatch2D;
-        private SpriteBatch spriteBatch;
+        private PrimitiveBatch3D _primitive3D;
+        private PrimitiveBatch2D _primitiveBatch2D;
+        private SpriteBatch _spriteBatch;
 
-        private Vector3 camPos = new Vector3(0f, 0f, 500f);
-        private RenderingArea2D renderingArea;
-        private string tapString = "";
+        private Vector3 _camPos = new Vector3(0f, 0f, 500f);
+        private RenderingArea2D _renderingArea;
+        private string _tapString = "";
 
         public DemoStateTwo()
             : base("stateTwo")
@@ -27,25 +27,25 @@ namespace Demo.Domain
 
         public override void Draw(TimeSpan time)
         {
-            var view = Matrix.CreateLookAt(camPos, camPos + new Vector3(0f, 0f, -1f), Vector3.Up);
+            var view = Matrix.CreateLookAt(_camPos, _camPos + new Vector3(0f, 0f, -1f), Vector3.Up);
             var projection = Matrix.CreatePerspectiveFieldOfView(
                 MathHelper.ToRadians(45.0f),
                 MGame.GraphicsManager.GraphicsDevice.PresentationParameters.BackBufferWidth / MGame.GraphicsManager.GraphicsDevice.PresentationParameters.BackBufferHeight,
                 1.0f, 10000.0f
                 );
 
-            primitive3D.Begin(view * projection);
-            primitive3D.DrawLine(new Vector3(100, 100, 0), new Vector3(200, 300, 400), Color.Green, Color.Red);
-            primitive3D.DrawLine(new Vector3(0, 0, 0), new Vector3(0, 0, 300), Color.Green, Color.Red);
-            primitive3D.End();
+            _primitive3D.Begin(view * projection);
+            _primitive3D.DrawLine(new Vector3(100, 100, 0), new Vector3(200, 300, 400), Color.Green, Color.Red);
+            _primitive3D.DrawLine(new Vector3(0, 0, 0), new Vector3(0, 0, 300), Color.Green, Color.Red);
+            _primitive3D.End();
 
-            primitiveBatch2D.Begin();
-            primitiveBatch2D.DrawRenderingArea(renderingArea);
-            primitiveBatch2D.End();
+            _primitiveBatch2D.Begin();
+            _primitiveBatch2D.DrawRenderingArea(_renderingArea);
+            _primitiveBatch2D.End();
 
-            spriteBatch.Begin();
-            spriteBatch.DrawString(MGame.FontStorage.Default, tapString, Vector2.Zero, Color.White);
-            spriteBatch.End();
+            _spriteBatch.Begin();
+            MGame.FontStorage.Default.Draw(_spriteBatch, _tapString, Vector2.Zero, Color.White);
+            _spriteBatch.End();
         }
 
         public override void Update(TimeSpan time)
@@ -57,19 +57,19 @@ namespace Demo.Domain
 
             if (MGame.Keyboard.IsKeyHeld(Keys.I))
             {
-                camPos.Y += 5;
+                _camPos.Y += 5;
             }
             if (MGame.Keyboard.IsKeyHeld(Keys.K))
             {
-                camPos.Y -= 5;
+                _camPos.Y -= 5;
             }
             if (MGame.Keyboard.IsKeyHeld(Keys.L))
             {
-                camPos.X += 5;
+                _camPos.X += 5;
             }
             if (MGame.Keyboard.IsKeyHeld(Keys.J))
             {
-                camPos.X -= 5;
+                _camPos.X -= 5;
             }
 
             if (MGame.Keyboard.IsKeyPressed(Keys.Space))
@@ -79,7 +79,7 @@ namespace Demo.Domain
 
             if (MGame.TouchScreen.Tap.TryGetCoordinate(out var tapCoordinate))
             {
-                tapString = tapCoordinate.ToString();
+                _tapString = tapCoordinate.ToString();
             }
 
             if (MGame.TouchScreen.Hold.TryGetCoordinate(out var holdCoordinate))
@@ -91,16 +91,16 @@ namespace Demo.Domain
         protected override void Activated(StateSwitchData data)
         {
             Console.WriteLine("State two activated! Message: " + (string)data.Data);
-            primitive3D = new PrimitiveBatch3D(MGame.GraphicsManager.GraphicsDevice);
-            spriteBatch = new SpriteBatch(MGame.GraphicsManager.GraphicsDevice);
-            primitiveBatch2D = new PrimitiveBatch2D(MGame.GraphicsManager.GraphicsDevice);
-            renderingArea = new RenderingArea2D(new MPoint2(320, 200), MGame.GraphicsManager.Resolution);
+            _primitive3D = new PrimitiveBatch3D(MGame.GraphicsManager.GraphicsDevice);
+            _spriteBatch = new SpriteBatch(MGame.GraphicsManager.GraphicsDevice);
+            _primitiveBatch2D = new PrimitiveBatch2D(MGame.GraphicsManager.GraphicsDevice);
+            _renderingArea = new RenderingArea2D(new MPoint2(320, 200), MGame.GraphicsManager.Resolution);
             MGame.GraphicsManager.ResolutionChanged += GraphicsManager_ResolutionChanged;
         }
 
         private void GraphicsManager_ResolutionChanged(object sender, ResolutionChangedEventArgs e)
         {
-            renderingArea = new RenderingArea2D(new MPoint2(320, 200), MGame.GraphicsManager.Resolution);
+            _renderingArea = new RenderingArea2D(new MPoint2(320, 200), MGame.GraphicsManager.Resolution);
         }
     }
 }

@@ -156,7 +156,7 @@ namespace MonoKle.Graphics
         /// <remarks>
         /// E.g. for converting display dragging to game dragging.
         /// </remarks>
-        /// <param name="displayCoordinate">The display coordinate.</param>
+        /// <param name="displayDelta">The display delta.</param>
         public MVector2 DisplayToWorldDelta(MPoint2 displayDelta) =>
             DisplayToWorld(displayDelta) - DisplayToWorld(MPoint2.Zero);
 

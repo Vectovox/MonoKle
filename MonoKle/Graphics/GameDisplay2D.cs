@@ -178,6 +178,16 @@ namespace MonoKle.Graphics
             UiRenderingArea.TransformDisplayToRender(displayCoordinate.ToMVector2()).ToMPoint2();
 
         /// <summary>
+        /// Transforms the given display delta vector to UI space.
+        /// </summary>
+        /// <remarks>
+        /// E.g. for converting display dragging to UI dragging.
+        /// </remarks>
+        /// <param name="displayDelta">The display delta.</param>
+        public MPoint2 DisplayToUIDelta(MPoint2 displayDelta) =>
+            DisplayToUi(displayDelta) - DisplayToUi(MPoint2.Zero);
+
+        /// <summary>
         /// Transforms the given world coordinate to UI space.
         /// </summary>
         /// <remarks>

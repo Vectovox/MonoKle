@@ -174,7 +174,7 @@ namespace MonoKle.Graphics
         /// E.g. for converting display click to UI actions.
         /// </remarks>
         /// <param name="displayCoordinate">The display coordinate.</param>
-        public MPoint2 DisplayToUi(MPoint2 displayCoordinate) =>
+        public MPoint2 DisplayToUI(MPoint2 displayCoordinate) =>
             UiRenderingArea.TransformDisplayToRender(displayCoordinate.ToMVector2()).ToMPoint2();
 
         /// <summary>
@@ -185,7 +185,7 @@ namespace MonoKle.Graphics
         /// </remarks>
         /// <param name="displayDelta">The display delta.</param>
         public MPoint2 DisplayToUIDelta(MPoint2 displayDelta) =>
-            DisplayToUi(displayDelta) - DisplayToUi(MPoint2.Zero);
+            DisplayToUI(displayDelta) - DisplayToUI(MPoint2.Zero);
 
         /// <summary>
         /// Transforms the given world coordinate to UI space.
@@ -194,6 +194,6 @@ namespace MonoKle.Graphics
         /// E.g. a HUD drawing UI markers over world entities.
         /// </remarks>
         /// <param name="worldCoordinate">The world coordinate to transform.</param>
-        public MPoint2 WorldToUi(MVector2 worldCoordinate) => DisplayToUi(WorldToDisplay(worldCoordinate));
+        public MPoint2 WorldToUI(MVector2 worldCoordinate) => DisplayToUI(WorldToDisplay(worldCoordinate));
     }
 }

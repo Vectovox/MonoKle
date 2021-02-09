@@ -109,11 +109,11 @@ namespace Demo.Domain
             MGame.GraphicsManager.GraphicsDevice.SetRenderTarget(_gameDisplay.UiRenderTarget);
             MGame.GraphicsManager.GraphicsDevice.Clear(Color.Transparent);
             _spriteBatch.Begin();
-            var boxLocation = _gameDisplay.WorldToUi(_errorBoxPosition);
+            var boxLocation = _gameDisplay.WorldToUI(_errorBoxPosition);
             font.Draw(_spriteBatch, "  <- Error box", boxLocation.ToMVector2(), Color.White);
             _spriteBatch.Draw(MGame.TextureStorage.White,
                 new MRectangleInt(64, 64).Translate(_gameDisplay.UiRenderingArea.Render.Width - 64, _gameDisplay.UiRenderingArea.Render.Height - 64),
-                _gameDisplay.DisplayToUi(MGame.Mouse.Position.Coordinate).X >= _gameDisplay.UiRenderingArea.Render.Width - 64 ? Color.Tan : Color.Teal);
+                _gameDisplay.DisplayToUI(MGame.Mouse.Position.Coordinate).X >= _gameDisplay.UiRenderingArea.Render.Width - 64 ? Color.Tan : Color.Teal);
             _spriteBatch.End();
 
             // Render inverting stuff 

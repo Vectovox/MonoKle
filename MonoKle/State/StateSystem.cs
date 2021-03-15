@@ -9,19 +9,22 @@ namespace MonoKle.State
     /// </summary>
     public class StateSystem : IStateSystem, IUpdateable, IDrawable
     {
-        private GameState currentState;
-        private Dictionary<string, GameState> stateByString = new Dictionary<string, GameState>();
-        private StateSwitchData switchData;
+        private GameState _currentState;
+        private Dictionary<string, GameState> _stateByString = new Dictionary<string, GameState>();
+        private StateSwitchData _switchData;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StateSystem"/> class.
         /// </summary>
-        public StateSystem() { }
+        public StateSystem()
+        {
+
+        }
 
         /// <summary>
         /// Gets a collection of the identifiers for the existing states.
         /// </summary>
-        public ICollection<string> StateIdentifiers => stateByString.Keys;
+        public ICollection<string> StateIdentifiers => _stateByString.Keys;
 
         /// <summary>
         /// Adds a state.
@@ -34,9 +37,9 @@ namespace MonoKle.State
                 throw new ArgumentNullException("State must not be null.");
             }
 
-            if (stateByString.ContainsKey(state.Identifier) == false)
+            if (_stateByString.ContainsKey(state.Identifier) == false)
             {
-                stateByString.Add(state.Identifier, state);
+                _stateByString.Add(state.Identifier, state);
                 return true;
             }
 
@@ -44,7 +47,7 @@ namespace MonoKle.State
             return false;
         }
 
-        public void Draw(TimeSpan timeDelta) => currentState?.Draw(timeDelta);
+        public void Draw(TimeSpan timeDelta) => _currentState?.Draw(timeDelta);
 
         /// <summary>
         /// Removes the state with the specified identifier.
@@ -52,10 +55,10 @@ namespace MonoKle.State
         /// <param name="identifier">String identifier of the state to remove.</param>
         public bool RemoveState(string identifier)
         {
-            if (stateByString.ContainsKey(identifier))
+            if (_stateByString.ContainsKey(identifier))
             {
-                stateByString[identifier].Remove();
-                stateByString.Remove(identifier);
+                _stateByString[identifier].Remove();
+                _stateByString.Remove(identifier);
                 return true;
             }
 
@@ -74,31 +77,31 @@ namespace MonoKle.State
         /// </summary>
         /// <param name="stateIdentifier">The identifier of the state to switch to.</param>
         /// <param name="data">Data to send with the switch. May be null.</param>
-        public void SwitchState(string stateIdentifier, object data) => switchData = new StateSwitchData(stateIdentifier, currentState == null ? null : currentState.Identifier, data);
+        public void SwitchState(string stateIdentifier, object data) => _switchData = new StateSwitchData(stateIdentifier, _currentState == null ? null : _currentState.Identifier, data);
 
         public void Update(TimeSpan timeDelta)
         {
             // Switch state
-            if (switchData != null && stateByString.ContainsKey(switchData.NextState))
+            if (_switchData != null && _stateByString.ContainsKey(_switchData.NextState))
             {
-                if (currentState != null)
+                if (_currentState != null)
                 {
-                    currentState.Deactivate(switchData);
-                    if (currentState.IsTemporary)
+                    _currentState.Deactivate(_switchData);
+                    if (_currentState.IsTemporary)
                     {
-                        RemoveState(currentState.Identifier);
+                        RemoveState(_currentState.Identifier);
                     }
                 }
 
-                currentState = stateByString[switchData.NextState];
-                currentState.Activate(switchData);
-                switchData = null;
+                _currentState = _stateByString[_switchData.NextState];
+                _currentState.Activate(_switchData);
+                _switchData = null;
             }
 
             // Update current state
-            if (currentState != null)
+            if (_currentState != null)
             {
-                currentState.Update(timeDelta);
+                _currentState.Update(timeDelta);
             }
         }
     }

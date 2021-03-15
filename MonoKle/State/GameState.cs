@@ -7,7 +7,7 @@ namespace MonoKle.State
     /// </summary>
     public abstract class GameState : IUpdateable, IDrawable
     {
-        private bool hasBeenActivated;
+        private bool _hasBeenActivated;
 
         /// <summary>
         /// Gets the identifier of the state.
@@ -21,7 +21,7 @@ namespace MonoKle.State
         /// Gets a value indicating whether this instance is temporary, meaning it should be removed after it is switched away from.
         /// </summary>
         /// <value>
-        /// <c>true</c> if this instance is temporary; otherwise, <c>false</c>.
+        /// True if this instance is temporary; otherwise false.
         /// </value>
         public bool IsTemporary { get; private set; }
 
@@ -44,10 +44,10 @@ namespace MonoKle.State
         /// <param name="data">State data to receive.</param>
         public void Activate(StateSwitchData data)
         {
-            if (hasBeenActivated == false)
+            if (_hasBeenActivated == false)
             {
                 BeforeFirstActivation(data);
-                hasBeenActivated = true;
+                _hasBeenActivated = true;
             }
 
             Activated(data);

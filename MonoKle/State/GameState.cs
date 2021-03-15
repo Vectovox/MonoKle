@@ -10,35 +10,6 @@ namespace MonoKle.State
         private bool _hasBeenActivated;
 
         /// <summary>
-        /// Gets the identifier of the state.
-        /// </summary>
-        /// <value>
-        /// The identifier of the state.
-        /// </value>
-        public string Identifier { get; private set; }
-
-        /// <summary>
-        /// Gets a value indicating whether this instance is temporary, meaning it should be removed after it is switched away from.
-        /// </summary>
-        /// <value>
-        /// True if this instance is temporary; otherwise false.
-        /// </value>
-        public bool IsTemporary { get; private set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GameState"/> class.
-        /// </summary>
-        /// <param name="identifier">The identifier of the state.</param>
-        public GameState(string identifier) => Identifier = identifier;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GameState"/> class.
-        /// </summary>
-        /// <param name="identifier">The identifier of the state.</param>
-        /// <param name="isTemporary">If set to <c>true</c>, the state [is temporary].</param>
-        public GameState(string identifier, bool isTemporary) : this(identifier) => IsTemporary = isTemporary;
-
-        /// <summary>
         /// Called when the state is being activated.
         /// </summary>
         /// <param name="data">State data to receive.</param>
@@ -62,16 +33,15 @@ namespace MonoKle.State
         }
 
         /// <summary>
-        /// Call when the state is being activated.
+        /// Called when the state is being deactivated.
         /// </summary>
-        /// <param name="data">State data to receive.</param>
-        public void Deactivate(StateSwitchData data) => Deactivated(data);
+        /// <param name="data">State switch data.</param>
+        public virtual void Deactivated(StateSwitchData data) { }
 
         /// <summary>
-        /// Call when the state is being deactivated.
+        /// Called when the state is being removed.
         /// </summary>
-        /// <param name="data">State data which will be sent.</param>
-        protected virtual void Deactivated(StateSwitchData data) { }
+        public virtual void Removed() { }
 
         public abstract void Draw(TimeSpan timeDelta);
 
@@ -80,16 +50,6 @@ namespace MonoKle.State
         /// </summary>
         /// <param name="data">State data to receive.</param>
         protected virtual void BeforeFirstActivation(StateSwitchData data) { }
-
-        /// <summary>
-        /// Call when the state is removed.
-        /// </summary>
-        public void Remove() => Removed();
-
-        /// <summary>
-        /// Called when the state is removed.
-        /// </summary>
-        protected virtual void Removed() { }
 
         public abstract void Update(TimeSpan timeDelta);
     }

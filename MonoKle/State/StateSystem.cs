@@ -5,104 +5,124 @@ using System.Collections.Generic;
 namespace MonoKle.State
 {
     /// <summary>
-    /// Class maintaining game states.
+    /// Class maintaining game states. States are switched out as needed upon calling <see cref="Update(TimeSpan)"/>.
     /// </summary>
     public class StateSystem : IStateSystem, IUpdateable, IDrawable
     {
-        private GameState _currentState;
-        private Dictionary<string, GameState> _stateByString = new Dictionary<string, GameState>();
-        private StateSwitchData _switchData;
+        private string _currentState = string.Empty;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="StateSystem"/> class.
-        /// </summary>
-        public StateSystem()
-        {
+        private readonly Dictionary<string, GameState> _stateByString = new Dictionary<string, GameState>();
 
-        }
+        private readonly Queue<StateSwitch> _switchQueue = new Queue<StateSwitch>();
 
-        /// <summary>
-        /// Gets a collection of the identifiers for the existing states.
-        /// </summary>
         public ICollection<string> StateIdentifiers => _stateByString.Keys;
 
-        /// <summary>
-        /// Adds a state.
-        /// </summary>
-        /// <param name="state">State to add.</param>
-        public bool AddState(GameState state)
+        public bool AddState(string identifier, GameState state)
         {
-            if (state == null)
+            if (state == null || identifier == null)
             {
                 throw new ArgumentNullException("State must not be null.");
             }
 
-            if (_stateByString.ContainsKey(state.Identifier) == false)
+            if (_stateByString.ContainsKey(identifier))
             {
-                _stateByString.Add(state.Identifier, state);
-                return true;
+                Logger.Global.Log($"Could not add state with identifier '{identifier}' as one with the same name already exists.", LogLevel.Error);
+                return false;
             }
 
-            Logger.Global.Log("Could not add state. Existing state exists with the identifier: " + state.Identifier, LogLevel.Error);
-            return false;
+            _stateByString.Add(identifier, state);
+            return true;
         }
 
-        public void Draw(TimeSpan timeDelta) => _currentState?.Draw(timeDelta);
+        public void Draw(TimeSpan timeDelta) => GetStateWithIdentifier(_currentState).Draw(timeDelta);
 
-        /// <summary>
-        /// Removes the state with the specified identifier.
-        /// </summary>
-        /// <param name="identifier">String identifier of the state to remove.</param>
         public bool RemoveState(string identifier)
         {
             if (_stateByString.ContainsKey(identifier))
             {
-                _stateByString[identifier].Remove();
+                if (identifier == _currentState)
+                {
+                    _currentState = string.Empty;
+                }
+                _stateByString[identifier].Removed();
                 _stateByString.Remove(identifier);
                 return true;
             }
 
-            Logger.Global.Log("Could not remove state. There is no state with the identifier: " + identifier, LogLevel.Error);
+            Logger.Global.Log($"Could not remove state with identifier '{identifier}' as it does not exist.", LogLevel.Error);
             return false;
         }
 
-        /// <summary>
-        /// Prepares for a state switch without data.
-        /// </summary>
-        /// <param name="stateIdentifier">The identifier of the state to switch to.</param>
-        public void SwitchState(string stateIdentifier) => SwitchState(stateIdentifier, null);
+        public void SwitchState(string stateIdentifier) =>
+            SwitchState(new StateSwitchData(stateIdentifier, _currentState));
 
-        /// <summary>
-        /// Prepares for a state switch using the provided data.
-        /// </summary>
-        /// <param name="stateIdentifier">The identifier of the state to switch to.</param>
-        /// <param name="data">Data to send with the switch. May be null.</param>
-        public void SwitchState(string stateIdentifier, object data) => _switchData = new StateSwitchData(stateIdentifier, _currentState == null ? null : _currentState.Identifier, data);
+        public void SwitchState(string stateIdentifier, object data) =>
+            SwitchState(new StateSwitchData(stateIdentifier, _currentState, data));
+
+        private void SwitchState(StateSwitchData data)
+        {
+            // Only allow one switch for now so clear previous one
+            if (_switchQueue.Count > 0)
+            {
+                _switchQueue.Clear();
+            }
+
+            var previous = GetStateWithIdentifier(data.PreviousState);
+            var next = GetStateWithIdentifier(data.NextState);
+            _switchQueue.Enqueue(new StateSwitch(previous, next, data));
+        }
 
         public void Update(TimeSpan timeDelta)
         {
-            // Switch state
-            if (_switchData != null && _stateByString.ContainsKey(_switchData.NextState))
-            {
-                if (_currentState != null)
-                {
-                    _currentState.Deactivate(_switchData);
-                    if (_currentState.IsTemporary)
-                    {
-                        RemoveState(_currentState.Identifier);
-                    }
-                }
-
-                _currentState = _stateByString[_switchData.NextState];
-                _currentState.Activate(_switchData);
-                _switchData = null;
-            }
-
             // Update current state
-            if (_currentState != null)
+            GetStateWithIdentifier(_currentState).Update(timeDelta);
+
+            // Run activation logic on state updates
+            while (_switchQueue.TryDequeue(out var switchData))
             {
-                _currentState.Update(timeDelta);
+                switchData.From.Deactivated(switchData.Data);
+                switchData.To.Activate(switchData.Data);
+                _currentState = switchData.Data.NextState;
+
+                if (!_stateByString.ContainsKey(_currentState))
+                {
+                    Logger.Global.Log($"Switched to state '{_currentState}' but it does not exist.", LogLevel.Warning);
+                }
             }
+        }
+
+        private GameState GetStateWithIdentifier(string identifier) =>
+            _stateByString.ContainsKey(identifier)
+                ? _stateByString[identifier]
+                : Void;
+
+        private static readonly GameState Void = new VoidState();
+
+        /// <summary>
+        /// NOOP game state.
+        /// </summary>
+        private class VoidState : GameState
+        {
+            public override void Draw(TimeSpan timeDelta) { }
+
+            public override void Update(TimeSpan timeDelta) { }
+        }
+
+        /// <summary>
+        /// State switching information.
+        /// </summary>
+        private class StateSwitch
+        {
+            public StateSwitch(GameState from, GameState to, StateSwitchData data)
+            {
+                From = from;
+                To = to;
+                Data = data;
+            }
+
+            public GameState From { get; }
+            public GameState To { get; }
+            public StateSwitchData Data { get; }
         }
     }
 }

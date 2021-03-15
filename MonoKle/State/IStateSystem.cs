@@ -13,10 +13,11 @@ namespace MonoKle.State
         ICollection<string> StateIdentifiers { get; }
 
         /// <summary>
-        /// Adds a state.
+        /// Adds a state with the given identifier.
         /// </summary>
+        /// <param name="identifier">Identifier to use.</param>
         /// <param name="state">State to add.</param>
-        bool AddState(GameState state);
+        bool AddState(string identifier, GameState state);
 
         /// <summary>
         /// Removes the state with the specified identifier.

@@ -24,8 +24,6 @@ namespace Demo.Domain
         private MVector2 _errorBoxPosition = new Vector2(50, 50);
         private readonly KeyboardTextInput _textInput = new KeyboardTextInput(new KeyboardCharacterInput(new KeyboardTyper(MGame.Keyboard, TimeSpan.FromSeconds(0.5), TimeSpan.FromMilliseconds(50))));
 
-        public DemoStateOne() : base("stateOne") { }
-
         public override void Draw(TimeSpan deltaTime)
         {
             // Draw scene to render target
@@ -157,7 +155,7 @@ namespace Demo.Domain
 
                 if (MGame.Keyboard.IsKeyPressed(Keys.Space))
                 {
-                    MGame.StateSystem.SwitchState("stateTwo", null);
+                    MGame.StateSystem.SwitchState("stateTwo");
                     MGame.AudioStorage["santa"].Play(1f, 0f, 0f);
                 }
 
@@ -252,7 +250,7 @@ namespace Demo.Domain
                 _textInput.Update();
                 if (MGame.TouchScreen.Hold.IsTriggered)
                 {
-                    MGame.StateSystem.SwitchState("stateTwo", null);
+                    MGame.StateSystem.SwitchState("stateTwo");
                 }
             }
 
@@ -275,16 +273,16 @@ namespace Demo.Domain
             base.BeforeFirstActivation(data);
             _gameDisplay = new GameDisplay2D(MGame.GraphicsManager, new MPoint2(900, 600), new MPoint2(1500, 768));
             _gameDisplay.Camera.MinScale = 0.3f;
-        }
-
-        protected override void Activated(StateSwitchData data)
-        {
-            _stateSwitchMessage = (string)data.Data ?? string.Empty;
-            MGame.Console.WriteLine($"State one activated! Message: {_stateSwitchMessage}");
             MGame.Console.WriteLine(MGame.TextureStorage.LoadFromManifest("Data/assets.manifest") + " textures loaded.");
             MGame.Console.WriteLine(MGame.FontStorage.LoadFromManifest("Data/assets.manifest") + " fonts loaded.");
             MGame.Console.WriteLine(MGame.EffectStorage.LoadFromManifest("Data/assets.manifest") + " effects loaded.");
             MGame.Console.WriteLine(MGame.AudioStorage.LoadFromManifest("Data/assets.manifest") + " sounds loaded.");
+        }
+
+        protected override void Activated(StateSwitchData data)
+        {
+            _stateSwitchMessage = data.HasData ? (string)data.Data : string.Empty;
+            MGame.Console.WriteLine($"State one activated! Message: {_stateSwitchMessage}");
             _spriteBatch = new SpriteBatch(MGame.GraphicsManager.GraphicsDevice);
             _timer.Reset();
             _primitive2D = new PrimitiveBatch2D(MGame.GraphicsManager.GraphicsDevice);

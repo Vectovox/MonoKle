@@ -20,11 +20,6 @@ namespace Demo.Domain
         private RenderingArea2D _renderingArea;
         private string _tapString = "";
 
-        public DemoStateTwo()
-            : base("stateTwo")
-        {
-        }
-
         public override void Draw(TimeSpan time)
         {
             var view = Matrix.CreateLookAt(_camPos, _camPos + new Vector3(0f, 0f, -1f), Vector3.Up);
@@ -90,7 +85,8 @@ namespace Demo.Domain
 
         protected override void Activated(StateSwitchData data)
         {
-            Console.WriteLine("State two activated! Message: " + (string)data.Data);
+            var stateSwitchMessage = data.HasData ? (string)data.Data : string.Empty;
+            Console.WriteLine("State two activated! Message: " + stateSwitchMessage);
             _primitive3D = new PrimitiveBatch3D(MGame.GraphicsManager.GraphicsDevice);
             _spriteBatch = new SpriteBatch(MGame.GraphicsManager.GraphicsDevice);
             _primitiveBatch2D = new PrimitiveBatch2D(MGame.GraphicsManager.GraphicsDevice);

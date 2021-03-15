@@ -51,6 +51,9 @@ namespace MonoKle.Console
             logger.LogAddedEvent += LogAdded;
             logger.Log("GameConsole activated.", LogLevel.Debug);
 
+            // Add existing logs, in case any were added
+            logger.GetLogs().ForEach(LogAdded);
+
             CommandBroker = new CommandBroker(this);
             CommandBroker.RegisterCallingAssembly();
         }
@@ -255,7 +258,9 @@ namespace MonoKle.Console
             }
         }
 
-        private void LogAdded(object sender, LogAddedEventArgs e) => WriteLine(e.Log.ToString(), e.Log.Level switch
+        private void LogAdded(object sender, LogAddedEventArgs e) => LogAdded(e.Log);
+
+        private void LogAdded(Log log) => WriteLine(log.ToString(), log.Level switch
         {
             LogLevel.Warning => WarningTextColour,
             LogLevel.Error => ErrorTextColour,

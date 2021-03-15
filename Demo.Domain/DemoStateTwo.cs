@@ -72,6 +72,11 @@ namespace Demo.Domain
                 MGame.StateSystem.SwitchState("stateOne", "HELLO!");
             }
 
+            if (MGame.Keyboard.IsKeyHeld(Keys.Space, TimeSpan.FromMilliseconds(500)))
+            {
+                MGame.StateSystem.SwitchState("stateOne", new DemoStateOne(), "HELLO! Hard switch!");
+            }
+
             if (MGame.TouchScreen.Tap.TryGetCoordinate(out var tapCoordinate))
             {
                 _tapString = tapCoordinate.ToString();

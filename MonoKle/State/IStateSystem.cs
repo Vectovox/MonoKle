@@ -35,7 +35,22 @@ namespace MonoKle.State
         /// Prepares for a state switch using the provided data.
         /// </summary>
         /// <param name="stateIdentifier">The identifier of the state to switch to.</param>
-        /// <param name="data">Data to send with the switch. May be null.</param>
+        /// <param name="data">Data to send with the switch.</param>
         void SwitchState(string stateIdentifier, object data);
+
+        /// <summary>
+        /// Switches to the provided state by adding it. Should it already exist it is replaced.
+        /// </summary>
+        /// <param name="stateIdentifier">The identifier to use for the state.</param>
+        /// <param name="state">The state to add.</param>
+        void SwitchState(string stateIdentifier, GameState state);
+
+        /// <summary>
+        /// Switches to the provided state by adding it. Should it already exist it is replaced.
+        /// </summary>
+        /// <param name="stateIdentifier">The identifier to use for the state.</param>
+        /// <param name="state">The state to add.</param>
+        /// <param name="data">Data to send with the switch.</param>
+        void SwitchState(string stateIdentifier, GameState state, object data);
     }
 }

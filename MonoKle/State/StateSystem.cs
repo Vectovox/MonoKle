@@ -59,6 +59,27 @@ namespace MonoKle.State
         public void SwitchState(string stateIdentifier, object data) =>
             SwitchState(new StateSwitchData(stateIdentifier, _currentState, data));
 
+        private void ReplaceState(string stateIdentifier, GameState state)
+        {
+            if (_stateByString.ContainsKey(stateIdentifier))
+            {
+                RemoveState(stateIdentifier);
+            }
+            AddState(stateIdentifier, state);
+        }
+
+        public void SwitchState(string stateIdentifier, GameState state)
+        {
+            ReplaceState(stateIdentifier, state);
+            SwitchState(stateIdentifier);
+        }
+
+        public void SwitchState(string stateIdentifier, GameState state, object data)
+        {
+            ReplaceState(stateIdentifier, state);
+            SwitchState(stateIdentifier, data);
+        }
+
         private void SwitchState(StateSwitchData data)
         {
             // Only allow one switch for now so clear previous one

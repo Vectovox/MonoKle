@@ -4,7 +4,6 @@ using MonoKle.Graphics;
 using MonoKle.Logging;
 using System;
 using System.Collections.Generic;
-using System.IO;
 
 namespace MonoKle.Asset
 {
@@ -31,7 +30,7 @@ namespace MonoKle.Asset
         /// Initializes a new instance of the <see cref="TextureStorageNew"/> class.
         /// </summary>
         /// <param name="graphicsDevice">The graphics device.</param>
-        public TextureStorage(GraphicsDevice graphicsDevice)
+        public TextureStorage(GraphicsDevice graphicsDevice, Logger logger) : base(logger)
         {
             _graphicsDevice = graphicsDevice;
             Error = new MTexture(new Texture2D(graphicsDevice, 1, 1).Fill(Color.Purple));
@@ -73,7 +72,7 @@ namespace MonoKle.Asset
             // Do not allow duplicate identifiers
             if (_textureDataByIdentifier.ContainsKey(identifier))
             {
-                Logger.Global.Log($"Identifier already loaded '{identifier}'. Skipping.", LogLevel.Error);
+                _logger.Log($"Identifier already loaded '{identifier}'. Skipping.", LogLevel.Error);
                 return false;
             }
 
@@ -88,7 +87,7 @@ namespace MonoKle.Asset
                 }
                 catch (Exception e)
                 {
-                    Logger.Global.Log($"Error reading texture '{e.Message}'. Skipping.", LogLevel.Error);
+                    _logger.Log($"Error reading texture '{e.Message}'. Skipping.", LogLevel.Error);
                     return false;
                 }
             }
@@ -119,7 +118,7 @@ namespace MonoKle.Asset
                 }
                 else
                 {
-                    Logger.Global.Log($"Error reading atlas rectangle for identifier '{identifier}'. Skipping.", LogLevel.Error);
+                    _logger.Log($"Error reading atlas rectangle for identifier '{identifier}'. Skipping.", LogLevel.Error);
                     return false;
                 }
             }
@@ -132,7 +131,7 @@ namespace MonoKle.Asset
                 if (!int.TryParse(args[1], out frameCount) ||
                     !int.TryParse(args[2], out frameRate))
                 {
-                    Logger.Global.Log($"Error reading animation data for identifier '{identifier}'. Skipping.", LogLevel.Error);
+                    _logger.Log($"Error reading animation data for identifier '{identifier}'. Skipping.", LogLevel.Error);
                     return false;
                 }
             }

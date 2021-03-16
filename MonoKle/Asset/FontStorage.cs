@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework.Graphics;
+using MonoKle.Logging;
 using System;
 using System.IO;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace MonoKle.Asset
         /// Initializes a new instance of the <see cref="FontStorage"/> class.
         /// </summary>
         /// <param name="graphicsDevice">Graphics device</param>
-        public FontStorage(GraphicsDevice graphicsDevice) => _graphicsDevice = graphicsDevice;
+        public FontStorage(GraphicsDevice graphicsDevice, Logger logger) : base(logger) => _graphicsDevice = graphicsDevice;
 
         protected override bool FileSupported(string extension) => extension.Equals(".mfnt", StringComparison.InvariantCultureIgnoreCase);
 
@@ -26,15 +27,15 @@ namespace MonoKle.Asset
         protected override bool Load(Stream stream, out FontData result)
         {
             var serializer = new XmlSerializer(typeof(BakedFont));
-            object o = serializer.Deserialize(stream);
+            
             BakedFont baked;
-
             try
             {
-                baked = (BakedFont)o;
+                baked = (BakedFont)serializer.Deserialize(stream);
             }
-            catch
+            catch (Exception e)
             {
+                _logger.Log($"Error reading font: {e.Message}", LogLevel.Error);
                 result = null;
                 return false;
             }

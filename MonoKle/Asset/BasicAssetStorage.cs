@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using MonoKle.Logging;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -7,11 +8,14 @@ namespace MonoKle.Asset
 {
     public abstract class BasicAssetStorage<T> : BasicAssetStorage<T, T>
     {
+        public BasicAssetStorage(Logger logger) : base(logger) { }
         protected override T GetInstance(T data) => data;
     }
 
     public abstract class BasicAssetStorage<TData, TInstance> : AbstractAssetStorage
     {
+        public BasicAssetStorage(Logger logger) : base(logger) { }
+
         private readonly Dictionary<string, TData> _assetStorage = new Dictionary<string, TData>();
 
         /// <summary>
@@ -32,7 +36,7 @@ namespace MonoKle.Asset
                 {
                     return GetInstance(value);
                 }
-                Logger.Global.Log($"Tried to access non-existing identifier '{identifier}'.", LogLevel.Warning);
+                _logger.Log($"Tried to access non-existing identifier '{identifier}'.", LogLevel.Warning);
                 return Default;
             }
         }
@@ -49,23 +53,40 @@ namespace MonoKle.Asset
             // Do not allow duplicate identifiers
             if (_assetStorage.ContainsKey(identifier))
             {
-                Logger.Global.Log($"Identifier already loaded '{identifier}'. Skipping.", LogLevel.Error);
+                _logger.Log($"Identifier already loaded '{identifier}'.", LogLevel.Error);
                 return false;
             }
 
-            if (Load(stream, out var result))
+            try
             {
-                _assetStorage.Add(identifier, result);
-                return true;
+                if (Load(stream, out var result))
+                {
+                    _assetStorage.Add(identifier, result);
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.Log($"Unhandled exception reading asset '{identifier}': {e.Message}", LogLevel.Error);
             }
 
-            Logger.Global.Log($"Could not load asset '{identifier}'. Skipping.", LogLevel.Error);
+            _logger.Log($"Could not read asset file for '{identifier}'.", LogLevel.Error);
             return false;
         }
 
         protected override bool Load(string path, string identifier, string[] args)
         {
-            return Load(TitleContainer.OpenStream(path), identifier);
+            try
+            {
+                using var stream = TitleContainer.OpenStream(path);
+                return Load(stream, identifier);
+            }
+            catch (FileNotFoundException)
+            {
+                _logger.Log($"File not found in path '{path}'.", LogLevel.Error);
+            }
+
+            return false;
         }
 
         protected abstract bool Load(Stream stream, out TData result);

@@ -10,6 +10,13 @@ namespace MonoKle.Asset
     /// </summary>
     public abstract class AbstractAssetStorage
     {
+        protected readonly Logger _logger;
+
+        public AbstractAssetStorage(Logger logger)
+        {
+            _logger = logger;
+        }
+
         protected abstract bool FileSupported(string extension);
         protected abstract bool Load(string path, string identifier, string[] args);
 
@@ -25,7 +32,7 @@ namespace MonoKle.Asset
                 return Load(path, identifier, Array.Empty<string>());
             }
 
-            Logger.Global.Log($"File not supported '{path}'.", LogLevel.Error);
+            _logger.Log($"File not supported '{path}'.", LogLevel.Error);
             return false;
         }
 
@@ -62,7 +69,7 @@ namespace MonoKle.Asset
                 var lineParts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
                 if (lineParts.Length < 2)
                 {
-                    Logger.Global.Log($"Manifest line '{line}' does not contain path and identifier", LogLevel.Error);
+                    _logger.Log($"Manifest line '{line}' does not contain path and identifier", LogLevel.Error);
                     continue;
                 }
                 var identifier = lineParts[0];
@@ -77,7 +84,7 @@ namespace MonoKle.Asset
                     }
                     else
                     {
-                        Logger.Global.Log($"Could not load asset '{line}' from manifest", LogLevel.Error);
+                        _logger.Log($"Could not load asset '{line}' from manifest", LogLevel.Error);
                     }
                 }
             }

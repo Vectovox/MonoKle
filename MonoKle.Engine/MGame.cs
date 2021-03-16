@@ -143,9 +143,9 @@ namespace MonoKle.Engine
             base.LoadContent();
 
             // Initialize storages
-            TextureStorage = new TextureStorage(GraphicsManager.GraphicsDevice);
-            AudioStorage = new AudioStorage();
-            EffectStorage = new EffectStorage(GraphicsManager.GraphicsDevice);
+            TextureStorage = new TextureStorage(GraphicsManager.GraphicsDevice, Logger);
+            AudioStorage = new AudioStorage(Logger);
+            EffectStorage = new EffectStorage(GraphicsManager.GraphicsDevice, Logger);
             InitializeFontStorage();
             InitializeConsole();
 
@@ -244,7 +244,7 @@ namespace MonoKle.Engine
 
         private static void InitializeFontStorage()
         {
-            FontStorage = new FontStorage(GraphicsManager.GraphicsDevice);
+            FontStorage = new FontStorage(GraphicsManager.GraphicsDevice, Logger);
             using var ms = new MemoryStream(Resources.FontResources.DefaultFont);
             FontStorage.Load(ms, "default");
             FontStorage.Default = FontStorage["default"];

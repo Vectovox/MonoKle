@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Microsoft.Xna.Framework.Graphics;
+using MonoKle.Logging;
 
 namespace MonoKle.Asset
 {
@@ -15,10 +17,8 @@ namespace MonoKle.Asset
         /// Initializes a new instance of <see cref="EffectStorage"/>.
         /// </summary>
         /// <param name="graphicsDevice">Graphics device.</param>
-        public EffectStorage(GraphicsDevice graphicsDevice)
-        {
-            _graphicsDevice = graphicsDevice;
-        }
+        /// <param name="logger">The logger to use.</param>
+        public EffectStorage(GraphicsDevice graphicsDevice, Logger logger) : base(logger) => _graphicsDevice = graphicsDevice;
 
         protected override bool FileSupported(string extension) => extension.Equals(".mfx");
 
@@ -37,8 +37,9 @@ namespace MonoKle.Asset
                 result = new Effect(_graphicsDevice, bytes.ToArray());
                 return true;
             }
-            catch
+            catch (Exception e)
             {
+                _logger.Log($"Error reading effect: {e.Message}", LogLevel.Error);
                 result = null;
                 return false;
             }

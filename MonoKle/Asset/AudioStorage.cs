@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Audio;
+using MonoKle.Logging;
 using System;
 using System.IO;
 
@@ -15,6 +16,10 @@ namespace MonoKle.Asset
     /// </summary>
     public class AudioStorage : BasicAssetStorage<SoundEffect>
     {
+        public AudioStorage(Logger logger) : base(logger)
+        {
+        }
+
         protected override bool FileSupported(string extension) =>
             extension.Equals(".wav", StringComparison.InvariantCultureIgnoreCase);
 
@@ -25,8 +30,9 @@ namespace MonoKle.Asset
                 result = SoundEffect.FromStream(stream);
                 return true;
             }
-            catch
+            catch (Exception e)
             {
+                _logger.Log($"Error reading audio: {e.Message}", LogLevel.Error);
                 result = null;
                 return false;
             }

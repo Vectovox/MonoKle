@@ -253,7 +253,7 @@ namespace MonoKle
         /// </summary>
         /// <param name="obj">The object to compare with.</param>
         /// <returns>True if they are equal, else false.</returns>
-        public override bool Equals(object obj) => obj is MVector2 other ? Equals(other) : false;
+        public override bool Equals(object obj) => obj is MVector2 other && Equals(other);
 
         /// <summary>
         /// Returns equality to another <see cref="MVector2"/>.

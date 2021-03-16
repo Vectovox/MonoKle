@@ -119,6 +119,22 @@ namespace MonoKle
         public static MPoint2 operator +(MPoint2 a, MPoint2 b) => new MPoint2(a.X + b.X, a.Y + b.Y);
 
         /// <summary>
+        /// Operator for memberwise multiplication with another <see cref="MPoint2"/>.
+        /// </summary>
+        /// <param name="a">Left operand.</param>
+        /// <param name="b">Right operand.</param>
+        /// <returns>Multiplied result.</returns>
+        public static MPoint2 operator *(MPoint2 a, MPoint2 b) => new MPoint2(a.X * b.X, a.Y * b.Y);
+
+        /// <summary>
+        /// Operator for memberwise division with another <see cref="MPoint2"/>.
+        /// </summary>
+        /// <param name="a">Left operand.</param>
+        /// <param name="b">Right operand.</param>
+        /// <returns>Division result.</returns>
+        public static MPoint2 operator /(MPoint2 a, MPoint2 b) => new MPoint2(a.X / b.X, a.Y / b.Y);
+
+        /// <summary>
         /// Logic operator for equality.
         /// </summary>
         /// <param name="a">Left operand.</param>
@@ -151,7 +167,7 @@ namespace MonoKle
         /// <returns></returns>
         public static MPoint2 Parse(string s)
         {
-            if (MPoint2.TryParse(s, out MPoint2 res) == false)
+            if (TryParse(s, out MPoint2 res) == false)
             {
                 throw new FormatException("String format not correctly defined.");
             }
@@ -182,14 +198,7 @@ namespace MonoKle
         /// </summary>
         /// <param name="obj">The object to compare with.</param>
         /// <returns>True if they are equal, else false.</returns>
-        public override bool Equals(object obj)
-        {
-            if (obj is MPoint2)
-            {
-                return this == (MPoint2)obj;
-            }
-            return false;
-        }
+        public override bool Equals(object obj) => obj is MPoint2 point && this == point;
 
         /// <summary>
         /// Returns equality to another <see cref="MPoint2"/>.

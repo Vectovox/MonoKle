@@ -9,6 +9,8 @@ namespace MonoKle.State
     /// </summary>
     public class StateSystem : IStateSystem, IUpdateable, IDrawable
     {
+        private readonly Logger _logger;
+
         private string _currentState = string.Empty;
 
         private readonly Dictionary<string, GameState> _stateByString = new Dictionary<string, GameState>();
@@ -16,6 +18,11 @@ namespace MonoKle.State
         private readonly Queue<StateSwitch> _switchQueue = new Queue<StateSwitch>();
 
         public ICollection<string> StateIdentifiers => _stateByString.Keys;
+
+        public StateSystem(Logger logger)
+        {
+            _logger = logger;
+        }
 
         public bool AddState(string identifier, GameState state)
         {
@@ -26,7 +33,7 @@ namespace MonoKle.State
 
             if (_stateByString.ContainsKey(identifier))
             {
-                Logger.Global.Log($"Could not add state with identifier '{identifier}' as one with the same name already exists.", LogLevel.Error);
+                _logger.Log($"Could not add state with identifier '{identifier}' as one with the same name already exists.", LogLevel.Error);
                 return false;
             }
 
@@ -49,7 +56,7 @@ namespace MonoKle.State
                 return true;
             }
 
-            Logger.Global.Log($"Could not remove state with identifier '{identifier}' as it does not exist.", LogLevel.Error);
+            _logger.Log($"Could not remove state with identifier '{identifier}' as it does not exist.", LogLevel.Error);
             return false;
         }
 
@@ -107,7 +114,7 @@ namespace MonoKle.State
 
                 if (!_stateByString.ContainsKey(_currentState))
                 {
-                    Logger.Global.Log($"Switched to state '{_currentState}' but it does not exist.", LogLevel.Warning);
+                    _logger.Log($"Switched to state '{_currentState}' but it does not exist.", LogLevel.Warning);
                 }
             }
         }

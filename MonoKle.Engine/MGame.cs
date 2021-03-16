@@ -78,10 +78,15 @@ namespace MonoKle.Engine
         private static readonly TouchScreen _touchScreen = new TouchScreen(_mouse);
 
         /// <summary>
+        /// Gets the logging utility, same as <see cref="Logger.Global"/>.
+        /// </summary>
+        public static Logger Logger { get; private set; } = Logger.Global;
+
+        /// <summary>
         /// Gets the state system, which keeps track of the states and switches between them.
         /// </summary>
         public static IStateSystem StateSystem => _stateSystem;
-        private static readonly StateSystem _stateSystem = new StateSystem();
+        private static readonly StateSystem _stateSystem = new StateSystem(Logger);
 
         /// <summary>
         /// Gets the running game instance.
@@ -92,11 +97,6 @@ namespace MonoKle.Engine
         /// Gets or sets the global game settings.
         /// </summary>
         public static MonoKleSettings Settings { get; } = new MonoKleSettings();
-
-        /// <summary>
-        /// Gets the logging utility, same as <see cref="Logger.Global"/>.
-        /// </summary>
-        public static Logger Logger { get; private set; }
 
         /// <summary>
         /// Gets the texture storage, loading and providing textures.
@@ -131,8 +131,7 @@ namespace MonoKle.Engine
             Settings.MouseEnabled = true;
             Settings.TouchEnabled = true;
 
-            // Set logger and enabled crashdumps
-            Logger = Logger.Global;
+            // Enable crashdumps
             AppDomain.CurrentDomain.UnhandledException += UnhandledException;
 
             InitializeVariables();

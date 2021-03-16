@@ -18,7 +18,7 @@ namespace MonoKle.Configuration
         /// </summary>
         public const char VariableValueDivisor = '=';
 
-        private CVarSystem system;
+        private readonly CVarSystem _system;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CVarFileLoader"/> class.
@@ -26,7 +26,7 @@ namespace MonoKle.Configuration
         /// <param name="system">The system to populate.</param>
         public CVarFileLoader(CVarSystem system)
         {
-            this.system = system;
+            _system = system;
         }
 
         /// <summary>
@@ -57,26 +57,27 @@ namespace MonoKle.Configuration
 
         private bool InterpretLine(string line)
         {
+            // Sanitize and check for comment line
             line = line.Trim();
-            if (line.StartsWith(CVarFileLoader.CommentedLineToken))
+            if (line.StartsWith(CommentedLineToken))
             {
                 return true;
             }
 
-            string[] parts = line.Split(CVarFileLoader.VariableValueDivisor);
-
-            if (parts.Length == 2)
+            // Split variable and value
+            string[] parts = line.Split(VariableValueDivisor);
+            if (parts.Length != 2)
             {
-                string variableText = parts[0].Trim();
-                string valueText = parts[1].Trim();
-
-                var sc = new StringConverter();
-                object value = sc.ToAny(valueText);
-
-                return system.SetValue(variableText, value);
+                return false;
             }
+            string variableText = parts[0].Trim();
+            string valueText = parts[1].Trim();
 
-            return false;
+            // Convert value string and populate variable with value
+            var sc = new StringConverter();
+            object value = sc.ToAny(valueText);
+
+            return _system.SetValue(variableText, value);
         }
 
         private void InterpretText(string text)

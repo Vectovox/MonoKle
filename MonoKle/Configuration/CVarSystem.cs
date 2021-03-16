@@ -1,6 +1,8 @@
 ﻿using MonoKle.Logging;
+using MoreLinq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace MonoKle.Configuration
@@ -72,15 +74,8 @@ namespace MonoKle.Configuration
         /// <param name="instance">The object instance to bind.</param>
         public void BindProperties(object instance)
         {
-            Type type = instance.GetType();
-            foreach (PropertyInfo property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic))
-            {
-                foreach (CVarAttribute attribute in property.GetCustomAttributes(typeof(CVarAttribute)))
-                {
-                    Bind(new PropertyCVar(property, instance), attribute.Identifier);
-                }
-            }
-            BindProperties(type);
+            GetInstanceProperties(instance).ForEach(t => Bind(new PropertyCVar(t.Property, instance), t.Attribute.Identifier));
+            BindProperties(instance.GetType());
         }
 
         /// <summary>
@@ -92,16 +87,8 @@ namespace MonoKle.Configuration
         /// Binds the static properties declared with <see cref="CVarAttribute"/> of the provided type.
         /// </summary>
         /// <param name="type">The type to bind static properties to.</param>
-        public void BindProperties(Type type)
-        {
-            foreach (PropertyInfo property in type.GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic))
-            {
-                foreach (CVarAttribute attribute in property.GetCustomAttributes(typeof(CVarAttribute)))
-                {
-                    Bind(new PropertyCVar(property, null), attribute.Identifier);
-                }
-            }
-        }
+        public void BindProperties(Type type) =>
+            GetClassProperties(type).ForEach(t => Bind(new PropertyCVar(t.Property, null), t.Attribute.Identifier));
 
         /// <summary>
         /// Determines whether the specified variable can be set or is read-only.
@@ -149,6 +136,28 @@ namespace MonoKle.Configuration
             Log($"Removed occurences of variable: {identifier}", LogLevel.Debug);
             return _variables.Remove(identifier);
         }
+
+        /// <summary>
+        /// Unbinds the properties declared with <see cref="CVarAttribute"/> of the provided object.
+        /// </summary>
+        /// <param name="instance">The object instance to find attributes on.</param>
+        /// <returns>The amount of variables unbound.</returns>
+        public int UnbindProperties(object instance) =>
+            GetInstanceProperties(instance).Sum(t => Unbind(t.Attribute.Identifier) ? 1 : 0)
+                + UnbindProperties(instance.GetType());
+
+        /// <summary>
+        /// Unbinds the static properties declared with <see cref="CVarAttribute"/> of the provided type argument.
+        /// </summary>
+        /// <returns>The amount of variables unbound.</returns>
+        public int UnbindProperties<T>() => UnbindProperties(typeof(T));
+
+        /// <summary>
+        /// Unbinds the static properties declared with <see cref="CVarAttribute"/> of the provided type.
+        /// </summary>
+        /// <param name="type">The type to unbind static properties from.</param>
+        /// <returns>The amount of variables unbound.</returns>
+        public int UnbindProperties(Type type) => GetClassProperties(type).Sum(t => Unbind(t.Attribute.Identifier) ? 1 : 0);
 
         /// <summary>
         /// Sets the value of the specified variable.
@@ -201,5 +210,27 @@ namespace MonoKle.Configuration
         }
 
         private static ICVar VoidVariable { get; } = new ValueCVar(new object());
+
+        private IEnumerable<(PropertyInfo Property, CVarAttribute Attribute)> GetInstanceProperties(object instance)
+        {
+            foreach (PropertyInfo property in instance.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic))
+            {
+                foreach (CVarAttribute attribute in property.GetCustomAttributes(typeof(CVarAttribute)))
+                {
+                    yield return (property, attribute);
+                }
+            }
+        }
+
+        private IEnumerable<(PropertyInfo Property, CVarAttribute Attribute)> GetClassProperties(Type type)
+        {
+            foreach (PropertyInfo property in type.GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic))
+            {
+                foreach (CVarAttribute attribute in property.GetCustomAttributes(typeof(CVarAttribute)))
+                {
+                    yield return (property, attribute);
+                }
+            }
+        }
     }
 }

@@ -66,19 +66,6 @@ namespace MonoKle.Configuration.Tests
         public void NewSystem_NoVariables() => Assert.AreEqual(0, _cvarSystem.Identifiers.Count);
 
         [TestMethod]
-        public void Unbind_Removed()
-        {
-            _cvarSystem.SetValue("a", 1);
-            _cvarSystem.SetValue("b", 2);
-            _cvarSystem.SetValue("c", 3);
-            _cvarSystem.Unbind("b");
-            Assert.AreEqual(2, _cvarSystem.Identifiers.Count);
-            Assert.AreEqual(1, _cvarSystem.GetValue("a"));
-            Assert.AreEqual(null, _cvarSystem.GetValue("b"));
-            Assert.AreEqual(3, _cvarSystem.GetValue("c"));
-        }
-
-        [TestMethod]
         public void SetValue_BoundVariable_Called()
         {
             var b = new VariableMock(true);
@@ -182,6 +169,55 @@ namespace MonoKle.Configuration.Tests
             Assert.AreEqual(StaticClassType.Static, 0);
             _cvarSystem.SetValue("static_class", 78);
             Assert.AreEqual(StaticClassType.Static, 78);
+        }
+
+        [TestMethod]
+        public void Unbind_Removed()
+        {
+            _cvarSystem.SetValue("a", 1);
+            _cvarSystem.SetValue("b", 2);
+            _cvarSystem.SetValue("c", 3);
+            _cvarSystem.Unbind("b");
+            Assert.AreEqual(2, _cvarSystem.Identifiers.Count);
+            Assert.AreEqual(1, _cvarSystem.GetValue("a"));
+            Assert.AreEqual(null, _cvarSystem.GetValue("b"));
+            Assert.AreEqual(3, _cvarSystem.GetValue("c"));
+        }
+
+        [TestMethod]
+        public void UnbindProperty_RemovedWithNoSideEffects()
+        {
+            // Setup
+            _cvarSystem.SetValue("a", 1);
+            var b = new BoundType() { X = 2, Y = 3, Z = 4 };
+            _cvarSystem.BindProperties(b);
+
+            // Test
+            var unbound = _cvarSystem.UnbindProperties(b);
+
+            // Assert
+            Assert.AreEqual(2, unbound);
+            Assert.AreEqual(1, _cvarSystem.Identifiers.Count);
+            Assert.AreEqual(1, _cvarSystem.GetValue("a"));
+            Assert.IsFalse(_cvarSystem.Contains("x"));
+            Assert.IsFalse(_cvarSystem.Contains("z"));
+        }
+
+        [TestMethod]
+        public void UnbindProperty_StaticClass_RemovedWithNoSideEffects()
+        {
+            // Setup
+            _cvarSystem.SetValue("a", 1);
+            _cvarSystem.BindProperties(typeof(StaticClassType));
+
+            // Test
+            var unbound = _cvarSystem.UnbindProperties(typeof(StaticClassType));
+
+            // Assert
+            Assert.AreEqual(1, unbound);
+            Assert.AreEqual(1, _cvarSystem.Identifiers.Count);
+            Assert.AreEqual(1, _cvarSystem.GetValue("a"));
+            Assert.IsFalse(_cvarSystem.Contains("static_class"));
         }
 
         private class BoundType

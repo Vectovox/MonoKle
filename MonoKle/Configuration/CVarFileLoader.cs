@@ -35,7 +35,7 @@ namespace MonoKle.Configuration
         /// <param name="identifier">The variable identifier.</param>
         /// <param name="value">The value.</param>
         /// <returns>True if successful; otherwise false.</returns>
-        public bool LoadItem(string identifier, string value) => InterpretLine(identifier + CVarFileLoader.VariableValueDivisor + value);
+        public bool LoadItem(string identifier, string value) => InterpretLine(identifier + VariableValueDivisor + value);
 
         /// <summary>
         /// Loads variables from the given text.
@@ -73,11 +73,8 @@ namespace MonoKle.Configuration
             string variableText = parts[0].Trim();
             string valueText = parts[1].Trim();
 
-            // Convert value string and populate variable with value
-            var sc = new StringConverter();
-            object value = sc.ToAny(valueText);
-
-            return _system.SetValue(variableText, value);
+            // Set value
+            return _system.SetValue(variableText, valueText);
         }
 
         private void InterpretText(string text)

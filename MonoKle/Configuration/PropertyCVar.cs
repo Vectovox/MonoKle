@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Reflection;
 
 namespace MonoKle.Configuration
@@ -80,6 +81,19 @@ namespace MonoKle.Configuration
                         return true;
                     }
                     catch (InvalidCastException)
+                    {
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        TypeConverter typeConverter = TypeDescriptor.GetConverter(_property.PropertyType);
+                        object converted = typeConverter.ConvertFrom(value);
+                        _property.SetValue(_owner, converted);
+                        return true;
+                    }
+                    catch (NotSupportedException)
                     {
                     }
                 }

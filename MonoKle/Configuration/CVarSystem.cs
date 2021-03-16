@@ -1,7 +1,6 @@
 ﻿using MonoKle.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 
 namespace MonoKle.Configuration
@@ -67,7 +66,7 @@ namespace MonoKle.Configuration
             {
                 _variables.Add(identifier, instance);
             }
-            Log("Bound variable instance to identifier: " + identifier, LogLevel.Debug);
+            Log($"Bound variable instance to identifier: {identifier}", LogLevel.Debug);
         }
 
         /// <summary>
@@ -112,15 +111,7 @@ namespace MonoKle.Configuration
         /// </summary>
         /// <param name="identifier">The identifier of the variable.</param>
         /// <returns>True if it can be set; otherwise false.</returns>
-        public bool CanSet(string identifier)
-        {
-            ICVar variable = GetVariable(identifier, false);
-            if (variable != null)
-            {
-                return variable.CanSet();
-            }
-            return false;
-        }
+        public bool CanSet(string identifier) => TryGetVariable(identifier, out var variable) && variable.CanSet();
 
         /// <summary>
         /// Clears all variables.
@@ -136,7 +127,7 @@ namespace MonoKle.Configuration
         /// </summary>
         /// <param name="identifier">The identifier.</param>
         /// <returns>True if a variable with the specified identifier exists; otherwise false.</returns>
-        public bool Contains(string identifier) => GetVariable(identifier, false) != null;
+        public bool Contains(string identifier) => TryGetVariable(identifier, out _);
 
         /// <summary>
         /// Gets the specified variable.
@@ -144,12 +135,11 @@ namespace MonoKle.Configuration
         /// <param name="identifier">The identifier variable to get.</param>
         public object GetValue(string identifier)
         {
-            ICVar variable = GetVariable(identifier);
-            if (variable != null)
+            if (TryGetVariable(identifier, out var variable))
             {
                 return variable.GetValue();
             }
-            return null;
+            throw new ArgumentException($"Variable with identifier '{identifier}' does not exist.");
         }
 
         /// <summary>
@@ -170,20 +160,22 @@ namespace MonoKle.Configuration
         /// <param name="value">The value to assign.</param>
         public bool SetValue(string identifier, object value)
         {
-            if (_variables.ContainsKey(identifier))
+            if (_variables.TryGetValue(identifier, out var variable))
             {
-                if (_variables[identifier].SetValue(value) == false)
+                // Existing variable so set the value
+                if (!variable.SetValue(value))
                 {
-                    Log("Could not set variable '" + identifier + "' to " + value, LogLevel.Error);
+                    Log($"Could not set variable '{identifier}' to '{value}'", LogLevel.Error);
                     return false;
                 }
             }
             else
             {
-                Log("Added new variable: " + identifier, LogLevel.Trace);
+                // No existing variable so add it
                 _variables.Add(identifier, new ValueCVar(value));
+                Log($"Added new variable '{identifier}'", LogLevel.Trace);
             }
-            Log("Set value of variable '" + identifier + "' to " + value, LogLevel.Trace);
+            Log($"Set value of variable '{identifier}' to '{value}'", LogLevel.Trace);
             return true;
         }
 
@@ -192,32 +184,25 @@ namespace MonoKle.Configuration
         /// </summary>
         /// <param name="message">The message to log.</param>
         /// <param name="level">The logging level.</param>
-        protected void Log(string message, LogLevel level)
-        {
-            if (Logger != null)
-            {
-                Logger.Log(message, level);
-            }
-        }
+        protected void Log(string message, LogLevel level) => Logger?.Log(message, level);
 
         /// <summary>
-        /// Gets the variable with the specified identifier.
+        /// Gets the variable associated with the given identifier.
         /// </summary>
-        /// <param name="identifier">The identifier.</param>
-        /// <returns></returns>
-        public ICVar GetVariable(string identifier) => GetVariable(identifier, true);
-
-        private ICVar GetVariable(string identifier, bool generateWarning)
+        /// <param name="identifier">The identifier to lookup.</param>
+        /// <param name="variable">Contains the associated variable if one exists for the given identifier; otherwise a void variable.</param>
+        /// <returns>True if a variable with the associated identifier exists; otherwise false.</returns>
+        public bool TryGetVariable(string identifier, out ICVar variable)
         {
             if (_variables.ContainsKey(identifier))
             {
-                return _variables[identifier];
+                variable = _variables[identifier];
+                return true;
             }
-            else if (generateWarning)
-            {
-                Log("Accessed variable does not exist: " + identifier, LogLevel.Warning);
-            }
-            return null;
+            variable = VoidVariable;
+            return false;
         }
+
+        private static ICVar VoidVariable { get; } = new ValueCVar(new object());
     }
 }

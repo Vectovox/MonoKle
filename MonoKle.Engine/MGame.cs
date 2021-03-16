@@ -159,7 +159,7 @@ namespace MonoKle.Engine
 
             // Done initializing
             _console.WriteLine("MonoKle Engine initialized!", Console.CommandTextColour);
-            _console.WriteLine("Running version: " + Assembly.GetAssembly(typeof(MGame)).GetName().Version, Console.CommandTextColour);
+            _console.WriteLine($"Running version: {ThisAssembly.AssemblyInformationalVersion}", Console.CommandTextColour);
             _initializing = false;
         }
 

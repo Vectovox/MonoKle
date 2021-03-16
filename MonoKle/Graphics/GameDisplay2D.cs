@@ -78,7 +78,9 @@ namespace MonoKle.Graphics
         /// <param name="graphicsManager">Graphics manager to use.</param>
         /// <param name="targetWorldResolution">The target resolution of the world rendering.</param>
         /// <param name="targetUiResolution">The target resolution of the UI rendering.</param>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Current C# does not support init in methods.
         public GameDisplay2D(GraphicsManager graphicsManager, MPoint2 targetWorldResolution, MPoint2 targetUiResolution)
+#pragma warning restore CS8618
         {
             // Graphics manager stuff
             _graphicsManager = graphicsManager;
@@ -195,5 +197,20 @@ namespace MonoKle.Graphics
         /// </remarks>
         /// <param name="worldCoordinate">The world coordinate to transform.</param>
         public MPoint2 WorldToUI(MVector2 worldCoordinate) => DisplayToUI(WorldToDisplay(worldCoordinate));
+
+        /// <summary>
+        /// Sets the UI as render target for the <see cref="GraphicsDevice"/>.
+        /// </summary>
+        public void RenderToUI() => GraphicsDevice.SetRenderTarget(UiRenderTarget);
+
+        /// <summary>
+        /// Sets the world as render target for the <see cref="GraphicsDevice"/>.
+        /// </summary>
+        public void RenderToWorld() => GraphicsDevice.SetRenderTarget(WorldRenderTarget);
+
+        /// <summary>
+        /// Sets the backbuffer as render target for the <see cref="GraphicsDevice"/>.
+        /// </summary>
+        public void RenderToBackbuffer() => GraphicsDevice.SetRenderTarget(null);
     }
 }

@@ -39,22 +39,5 @@ namespace MonoKle
 
             return null;
         }
-
-        public object ToType(string s, Type type)
-        {
-            if (type == typeof(MVector2))
-            {
-                return ToMVector2(s);
-            }
-            else if (type == typeof(MPoint2))
-            {
-                return ToMPoint2(s);
-            }
-            return null;
-        }
-
-        public MVector2 ToMVector2(string s) => MVector2.Parse(s);
-
-        public MPoint2 ToMPoint2(string s) => MPoint2.Parse(s);
     }
 }

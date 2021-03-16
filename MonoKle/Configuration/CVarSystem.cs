@@ -11,14 +11,7 @@ namespace MonoKle.Configuration
     /// </summary>
     public class CVarSystem : ILogged
     {
-        private Dictionary<string, ICVar> _variables = new Dictionary<string, ICVar>();
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CVarSystem"/> class.
-        /// </summary>
-        public CVarSystem()
-        {
-        }
+        private readonly Dictionary<string, ICVar> _variables = new Dictionary<string, ICVar>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CVarSystem"/> class.

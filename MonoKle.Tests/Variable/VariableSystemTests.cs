@@ -8,6 +8,9 @@ namespace MonoKle.Configuration.Tests
     {
         private CVarSystem _cvarSystem;
 
+        [TestInitialize]
+        public void Init() => _cvarSystem = new CVarSystem(new Logging.Logger());
+
         [TestMethod]
         public void Clear_Cleared()
         {
@@ -27,8 +30,8 @@ namespace MonoKle.Configuration.Tests
             var b = new MockVariable(true);
             _cvarSystem.Bind(b, "a");
             _cvarSystem.GetValue("a");
-            Assert.IsTrue(b.getCalled);
-            Assert.IsFalse(b.setCalled);
+            Assert.IsTrue(b._getCalled);
+            Assert.IsFalse(b._setCalled);
         }
 
         [TestMethod]
@@ -59,9 +62,6 @@ namespace MonoKle.Configuration.Tests
             Assert.AreEqual(value2, _cvarSystem.GetValue(id2));
         }
 
-        [TestInitialize]
-        public void Init() => _cvarSystem = new CVarSystem();
-
         [TestMethod]
         public void NewSystem_NoVariables() => Assert.AreEqual(0, _cvarSystem.Identifiers.Count);
 
@@ -84,8 +84,8 @@ namespace MonoKle.Configuration.Tests
             var b = new MockVariable(true);
             _cvarSystem.Bind(b, "a");
             _cvarSystem.SetValue("a", 5);
-            Assert.IsFalse(b.getCalled);
-            Assert.IsTrue(b.setCalled);
+            Assert.IsFalse(b._getCalled);
+            Assert.IsTrue(b._setCalled);
         }
 
         [TestMethod]
@@ -97,14 +97,22 @@ namespace MonoKle.Configuration.Tests
         }
 
         [TestMethod]
+        public void SetValue_BoundVariable_TrueReturn()
+        {
+            var b = new MockVariable(true);
+            _cvarSystem.Bind(b, "a");
+            Assert.IsTrue(_cvarSystem.SetValue("a", 5));
+        }
+
+        [TestMethod]
         public void SetValue_BoundVariable_MockNotUpdated()
         {
             var b = new MockVariable(false);
             _cvarSystem.SetValue("a", 5);
             _cvarSystem.Bind(b, "a", false);
-            Assert.AreEqual(null, b.var);
-            Assert.IsFalse(b.getCalled);
-            Assert.IsFalse(b.setCalled);
+            Assert.AreEqual(null, b._var);
+            Assert.IsFalse(b._getCalled);
+            Assert.IsFalse(b._setCalled);
         }
 
         [TestMethod]
@@ -113,9 +121,9 @@ namespace MonoKle.Configuration.Tests
             var b = new MockVariable(false);
             _cvarSystem.SetValue("a", 5);
             _cvarSystem.Bind(b, "a", true);
-            Assert.AreEqual(5, b.var);
-            Assert.IsFalse(b.getCalled);
-            Assert.IsTrue(b.setCalled);
+            Assert.AreEqual(5, b._var);
+            Assert.IsFalse(b._getCalled);
+            Assert.IsTrue(b._setCalled);
         }
 
         [TestMethod]
@@ -192,14 +200,14 @@ namespace MonoKle.Configuration.Tests
 
         private class MockVariable : ICVar
         {
-            public bool getCalled;
-            public bool setCalled;
-            public bool toReturnOnSet;
-            public object var;
+            public bool _getCalled;
+            public bool _setCalled;
+            public bool _toReturnOnSet;
+            public object _var;
 
             public MockVariable(bool toReturnOnSet)
             {
-                toReturnOnSet = toReturnOnSet;
+                _toReturnOnSet = toReturnOnSet;
             }
 
             public Type Type => throw new NotImplementedException();
@@ -208,15 +216,15 @@ namespace MonoKle.Configuration.Tests
 
             public object GetValue()
             {
-                getCalled = true;
-                return var;
+                _getCalled = true;
+                return _var;
             }
 
             public bool SetValue(object value)
             {
-                setCalled = true;
-                var = value;
-                return toReturnOnSet;
+                _setCalled = true;
+                _var = value;
+                return _toReturnOnSet;
             }
         }
     }

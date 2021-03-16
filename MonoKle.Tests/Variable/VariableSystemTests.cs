@@ -19,9 +19,9 @@ namespace MonoKle.Configuration.Tests
             _cvarSystem.SetValue("c", 3);
             _cvarSystem.Clear();
             Assert.AreEqual(0, _cvarSystem.Identifiers.Count);
-            Assert.AreEqual(null, _cvarSystem.GetValue("a"));
-            Assert.AreEqual(null, _cvarSystem.GetValue("b"));
-            Assert.AreEqual(null, _cvarSystem.GetValue("c"));
+            Assert.IsFalse(_cvarSystem.Contains("a"));
+            Assert.IsFalse(_cvarSystem.Contains("b"));
+            Assert.IsFalse(_cvarSystem.Contains("c"));
         }
 
         [TestMethod]
@@ -44,11 +44,8 @@ namespace MonoKle.Configuration.Tests
         }
 
         [TestMethod]
-        public void GetValue_Nonexisting_Null()
-        {
-            _cvarSystem.SetValue("abcd", 8);
-            Assert.AreEqual(null, _cvarSystem.GetValue("abc"));
-        }
+        public void GetValue_Nonexisting_Exception() =>
+            Assert.ThrowsException<ArgumentException>(() => _cvarSystem.GetValue("abc"));
 
         [TestMethod]
         public void GetValue_TwoExists_Correct()
@@ -180,8 +177,8 @@ namespace MonoKle.Configuration.Tests
             _cvarSystem.Unbind("b");
             Assert.AreEqual(2, _cvarSystem.Identifiers.Count);
             Assert.AreEqual(1, _cvarSystem.GetValue("a"));
-            Assert.AreEqual(null, _cvarSystem.GetValue("b"));
             Assert.AreEqual(3, _cvarSystem.GetValue("c"));
+            Assert.IsFalse(_cvarSystem.Contains("b"));
         }
 
         [TestMethod]

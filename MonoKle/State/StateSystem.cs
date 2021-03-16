@@ -124,7 +124,7 @@ namespace MonoKle.State
                 ? _stateByString[identifier]
                 : Void;
 
-        private static readonly GameState Void = new VoidState();
+        private static GameState Void { get; } = new VoidState();
 
         /// <summary>
         /// NOOP game state.

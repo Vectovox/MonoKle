@@ -16,10 +16,7 @@ namespace MonoKle.Configuration
         /// Initializes a new instance of the <see cref="CVarSystem"/> class.
         /// </summary>
         /// <param name="logger">The logger to use.</param>
-        public CVarSystem(Logger logger)
-        {
-            Logger = logger;
-        }
+        public CVarSystem(Logger logger) => Logger = logger;
 
         /// <summary>
         /// Gets the variable identifiers.
@@ -143,13 +140,13 @@ namespace MonoKle.Configuration
         }
 
         /// <summary>
-        /// Removes the specified variable.
+        /// Unbinds and removes the specified variable.
         /// </summary>
         /// <param name="identifier">The identifier of the variable to remove.</param>
         /// <returns>True if a variable was removed; otherwise false.</returns>
-        public bool Remove(string identifier)
+        public bool Unbind(string identifier)
         {
-            Log("Removed occurences of variable: " + identifier, LogLevel.Debug);
+            Log($"Removed occurences of variable: {identifier}", LogLevel.Debug);
             return _variables.Remove(identifier);
         }
 
@@ -184,7 +181,7 @@ namespace MonoKle.Configuration
         /// </summary>
         /// <param name="message">The message to log.</param>
         /// <param name="level">The logging level.</param>
-        protected void Log(string message, LogLevel level) => Logger?.Log(message, level);
+        protected void Log(string message, LogLevel level) => Logger.Log(message, level);
 
         /// <summary>
         /// Gets the variable associated with the given identifier.

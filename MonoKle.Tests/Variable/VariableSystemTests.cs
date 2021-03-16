@@ -66,12 +66,12 @@ namespace MonoKle.Configuration.Tests
         public void NewSystem_NoVariables() => Assert.AreEqual(0, _cvarSystem.Identifiers.Count);
 
         [TestMethod]
-        public void Remove_Removed()
+        public void Unbind_Removed()
         {
             _cvarSystem.SetValue("a", 1);
             _cvarSystem.SetValue("b", 2);
             _cvarSystem.SetValue("c", 3);
-            _cvarSystem.Remove("b");
+            _cvarSystem.Unbind("b");
             Assert.AreEqual(2, _cvarSystem.Identifiers.Count);
             Assert.AreEqual(1, _cvarSystem.GetValue("a"));
             Assert.AreEqual(null, _cvarSystem.GetValue("b"));

@@ -11,7 +11,7 @@ namespace MonoKle.Engine.Commands
 
         public void Call(IGameConsole console)
         {
-            if (MGame.Variables.Variables.Remove(Variable) == false)
+            if (MGame.Variables.Variables.Unbind(Variable) == false)
             {
                 MGame.Console.WriteError("Could not remove variable since it does not exist.");
             }

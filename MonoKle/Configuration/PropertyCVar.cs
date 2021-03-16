@@ -8,7 +8,7 @@ namespace MonoKle.Configuration
     /// </summary>
     public class PropertyCVar : ICVar
     {
-        private readonly object _owner;
+        private readonly object? _owner;
         private readonly PropertyInfo _property;
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace MonoKle.Configuration
         /// </summary>
         /// <param name="property">The property to use.</param>
         /// <param name="owner">The owner. Must be null for static properties.</param>
-        public PropertyCVar(PropertyInfo property, object owner)
+        public PropertyCVar(PropertyInfo property, object? owner)
         {
             if (property == null)
             {
@@ -55,31 +55,12 @@ namespace MonoKle.Configuration
             _owner = owner;
         }
 
-        /// <summary>
-        /// Gets the type of the variable.
-        /// </summary>
-        /// <value>
-        /// The type.
-        /// </value>
-        public Type Type => CanSet() ? _property.PropertyType : null;
+        public Type Type => _property.PropertyType;
 
-        /// <summary>
-        /// Determines whether this instance can set.
-        /// </summary>
-        /// <returns></returns>
         public bool CanSet() => _property.SetMethod != null;
 
-        /// <summary>
-        /// Gets the variable value.
-        /// </summary>
-        /// <returns></returns>
         public object GetValue() => _property.GetValue(_owner);
 
-        /// <summary>
-        /// Sets the variable to the provided value if possible.
-        /// </summary>
-        /// <param name="value">The value to set.</param>
-        /// <returns>True if value could be set; otherwise false.</returns>
         public bool SetValue(object value)
         {
             if (CanSet())
@@ -98,7 +79,7 @@ namespace MonoKle.Configuration
                         _property.SetValue(_owner, newObj);
                         return true;
                     }
-                    catch (InvalidCastException e)
+                    catch (InvalidCastException)
                     {
                     }
                 }

@@ -18,33 +18,12 @@ namespace MonoKle.Configuration
             _value = value;
         }
 
-        /// <summary>
-        /// Gets the type of the variable.
-        /// </summary>
-        /// <value>
-        /// The type.
-        /// </value>
         public Type Type => typeof(object);
 
-        /// <summary>
-        /// Determines whether this instance can set.
-        /// </summary>
-        /// <returns></returns>
         public bool CanSet() => true;
 
-        /// <summary>
-        /// Gets the variable value.
-        /// </summary>
-        /// <returns></returns>
         public object GetValue() => _value;
 
-        /// <summary>
-        /// Sets the variable to the provided value if possible.
-        /// </summary>
-        /// <param name="value">The value to set.</param>
-        /// <returns>
-        /// True if value could be set; otherwise false.
-        /// </returns>
         public bool SetValue(object value)
         {
             _value = value;

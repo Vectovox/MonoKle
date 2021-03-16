@@ -11,14 +11,11 @@ namespace SettingsLister
         {
             var types = typeof(MonoKle.MVector2).Assembly.GetTypes().Concat(typeof(MonoKle.Engine.MonoKleSettings).Assembly.GetTypes());
             var properties = types.SelectMany(t => t.GetProperties());
-            foreach (var property in properties)
-            {
-                var attribute = property.GetCustomAttribute<MonoKle.Configuration.CVarAttribute>();
-                if (attribute != null)
-                {
-                    Console.WriteLine($"{attribute.Identifier} : {property.DeclaringType.Name}");
-                }
-            }
+            var pairs = properties.Select(property => ( property, attribute:  property.GetCustomAttribute<MonoKle.Configuration.CVarAttribute>()))
+                                  .Where(pair => pair.attribute != null);
+
+            pairs.OrderBy(p => p.attribute.Identifier)
+                 .ForEach(pair => Console.WriteLine($"{pair.attribute.Identifier} : {pair.property.DeclaringType.Name}"));
         }
     }
 }

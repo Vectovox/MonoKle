@@ -7,18 +7,20 @@ namespace MonoKle.Graphics
     /// <summary>
     /// Abstract class for drawing primitives.
     /// </summary>
-    public abstract class AbstractPrimitiveBatch : IPrimitiveBatch
+    /// <remarks>
+    /// Intended purpose is debugging. Should not be run in production.
+    /// </remarks>
+    public abstract class AbstractPrimitiveBatch : IPrimitiveBatch, IDisposable
     {
-        private const string EXCEPTION_MSG_ALREADY_BEGUN = "Begin has already been called.";
-        private const string EXCEPTION_MSG_NOT_BEGUN = "Begin has not been called.";
-        private const int INITIAL_VERTEX_AMOUNT = 1;
+        private const string BeginNotCalledExceptionMessage = "Begin has not been called.";
+        private const int InitialVertexAmount = 1;
 
-        private BasicEffect effect;
-        private GraphicsDevice graphicsDevice;
-        private bool hasBegun;
-        private short[] indexArray = new short[AbstractPrimitiveBatch.INITIAL_VERTEX_AMOUNT];
-        private int nVertices = 0;
-        private VertexPositionColor[] vertexArray = new VertexPositionColor[AbstractPrimitiveBatch.INITIAL_VERTEX_AMOUNT];
+        private readonly BasicEffect _effect;
+        private readonly GraphicsDevice _graphicsDevice;
+        private bool _hasBegun;
+        private short[] _indexArray = new short[InitialVertexAmount];
+        private int _nVertices = 0;
+        private VertexPositionColor[] _vertexArray = new VertexPositionColor[InitialVertexAmount];
 
         /// <summary>
         /// Abstract constructor for <see cref="AbstractPrimitiveBatch"/>.
@@ -26,59 +28,56 @@ namespace MonoKle.Graphics
         /// <param name="graphicsDevice">The graphics device to draw with.</param>
         public AbstractPrimitiveBatch(GraphicsDevice graphicsDevice)
         {
-            this.graphicsDevice = graphicsDevice;
-            effect = new BasicEffect(graphicsDevice);
-            effect.VertexColorEnabled = true;
+            _graphicsDevice = graphicsDevice;
+            _effect = new BasicEffect(graphicsDevice)
+            {
+                VertexColorEnabled = true
+            };
             Grow();
         }
 
-        /// <summary>
-        /// Begins a batch of primitives.
-        /// </summary>
+        public void Dispose()
+        {
+            _effect.Dispose();
+        }
+
         public void Begin() => Begin(Matrix.Identity);
 
-        /// <summary>
-        /// Begins a batch of primitives, using a transformation matrix to apply to each primitive.
-        /// </summary>
-        /// <param name="transformMatrix">Transformation matrix to apply.</param>
         public void Begin(Matrix transformMatrix)
         {
-            if (hasBegun)
+            if (_hasBegun)
             {
-                throw new InvalidOperationException(AbstractPrimitiveBatch.EXCEPTION_MSG_ALREADY_BEGUN);
+                throw new InvalidOperationException("Begin has already been called.");
             }
             else
             {
-                effect.Projection = transformMatrix * GetPostTransformationMatrix(graphicsDevice.Viewport);
-                hasBegun = true;
+                _effect.Projection = transformMatrix * GetPostTransformationMatrix(_graphicsDevice.Viewport);
+                _hasBegun = true;
             }
         }
 
-        /// <summary>
-        /// Ends a batch of primitives.
-        /// </summary>
         public void End()
         {
-            if (hasBegun == false)
+            if (!_hasBegun)
             {
-                throw new InvalidOperationException(AbstractPrimitiveBatch.EXCEPTION_MSG_NOT_BEGUN);
+                throw new InvalidOperationException(BeginNotCalledExceptionMessage);
             }
             else
             {
-                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                foreach (EffectPass pass in _effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
-                    graphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.LineList,
-                        vertexArray,
+                    _graphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.LineList,
+                        _vertexArray,
                         0,
-                        nVertices,
-                        indexArray,
+                        _nVertices,
+                        _indexArray,
                         0,
-                        (int)(nVertices * 0.5f));
+                        (int)(_nVertices * 0.5f));
                 }
 
-                nVertices = 0;
-                hasBegun = false;
+                _nVertices = 0;
+                _hasBegun = false;
             }
         }
 
@@ -91,19 +90,19 @@ namespace MonoKle.Graphics
         /// <param name="endColor">Color of line on ending coordinate.</param>
         protected void AddLine(Vector3 start, Vector3 end, Color startColor, Color endColor)
         {
-            if (hasBegun == false)
+            if (!_hasBegun)
             {
-                throw new InvalidOperationException(AbstractPrimitiveBatch.EXCEPTION_MSG_NOT_BEGUN);
+                throw new InvalidOperationException(BeginNotCalledExceptionMessage);
             }
             else
             {
-                if (nVertices >= vertexArray.Length)
+                if (_nVertices >= _vertexArray.Length)
                 {
                     Grow();
                 }
-                vertexArray[nVertices] = new VertexPositionColor(start, startColor);
-                vertexArray[nVertices + 1] = new VertexPositionColor(end, endColor);
-                nVertices += 2;
+                _vertexArray[_nVertices] = new VertexPositionColor(start, startColor);
+                _vertexArray[_nVertices + 1] = new VertexPositionColor(end, endColor);
+                _nVertices += 2;
             }
         }
 
@@ -116,20 +115,20 @@ namespace MonoKle.Graphics
 
         private void Grow()
         {
-            short[] newIndexArray = new short[indexArray.Length * 2];
+            short[] newIndexArray = new short[_indexArray.Length * 2];
             var newVertexArray = new VertexPositionColor[newIndexArray.Length];
 
             for (short i = 0; i < newIndexArray.Length; i++)
             {
                 newIndexArray[i] = i;
             }
-            for (int i = 0; i < vertexArray.Length; i++)
+            for (int i = 0; i < _vertexArray.Length; i++)
             {
-                newVertexArray[i] = vertexArray[i];
+                newVertexArray[i] = _vertexArray[i];
             }
 
-            indexArray = newIndexArray;
-            vertexArray = newVertexArray;
+            _indexArray = newIndexArray;
+            _vertexArray = newVertexArray;
         }
     }
 }

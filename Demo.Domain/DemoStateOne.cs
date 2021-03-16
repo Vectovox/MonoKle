@@ -285,6 +285,7 @@ namespace Demo.Domain
             MGame.Console.WriteLine($"State one activated! Message: {_stateSwitchMessage}");
             _spriteBatch = new SpriteBatch(MGame.GraphicsManager.GraphicsDevice);
             _timer.Reset();
+            _primitive2D?.Dispose();
             _primitive2D = new PrimitiveBatch2D(MGame.GraphicsManager.GraphicsDevice);
         }
     }

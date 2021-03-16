@@ -10,7 +10,14 @@ namespace MonoKle.Engine.Commands
     {
         public void Call(IGameConsole console) => MGame.Variables.Variables.Identifiers
                 .OrderBy(i => i)
-                .ForEach(identifier => MGame.Console.WriteLine("\t" + identifier, MGame.Variables.Variables.CanSet(identifier) ? MGame.Console.DefaultTextColour : MGame.Console.DisabledTextColour));
+                .ForEach(PrintIdentifier);
+
+        private static void PrintIdentifier(string identifier)
+        {
+            var color = MGame.Variables.Variables.CanSet(identifier) ? MGame.Console.DefaultTextColour : MGame.Console.DisabledTextColour;
+            string text = $"\t{identifier} : {MGame.Variables.Variables.GetValue(identifier)}";
+            MGame.Console.WriteLine(text, color);
+        }
 
         public ICollection<string> GetPositionalSuggestions() => new string[0];
     }

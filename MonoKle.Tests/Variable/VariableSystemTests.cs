@@ -27,7 +27,7 @@ namespace MonoKle.Configuration.Tests
         [TestMethod]
         public void GetValue_BoundVariable_Called()
         {
-            var b = new MockVariable(true);
+            var b = new VariableMock(true);
             _cvarSystem.Bind(b, "a");
             _cvarSystem.GetValue("a");
             Assert.IsTrue(b._getCalled);
@@ -81,7 +81,7 @@ namespace MonoKle.Configuration.Tests
         [TestMethod]
         public void SetValue_BoundVariable_Called()
         {
-            var b = new MockVariable(true);
+            var b = new VariableMock(true);
             _cvarSystem.Bind(b, "a");
             _cvarSystem.SetValue("a", 5);
             Assert.IsFalse(b._getCalled);
@@ -91,7 +91,7 @@ namespace MonoKle.Configuration.Tests
         [TestMethod]
         public void SetValue_BoundVariable_FalseReturn()
         {
-            var b = new MockVariable(false);
+            var b = new VariableMock(false);
             _cvarSystem.Bind(b, "a");
             Assert.IsFalse(_cvarSystem.SetValue("a", 5));
         }
@@ -99,7 +99,7 @@ namespace MonoKle.Configuration.Tests
         [TestMethod]
         public void SetValue_BoundVariable_TrueReturn()
         {
-            var b = new MockVariable(true);
+            var b = new VariableMock(true);
             _cvarSystem.Bind(b, "a");
             Assert.IsTrue(_cvarSystem.SetValue("a", 5));
         }
@@ -107,7 +107,7 @@ namespace MonoKle.Configuration.Tests
         [TestMethod]
         public void SetValue_BoundVariable_MockNotUpdated()
         {
-            var b = new MockVariable(false);
+            var b = new VariableMock(false);
             _cvarSystem.SetValue("a", 5);
             _cvarSystem.Bind(b, "a", false);
             Assert.AreEqual(null, b._var);
@@ -118,7 +118,7 @@ namespace MonoKle.Configuration.Tests
         [TestMethod]
         public void SetValue_BoundVariable_MockUpdated()
         {
-            var b = new MockVariable(false);
+            var b = new VariableMock(false);
             _cvarSystem.SetValue("a", 5);
             _cvarSystem.Bind(b, "a", true);
             Assert.AreEqual(5, b._var);
@@ -142,7 +142,7 @@ namespace MonoKle.Configuration.Tests
         [TestMethod]
         public void BindProperties_CorrectlyBound()
         {
-            var b = new BoundClass() { X = 1, Y = 2, Z = 3 };
+            var b = new BoundType() { X = 1, Y = 2, Z = 3 };
             _cvarSystem.BindProperties(b);
             _cvarSystem.SetValue("z", 17);
             Assert.AreEqual(2, _cvarSystem.Identifiers.Count);
@@ -155,7 +155,7 @@ namespace MonoKle.Configuration.Tests
         [TestMethod]
         public void BindProperties_PrivateProperty_Assigned()
         {
-            var sut = new PrivateTest();
+            var sut = new PrivatePropertyType();
             _cvarSystem.BindProperties(sut);
             Assert.AreEqual(1, _cvarSystem.Identifiers.Count);
             Assert.AreEqual(sut.PrivateValue, 0);
@@ -166,15 +166,25 @@ namespace MonoKle.Configuration.Tests
         [TestMethod]
         public void BindProperties_StaticProperty_Assigned()
         {
-            var sut = new StaticTest();
+            var sut = new StaticPropertyType();
             _cvarSystem.BindProperties(sut);
             Assert.AreEqual(1, _cvarSystem.Identifiers.Count);
-            Assert.AreEqual(StaticTest.Static, 0);
+            Assert.AreEqual(StaticPropertyType.Static, 0);
             _cvarSystem.SetValue("static", 78);
-            Assert.AreEqual(StaticTest.Static, 78);
+            Assert.AreEqual(StaticPropertyType.Static, 78);
         }
 
-        private class BoundClass
+        [TestMethod]
+        public void BindProperties_StaticClass_Assigned()
+        {
+            _cvarSystem.BindProperties(typeof(StaticClassType));
+            Assert.AreEqual(1, _cvarSystem.Identifiers.Count);
+            Assert.AreEqual(StaticClassType.Static, 0);
+            _cvarSystem.SetValue("static_class", 78);
+            Assert.AreEqual(StaticClassType.Static, 78);
+        }
+
+        private class BoundType
         {
             [CVar("x")]
             public int X { get; set; }
@@ -185,27 +195,40 @@ namespace MonoKle.Configuration.Tests
             public int Z { get; set; }
         }
 
-        private class PrivateTest
+        private class PrivatePropertyType
         {
             [CVar("private")]
             private int Private { get; set; }
             public int PrivateValue => Private;
         }
 
-        private class StaticTest
+        private class StaticPropertyType
         {
             [CVar("static")]
             public static int Static { get; set; }
+
+            public static int NotBound { get; set; }
         }
 
-        private class MockVariable : ICVar
+        private static class StaticClassType
+        {
+            [CVar("static_class")]
+            public static int Static { get; set; }
+
+            public static int NotBound { get; set; }
+        }
+
+        /// <summary>
+        /// Used to control variable behavior form the tests.
+        /// </summary>
+        private class VariableMock : ICVar
         {
             public bool _getCalled;
             public bool _setCalled;
             public bool _toReturnOnSet;
             public object _var;
 
-            public MockVariable(bool toReturnOnSet)
+            public VariableMock(bool toReturnOnSet)
             {
                 _toReturnOnSet = toReturnOnSet;
             }

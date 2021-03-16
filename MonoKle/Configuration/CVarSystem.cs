@@ -71,7 +71,7 @@ namespace MonoKle.Configuration
         }
 
         /// <summary>
-        /// Binds the properties of the provided object to variables. Only properties declared with <see cref="CVarAttribute"/> are bound.
+        /// Binds the properties declared with <see cref="CVarAttribute"/> of the provided object.
         /// </summary>
         /// <param name="instance">The object instance to bind.</param>
         public void BindProperties(object instance)
@@ -84,6 +84,20 @@ namespace MonoKle.Configuration
                     Bind(new PropertyCVar(property, instance), attribute.Identifier);
                 }
             }
+            BindProperties(type);
+        }
+
+        /// <summary>
+        /// Binds the static properties declared with <see cref="CVarAttribute"/> of the provided type argument.
+        /// </summary>
+        public void BindProperties<T>() => BindProperties(typeof(T));
+
+        /// <summary>
+        /// Binds the static properties declared with <see cref="CVarAttribute"/> of the provided type.
+        /// </summary>
+        /// <param name="type">The type to bind static properties to.</param>
+        public void BindProperties(Type type)
+        {
             foreach (PropertyInfo property in type.GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic))
             {
                 foreach (CVarAttribute attribute in property.GetCustomAttributes(typeof(CVarAttribute)))

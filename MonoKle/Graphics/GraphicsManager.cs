@@ -23,7 +23,7 @@ namespace MonoKle.Graphics
         /// <summary>
         /// Occurs when resolution is changed.
         /// </summary>
-        public event ResolutionChangedEventHandler ResolutionChanged;
+        public event ResolutionChangedEventHandler? ResolutionChanged;
 
         /// <summary>
         /// Gets the graphics device.
@@ -39,7 +39,7 @@ namespace MonoKle.Graphics
         /// <value>
         /// The resolution.
         /// </value>
-        [CVar("g_res")]
+        [CVar("graphics_backbuffer_size")]
         public MPoint2 Resolution
         {
             get { return new MPoint2(_graphicsDeviceManager.PreferredBackBufferWidth, _graphicsDeviceManager.PreferredBackBufferHeight); }
@@ -52,7 +52,7 @@ namespace MonoKle.Graphics
         /// <value>
         /// The height of the resolution.
         /// </value>
-        [CVar("g_res_y")]
+        [CVar("graphics_backbuffer_size_y")]
         public int ResolutionHeight
         {
             get { return Resolution.Y; }
@@ -65,7 +65,7 @@ namespace MonoKle.Graphics
         /// <value>
         /// The width of the resolution.
         /// </value>
-        [CVar("g_res_x")]
+        [CVar("graphics_backbuffer_size_x")]
         public int ResolutionWidth
         {
             get { return Resolution.X; }
@@ -80,7 +80,7 @@ namespace MonoKle.Graphics
         /// <value>
         /// <c>true</c> if this instance is fullscreen; otherwise, <c>false</c>.
         /// </value>
-        [CVar("g_fullscreen")]
+        [CVar("graphics_fullscreen")]
         public bool IsFullscreen
         {
             get { return _graphicsDeviceManager.IsFullScreen; }

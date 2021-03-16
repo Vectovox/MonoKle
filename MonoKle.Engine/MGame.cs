@@ -10,7 +10,6 @@ using MonoKle.Logging;
 using MonoKle.State;
 using System;
 using System.IO;
-using System.Reflection;
 
 namespace MonoKle.Engine
 {

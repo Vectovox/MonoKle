@@ -72,19 +72,20 @@ namespace MonoKle.Console
 
         public Color ErrorTextColour { get; set; } = Color.Red;
 
-        [CVar("c_isopen")]
+        [CVar("console_isopen")]
         public bool IsOpen { get; set; }
 
-        [CVar("c_size")]
+        [CVar("console_size")]
         public uint Size { get; set; } = byte.MaxValue;
 
         public int TabLength { get; set; } = 4;
 
         public FontInstance TextFont { get; set; }
 
-        [CVar("c_textsize")]
+        [CVar("console_textsize")]
         public int TextSize { get => TextFont.Size; set => TextFont.Size = value; }
 
+        [CVar("console_togglekey")]
         public Keys ToggleKey { get; set; } = Keys.F1;
 
         public Color WarningTextColour { get; set; } = Color.Yellow;

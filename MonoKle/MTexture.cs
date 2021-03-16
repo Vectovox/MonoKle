@@ -37,8 +37,9 @@ namespace MonoKle
 
         public MTexture(Texture2D texture, MRectangleInt atlasRectangle, int frameCount, int frameRate)
         {
-            if (frameCount < 1) {
-                throw new ArgumentException($"Invalid framecount {frameCount}. Must be greater than 0.");
+            if (frameCount < 1)
+            {
+                throw new ArgumentException($"Invalid framecount '{frameCount}'. Must be greater than 0.");
             }
             TextureData = texture;
             AtlasRectangle = atlasRectangle;
@@ -64,5 +65,11 @@ namespace MonoKle
         /// </summary>
         /// <param name="frame">The elapsed time to animate to.</param>
         public MTexture Animate(TimeSpan elapsedTime) => Animate((int)(FrameRate * elapsedTime.TotalSeconds));
+
+        /// <summary>
+        /// Returns a new instance of <see cref="MTexture"/> with the atlas rectangle set to the provided value.
+        /// </summary>
+        /// <param name="atlas">The atlas rectangle to use.</param>
+        public MTexture WithAtlas(MRectangleInt atlas) => new MTexture(TextureData, atlas, FrameCount, FrameRate);
     }
 }

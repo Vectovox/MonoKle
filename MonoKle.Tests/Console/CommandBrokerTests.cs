@@ -80,6 +80,41 @@ namespace MonoKle.Console.Tests
         }
 
         [TestMethod]
+        public void Register_CommandWithoutInterface_Exception()
+        {
+            var console = new Mock<IGameConsole>();
+            var commandBroker = new CommandBroker(console.Object);
+            Assert.ThrowsException<ArgumentException>(() => commandBroker.Register(typeof(NoInterfaceTestCommand)));
+        }
+
+        [TestMethod]
+        public void Register_NoParameterlessConstructor_Exception()
+        {
+            var console = new Mock<IGameConsole>();
+            var commandBroker = new CommandBroker(console.Object);
+            Assert.ThrowsException<ArgumentException>(() => commandBroker.Register(typeof(NoParameterlessConstructorTestCommand)));
+        }
+
+        [TestMethod]
+        public void RegisterCallingAssembly_InvalidCommandsPresent_CommandRegisteredWithNoExceptions()
+        {
+            // Checks at least one as maintaining assertions for all valid commands will be annoying
+            var console = new Mock<IGameConsole>();
+            var commandBroker = new CommandBroker(console.Object);
+            int result = commandBroker.RegisterCallingAssembly();
+            Assert.IsTrue(commandBroker.Contains("emptyTestCommand"));
+            Assert.AreEqual(result, commandBroker.Commands.Count());
+        }
+
+        [TestMethod]
+        public void Unregister_CommandWithoutInterface_Exception()
+        {
+            var console = new Mock<IGameConsole>();
+            var commandBroker = new CommandBroker(console.Object);
+            Assert.ThrowsException<ArgumentException>(() => commandBroker.Unregister(typeof(NoInterfaceTestCommand)));
+        }
+
+        [TestMethod]
         public void Unregister_CommandNotFound()
         {
             var console = new Mock<IGameConsole>();
@@ -230,20 +265,18 @@ namespace MonoKle.Console.Tests
             Assert.IsFalse(result);
         }
 
-        [TestMethod]
-        public void Register_CommandWithoutInterface_Exception()
+        [ConsoleCommand("NoParameterlessConstructorTestCommand")]
+        private class NoParameterlessConstructorTestCommand : IConsoleCommand
         {
-            var console = new Mock<IGameConsole>();
-            var commandBroker = new CommandBroker(console.Object);
-            Assert.ThrowsException<ArgumentException>(() => commandBroker.Register(typeof(NoInterfaceTestCommand)));
-        }
+            private readonly bool _nothingToSeeHere;
+            public NoParameterlessConstructorTestCommand(bool nothingToSeeHere)
+            {
+                _nothingToSeeHere = nothingToSeeHere;
+            }
 
-        [TestMethod]
-        public void Unregister_CommandWithoutInterface_Exception()
-        {
-            var console = new Mock<IGameConsole>();
-            var commandBroker = new CommandBroker(console.Object);
-            Assert.ThrowsException<ArgumentException>(() => commandBroker.Unregister(typeof(NoInterfaceTestCommand)));
+            public void Call(IGameConsole console) => throw new NotImplementedException(_nothingToSeeHere.ToString());
+
+            public ICollection<string> GetPositionalSuggestions() => throw new NotImplementedException();
         }
 
         [ConsoleCommand("NoInterfaceTestCommand")]

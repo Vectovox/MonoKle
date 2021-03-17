@@ -102,9 +102,21 @@ namespace MonoKle.Console
         }
 
         /// <summary>
-        /// Registers all <see cref="IConsoleCommand"/> types in the calling assembly for execution.
+        /// Registers all valid <see cref="IConsoleCommand"/> types in the calling assembly for execution.
         /// </summary>
-        public void RegisterCallingAssembly() => Assembly.GetCallingAssembly().GetTypes().Where(IsValidType).ForEach(Register);
+        /// <returns>The amount of registered commands.</returns>
+        public int RegisterCallingAssembly() => Assembly.GetCallingAssembly().GetTypes().Where(IsValidType).Sum(command =>
+        {
+            try
+            {
+                Register(command);
+            }
+            catch
+            {
+                return 0;
+            }
+            return 1;
+        });
 
         /// <summary>
         /// Registers the specified command for execution. Type must be of <see cref="IConsoleCommand"/>.
@@ -185,11 +197,14 @@ namespace MonoKle.Console
         {
             if (!IsValidType(type))
             {
-                throw new ArgumentException($"Type must be {nameof(IConsoleCommand)}");
+                string str =
+                    $"Type must be of {nameof(IConsoleCommand)}, non-abstract, and contain a parameterless constructor";
+                throw new ArgumentException(str);
             }
         }
 
-        private bool IsValidType(Type type) => !type.IsAbstract && type.IsClass && typeof(IConsoleCommand).IsAssignableFrom(type);
+        private bool IsValidType(Type type) =>
+            !type.IsAbstract && type.IsClass && type.GetConstructor(Type.EmptyTypes) != null && typeof(IConsoleCommand).IsAssignableFrom(type);
 
         /// <summary>
         /// Unregisters the provided command type.

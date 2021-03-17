@@ -23,7 +23,7 @@ namespace MonoKle.Asset
         protected override bool FileSupported(string extension) =>
             extension.Equals(".wav", StringComparison.InvariantCultureIgnoreCase);
 
-        protected override bool Load(Stream stream, out SoundEffect result)
+        protected override bool Load(Stream stream, out SoundEffect? result)
         {
             try
             {

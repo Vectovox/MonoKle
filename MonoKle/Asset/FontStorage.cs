@@ -24,7 +24,7 @@ namespace MonoKle.Asset
 
         protected override FontInstance GetInstance(FontData data) => new FontInstance(data);
 
-        protected override bool Load(Stream stream, out FontData result)
+        protected override bool Load(Stream stream, out FontData? result)
         {
             var serializer = new XmlSerializer(typeof(BakedFont));
             
@@ -42,10 +42,8 @@ namespace MonoKle.Asset
 
             var texList = baked.ImageList.Select(byteArray =>
             {
-                using (var textureStream = new MemoryStream(byteArray, false))
-                {
-                    return Texture2D.FromStream(_graphicsDevice, textureStream);
-                }
+                using var textureStream = new MemoryStream(byteArray, false);
+                return Texture2D.FromStream(_graphicsDevice, textureStream);
             }).ToList();
 
             result = new FontData(baked.FontFile, texList);

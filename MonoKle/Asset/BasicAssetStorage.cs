@@ -6,13 +6,13 @@ using System.IO;
 
 namespace MonoKle.Asset
 {
-    public abstract class BasicAssetStorage<T> : BasicAssetStorage<T, T>
+    public abstract class BasicAssetStorage<T> : BasicAssetStorage<T, T> where T : class
     {
         public BasicAssetStorage(Logger logger) : base(logger) { }
         protected override T GetInstance(T data) => data;
     }
 
-    public abstract class BasicAssetStorage<TData, TInstance> : AbstractAssetStorage
+    public abstract class BasicAssetStorage<TData, TInstance> : AbstractAssetStorage where TData : class
     {
         public BasicAssetStorage(Logger logger) : base(logger) { }
 
@@ -61,7 +61,7 @@ namespace MonoKle.Asset
             {
                 if (Load(stream, out var result))
                 {
-                    _assetStorage.Add(identifier, result);
+                    _assetStorage.Add(identifier, result!);
                     return true;
                 }
             }
@@ -89,7 +89,7 @@ namespace MonoKle.Asset
             return false;
         }
 
-        protected abstract bool Load(Stream stream, out TData result);
+        protected abstract bool Load(Stream stream, out TData? result);
 
         /// <summary>
         /// Unloads all assets, returning the amount of asset identifiers unloaded.

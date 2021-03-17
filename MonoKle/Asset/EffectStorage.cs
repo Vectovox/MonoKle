@@ -22,7 +22,7 @@ namespace MonoKle.Asset
 
         protected override bool FileSupported(string extension) => extension.Equals(".mfx");
 
-        protected override bool Load(Stream stream, out Effect result)
+        protected override bool Load(Stream stream, out Effect? result)
         {
             int val = stream.ReadByte();
             List<byte> bytes = new List<byte>();

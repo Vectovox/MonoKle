@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Reflection;
 
 namespace MonoKle.Configuration
@@ -76,7 +77,7 @@ namespace MonoKle.Configuration
                 {
                     try
                     {
-                        object newObj = Convert.ChangeType(value, _property.PropertyType);
+                        object newObj = Convert.ChangeType(value, _property.PropertyType, CultureInfo.InvariantCulture);
                         _property.SetValue(_owner, newObj);
                         return true;
                     }
@@ -89,7 +90,7 @@ namespace MonoKle.Configuration
                     try
                     {
                         TypeConverter typeConverter = TypeDescriptor.GetConverter(_property.PropertyType);
-                        object converted = typeConverter.ConvertFrom(value);
+                        object converted = typeConverter.ConvertFrom(null, CultureInfo.InvariantCulture, value);
                         _property.SetValue(_owner, converted);
                         return true;
                     }

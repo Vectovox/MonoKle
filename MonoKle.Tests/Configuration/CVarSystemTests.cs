@@ -1,5 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Globalization;
+using System.Threading;
 
 namespace MonoKle.Configuration.Tests
 {
@@ -238,6 +240,22 @@ namespace MonoKle.Configuration.Tests
             // Setup
             var bound = new StringConversionType();
             _cvarSystem.BindProperties(bound);
+
+            // Test
+            var result = _cvarSystem.SetValue("float", "8.98");
+
+            // Assert
+            Assert.IsTrue(result);
+            Assert.AreEqual(8.98f, bound.Float);
+        }
+
+        [TestMethod]
+        public void SetValue_FloatFromString_CommaSeparatedLocale_ConvertedWithInvariantCulture()
+        {
+            // Setup
+            var bound = new StringConversionType();
+            _cvarSystem.BindProperties(bound);
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("de-DE");
 
             // Test
             var result = _cvarSystem.SetValue("float", "8.98");

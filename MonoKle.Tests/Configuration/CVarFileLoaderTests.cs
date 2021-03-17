@@ -3,7 +3,7 @@
 namespace MonoKle.Configuration.Tests
 {
     [TestClass]
-    public class VariablePopulatorTests
+    public class CVarFileLoaderTests
     {
         private CVarFileLoader _populator;
         private CVarSystem _system;

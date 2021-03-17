@@ -1,5 +1,7 @@
 using Microsoft.Xna.Framework;
+using MonoKle.Converters;
 using System;
+using System.ComponentModel;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -10,6 +12,7 @@ namespace MonoKle
     /// Two-dimensional, immutable, serializable, integer-based point.
     /// </summary>
     [Serializable]
+    [TypeConverter(typeof(MPoint2Converter))]
     public struct MPoint2 : IEquatable<MPoint2>
     {
         /// <summary>

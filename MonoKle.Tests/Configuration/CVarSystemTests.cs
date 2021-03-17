@@ -4,7 +4,7 @@ using System;
 namespace MonoKle.Configuration.Tests
 {
     [TestClass]
-    public class VariableSystemTests
+    public class CVarSystemTests
     {
         private CVarSystem _cvarSystem;
 
@@ -215,6 +215,84 @@ namespace MonoKle.Configuration.Tests
             Assert.AreEqual(1, _cvarSystem.Identifiers.Count);
             Assert.AreEqual(1, _cvarSystem.GetValue("a"));
             Assert.IsFalse(_cvarSystem.Contains("static_class"));
+        }
+
+        [TestMethod]
+        public void SetValue_IntegerFromString_Converted()
+        {
+            // Setup
+            var bound = new StringConversionType();
+            _cvarSystem.BindProperties(bound);
+
+            // Test
+            var result = _cvarSystem.SetValue("integer", "8");
+
+            // Assert
+            Assert.IsTrue(result);
+            Assert.AreEqual(8, bound.Integer);
+        }
+
+        [TestMethod]
+        public void SetValue_FloatFromString_Converted()
+        {
+            // Setup
+            var bound = new StringConversionType();
+            _cvarSystem.BindProperties(bound);
+
+            // Test
+            var result = _cvarSystem.SetValue("float", "8.98");
+
+            // Assert
+            Assert.IsTrue(result);
+            Assert.AreEqual(8.98f, bound.Float);
+        }
+
+        [TestMethod]
+        public void SetValue_StringFromString_Set()
+        {
+            // Setup
+            var bound = new StringConversionType();
+            _cvarSystem.BindProperties(bound);
+            const string toTest = "My name is ransom";
+
+            // Test
+
+            var result = _cvarSystem.SetValue("string", toTest);
+
+            // Assert
+            Assert.IsTrue(result);
+            Assert.AreEqual(toTest, bound.String);
+        }
+
+        [TestMethod]
+        public void SetValue_MPoint2FromString_Converted()
+        {
+            // Setup
+            var bound = new StringConversionType();
+            _cvarSystem.BindProperties(bound);
+            var mpoint = new MPoint2(8, -11);
+
+            // Test
+            var result = _cvarSystem.SetValue("mpoint2", mpoint.ToString());
+
+            // Assert
+            Assert.IsTrue(result);
+            Assert.AreEqual(mpoint, bound.MPoint2);
+        }
+
+        private class StringConversionType
+        {
+            [CVar("integer")]
+            public int Integer { get; set; }
+
+            [CVar("float")]
+            public float Float { get; set; }
+
+            [CVar("string")]
+            public string String { get; set; }
+
+            [CVar("mpoint2")]
+            public MPoint2 MPoint2 { get; set; }
         }
 
         private class BoundType

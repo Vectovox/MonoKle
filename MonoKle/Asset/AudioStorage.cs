@@ -14,7 +14,7 @@ namespace MonoKle.Asset
     ///     4-bit compressed IMA/ADPCM(IMA4),
     ///     4-bit compressed
     /// </summary>
-    public class AudioStorage : BasicAssetStorage<SoundEffect>
+    public class AudioStorage : BasicAssetStorage<SoundEffect, MSoundEffectInstance>
     {
         public AudioStorage(Logger logger) : base(logger)
         {
@@ -22,6 +22,8 @@ namespace MonoKle.Asset
 
         protected override bool FileSupported(string extension) =>
             extension.Equals(".wav", StringComparison.InvariantCultureIgnoreCase);
+
+        protected override MSoundEffectInstance GetInstance(SoundEffect data) => new MSoundEffectInstance(data);
 
         protected override bool Load(Stream stream, out SoundEffect? result)
         {

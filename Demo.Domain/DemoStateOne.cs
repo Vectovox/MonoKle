@@ -156,7 +156,7 @@ namespace Demo.Domain
                 if (MGame.Keyboard.IsKeyPressed(Keys.Space))
                 {
                     MGame.StateSystem.SwitchState("stateTwo");
-                    MGame.AudioStorage["santa"].Play(1f, 0f, 0f);
+                    MGame.AudioStorage["santa"].WithPitchVariation(0.2f).Play();
                 }
 
                 if (MGame.Keyboard.AreKeysHeld(new Keys[] { Keys.R, Keys.T }, MonoKle.Input.CollectionQueryBehavior.All))

@@ -185,8 +185,8 @@ namespace MonoKle
         /// <returns>True if parsing was successful; otherwise false.</returns>
         public static bool TryParse(string s, out MPoint2 result)
         {
-            Match match = Regex.Match(s.Replace(" ", ""), MPoint2.RegexParse);
-            result = MPoint2.Zero;
+            Match match = Regex.Match(s.Replace(" ", ""), RegexParse, RegexOptions.Compiled);
+            result = Zero;
             if (match.Success)
             {
                 int x = int.Parse(match.Groups[1].Value, NumberFormatInfo.InvariantInfo);

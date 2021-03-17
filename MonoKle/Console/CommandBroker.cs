@@ -20,15 +20,21 @@ namespace MonoKle.Console
         /// </summary>
         public IEnumerable<string> Commands => _typeCommands.Keys;
 
-        public CommandBroker(IGameConsole console)
-        {
-            _console = console;
-        }
+        public CommandBroker(IGameConsole console) => _console = console;
 
         /// <summary>
-        /// Calls the specified command string. Returns whether the command is called successfully.
+        /// Interprets the provided string and runs the appropriate command.
         /// </summary>
         /// <param name="commandString">The command string to call.</param>
+        /// <returns>True if successfully called; false if string was not parseable or command failed.</returns>
+        public bool Call(string commandString) => CommandString.TryParse(commandString, out var command) && Call(command);
+
+
+        /// <summary>
+        /// Calls the appropriate command given the specified command string.
+        /// </summary>
+        /// <param name="commandString">The command string to call.</param>
+        /// <returns>True if the command was called succesfully; otherwise false.</returns>
         public bool Call(CommandString commandString)
         {
             var instance = GetCommandInstance(commandString.Command);

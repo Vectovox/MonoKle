@@ -29,7 +29,6 @@ namespace MonoKle.Console
         /// <returns>True if successfully called; false if string was not parseable or command failed.</returns>
         public bool Call(string commandString) => CommandString.TryParse(commandString, out var command) && Call(command);
 
-
         /// <summary>
         /// Calls the appropriate command given the specified command string.
         /// </summary>
@@ -105,7 +104,7 @@ namespace MonoKle.Console
         /// Registers all valid <see cref="IConsoleCommand"/> types in the calling assembly for execution.
         /// </summary>
         /// <returns>The amount of registered commands.</returns>
-        public int RegisterCallingAssembly() => Assembly.GetCallingAssembly().GetTypes().Where(IsValidType).Sum(command =>
+        public int RegisterCallingAssembly() => Assembly.GetCallingAssembly().GetTypes().Where(IsInstantiableType).Sum(command =>
         {
             try
             {
@@ -122,9 +121,10 @@ namespace MonoKle.Console
         /// Registers the specified command for execution. Type must be of <see cref="IConsoleCommand"/>.
         /// </summary>
         /// <param name="type">The type to register.</param>
+        /// <exception cref="ArgumentException"></exception>
         public void Register(Type type)
         {
-            AssertType(type);
+            AssertInstantiable(type);
             var commandInstance = (IConsoleCommand)Activator.CreateInstance(type);
             Register(commandInstance);
         }
@@ -132,11 +132,13 @@ namespace MonoKle.Console
         /// <summary>
         /// Registers the specified command for execution. Type must be of <see cref="IConsoleCommand"/>.
         /// </summary>
+        /// <exception cref="ArgumentException"></exception>
         public void Register<T>() where T : IConsoleCommand, new() => Register(typeof(T));
 
         /// <summary>
         /// Registers the specified command for execution.
         /// </summary>
+        /// <exception cref="ArgumentException"></exception>
         public void Register(IConsoleCommand command)
         {
             var type = command.GetType();
@@ -179,9 +181,13 @@ namespace MonoKle.Console
         /// </summary>
         /// <param name="type">The type to unregister.</param>
         /// <returns>True if unregistered, otherwise false.</returns>
+        /// <exception cref="ArgumentException"></exception>
         public bool Unregister(Type type)
         {
-            AssertType(type);
+            if (!typeof(IConsoleCommand).IsAssignableFrom(type))
+            {
+                throw new ArgumentException($"Type not of {nameof(IConsoleCommand)}.");
+            }
 
             var commandAttribute = GetCommandAttribute(type);
 
@@ -193,17 +199,15 @@ namespace MonoKle.Console
             return _typeCommands.Remove(commandAttribute.Name);
         }
 
-        private void AssertType(Type type)
+        private void AssertInstantiable(Type type)
         {
-            if (!IsValidType(type))
+            if (!IsInstantiableType(type))
             {
-                string str =
-                    $"Type must be of {nameof(IConsoleCommand)}, non-abstract, and contain a parameterless constructor";
-                throw new ArgumentException(str);
+                throw new ArgumentException($"Type must be concrete implementation of {nameof(IConsoleCommand)} with parameterless constructor.");
             }
         }
 
-        private bool IsValidType(Type type) =>
+        private bool IsInstantiableType(Type type) =>
             !type.IsAbstract && type.IsClass && type.GetConstructor(Type.EmptyTypes) != null && typeof(IConsoleCommand).IsAssignableFrom(type);
 
         /// <summary>

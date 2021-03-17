@@ -115,6 +115,16 @@ namespace MonoKle.Console.Tests
         }
 
         [TestMethod]
+        public void Unregister_CommandWithoutParameterlessConstructor_Removed()
+        {
+            var console = new Mock<IGameConsole>();
+            var commandBroker = new CommandBroker(console.Object);
+            commandBroker.Register(new NoParameterlessConstructorTestCommand(true));
+            commandBroker.Unregister(typeof(NoParameterlessConstructorTestCommand));
+            Assert.AreEqual(0, commandBroker.Commands.Count());
+        }
+
+        [TestMethod]
         public void Unregister_CommandNotFound()
         {
             var console = new Mock<IGameConsole>();

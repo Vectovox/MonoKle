@@ -26,7 +26,12 @@ namespace MonoKle
         /// Initiates a new instance of <see cref="Camera2D"/>.
         /// </summary>
         /// <param name="size">The size of the camera.</param>
-        public Camera2D(MPoint2 size) => Size = size;
+        public Camera2D(MPoint2 size)
+        {
+            Size = size;
+            // Initialize matrixes
+            Update(TimeSpan.Zero);
+        }
 
         /// <summary>
         /// Gets the size of the camera. 

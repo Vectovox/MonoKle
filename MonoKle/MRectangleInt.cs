@@ -97,7 +97,7 @@ namespace MonoKle
         public MVector2 Center => new MVector2(TopLeft.X + Width * 0.5f, TopLeft.Y + Height * 0.5f);
 
         /// <summary>
-        /// Gets the width.
+        /// Gets the height.
         /// </summary>
         public int Height => BottomRight.Y - TopLeft.Y;
 

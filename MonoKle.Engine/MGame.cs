@@ -235,6 +235,7 @@ namespace MonoKle.Engine
             _console = new GameConsole(new Rectangle(0, 0, GraphicsManager.Resolution.X, GraphicsManager.Resolution.Y / 3),
                 GraphicsManager.GraphicsDevice,
                 _keyboard,
+                _mouse,
                 TextureStorage.White,
                 FontStorage.Default,
                 Logger);

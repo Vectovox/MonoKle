@@ -5,6 +5,7 @@ using MonoKle.Asset;
 using MonoKle.Configuration;
 using MonoKle.Graphics;
 using MonoKle.Input.Keyboard;
+using MonoKle.Input.Mouse;
 using MonoKle.Logging;
 using MoreLinq;
 using System;
@@ -26,6 +27,7 @@ namespace MonoKle.Console
         private readonly KeyboardTyper _keyboard;
         private readonly LinkedList<TextEntry> _textEntries = new LinkedList<TextEntry>();
         private readonly SpriteBatch _spriteBatch;
+        private readonly IMouse _mouse;
         private readonly MTexture _whiteTexture;
 
         private int _scrollOffset = 0;
@@ -36,15 +38,18 @@ namespace MonoKle.Console
         /// <param name="area">The area.</param>
         /// <param name="graphicsDevice">The graphics device.</param>
         /// <param name="keyboardInput">The keyboard input.</param>
+        /// <param name="mouse">The mouse.</param>
         /// <param name="whiteTexture">The background texture.</param>
+        /// <param name="font">The font used for rendering text.</param>
         /// <param name="logger">The logger to use.</param>
-        public GameConsole(MRectangleInt area, GraphicsDevice graphicsDevice, IKeyboard keyboardInput, MTexture whiteTexture, FontInstance font, Logger logger)
+        public GameConsole(MRectangleInt area, GraphicsDevice graphicsDevice, IKeyboard keyboardInput, IMouse mouse, MTexture whiteTexture, FontInstance font, Logger logger)
         {
             _spriteBatch = new SpriteBatch(graphicsDevice);
             _keyboard = new KeyboardTyper(keyboardInput, TypingActivationDelay, TypingCycleDelay);
             _inputField = new InputField("-", "$ ", TimeSpan.FromSeconds(0.25), 10, new KeyboardCharacterInput(_keyboard));
 
             Area = area;
+            _mouse = mouse;
             TextFont = font;
             TextSize = 16;
             _whiteTexture = whiteTexture;
@@ -133,6 +138,7 @@ namespace MonoKle.Console
             if (IsOpen)
             {
                 UpdateKeyboard();
+                UpdateMouse();
                 _inputField.Update(timeDelta);
             }
         }
@@ -256,6 +262,19 @@ namespace MonoKle.Console
             if (_keyboard.IsTyped(Keys.PageDown))
             {
                 ScrollDown();
+            }
+        }
+
+        private void UpdateMouse()
+        {
+            if (_mouse.ScrollDirection == Input.MouseScrollDirection.Down)
+            {
+                ScrollDown();
+            }
+
+            if (_mouse.ScrollDirection == Input.MouseScrollDirection.Up)
+            {
+                ScrollUp();
             }
         }
 

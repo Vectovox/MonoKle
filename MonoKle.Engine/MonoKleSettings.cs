@@ -39,5 +39,11 @@ namespace MonoKle.Engine
         /// </summary>
         [CVar("mouse_visible")]
         public bool MouseVisible { get { return MGame.GameInstance.IsMouseVisible; } set { MGame.GameInstance.IsMouseVisible = value; } }
+
+        /// <summary>
+        /// Gets or sets the crash dump path.
+        /// </summary>
+        [CVar("crash_dump_path")]
+        public string CrashDumpPath { get; set; }
     }
 }

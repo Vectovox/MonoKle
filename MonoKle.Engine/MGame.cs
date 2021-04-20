@@ -128,6 +128,7 @@ namespace MonoKle.Engine
             Settings.KeyboardEnabled = true;
             Settings.MouseEnabled = true;
             Settings.TouchEnabled = true;
+            Settings.CrashDumpPath = "./crashdump.log";
 
             // Enable crashdumps
             AppDomain.CurrentDomain.UnhandledException += UnhandledException;
@@ -267,8 +268,8 @@ namespace MonoKle.Engine
         private static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Logger.Log(e.ExceptionObject.ToString(), LogLevel.Error);
-            var fs = new FileStream("./crashdump.log", FileMode.OpenOrCreate | FileMode.Truncate);
-            Logger.WriteLog(fs); // TODO: Remove magic constant. Not into a constants class, but into settings! E.g. Settings.GetValue("crashdump").
+            var fs = new FileStream(Settings.CrashDumpPath, FileMode.OpenOrCreate | FileMode.Truncate);
+            Logger.WriteLog(fs);
         }
     }
 }

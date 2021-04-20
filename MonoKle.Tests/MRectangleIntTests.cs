@@ -1,6 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MonoKle.Tests
 {
@@ -422,6 +424,23 @@ namespace MonoKle.Tests
             var result = testRectangle.Scale(2f);
             var expected = new MRectangleInt(-5, -7, 20, 30);
             Assert.AreEqual(expected, result);
+        }
+
+        [TestMethod]
+        public void Iterate()
+        {
+            var testRectangle = new MRectangleInt(3, 4, 1, 2);
+            var result = testRectangle.Iterate().ToList();
+            var expected = new List<MPoint2>
+            {
+                new MPoint2(3, 4),
+                new MPoint2(4, 4),
+                new MPoint2(3, 5),
+                new MPoint2(4, 5),
+                new MPoint2(3, 6),
+                new MPoint2(4, 6),
+            };
+            CollectionAssert.AreEquivalent(expected, result);
         }
     }
 }

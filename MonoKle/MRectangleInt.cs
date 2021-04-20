@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace MonoKle
@@ -437,5 +438,19 @@ namespace MonoKle
         /// Converts the <see cref="MRectangleInt"/> to an <see cref="MRectangle"/> by int -> float conversion.
         /// </summary>
         public MRectangle ToMRectangle() => new MRectangle(this);
+
+        /// <summary>
+        /// Iterates each discrete point contained within the <see cref="MRectangleInt"/>.
+        /// </summary>
+        public IEnumerable<MPoint2> Iterate()
+        {
+            for (int x = Left; x <= Right; x++)
+            {
+                for (int y = Top; y <= Bottom; y++)
+                {
+                    yield return new MPoint2(x, y);
+                }
+            }
+        }
     }
 }

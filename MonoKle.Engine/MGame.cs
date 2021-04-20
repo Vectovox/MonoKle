@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using MonoKle.Asset;
 using MonoKle.Console;
 using MonoKle.Graphics;
@@ -110,13 +111,11 @@ namespace MonoKle.Engine
         /// <summary>
         /// Gets the variable storage, handling all game variables, such as settings.
         /// </summary>
-        /// <value>
         public static VariableStorage Variables { get; private set; }
 
         /// <summary>
         /// Initializes the MonoKle backend, returning a runnable game instance.
         /// </summary>
-        /// <param name="resolution">The initial display resolution.</param>
         /// <param name="fullscreen">The initial fullscreen setting.</param>
         public static MGame Create(bool fullscreen)
         {

@@ -14,8 +14,21 @@ namespace MonoKle.Graphics
 
         public GraphicsDevice GraphicsDevice { get; }
 
-        public MPoint2 WorldTargetResolution { get; }
-        public MPoint2 UiTargetResolution { get; }
+        /// <summary>
+        /// Gets or sets the target resolution for the world rendering.
+        /// </summary>
+        /// <remarks>
+        /// Note that changes to rendering area or render target will not take effect until <see cref="Apply"/> is called.
+        /// </remarks>
+        public MPoint2 WorldTargetResolution { get; set; }
+
+        /// <summary>
+        /// Gets or sets the target resolution for the UI rendering.
+        /// </summary>
+        /// <remarks>
+        /// Note that changes to rendering area or render target will not take effect until <see cref="Apply"/> is called.
+        /// </remarks>
+        public MPoint2 UiTargetResolution { get; set; }
 
         /// <summary>
         /// Gets or sets the camera for the world rendering.

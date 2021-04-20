@@ -192,6 +192,34 @@ namespace MonoKle.Console.Tests
         }
 
         [TestMethod]
+        public void Call_Positional_WithAndWithoutRequiredInSequence_NonRequiredGetsDefaultValue()
+        {
+            var console = new Mock<IGameConsole>();
+            var commandBroker = new CommandBroker(console.Object);
+            var command = new DefaultValueTestCommand();
+            commandBroker.Register(command);
+            CommandString.TryParse("defaultValueTestCommand true", out var commandString);
+            commandBroker.Call(commandString);
+            CommandString.TryParse("defaultValueTestCommand", out var commandString2);
+            commandBroker.Call(commandString2);
+            Assert.AreEqual(false, command.NonRequiredPositional);
+        }
+
+        [TestMethod]
+        public void Call_Argument_WithAndWithoutRequiredInSequence_NonRequiredGetsDefaultValue()
+        {
+            var console = new Mock<IGameConsole>();
+            var commandBroker = new CommandBroker(console.Object);
+            var command = new DefaultValueTestCommand();
+            commandBroker.Register(command);
+            CommandString.TryParse("defaultValueTestCommand -arg true", out var commandString);
+            commandBroker.Call(commandString);
+            CommandString.TryParse("defaultValueTestCommand", out var commandString2);
+            commandBroker.Call(commandString2);
+            Assert.AreEqual(false, command.NonRequiredArgument);
+        }
+
+        [TestMethod]
         public void Call_DifferentTypes_TypesConvertedAndAssigned()
         {
             var console = new Mock<IGameConsole>();
@@ -444,6 +472,26 @@ namespace MonoKle.Console.Tests
                 LastInt32 = Int32;
                 LastFloat = Float;
                 LastBool = Bool;
+            }
+
+            public ICollection<string> GetPositionalSuggestions() => new string[0];
+        }
+
+        [ConsoleCommand("defaultValueTestCommand")]
+        private class DefaultValueTestCommand : IConsoleCommand
+        {
+            [ConsolePositional(0, IsRequired = false)]
+            public bool NonRequiredPositional { get; set; }
+
+            [ConsoleArgument("arg", IsRequired = false)]
+            public bool NonRequiredArgument { get; set; }
+
+            internal static void Reset()
+            {
+            }
+
+            public void Call(IGameConsole console)
+            {
             }
 
             public ICollection<string> GetPositionalSuggestions() => new string[0];

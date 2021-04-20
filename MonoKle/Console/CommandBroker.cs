@@ -245,10 +245,16 @@ namespace MonoKle.Console
             {
                 bool argumentExists = commandString.PositionalArguments.Count > positional.Argument.Position;
 
-                if (!argumentExists && positional.Argument.IsRequired)
+                if (!argumentExists)
                 {
-                    _console.WriteError($"Required argument on position '{positional.Argument.Position}' not found.");
-                    return false;
+                    if (positional.Argument.IsRequired)
+                    {
+                        _console.WriteError($"Required argument on position '{positional.Argument.Position}' not found.");
+                        return false;
+                    }
+
+                    // Assign default value
+                    AssignDefaultArgument(command, positional.Property);
                 }
 
                 if (argumentExists && !AssignArgument(command, positional.Property, commandString.PositionalArguments[positional.Argument.Position]))
@@ -266,10 +272,16 @@ namespace MonoKle.Console
             {
                 bool namedArgumentExists = commandString.NamedArguments.ContainsKey(argument.Argument.Name);
 
-                if (!namedArgumentExists && argument.Argument.IsRequired)
+                if (!namedArgumentExists)
                 {
-                    _console.WriteError($"Required argument '{argument.Argument.Name}' not found.");
-                    return false;
+                    if (argument.Argument.IsRequired)
+                    {
+                        _console.WriteError($"Required argument '{argument.Argument.Name}' not found.");
+                        return false;
+                    }
+
+                    // Assign default value
+                    AssignDefaultArgument(command, argument.Property);
                 }
 
                 if (namedArgumentExists && !AssignArgument(command, argument.Property, commandString.NamedArguments[argument.Argument.Name]))
@@ -291,33 +303,54 @@ namespace MonoKle.Console
             return true;
         }
 
+        private void AssignDefaultArgument(IConsoleCommand instance, PropertyInfo propertyInfo)
+        {
+            if (propertyInfo.PropertyType == typeof(int))
+            {
+                propertyInfo.SetValue(instance, default(int));
+            }
+            else if (propertyInfo.PropertyType == typeof(float))
+            {
+                propertyInfo.SetValue(instance, default(float));
+            }
+            else if (propertyInfo.PropertyType == typeof(bool))
+            {
+                propertyInfo.SetValue(instance, default(bool));
+            }
+            else if (propertyInfo.PropertyType == typeof(string))
+            {
+                propertyInfo.SetValue(instance, null);
+            }
+            else
+            {
+                _console.WriteError("Could not assign default argument value.");
+            }
+        }
+
         private bool AssignArgument(IConsoleCommand instance, PropertyInfo propertyInfo, string value)
         {
             if (propertyInfo.PropertyType == typeof(int) && int.TryParse(value, out int intResult))
             {
                 propertyInfo.SetValue(instance, intResult);
-                return true;
             }
-
-            if (propertyInfo.PropertyType == typeof(float) && float.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out float floatResult))
+            else if (propertyInfo.PropertyType == typeof(float) && float.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out float floatResult))
             {
                 propertyInfo.SetValue(instance, floatResult);
-                return true;
             }
-
-            if (propertyInfo.PropertyType == typeof(bool) && bool.TryParse(value, out bool boolResult))
+            else if (propertyInfo.PropertyType == typeof(bool) && bool.TryParse(value, out bool boolResult))
             {
                 propertyInfo.SetValue(instance, boolResult);
-                return true;
             }
-
-            if (propertyInfo.PropertyType == typeof(string))
+            else if (propertyInfo.PropertyType == typeof(string))
             {
                 propertyInfo.SetValue(instance, value);
-                return true;
+            }
+            else
+            {
+                return false;
             }
 
-            return false;
+            return true;
         }
 
         private class ArgumentProperty<T>

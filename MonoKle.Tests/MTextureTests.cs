@@ -58,5 +58,12 @@ namespace MonoKle.Tests
             Assert.AreEqual(sut.Animate(TimeSpan.FromSeconds(1.1)).AtlasRectangle, sut.Animate(5).AtlasRectangle);
             Assert.AreEqual(sut.Animate(TimeSpan.FromSeconds(1.2)).AtlasRectangle, sut.Animate(6).AtlasRectangle);
         }
+
+        [TestMethod]
+        public void AnimationDuration_Correct()
+        {
+            var sut = new MTexture(null, new MRectangleInt(10, 10, 30, 40), 5, 10);
+            Assert.AreEqual(TimeSpan.FromMilliseconds(500), sut.AnimationDuration);
+        }
     }
 }

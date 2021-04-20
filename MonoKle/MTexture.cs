@@ -39,7 +39,11 @@ namespace MonoKle
         {
             if (frameCount < 1)
             {
-                throw new ArgumentException($"Invalid framecount '{frameCount}'. Must be greater than 0.");
+                throw new ArgumentException($"Invalid frame count '{frameCount}'. Must be greater than 0.");
+            }
+            if (frameRate < 1)
+            {
+                throw new ArgumentException($"Invalid frame rate '{frameRate}'. Must be greater than 0.");
             }
             TextureData = texture;
             AtlasRectangle = atlasRectangle;
@@ -47,7 +51,10 @@ namespace MonoKle
             FrameRate = frameRate;
         }
 
-        private int FrameWidth => AtlasRectangle.Width / FrameCount;
+        /// <summary>
+        /// Gets the duration of the animation.
+        /// </summary>
+        public TimeSpan AnimationDuration => TimeSpan.FromSeconds(FrameCount / (float)FrameRate);
 
         /// <summary>
         /// Returns new instance of <see cref="MTexture"/> that represents the frame at the provided frame number.
@@ -58,12 +65,13 @@ namespace MonoKle
             new MTexture(TextureData, AtlasRectangle
                 .RedimensionWidth(FrameWidth)
                 .TranslateX(FrameWidth * (frameNumber % FrameCount)));
+        private int FrameWidth => AtlasRectangle.Width / FrameCount;
 
         /// <summary>
         /// Returns new instance of <see cref="MTexture"/> that shows the frame after the provided elapsed time. Loops
         /// the animation when elapsed time is longer than the length of the animation.
         /// </summary>
-        /// <param name="frame">The elapsed time to animate to.</param>
+        /// <param name="elapsedTime">The elapsed time to animate to.</param>
         public MTexture Animate(TimeSpan elapsedTime) => Animate((int)(FrameRate * elapsedTime.TotalSeconds));
 
         /// <summary>

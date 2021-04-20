@@ -146,7 +146,7 @@ namespace MonoKle
         public static bool operator ==(MPoint2 a, MPoint2 b) => a.X == b.X && a.Y == b.Y;
 
         /// <summary>
-        /// Performs an implicit conversion from <see cref="Point"/> to <see cref="MPoint2"/>.
+        /// Performs an implicit conversion from <see cref="System.Drawing.Point"/> to <see cref="MPoint2"/>.
         /// </summary>
         /// <param name="p">The point.</param>
         /// <returns>
@@ -155,19 +155,15 @@ namespace MonoKle
         public static implicit operator MPoint2(Point p) => new MPoint2(p.X, p.Y);
 
         /// <summary>
-        /// Performs an implicit conversion from <see cref="MPoint2"/> to <see cref="Point"/>.
+        /// Performs an implicit conversion from <see cref="MPoint2"/> to <see cref="System.Drawing.Point"/>.
         /// </summary>
         /// <param name="p">The point.</param>
-        /// <returns>
-        /// The result of the conversion.
-        /// </returns>
         public static implicit operator Point(MPoint2 p) => new Point(p.X, p.Y);
 
         /// <summary>
         /// Parses the specified string.
         /// </summary>
         /// <param name="s">The string to parse.</param>
-        /// <returns></returns>
         public static MPoint2 Parse(string s)
         {
             if (TryParse(s, out MPoint2 res) == false)

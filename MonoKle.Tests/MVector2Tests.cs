@@ -6,6 +6,15 @@ namespace MonoKle.Tests
     public class MVector2Tests
     {
         [TestMethod]
+        public void ImplicitOperatorMPoint2_CorrectlyAssigned()
+        {
+            int x = 27;
+            int y = -11;
+            MVector2 sut = new MPoint2(x, y);
+            Assert.AreEqual(new MVector2(x, y), sut);
+        }
+
+        [TestMethod]
         public void Parse_TryParse_Equal()
         {
             string s = nameof(MVector2) + "(-15.2, 0.1)";

@@ -160,19 +160,19 @@ namespace MonoKle
         /// Performs an implicit conversion from <see cref="Vector2"/> to <see cref="MVector2"/>.
         /// </summary>
         /// <param name="vector">The vector.</param>
-        /// <returns>
-        /// The result of the conversion.
-        /// </returns>
         public static implicit operator MVector2(Vector2 vector) => new MVector2(vector.X, vector.Y);
 
         /// <summary>
         /// Performs an implicit conversion from <see cref="MVector2"/> to <see cref="Vector2"/>.
         /// </summary>
         /// <param name="vector">The vector.</param>
-        /// <returns>
-        /// The result of the conversion.
-        /// </returns>
         public static implicit operator Vector2(MVector2 vector) => new Vector2(vector.X, vector.Y);
+
+        /// <summary>
+        /// Performs an implicit conversion from <see cref="MPoint2"/> to <see cref="MVector2"/>.
+        /// </summary>
+        /// <param name="p">The point.</param>
+        public static implicit operator MVector2(MPoint2 p) => new MVector2(p);
 
         /// <summary>
         /// Parses the specified string.

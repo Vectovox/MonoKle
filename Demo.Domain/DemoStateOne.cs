@@ -73,6 +73,14 @@ namespace Demo.Domain
             DrawTextBox(font.Wrap("This is a too long string that should be wrapped appropriately", wrapLength), new MVector2(0, 650));
             _spriteBatch.Draw(MGame.TextureStorage.White, new MRectangleInt(0, 650, wrapLength, 100), new Color(1f, 1f, 1f, 0.3f));
 
+            // Test color changing
+            Color ColorChanger(char token, Color original) => token switch
+            {
+                '1' => Color.Red,
+                _ => original,
+            };
+            font.WithSize(64).Draw(_spriteBatch, "Test changing \\1\\color\\0\\ in text.", new Vector2(500, 500), Color.Green, ColorChanger);
+
             // Test size
             _spriteBatch.Draw(MGame.TextureStorage.White, new MRectangleInt(500, 250, 100, 64), Color.DarkGray);
             font.WithSize(64).Draw(_spriteBatch, "Text size test", new Vector2(500, 250), Color.Green);

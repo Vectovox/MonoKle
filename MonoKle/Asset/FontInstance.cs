@@ -12,8 +12,8 @@ namespace MonoKle.Asset
         private readonly FontData _fontData;
 
         /// <summary>
-        /// Initializes a new instance of <see cref="FontInstance"/> class with the default <see cref="Size"/>
-        /// and <see cref="LineHeight"/> assigned from the font data.
+        /// Initializes a new instance of <see cref="FontInstance"/> class with the
+        /// default <see cref="Size"/> assigned from the font data.
         /// </summary>
         /// <param name="fontData"></param>
         public FontInstance(FontData fontData)
@@ -48,6 +48,11 @@ namespace MonoKle.Asset
         public int LinePadding { get; set; }
 
         /// <summary>
+        /// Gets or sets the character denoting opening and closing of a non-rendered color tag section.
+        /// </summary>
+        public char ColorTag { get; set; } = '\\';
+
+        /// <summary>
         /// Returns the size of the given text.
         /// </summary>
         /// <remarks>
@@ -60,12 +65,22 @@ namespace MonoKle.Asset
         {
             float rowSize = 0f;
             Vector2 totalSize = new Vector2(0f, Size + LinePadding);
+            bool tagOpen = false;
 
             foreach (char character in text)
             {
-                // Update totals on linebreak
-                if (character == '\n')
+                if (character == ColorTag)
                 {
+                    // Open/close color tag
+                    tagOpen = !tagOpen;
+                }
+                else if (tagOpen)
+                {
+                    // Do not record size if in a color tag
+                }
+                else if (character == '\n')
+                {
+                    // Update totals on linebreak
                     // X-component
                     totalSize.X = Math.Max(totalSize.X, rowSize);
                     rowSize = 0;
@@ -124,7 +139,7 @@ namespace MonoKle.Asset
         }
 
         /// <summary>
-        /// Draws the given string with an active spritebatch, applying rotation.
+        /// Draws the given string with an active spritebatch.
         /// </summary>
         /// <param name="spriteBatch">The spritebatch to draw with.</param>
         /// <param name="text">The text to draw.</param>
@@ -132,6 +147,17 @@ namespace MonoKle.Asset
         /// <param name="color">The color with which to draw the text.</param>
         public void Draw(SpriteBatch spriteBatch, string text, Vector2 position, Color color) =>
             Draw(spriteBatch, text, position, color, 0f, MVector2.Zero, 0, SpriteEffects.None);
+
+        /// <summary>
+        /// Draws the given string with an active spritebatch.
+        /// </summary>
+        /// <param name="spriteBatch">The spritebatch to draw with.</param>
+        /// <param name="text">The text to draw.</param>
+        /// <param name="position">The position to draw the text in.</param>
+        /// <param name="color">The color with which to draw the text.</param>
+        /// <param name="colorSelector">Color selector function called on color tags.</param>
+        public void Draw(SpriteBatch spriteBatch, string text, Vector2 position, Color color, Func<char, Color, Color> colorSelector) =>
+            Draw(spriteBatch, text, position, color, 0f, MVector2.Zero, 0, SpriteEffects.None, colorSelector);
 
         /// <summary>
         /// Draws the given string with an active spritebatch, applying rotation.
@@ -172,13 +198,42 @@ namespace MonoKle.Asset
         /// <param name="layerDepth">The layer depth.</param>
         /// <param name="effect">The sprite effects to apply.</param>
         public void Draw(SpriteBatch spriteBatch, string text, Vector2 position, Color color,
-            float rotation, Vector2 origin, float layerDepth, SpriteEffects effect)
+            float rotation, Vector2 origin, float layerDepth, SpriteEffects effect) =>
+            Draw(spriteBatch, text, position, color, rotation, origin, layerDepth, effect, ColorFunc);
+        private static Color ColorFunc(char token, Color original) => original;
+
+        /// <summary>
+        /// Draws the given string with an active spritebatch.
+        /// </summary>
+        /// <param name="spriteBatch">The spritebatch to draw with.</param>
+        /// <param name="text">The text to draw.</param>
+        /// <param name="position">The position to draw the text in.</param>
+        /// <param name="color">The color with which to draw the text.</param>
+        /// <param name="rotation">The rotation of the text.</param>
+        /// <param name="origin">The origin of the text rotation.</param>
+        /// <param name="layerDepth">The layer depth.</param>
+        /// <param name="effect">The sprite effects to apply.</param>
+        /// <param name="colorSelector">Color selector function called on color tags.</param>
+        public void Draw(SpriteBatch spriteBatch, string text, Vector2 position, Color color,
+            float rotation, Vector2 origin, float layerDepth, SpriteEffects effect, Func<char, Color, Color> colorSelector)
         {
             float scaleFactor = ScaleFactor;    // Precompute for efficiency
             Vector2 drawPosition = position;
+            bool tagOpen = false;
+            Color currentColor = color;
             foreach (char character in text)
             {
-                if (character == '\n')
+                if (character == ColorTag)
+                {
+                    // Open/close color tag
+                    tagOpen = !tagOpen;
+                }
+                else if (tagOpen)
+                {
+                    // Allow color switch
+                    currentColor = colorSelector(character, color);
+                }
+                else if (character == '\n')
                 {
                     // Move to next line
                     drawPosition.Y += Size + LinePadding;
@@ -203,7 +258,7 @@ namespace MonoKle.Asset
                         destinationVector.Y = (float)y + position.Y;
                     }
 
-                    spriteBatch.Draw(_fontData.GetPage(fontCharacter.Page), destinationVector, sourceRectangle, color,
+                    spriteBatch.Draw(_fontData.GetPage(fontCharacter.Page), destinationVector, sourceRectangle, currentColor,
                         rotation, Vector2.Zero, scaleFactor, effect, layerDepth);
                     drawPosition.X += fontCharacter.XAdvance * scaleFactor;
                 }

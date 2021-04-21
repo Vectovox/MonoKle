@@ -49,7 +49,7 @@ namespace MonoKle.Asset
                 },
             };
             _fontData = new FontData(fontFile, new List<Microsoft.Xna.Framework.Graphics.Texture2D>());
-            _font = new FontInstance(_fontData);
+            _font = new FontInstance(_fontData) { ColorTag = '#' };
         }
 
         [DataTestMethod]
@@ -61,6 +61,7 @@ namespace MonoKle.Asset
         [DataRow("a\na", AWidth, Size * 2, DisplayName = "Two of same characters on different rows")]
         [DataRow("ab", AWidth + BWidth, Size, DisplayName = "Two characters of different size")]
         [DataRow("a\nb", AWidth, Size * 2, DisplayName = "Two characters of different size on different rows")]
+        [DataRow("a#betw\neen#b", AWidth + BWidth, Size, DisplayName = "Color tag not measured")]
         public void MeasureString_DefaultSettings_CorrectValue(string testString, float expectedWidth, float expectedHeight) =>
             Assert.AreEqual(new MVector2(expectedWidth, expectedHeight), _font.Measure(testString));
 

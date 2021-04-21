@@ -1,3 +1,4 @@
+#!/bin/bash
 push_package()
 {
 	PACKAGE=$1

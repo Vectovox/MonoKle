@@ -1,3 +1,4 @@
+#!/bin/bash
 if ! dotnet build MonoKle -c Release
 then
 	echo "Build error! Aborting..."

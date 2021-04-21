@@ -1,3 +1,4 @@
+#!/bin/bash
 assert_git_clean()
 {
     if [ -z "$(git status --porcelain)" ]; then 

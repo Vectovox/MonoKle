@@ -347,7 +347,7 @@ namespace MonoKle.Tests
         }
 
         [TestMethod]
-        public void ImplicitConversion_ToRectangle()
+        public void ImplicitConversion_ToRectangle_ValueKept()
         {
             var original = new Rectangle(-10, -20, 35, 37);
             MRectangleInt conv = original;
@@ -356,12 +356,37 @@ namespace MonoKle.Tests
         }
 
         [TestMethod]
-        public void ImplicitConversion_FromRectangle()
+        public void ImplicitConversion_FromRectangle_ValueKept()
         {
             var original = new MRectangleInt(-10, -20, 35, 37);
             Rectangle conv = original;
             MRectangleInt back = conv;
             Assert.AreEqual(original, back);
+        }
+
+        [TestMethod]
+        public void ImplicitConversion_ToRectangle_Equal()
+        {
+            var sut = new MRectangleInt(-50, -23, 170, 99);
+            AssertRectangleEqual(sut, sut);
+        }
+
+        [TestMethod]
+        public void Constructor_EqualToRectangle()
+        {
+            var sut = new MRectangleInt(-50, -23, 170, 99);
+            var rect = new Rectangle(-50, -23, 170, 99);
+            AssertRectangleEqual(rect, sut);
+        }
+
+        private void AssertRectangleEqual(Rectangle rect, MRectangleInt sut)
+        {
+            Assert.AreEqual(rect.X, sut.Left);
+            Assert.AreEqual(rect.Y, sut.Top);
+            Assert.AreEqual(rect.Width, sut.Width);
+            Assert.AreEqual(rect.Height, sut.Height);
+            Assert.AreEqual(rect.Right, sut.Right);
+            Assert.AreEqual(rect.Bottom, sut.Bottom);
         }
 
         [DataTestMethod]

@@ -112,12 +112,12 @@ namespace MonoKle
         /// <summary>
         /// Gets the width of a single frame once animated.
         /// </summary>
-        public int FrameWidth => (AtlasRectangle.Width - FrameMargin * FrameColumns * 2) / FrameColumns;
+        public int FrameWidth => AtlasRectangle.Width / FrameColumns - 2 * FrameMargin;
 
         /// <summary>
         /// Gets the width of a single frame once animated.
         /// </summary>
-        public int FrameHeight => (AtlasRectangle.Height - FrameMargin * FrameRows * 2) / FrameRows;
+        public int FrameHeight => AtlasRectangle.Height / FrameRows - 2 * FrameMargin;
 
         /// <summary>
         /// Returns new instance of <see cref="MTexture"/> that represents the frame at the provided row and column.
@@ -128,13 +128,17 @@ namespace MonoKle
         /// </remarks>
         /// <param name="column">Zero-based index of the column to get.</param>
         /// <param name="row">Zero-based index of the row to get.</param>
-        public MTexture GetCell(int column, int row) =>
-            new MTexture(TextureData, AtlasRectangle
+        public MTexture GetCell(int column, int row)
+        {
+            int wrappedColumn = column % FrameColumns;
+            int wrappedRow = row % FrameRows;
+            return new MTexture(TextureData, AtlasRectangle
                 .RedimensionWidth(FrameWidth)
                 .RedimensionHeight(FrameHeight)
-                .TranslateX(FrameWidth * (column % FrameColumns) + FrameMargin * (column % FrameColumns + 1) + FrameMargin * (column % FrameColumns))
-                .TranslateY(FrameHeight * (row % FrameRows) + FrameMargin * (row % FrameRows + 1) + FrameMargin * (row % FrameRows))
+                .TranslateX(wrappedColumn * (FrameWidth + FrameMargin + FrameMargin) + FrameMargin)
+                .TranslateY(wrappedRow * (FrameHeight + FrameMargin + FrameMargin) + FrameMargin)
             );
+        }
 
         /// <summary>
         /// Gets the whole provided column, only applying <see cref="FrameMargin"/> between columns.
@@ -143,10 +147,13 @@ namespace MonoKle
         /// Wraps around when the provided column is outside of the atlas.
         /// </remarks>
         /// <param name="column">Zero-based index of the column to get.</param>
-        public MTexture GetColumn(int column) =>
-            new MTexture(TextureData, AtlasRectangle
+        public MTexture GetColumn(int column)
+        {
+            int wrappedColumn = column % FrameColumns;
+            return new MTexture(TextureData, AtlasRectangle
                 .RedimensionWidth(FrameWidth)
-                .TranslateX(FrameWidth * (column % FrameColumns) + FrameMargin * (column % FrameColumns + 1) + FrameMargin * (column % FrameColumns)));
+                .TranslateX(wrappedColumn * (FrameWidth + FrameMargin + FrameMargin) + FrameMargin));
+        }
 
         /// <summary>
         /// Gets the whole provided row, only applying <see cref="FrameMargin"/> between rows.
@@ -155,10 +162,13 @@ namespace MonoKle
         /// Wraps around when the provided row is outside of the atlas.
         /// </remarks>
         /// <param name="row">Zero-based index of the row to get.</param>
-        public MTexture GetRow(int row) =>
-            new MTexture(TextureData, AtlasRectangle
+        public MTexture GetRow(int row)
+        {
+            int wrappedRow = row % FrameRows;
+            return new MTexture(TextureData, AtlasRectangle
                 .RedimensionHeight(FrameHeight)
-                .TranslateY(FrameHeight * (row % FrameRows) + FrameMargin * (row % FrameRows + 1) + FrameMargin * (row % FrameRows)));
+                .TranslateY(wrappedRow * (FrameHeight + FrameMargin + FrameMargin) + FrameMargin));
+        }
 
         /// <summary>
         /// Animates the given row to the provided frame.

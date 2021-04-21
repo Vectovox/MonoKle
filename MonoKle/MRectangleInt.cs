@@ -25,14 +25,8 @@ namespace MonoKle
         /// </summary>
         /// <param name="width">Width.</param>
         /// <param name="height">Height.</param>
-        public MRectangleInt(int width, int height)
+        public MRectangleInt(int width, int height) : this(0, 0, width, height)
         {
-            int xLeft = Math.Min(0, width);
-            int xRight = Math.Max(0, width);
-            int yTop = Math.Min(0, height);
-            int yBottom = Math.Max(0, height);
-            TopLeft = new MPoint2(xLeft, yTop);
-            BottomRight = new MPoint2(xRight, yBottom);
         }
 
         /// <summary>
@@ -56,14 +50,8 @@ namespace MonoKle
         /// Creates a new instance of <see cref="MRectangleInt"/> around (0, 0) with the given size.
         /// </summary>
         /// <param name="size">The size.</param>
-        public MRectangleInt(MPoint2 size)
+        public MRectangleInt(MPoint2 size) : this(size.X, size.Y)
         {
-            int xLeft = Math.Min(0, size.X);
-            int xRight = Math.Max(0, size.X);
-            int yTop = Math.Min(0, size.Y);
-            int yBottom = Math.Max(0, size.Y);
-            TopLeft = new MPoint2(xLeft, yTop);
-            BottomRight = new MPoint2(xRight, yBottom);
         }
 
         /// <summary>

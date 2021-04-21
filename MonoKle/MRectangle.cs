@@ -34,28 +34,16 @@ namespace MonoKle
         /// </summary>
         /// <param name="width">Width.</param>
         /// <param name="height">Height.</param>
-        public MRectangle(float width, float height)
+        public MRectangle(float width, float height) : this(0, 0, width, height)
         {
-            float xLeft = Math.Min(0, width);
-            float xRight = Math.Max(0, width);
-            float yTop = Math.Min(0, height);
-            float yBottom = Math.Max(0, height);
-            TopLeft = new MVector2(xLeft, yTop);
-            BottomRight = new MVector2(xRight, yBottom);
         }
 
         /// <summary>
         /// Creates a new instance of <see cref="MRectangle"/> around (0, 0) with the given size.
         /// </summary>
         /// <param name="size">The size.</param>
-        public MRectangle(MVector2 size)
+        public MRectangle(MVector2 size) : this(size.X, size.Y)
         {
-            float xLeft = Math.Min(0, size.X);
-            float xRight = Math.Max(0, size.X);
-            float yTop = Math.Min(0, size.Y);
-            float yBottom = Math.Max(0, size.Y);
-            TopLeft = new MVector2(xLeft, yTop);
-            BottomRight = new MVector2(xRight, yBottom);
         }
 
         /// <summary>

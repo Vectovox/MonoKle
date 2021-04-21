@@ -7,7 +7,6 @@ using MonoKle.Engine;
 using MonoKle.Graphics;
 using MonoKle.Input.Keyboard;
 using MonoKle.Logging;
-using MonoKle.Messaging;
 using MonoKle.State;
 using System;
 
@@ -261,16 +260,6 @@ namespace Demo.Domain
 
             _gameDisplay.Camera.Update(deltaTime);
             _timer.Update(deltaTime);
-        }
-
-        public void ConsoleMessage(object sender, MessageEventArgs args)
-        {
-            string data = args.Data as string;
-
-            if (data.Equals("reset timer"))
-            {
-                _timer.Reset();
-            }
         }
 
         protected override void BeforeFirstActivation(StateSwitchData data)

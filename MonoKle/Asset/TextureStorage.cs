@@ -27,9 +27,10 @@ namespace MonoKle.Asset
         public MTexture Error { get; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TextureStorageNew"/> class.
+        /// Initializes a new instance of the <see cref="TextureStorage"/> class.
         /// </summary>
         /// <param name="graphicsDevice">The graphics device.</param>
+        /// <param name="logger">The logger to use.</param>
         public TextureStorage(GraphicsDevice graphicsDevice, Logger logger) : base(logger)
         {
             _graphicsDevice = graphicsDevice;
@@ -50,8 +51,8 @@ namespace MonoKle.Asset
                 {
                     var data = _textureDataByIdentifier[identifier];
                     return data.AtlasRectangle == null
-                        ? new MTexture(_textureByPath[data.Path], data.FrameCount, data.FrameRate)
-                        : new MTexture(_textureByPath[data.Path], data.AtlasRectangle.Value, data.FrameCount, data.FrameRate);
+                        ? new MTexture(_textureByPath[data.Path], data.FrameColumns, data.FrameRows, data.FrameMargin, data.FrameRate)
+                        : new MTexture(_textureByPath[data.Path], data.AtlasRectangle.Value, data.FrameColumns, data.FrameRows, data.FrameMargin, data.FrameRate);
                 }
                 return Error;
             }
@@ -103,6 +104,7 @@ namespace MonoKle.Asset
 
         protected override bool Load(string path, string identifier, string[] args)
         {
+            // Format is: ... atlasRectangle (- to use full texture) | frameColumns,frameRows | frameMargin | frameRate
             // Parse atlas rectangle
             MRectangleInt? atlasRectangle = null;
             if (args.Length > 0 && args[0] != "-")
@@ -123,24 +125,44 @@ namespace MonoKle.Asset
                 }
             }
 
-            // Parse animation data
-            int frameCount = 1;
-            int frameRate = 1;
-            if (args.Length > 2)
+            // Parse frames and columns
+            int frameColumns = 1;
+            int frameRows = 1;
+            if (args.Length > 1)
             {
-                if (!int.TryParse(args[1], out frameCount) ||
-                    !int.TryParse(args[2], out frameRate))
+                var sizeParts = args[1].Split(',', StringSplitOptions.RemoveEmptyEntries);
+                if (sizeParts.Length != 2 ||
+                    !int.TryParse(sizeParts[0], out frameColumns) ||
+                    !int.TryParse(sizeParts[1], out frameRows))
                 {
-                    _logger.Log($"Error reading animation data for identifier '{identifier}'. Skipping.", LogLevel.Error);
+                    _logger.Log($"Error reading columns and rows for identifier '{identifier}'. Skipping.", LogLevel.Error);
                     return false;
                 }
+            }
+
+            // Parse frame margin
+            int frameMargin = 0;
+            if (args.Length > 2 && !int.TryParse(args[2], out frameMargin))
+            {
+                _logger.Log($"Error reading frame margin for identifier '{identifier}'. Skipping.", LogLevel.Error);
+                return false;
+            }
+
+            // Parse animation frame rate
+            int frameRate = 1;
+            if (args.Length > 3 && !int.TryParse(args[3], out frameRate))
+            {
+                _logger.Log($"Error reading framerate for identifier '{identifier}'. Skipping.", LogLevel.Error);
+                return false;
             }
 
             return Load(identifier, new TextureData
             {
                 Path = path,
                 AtlasRectangle = atlasRectangle,
-                FrameCount = frameCount,
+                FrameColumns = frameColumns,
+                FrameRows = frameRows,
+                FrameMargin = frameMargin,
                 FrameRate = frameRate,
             });
         }
@@ -160,8 +182,10 @@ namespace MonoKle.Asset
         {
             public string Path = string.Empty;
             public MRectangleInt? AtlasRectangle = null;
-            public int FrameCount = 1;
+            public int FrameColumns = 1;
+            public int FrameRows = 1;
             public int FrameRate = 1;
+            public int FrameMargin = 1;
         }
     }
 }

@@ -37,7 +37,7 @@ namespace Demo.Domain
             _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.Default,
                 RasterizerState.CullCounterClockwise, null, _gameDisplay.Camera.TransformMatrix);
 
-            _spriteBatch.Draw(MGame.TextureStorage["animation"].Animate(_timer.Elapsed), new Vector2(0, -20), Color.White);
+            _spriteBatch.Draw(MGame.TextureStorage["animation"].AnimateRow(_timer.Elapsed), new Vector2(0, -20), Color.White);
 
             _spriteBatch.Draw(MGame.TextureStorage.Error, new MRectangleInt(0, 50, 16, 16), Color.White);
             _spriteBatch.Draw(MGame.TextureStorage.White, new MRectangleInt(16, 16).Translate(_errorBoxPosition.ToMPoint2()), Color.Red);
@@ -45,6 +45,11 @@ namespace Demo.Domain
             _spriteBatch.Draw(MGame.TextureStorage["red"], new Vector2(150, 50), Color.White);
             _spriteBatch.Draw(MGame.TextureStorage["green"], new Vector2(200, 50), Color.White);
             _spriteBatch.Draw(MGame.TextureStorage["blue"], new Vector2(250, 50), Color.White);
+
+            _spriteBatch.Draw(MGame.TextureStorage["colorAtlas"].GetCell(0, 0), new Vector2(500, 50), Color.White);
+            _spriteBatch.Draw(MGame.TextureStorage["colorAtlas"].GetCell(1, 0), new Vector2(550, 50), Color.White);
+            _spriteBatch.Draw(MGame.TextureStorage["colorAtlas"].GetCell(0, 1), new Vector2(600, 50), Color.White);
+            _spriteBatch.Draw(MGame.TextureStorage["colorAtlas"].GetCell(1, 1), new Vector2(650, 50), Color.White);
 
             FontInstance font = MGame.FontStorage["testfont"];
 

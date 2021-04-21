@@ -227,7 +227,7 @@ namespace MonoKle
         /// Scales the <see cref="MRectangle"/> to a size that fits the given bounding rectangle as well
         /// as possible without affecting the aspect ratio. Position is left unaltered.
         /// </summary>
-        /// <param name="boundinRectangle">The bounding rectangle to fit to.</param>
+        /// <param name="boundingRectangle">The bounding rectangle to fit to.</param>
         public MRectangle ScaleToFit(MRectangle boundingRectangle)
         {
             float thisRatio = AspectRatio;
@@ -249,7 +249,7 @@ namespace MonoKle
         /// Scales the <see cref="MRectangle"/> to a minimal size that fills the given bounding rectangle
         /// without affecting the aspect ratio. Position is left unaltered.
         /// </summary>
-        /// <param name="boundinRectangle">The bounding rectangle to fit to.</param>
+        /// <param name="boundingRectangle">The bounding rectangle to fit to.</param>
         public MRectangle ScaleToFill(MRectangle boundingRectangle)
         {
             float thisRatio = AspectRatio;
@@ -365,15 +365,8 @@ namespace MonoKle
         /// Returns whether this is equal to the provided object.
         /// </summary>
         /// <param name="obj">The object to check for equality with.</param>
-        /// <returns>True if equal, else false.</returns>
-        public override bool Equals(object obj)
-        {
-            if (obj is MRectangle)
-            {
-                return this == ((MRectangle)obj);
-            }
-            return false;
-        }
+        /// <returns>True if equal; else false.</returns>
+        public override bool Equals(object obj) => obj is MRectangle rectangle && this == rectangle;
 
         /// <summary>
         /// Returns whether this is equal to the provided <see cref="MRectangle"/>.

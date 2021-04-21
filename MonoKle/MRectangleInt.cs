@@ -1,6 +1,5 @@
 using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace MonoKle
@@ -130,7 +129,7 @@ namespace MonoKle
         /// <summary>
         /// Gets the height.
         /// </summary>
-        public int Width => BottomRight.X - TopLeft.X;
+        public int Width => BottomRight.X - TopLeft.X ;
 
         /// <summary>
         /// Non-equality operator.
@@ -151,7 +150,6 @@ namespace MonoKle
         /// <summary>
         /// Performs an implicit conversion from <see cref="Rectangle"/> to <see cref="MRectangleInt"/>.
         /// </summary>
-        /// <param name="r">The r.</param>
         /// <returns>
         /// The result of the conversion.
         /// </returns>
@@ -160,14 +158,13 @@ namespace MonoKle
         /// <summary>
         /// Performs an implicit conversion from <see cref="MRectangleInt"/> to <see cref="Rectangle"/>.
         /// </summary>
-        /// <param name="r">The r.</param>
         /// <returns>
         /// The result of the conversion.
         /// </returns>
         public static implicit operator Rectangle(MRectangleInt r) => new Rectangle(r.TopLeft.X, r.TopLeft.Y, r.Width, r.Height);
 
         /// <summary>
-        /// Clamps the provided <see cref="MRectangleInt"/> to fit within.
+        /// Clamps the provided <see cref="MRectangleInt"/> to be within.
         /// </summary>
         /// <param name="area">The <see cref="MRectangleInt"/> to clamp.</param>
         public MRectangleInt Clamp(MRectangleInt area)
@@ -178,7 +175,7 @@ namespace MonoKle
         }
 
         /// <summary>
-        /// Clamps the provided <see cref="MRectangle"/> to fit within.
+        /// Clamps the provided <see cref="MRectangle"/> to be within.
         /// </summary>
         /// <param name="area">The <see cref="MRectangle"/> to clamp.</param>
         public MRectangle Clamp(MRectangle area)
@@ -189,7 +186,8 @@ namespace MonoKle
         }
 
         /// <summary>
-        /// Clamps the provided <see cref="MPoint2"/> to be positioned within this.
+        /// Clamps the provided <see cref="MPoint2"/> to be positioned within or on the edge of
+        /// the <see cref="MRectangleInt"/>.
         /// </summary>
         /// <param name="coordinate">The <see cref="MPoint2"/> to clamp.</param>
         public MPoint2 Clamp(MPoint2 coordinate)
@@ -219,7 +217,8 @@ namespace MonoKle
         }
 
         /// <summary>
-        /// Clamps the provided <see cref="MVector2"/> to be positioned within this.
+        /// Clamps the provided <see cref="MVector2"/> to be positioned within or on the edge of
+        /// the <see cref="MRectangleInt"/>.
         /// </summary>
         /// <param name="coordinate">The <see cref="MVector2"/> to clamp.</param>
         public MVector2 Clamp(MVector2 coordinate)
@@ -438,19 +437,5 @@ namespace MonoKle
         /// Converts the <see cref="MRectangleInt"/> to an <see cref="MRectangle"/> by int -> float conversion.
         /// </summary>
         public MRectangle ToMRectangle() => new MRectangle(this);
-
-        /// <summary>
-        /// Iterates each discrete point contained within the <see cref="MRectangleInt"/>.
-        /// </summary>
-        public IEnumerable<MPoint2> Iterate()
-        {
-            for (int x = Left; x <= Right; x++)
-            {
-                for (int y = Top; y <= Bottom; y++)
-                {
-                    yield return new MPoint2(x, y);
-                }
-            }
-        }
     }
 }

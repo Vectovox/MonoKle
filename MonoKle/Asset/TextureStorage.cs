@@ -47,12 +47,22 @@ namespace MonoKle.Asset
         {
             get
             {
-                if (_textureDataByIdentifier.ContainsKey(identifier))
+                if (_textureDataByIdentifier.TryGetValue(identifier, out var data))
                 {
-                    var data = _textureDataByIdentifier[identifier];
-                    return data.AtlasRectangle == null
-                        ? new MTexture(_textureByPath[data.Path], data.FrameColumns, data.FrameRows, data.FrameMargin, data.FrameRate)
-                        : new MTexture(_textureByPath[data.Path], data.AtlasRectangle.Value, data.FrameColumns, data.FrameRows, data.FrameMargin, data.FrameRate);
+                    try
+                    {
+                        return data.AtlasRectangle == null
+                            ? new MTexture(_textureByPath[data.Path], data.FrameColumns, data.FrameRows, data.FrameMargin, data.FrameRate)
+                            : new MTexture(_textureByPath[data.Path], data.AtlasRectangle.Value, data.FrameColumns, data.FrameRows, data.FrameMargin, data.FrameRate);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.Log($"Error accessing texture '{identifier}': {e.Message}", LogLevel.Error);
+                    }
+                }
+                else
+                {
+                    _logger.Log($"Accessed non-existing texture: '{identifier}'.", LogLevel.Warning);
                 }
                 return Error;
             }

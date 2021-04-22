@@ -7,18 +7,20 @@ namespace MonoKle.Tests
     public class MTextureTests
     {
         [TestMethod]
-        public void DurationRow_Correct()
-        {
-            var sut = new MTexture(null, new MRectangleInt(10, 10, 30, 40), 5, 1, 0, 10);
-            Assert.AreEqual(TimeSpan.FromMilliseconds(500), sut.DurationRow);
-        }
+        public void DurationRow_Animated_Correct() =>
+            Assert.AreEqual(TimeSpan.FromMilliseconds(500), new MTexture(null, new MRectangleInt(10, 10, 30, 40), 5, 1, 0, 10).DurationRow);
 
         [TestMethod]
-        public void DurationColumn_Correct()
-        {
-            var sut = new MTexture(null, new MRectangleInt(10, 10, 30, 40), 1, 5, 0, 10);
-            Assert.AreEqual(TimeSpan.FromMilliseconds(500), sut.DurationColumn);
-        }
+        public void DurationRow_NonAnimated_Correct() =>
+            Assert.AreEqual(TimeSpan.MaxValue, new MTexture(null, new MRectangleInt(10, 10, 30, 40), 5, 1, 0, 0).DurationRow);
+
+        [TestMethod]
+        public void DurationColumn_Animated_Correct() =>
+            Assert.AreEqual(TimeSpan.FromMilliseconds(500), new MTexture(null, new MRectangleInt(10, 10, 30, 40), 1, 5, 0, 10).DurationColumn);
+
+        [TestMethod]
+        public void DurationColumn_NonAnimated_Correct() =>
+            Assert.AreEqual(TimeSpan.MaxValue, new MTexture(null, new MRectangleInt(10, 10, 30, 40), 1, 5, 0, 0).DurationColumn);
 
         [DataTestMethod]
         [DataRow(14, 2, 2, 3, DisplayName = "2 Margin")] // [][][X][X][X][][][][][Y][Y][Y][][]
@@ -205,7 +207,6 @@ namespace MonoKle.Tests
         [DataRow(100, 50, 1, 0, 0, 1, DisplayName = "Zero Rows")]
         [DataRow(100, 50, 1, -1, 0, 1, DisplayName = "Negative Rows")]
         [DataRow(100, 50, 1, 1, -1, 1, DisplayName = "Negative Margin")]
-        [DataRow(100, 50, 1, 1, 0, 0, DisplayName = "Zero Frame rate")]
         [DataRow(100, 50, 1, 1, 0, -1, DisplayName = "Negative Frame rate")]
         [DataRow(100, 50, 3, 1, 0, 1, DisplayName = "Columns not divisible")]
         [DataRow(100, 50, 1, 3, 0, 1, DisplayName = "Rows not divisible")]

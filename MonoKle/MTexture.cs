@@ -45,7 +45,7 @@ namespace MonoKle
             : this(texture, frameColumns, frameRows, 0) { }
 
         public MTexture(Texture2D texture, int frameColumns, int frameRows, int frameMargin)
-            : this(texture, frameColumns, frameRows, frameMargin, 1) { }
+            : this(texture, frameColumns, frameRows, frameMargin, 0) { }
 
         public MTexture(Texture2D texture, int frameColumns, int frameRows, int frameMargin, int frameRate)
             : this(texture, new MRectangleInt(0, 0, texture.Width, texture.Height), frameColumns, frameRows, frameMargin, frameRate) { }
@@ -57,7 +57,7 @@ namespace MonoKle
             : this(texture, atlasRectangle, frameColumns, frameRows, 0) { }
 
         public MTexture(Texture2D texture, MRectangleInt atlasRectangle, int frameColumns, int frameRows, int frameMargin)
-            : this(texture, atlasRectangle, frameColumns, frameRows, frameMargin, 1) { }
+            : this(texture, atlasRectangle, frameColumns, frameRows, frameMargin, 0) { }
 
         public MTexture(Texture2D texture, MRectangleInt atlasRectangle, int frameColumns, int frameRows, int frameMargin, int frameRate)
         {
@@ -71,9 +71,9 @@ namespace MonoKle
                 throw new ArgumentException($"Invalid row amount '{frameRows}'. Must be greater than 0.");
             }
 
-            if (frameRate < 1)
+            if (frameRate < 0)
             {
-                throw new ArgumentException($"Invalid frame rate '{frameRate}'. Must be greater than 0.");
+                throw new ArgumentException($"Invalid frame rate '{frameRate}'. Must be greater or equal to 0.");
             }
 
             if (frameMargin < 0)
@@ -102,12 +102,12 @@ namespace MonoKle
         /// <summary>
         /// Gets the animation duration animating over columns.
         /// </summary>
-        public TimeSpan DurationRow => TimeSpan.FromSeconds(FrameColumns / (float)FrameRate);
+        public TimeSpan DurationRow => FrameRate == 0 ? TimeSpan.MaxValue : TimeSpan.FromSeconds(FrameColumns / (float)FrameRate);
 
         /// <summary>
         /// Gets the animation duration animating over rows.
         /// </summary>
-        public TimeSpan DurationColumn => TimeSpan.FromSeconds(FrameRows / (float)FrameRate);
+        public TimeSpan DurationColumn => FrameRate == 0 ? TimeSpan.MaxValue : TimeSpan.FromSeconds(FrameRows / (float)FrameRate);
 
         /// <summary>
         /// Gets the width of a single frame once animated.

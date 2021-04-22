@@ -194,8 +194,8 @@ namespace MonoKle.Asset
             public MRectangleInt? AtlasRectangle = null;
             public int FrameColumns = 1;
             public int FrameRows = 1;
-            public int FrameRate = 1;
-            public int FrameMargin = 1;
+            public int FrameRate = 0;
+            public int FrameMargin = 0;
         }
     }
 }

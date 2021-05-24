@@ -9,6 +9,11 @@ namespace MonoKle
     public class MTexture
     {
         /// <summary>
+        /// The identifier of the texture.
+        /// </summary>
+        public readonly string Identifier;
+
+        /// <summary>
         /// The raw data that the <see cref="MTexture"/> maps on.
         /// </summary>
         public readonly Texture2D TextureData;
@@ -38,28 +43,28 @@ namespace MonoKle
         /// </summary>
         public readonly int FrameMargin;
 
-        public MTexture(Texture2D texture)
-            : this(texture, 1, 1) { }
+        public MTexture(Texture2D texture, string identifier)
+            : this(texture, identifier, 1, 1) { }
 
-        public MTexture(Texture2D texture, int frameColumns, int frameRows)
-            : this(texture, frameColumns, frameRows, 0) { }
+        public MTexture(Texture2D texture, string identifier, int frameColumns, int frameRows)
+            : this(texture, identifier, frameColumns, frameRows, 0) { }
 
-        public MTexture(Texture2D texture, int frameColumns, int frameRows, int frameMargin)
-            : this(texture, frameColumns, frameRows, frameMargin, 0) { }
+        public MTexture(Texture2D texture, string identifier, int frameColumns, int frameRows, int frameMargin)
+            : this(texture, identifier, frameColumns, frameRows, frameMargin, 0) { }
 
-        public MTexture(Texture2D texture, int frameColumns, int frameRows, int frameMargin, int frameRate)
-            : this(texture, new MRectangleInt(0, 0, texture.Width, texture.Height), frameColumns, frameRows, frameMargin, frameRate) { }
+        public MTexture(Texture2D texture, string identifier, int frameColumns, int frameRows, int frameMargin, int frameRate)
+            : this(texture, identifier, new MRectangleInt(0, 0, texture.Width, texture.Height), frameColumns, frameRows, frameMargin, frameRate) { }
 
-        public MTexture(Texture2D texture, MRectangleInt atlasRectangle)
-            : this(texture, atlasRectangle, 1, 1) { }
+        public MTexture(Texture2D texture, string identifier, MRectangleInt atlasRectangle)
+            : this(texture, identifier, atlasRectangle, 1, 1) { }
 
-        public MTexture(Texture2D texture, MRectangleInt atlasRectangle, int frameColumns, int frameRows)
-            : this(texture, atlasRectangle, frameColumns, frameRows, 0) { }
+        public MTexture(Texture2D texture, string identifier, MRectangleInt atlasRectangle, int frameColumns, int frameRows)
+            : this(texture, identifier, atlasRectangle, frameColumns, frameRows, 0) { }
 
-        public MTexture(Texture2D texture, MRectangleInt atlasRectangle, int frameColumns, int frameRows, int frameMargin)
-            : this(texture, atlasRectangle, frameColumns, frameRows, frameMargin, 0) { }
+        public MTexture(Texture2D texture, string identifier, MRectangleInt atlasRectangle, int frameColumns, int frameRows, int frameMargin)
+            : this(texture, identifier, atlasRectangle, frameColumns, frameRows, frameMargin, 0) { }
 
-        public MTexture(Texture2D texture, MRectangleInt atlasRectangle, int frameColumns, int frameRows, int frameMargin, int frameRate)
+        public MTexture(Texture2D texture, string identifier, MRectangleInt atlasRectangle, int frameColumns, int frameRows, int frameMargin, int frameRate)
         {
             if (frameColumns < 1)
             {
@@ -92,6 +97,7 @@ namespace MonoKle
             }
 
             TextureData = texture;
+            Identifier = identifier;
             AtlasRectangle = atlasRectangle;
             FrameMargin = frameMargin;
             FrameColumns = frameColumns;
@@ -132,7 +138,7 @@ namespace MonoKle
         {
             int wrappedColumn = column % FrameColumns;
             int wrappedRow = row % FrameRows;
-            return new MTexture(TextureData, AtlasRectangle
+            return new MTexture(TextureData, Identifier, AtlasRectangle
                 .RedimensionWidth(FrameWidth)
                 .RedimensionHeight(FrameHeight)
                 .TranslateX(wrappedColumn * (FrameWidth + FrameMargin + FrameMargin) + FrameMargin)
@@ -150,7 +156,7 @@ namespace MonoKle
         public MTexture GetColumn(int column)
         {
             int wrappedColumn = column % FrameColumns;
-            return new MTexture(TextureData, AtlasRectangle
+            return new MTexture(TextureData, Identifier, AtlasRectangle
                 .RedimensionWidth(FrameWidth)
                 .TranslateX(wrappedColumn * (FrameWidth + FrameMargin + FrameMargin) + FrameMargin));
         }
@@ -165,7 +171,7 @@ namespace MonoKle
         public MTexture GetRow(int row)
         {
             int wrappedRow = row % FrameRows;
-            return new MTexture(TextureData, AtlasRectangle
+            return new MTexture(TextureData, Identifier, AtlasRectangle
                 .RedimensionHeight(FrameHeight)
                 .TranslateY(wrappedRow * (FrameHeight + FrameMargin + FrameMargin) + FrameMargin));
         }
@@ -242,12 +248,14 @@ namespace MonoKle
         /// Returns a new instance of <see cref="MTexture"/> with the atlas rectangle set to the provided value.
         /// </summary>
         /// <param name="atlas">The atlas rectangle to use.</param>
-        public MTexture WithAtlas(MRectangleInt atlas) => new MTexture(TextureData, atlas, FrameColumns, FrameRows, FrameRate, FrameMargin);
+        public MTexture WithAtlas(MRectangleInt atlas) => new MTexture(TextureData, Identifier, atlas, FrameColumns, FrameRows, FrameRate, FrameMargin);
 
         /// <summary>
         /// Returns a new instance of <see cref="MTexture"/> with the atlas margin set to the provided value.
         /// </summary>
         /// <param name="margin">The margin to use.</param>
-        public MTexture WithMargin(int margin) => new MTexture(TextureData, AtlasRectangle, FrameColumns, FrameRows, FrameRate, margin);
+        public MTexture WithMargin(int margin) => new MTexture(TextureData, Identifier, AtlasRectangle, FrameColumns, FrameRows, FrameRate, margin);
+
+        public override string ToString() => $"{Identifier} | {AtlasRectangle}";
     }
 }

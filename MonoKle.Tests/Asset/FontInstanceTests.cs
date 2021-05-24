@@ -25,6 +25,10 @@ namespace MonoKle.Asset
         {
             var fontFile = new FontFile
             {
+                Info = new FontInfo
+                {
+                    
+                },
                 Common = new FontCommon
                 {
                     LineHeight = Size,

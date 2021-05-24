@@ -203,7 +203,7 @@ namespace MonoKle.Engine
 
                 if (Settings.TouchEnabled)
                 {
-                    _touchScreen.Update();
+                    _touchScreen.Update(deltaTime);
                 }
 
                 GraphicsManager.Update(Window.ClientBounds.Size);

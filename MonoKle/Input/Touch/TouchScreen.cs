@@ -28,11 +28,13 @@ namespace MonoKle.Input.Touch
         };
 
         private readonly IMouse _mouse;
+        private readonly TouchInput _touchInput = new TouchInput();
 
-        public TouchScreen(IMouse mouse)
-        {
-            _mouse = mouse;
-        }
+        /// <summary>
+        /// Creates and initializes a new instance of <see cref="TouchScreen"/>.
+        /// </summary>
+        /// <param name="mouse">The mouse to use for virtual touch screen input.</param>
+        public TouchScreen(IMouse mouse) => _mouse = mouse;
 
         [CVar("touch_virtual")]
         public bool VirtualTouch { get; set; }
@@ -47,30 +49,33 @@ namespace MonoKle.Input.Touch
 
         public IPinchAction Pinch => _pinchActions[GestureType.Pinch];
 
+        public ITouchInput Touch => _touchInput;
+
         public GestureType EnabledGestures
         {
             get { return TouchPanel.EnabledGestures; }
             set { TouchPanel.EnabledGestures = value; }
         }
 
-        public void Update()
+        public void Update(TimeSpan timeDelta)
         {
             // Reset all actions
             _pressActions.Values.ForEach(action => action.Reset());
             _dragActions.Values.ForEach(action => action.Reset());
             _pinchActions.Values.ForEach(action => action.Reset());
 
-            // Set actions again if their conditions are met
-            UpdateTouchInput();
-
-            // If enabled, we set actions from mouse input as well
             if (VirtualTouch)
             {
-                UpdateMouseInput();
+                UpdateMouseInput(timeDelta);
+            }
+            else
+            {
+                UpdateGestures();
+                UpdateTouchInput(timeDelta);
             }
         }
 
-        private void UpdateTouchInput()
+        private void UpdateGestures()
         {
             // Iterate all available gestures and act on them
             while (TouchPanel.IsGestureAvailable)
@@ -104,7 +109,32 @@ namespace MonoKle.Input.Touch
             }
         }
 
-        private void UpdateMouseInput()
+        private void UpdateTouchInput(TimeSpan timeDelta)
+        {
+            // Poll the screen state
+            var state = TouchPanel.GetState();
+
+            // Iterate to check if the screen is continuously touched
+            bool touched = false;
+            foreach (TouchLocation location in state)
+            {
+                if (location.State == TouchLocationState.Moved)
+                {
+                    // Touched so update the data
+                    touched = true;
+                    _touchInput.Update(timeDelta, location.Position.ToPoint());
+                    break;
+                }
+            }
+
+            // Reset in case nothing was recorded
+            if (!touched)
+            {
+                _touchInput.Reset(timeDelta);
+            }
+        }
+
+        private void UpdateMouseInput(TimeSpan delta)
         {
             if (_mouse.Left.IsHeldForOnce(TimeSpan.FromSeconds(1)))
             {
@@ -127,6 +157,15 @@ namespace MonoKle.Input.Touch
             else if (_mouse.ScrollDirection == MouseScrollDirection.Up)
             {
                 _pinchActions[GestureType.Pinch].Set(_mouse.Position.Coordinate, 0.1f);
+            }
+
+            if (_mouse.Left.IsDown)
+            {
+                _touchInput.Update(delta, _mouse.Position.Coordinate);
+            }
+            else
+            {
+                _touchInput.Reset(delta);
             }
         }
     }

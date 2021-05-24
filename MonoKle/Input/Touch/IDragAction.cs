@@ -8,13 +8,13 @@ namespace MonoKle.Input.Touch
     public interface IDragAction : IPressAction
     {
         /// <summary>
-        /// Gets the screen delta of the action. Throws if <see cref="IsTriggered"/> is false.
+        /// Gets the screen delta of the action. Throws if <see cref="ITouchAction.IsTriggered"/> is false.
         /// </summary>
-        /// <exception cref="InvalidOperationException">Thrown if action is not valid. See <see cref="IsTriggered"/>.</exception>
+        /// <exception cref="InvalidOperationException">Thrown if action is not valid. See <see cref="ITouchAction.IsTriggered"/>.</exception>
         MPoint2 Delta { get; }
 
         /// <summary>
-        /// Returns <see cref="IsTriggered"/>. If true, populates the out parameter
+        /// Returns <see cref="ITouchAction.IsTriggered"/>. If true, populates the out parameter
         /// with <see cref="Delta"/>.
         /// </summary>
         /// <param name="coordinate">The delta of the action.</param>

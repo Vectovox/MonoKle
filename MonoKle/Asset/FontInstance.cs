@@ -63,13 +63,16 @@ namespace MonoKle.Asset
         /// <returns>An <see cref="MVector2"/> representing the size.</returns>
         public MVector2 Measure(string text)
         {
+            // Precompute for efficiency
             var doubleOutline = _fontData.Outline * 2;
             var lineHeightIncrease = Size + LinePadding + doubleOutline;
             
-            float rowSize = 0f;
+            // Set initial values
+            float rowSize = 0;
             Vector2 totalSize = new Vector2(0f, lineHeightIncrease);
             bool tagOpen = false;
 
+            // Iterate all characters to measure string
             foreach (char character in text)
             {
                 if (character == ColorTag)
@@ -94,13 +97,13 @@ namespace MonoKle.Asset
                 else if (_fontData.TryGetChar(character, out FontChar fontCharacter))
                 {
                     // Measure character and set the line size
-                    rowSize += fontCharacter.XAdvance + doubleOutline;
+                    rowSize += fontCharacter.XAdvance + _fontData.Outline;
                 }
             }
 
             // Final update to total size
             totalSize.X = Math.Max(totalSize.X, rowSize) * ScaleFactor;
-            return new MVector2(totalSize.X, totalSize.Y);
+            return totalSize;
         }
 
         /// <summary>
@@ -220,13 +223,17 @@ namespace MonoKle.Asset
         public void Draw(SpriteBatch spriteBatch, string text, Vector2 position, Color color,
             float rotation, Vector2 origin, float layerDepth, SpriteEffects effect, Func<char, Color, Color> colorSelector)
         {
+            // Precompute for efficiency
             var doubleOutline = _fontData.Outline * 2;
-            Vector2 originalPosition = new Vector2(position.X + _fontData.Outline, position.Y + _fontData.Outline);
+            Vector2 originalPosition = new Vector2(position.X, position.Y + _fontData.Outline);
 
-            float scaleFactor = ScaleFactor;    // Precompute for efficiency
+            // Set initial values
+            float scaleFactor = ScaleFactor;
             Vector2 drawPosition = originalPosition;
             bool tagOpen = false;
             Color currentColor = color;
+
+            // Iterate and draw characters
             foreach (char character in text)
             {
                 if (character == ColorTag)
@@ -266,7 +273,7 @@ namespace MonoKle.Asset
 
                     spriteBatch.Draw(_fontData.GetPage(fontCharacter.Page), destinationVector, sourceRectangle, currentColor,
                         rotation, Vector2.Zero, scaleFactor, effect, layerDepth);
-                    drawPosition.X += (fontCharacter.XAdvance + doubleOutline) * scaleFactor;
+                    drawPosition.X += (fontCharacter.XAdvance + _fontData.Outline) * scaleFactor;
                 }
             }
         }

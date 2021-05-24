@@ -82,7 +82,7 @@ namespace Demo.Domain
 
             // Test wrapping strings
             int wrapLength = (int)_errorBoxPosition.X;
-            DrawTextBox(font.Wrap("This is a too long string that should be wrapped appropriately", wrapLength), new MVector2(0, 650));
+            DrawTextBox(font.Wrap("Mmm... This is a too long string that should be wrapped appropriately", wrapLength), new MVector2(0, 650));
             _spriteBatch.Draw(MGame.TextureStorage.White, new MRectangleInt(0, 650, wrapLength, 100), new Color(1f, 1f, 1f, 0.3f));
 
             // Test color changing

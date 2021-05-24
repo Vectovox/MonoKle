@@ -85,8 +85,11 @@ namespace Demo.Domain
             DrawTextBox(font.Wrap("Mmm... This is a too long, default string that should be wrapped appropriately", wrapLength), new MVector2(0, 650));
             _spriteBatch.Draw(MGame.TextureStorage.White, new MRectangleInt(0, 650, wrapLength, -50), new Color(1f, 1f, 1f, 0.3f));
 
-            DrawTextBox(font.WithSize(48).Wrap("Mmm... This is a too long, scaled string that should be wrapped appropriately", wrapLength), new MVector2(0, 1300), 48);
-            _spriteBatch.Draw(MGame.TextureStorage.White, new MRectangleInt(0, 1300, wrapLength, -50), new Color(1f, 1f, 1f, 0.3f));
+            DrawTextBox(font.WithSize(48).Wrap("Mmm... This is a too long, bigger string that should be wrapped appropriately", wrapLength), new MVector2(0, 1150), 48);
+            _spriteBatch.Draw(MGame.TextureStorage.White, new MRectangleInt(0, 1150, wrapLength, -50), new Color(1f, 1f, 1f, 0.3f));
+
+            DrawTextBox(font.WithSize(24).Wrap("Mmm... This is a too long, smaller string that should be wrapped appropriately", wrapLength), new MVector2(0, 1850), 24);
+            _spriteBatch.Draw(MGame.TextureStorage.White, new MRectangleInt(0, 1850, wrapLength, -50), new Color(1f, 1f, 1f, 0.3f));
 
             // Test color changing
             static Color ColorChanger(char token, Color original) => token switch

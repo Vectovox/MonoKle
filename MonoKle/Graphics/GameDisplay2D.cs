@@ -7,11 +7,14 @@ namespace MonoKle.Graphics
     /// Class that represents a 2D game display, solving the problem of addressing different
     /// display resolutions.
     /// </summary>
-    public class GameDisplay2D : IDisposable
+    public class GameDisplay2D<TCamera> : IDisposable where TCamera : Camera2D
     {
         private readonly GraphicsManager _graphicsManager;
-        private DynamicCamera2D _camera = new DynamicCamera2D(MPoint2.One);
+        private TCamera _camera;
 
+        /// <summary>
+        /// Gets the graphics device associated with the <see cref="GameDisplay2D{TCamera}"/>.
+        /// </summary>
         public GraphicsDevice GraphicsDevice { get; }
 
         /// <summary>
@@ -36,7 +39,7 @@ namespace MonoKle.Graphics
         /// <remarks>
         /// Setting the camera will automatically update its size to conform to the rendering resolution.
         /// </remarks>
-        public DynamicCamera2D Camera
+        public TCamera Camera
         {
             get => _camera;
             set
@@ -76,25 +79,30 @@ namespace MonoKle.Graphics
         public DepthFormat DepthFormat { get; set; }
 
         /// <summary>
-        /// Creates and initializes a new <see cref="GameDisplay2D"/>,
+        /// Creates and initializes a new <see cref="GameDisplay2D{TCamera}"/>,
         /// having the same resolution for the world as the UI.
         /// </summary>
         /// <param name="graphicsManager">Graphics manager to use.</param>
+        /// <param name="camera">The camera to use.</param>
         /// <param name="targetResolution">The target resolution of the rendering.</param>
-        public GameDisplay2D(GraphicsManager graphicsManager, MPoint2 targetResolution) :
-            this(graphicsManager, targetResolution, targetResolution)
+        public GameDisplay2D(GraphicsManager graphicsManager, TCamera camera, MPoint2 targetResolution) :
+            this(graphicsManager, camera, targetResolution, targetResolution)
         { }
 
         /// <summary>
-        /// Creates and initializes a new <see cref="GameDisplay2D"/>.
+        /// Creates and initializes a new <see cref="GameDisplay2D{TCamera}"/>.
         /// </summary>
         /// <param name="graphicsManager">Graphics manager to use.</param>
+        /// <param name="camera">The camera to use.</param>
         /// <param name="targetWorldResolution">The target resolution of the world rendering.</param>
         /// <param name="targetUiResolution">The target resolution of the UI rendering.</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Current C# does not support init in methods.
-        public GameDisplay2D(GraphicsManager graphicsManager, MPoint2 targetWorldResolution, MPoint2 targetUiResolution)
+        public GameDisplay2D(GraphicsManager graphicsManager, TCamera camera, MPoint2 targetWorldResolution, MPoint2 targetUiResolution)
 #pragma warning restore CS8618
         {
+            // Assign camera
+            _camera = camera;
+
             // Graphics manager stuff
             _graphicsManager = graphicsManager;
             _graphicsManager.ResolutionChanged += ResolutionChanged;
@@ -110,7 +118,7 @@ namespace MonoKle.Graphics
         }
 
         /// <summary>
-        /// Call to apply any changes made to the <see cref="GameDisplay2D"/>.
+        /// Call to apply any changes made to the <see cref="GameDisplay2D{TCamera}"/>.
         /// </summary>
         public void Apply()
         {
@@ -137,7 +145,7 @@ namespace MonoKle.Graphics
             SetCameraSize();
         }
 
-        private void SetCameraSize() => Camera.Size = WorldRenderingArea.Render.BottomRight;
+        private void SetCameraSize() => _camera.Size = WorldRenderingArea.Render.BottomRight;
 
         /// <summary>
         /// Call to dispose.

@@ -16,7 +16,7 @@ namespace Demo.Domain
     {
         private SpriteBatch _spriteBatch;
         private readonly Timer _timer = new Timer(TimeSpan.FromSeconds(5));
-        private GameDisplay2D _gameDisplay;
+        private GameDisplay2D<DynamicCamera2D> _gameDisplay;
         private PrimitiveBatch2D _primitive2D;
         private string _stateSwitchMessage = string.Empty;
         private MVector2 _lastInversionPosition;
@@ -74,7 +74,7 @@ namespace Demo.Domain
             _spriteBatch.Draw(MGame.TextureStorage.White, new MRectangleInt(0, 650, wrapLength, 100), new Color(1f, 1f, 1f, 0.3f));
 
             // Test color changing
-            Color ColorChanger(char token, Color original) => token switch
+            static Color ColorChanger(char token, Color original) => token switch
             {
                 '1' => Color.Red,
                 _ => original,
@@ -273,8 +273,11 @@ namespace Demo.Domain
         protected override void BeforeFirstActivation(StateSwitchData data)
         {
             base.BeforeFirstActivation(data);
-            _gameDisplay = new GameDisplay2D(MGame.GraphicsManager, new MPoint2(900, 600), new MPoint2(1500, 768));
-            _gameDisplay.Camera.MinScale = 0.3f;
+            var camera = new DynamicCamera2D(MPoint2.Zero)
+            {
+                MinScale = 0.3f
+            };
+            _gameDisplay = new GameDisplay2D<DynamicCamera2D>(MGame.GraphicsManager, camera, new MPoint2(900, 600), new MPoint2(1500, 768));
             MGame.Console.WriteLine(MGame.TextureStorage.LoadFromManifest("Data/assets.manifest") + " textures loaded.");
             MGame.Console.WriteLine(MGame.FontStorage.LoadFromManifest("Data/assets.manifest") + " fonts loaded.");
             MGame.Console.WriteLine(MGame.EffectStorage.LoadFromManifest("Data/assets.manifest") + " effects loaded.");

@@ -11,32 +11,32 @@ namespace MonoKle.Console
     /// </summary>
     public class InputField : KeyboardTextInput
     {
-        private readonly List<string> history;
+        private readonly List<string> _history;
 
-        private readonly Timer cursorTimer;
+        private readonly Timer _cursorTimer;
 
-        private readonly string commandToken;
-        private readonly string cursorToken;
+        private readonly string _commandToken;
+        private readonly string _cursorToken;
 
-        private string displayTextCursor = "";
-        private string displayTextCursorNoToken = "";
+        private string _displayTextCursor = "";
+        private string _displayTextCursorNoToken = "";
 
-        private int historyIndex = 0;
-        private bool isBlinking;
+        private int _historyIndex = 0;
+        private bool _isBlinking;
 
         public InputField(string cursorToken, string commandToken, TimeSpan cursorBlinkRate, int historyCapacity, KeyboardCharacterInput characterInput)
             : base(characterInput)
         {
-            this.cursorToken = cursorToken;
-            this.commandToken = commandToken;
-            history = new List<string>(historyCapacity);
-            cursorTimer = new Timer(cursorBlinkRate);
+            _cursorToken = cursorToken;
+            _commandToken = commandToken;
+            _history = new List<string>(historyCapacity);
+            _cursorTimer = new Timer(cursorBlinkRate);
             OnTextChange();
         }
 
         public string DisplayText { get; private set; } = "";
 
-        public string CursorDisplayText => isBlinking ? displayTextCursorNoToken : displayTextCursor;
+        public string CursorDisplayText => _isBlinking ? _displayTextCursorNoToken : _displayTextCursor;
 
         public Keys NextMemoryKey { get; set; } = Keys.Down;
 
@@ -50,24 +50,24 @@ namespace MonoKle.Console
         /// <summary>
         /// Remembers the given text.
         /// </summary>
-        /// <param name="input">The text to remember.</param>
+        /// <param name="text">The text to remember.</param>
         public void Remember(string text)
         {
-            if (history.Count == history.Capacity)
+            if (_history.Count == _history.Capacity)
             {
-                history.RemoveAt(0);
+                _history.RemoveAt(0);
             }
-            history.Add(text);
+            _history.Add(text);
         }
 
         public void Update(TimeSpan timeDelta)
         {
             Update();
 
-            if (cursorTimer.UpdateDone(timeDelta))
+            if (_cursorTimer.Update(timeDelta))
             {
-                isBlinking = !isBlinking;
-                cursorTimer.Reset();
+                _isBlinking = !_isBlinking;
+                _cursorTimer.Reset();
             }
 
             if (CharacterInput.KeyboardTyper.IsTyped(NextMemoryKey))
@@ -85,29 +85,29 @@ namespace MonoKle.Console
 
         protected override void OnTextChange()
         {
-            historyIndex = history.Count;
+            _historyIndex = _history.Count;
             UpdateDisplayText();
         }
 
         private void ChangeMemory(int delta)
         {
-            if (history.Count > 0)
+            if (_history.Count > 0)
             {
-                int newIndex = historyIndex + delta;
-                newIndex = MathHelper.Clamp(newIndex, 0, history.Count - 1);
-                Text = history[newIndex];
+                int newIndex = _historyIndex + delta;
+                newIndex = MathHelper.Clamp(newIndex, 0, _history.Count - 1);
+                Text = _history[newIndex];
                 // Overwrite history index after text update
-                historyIndex = newIndex;
+                _historyIndex = newIndex;
             }
         }
 
         private void UpdateDisplayText()
         {
-            var beforeCursor = commandToken + Text[..CursorPosition];
+            var beforeCursor = _commandToken + Text[..CursorPosition];
             var afterCursor = Text[CursorPosition..];
             DisplayText = beforeCursor + afterCursor;
-            displayTextCursor = beforeCursor + cursorToken + afterCursor;
-            displayTextCursorNoToken = beforeCursor + " " + afterCursor;
+            _displayTextCursor = beforeCursor + _cursorToken + afterCursor;
+            _displayTextCursorNoToken = beforeCursor + " " + afterCursor;
         }
     }
 }

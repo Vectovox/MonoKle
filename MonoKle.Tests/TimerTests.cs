@@ -175,14 +175,24 @@ namespace MonoKle.Tests
         }
 
         [TestMethod]
-        public void UpdateDone_Done_OnlyTrueOnFirstCall()
+        public void Update_NotDone_False()
+        {
+            var span = TimeSpan.FromSeconds(10);
+            var spanToUpdate = TimeSpan.FromSeconds(5);
+            var timer = new Timer(span);
+
+            Assert.IsFalse(timer.Update(spanToUpdate));
+        }
+
+        [TestMethod]
+        public void Update_Done_OnlyTrueOnFirstCall()
         {
             var span = TimeSpan.FromSeconds(10);
             var spanToUpdate = TimeSpan.FromSeconds(100);
             var timer = new Timer(span);
 
-            Assert.IsTrue(timer.UpdateDone(spanToUpdate));
-            Assert.IsFalse(timer.UpdateDone(spanToUpdate));
+            Assert.IsTrue(timer.Update(spanToUpdate));
+            Assert.IsFalse(timer.Update(spanToUpdate));
         }
 
         [TestMethod]

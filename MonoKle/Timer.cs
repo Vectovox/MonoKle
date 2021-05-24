@@ -6,7 +6,7 @@ namespace MonoKle
     /// A serializable and updateable timer that provides information on time left and whether the timer is done counting.
     /// </summary>
     [Serializable]
-    public class Timer : IUpdateable
+    public class Timer
     {
         private bool _wasDone;
 
@@ -84,17 +84,23 @@ namespace MonoKle
         }
 
         /// <summary>
-        /// Trigger the <see cref="Timer"/>, setting its duration to zero. Effectively an inverse <see cref="Reset"/>.
+        /// Trigger the <see cref="Timer"/>, setting its duration to zero. Effectively an inverse <see cref="Reset()"/>.
         /// </summary>
         public void Trigger() => Reset(TimeSpan.Zero);
 
         /// <summary>
-        /// Gets whether the timer is triggered.
-        /// If true, will invert after the subsequent <see cref="Update"/> or <see cref="UpdateDone(TimeSpan)"/>.
+        /// Gets whether the timer is triggered. Becomes true once there is no duration left from an
+        /// <see cref="Update(TimeSpan)"/> call. Subsequent <see cref="Update(TimeSpan)"/> calls will
+        /// reset this value to false.
         /// </summary>
         public bool IsTriggered => !_wasDone && IsDone;
 
-        public void Update(TimeSpan elapsedTime)
+        /// <summary>
+        /// Updates the timer with the given elapsed time and returns whether the timer was finished by the update.
+        /// </summary>
+        /// <param name="elapsedTime">The elapsed time.</param>
+        /// <returns>True if triggered, otherwise false.</returns>
+        public bool Update(TimeSpan elapsedTime)
         {
             _wasDone = IsDone;
             TimeLeft -= elapsedTime;
@@ -102,17 +108,6 @@ namespace MonoKle
             {
                 TimeLeft = TimeSpan.Zero;
             }
-        }
-
-        /// <summary>
-        /// Updates the timer and returns whether the timer got finished by the update.
-        /// Same logic applies as <see cref="IsTriggered"/>.
-        /// </summary>
-        /// <param name="elapsedTime">The elapsed time.</param>
-        /// <returns>True if done, otherwise false.</returns>
-        public bool UpdateDone(TimeSpan elapsedTime)
-        {
-            Update(elapsedTime);
             return IsTriggered;
         }
     }

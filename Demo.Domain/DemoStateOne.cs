@@ -22,11 +22,13 @@ namespace Demo.Domain
         private MVector2 _lastInversionPosition;
         private MVector2 _errorBoxPosition = new Vector2(50, 50);
         private readonly KeyboardTextInput _textInput = new KeyboardTextInput(new KeyboardCharacterInput(new KeyboardTyper(MGame.Keyboard, TimeSpan.FromSeconds(0.5), TimeSpan.FromMilliseconds(50))));
+        private bool _outlineFont = false;
 
         public override void Draw(TimeSpan deltaTime)
         {
             // Draw scene to render target
             MGame.GraphicsManager.GraphicsDevice.SetRenderTarget(_gameDisplay.WorldRenderTarget);
+            MGame.GraphicsManager.GraphicsDevice.Clear(Color.DimGray);
 
             // Test primitive batch
             _primitive2D.Begin(_gameDisplay.Camera.TransformMatrix);
@@ -54,7 +56,7 @@ namespace Demo.Domain
             _spriteBatch.Draw(MGame.TextureStorage["colorAtlas"].GetCell(0, 1), new Vector2(600, 50), Color.White);
             _spriteBatch.Draw(MGame.TextureStorage["colorAtlas"].GetCell(1, 1), new Vector2(650, 50), Color.White);
 
-            FontInstance font = MGame.FontStorage["testfont"];
+            FontInstance font = _outlineFont ? MGame.FontStorage["testfont_o"] : MGame.FontStorage["testfont"];
 
             // Test non-gesture touch
             if (MGame.TouchScreen.Touch.Press.IsHeldFor(TimeSpan.FromMilliseconds(150)))
@@ -250,6 +252,10 @@ namespace Demo.Domain
                 else if (MGame.Keyboard.IsKeyPressed(Keys.F3))
                 {
                     MGame.GraphicsManager.Resolution = new MPoint2(800, 600);
+                }
+                else if (MGame.Keyboard.IsKeyPressed(Keys.F5))
+                {
+                    _outlineFont = !_outlineFont;
                 }
 
                 if (MGame.Keyboard.IsKeyPressed(Keys.F12))

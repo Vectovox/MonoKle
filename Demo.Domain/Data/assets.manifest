@@ -11,6 +11,7 @@ blue        Data/Textures/atlas.png   16,16,16,16
 colorAtlas  Data/Textures/atlas.png - 2,2
 
 testfont    Data/Fonts/testfont.mfnt
+testfont_o  Data/Fonts/testfont_outline.mfnt
 
 santa       Data/Sounds/santa.wav
 inversion   Data/Effects/inversion.mfx

@@ -17,6 +17,8 @@ namespace MonoKle.Asset
         /// </summary>
         public int Size { get; }
 
+        public int Outline { get; }
+
         /// <summary>
         /// Creates a new instance of <see cref="FontData"/>.
         /// </summary>
@@ -25,6 +27,7 @@ namespace MonoKle.Asset
         public FontData(FontFile data, List<Texture2D> pageList)
         {
             Size = data.Common.LineHeight;
+            Outline = data.Info.OutLine;
             _fontCharByChar = data.Chars.ToDictionary(ch => (char)ch.ID);
             _pageList = pageList;
         }

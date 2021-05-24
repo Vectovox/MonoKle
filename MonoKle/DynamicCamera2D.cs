@@ -115,12 +115,11 @@ namespace MonoKle
         /// Updates camera composition with the given amount of delta time.
         /// </summary>
         /// <param name="timeDelta">Delta time.</param>
-        public override void Update(TimeSpan timeDelta)
+        public void Update(TimeSpan timeDelta)
         {
             UpdateScale(timeDelta);
             UpdateRotation(timeDelta);
             UpdatePosition(timeDelta);
-            base.Update(timeDelta);
         }
 
         private void UpdatePosition(TimeSpan timeDelta)

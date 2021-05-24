@@ -20,18 +20,13 @@ namespace MonoKle
 
         private Matrix _transformMatrix;
         private Matrix _transformMatrixInv;
-        private bool _matrixNeedsUpdate = true;
+        private bool _matrixOutdated = true;
 
         /// <summary>
         /// Initiates a new instance of <see cref="Camera2D"/>.
         /// </summary>
         /// <param name="size">The size of the camera.</param>
-        public Camera2D(MPoint2 size)
-        {
-            Size = size;
-            // Initialize matrixes
-            Update(TimeSpan.Zero);
-        }
+        public Camera2D(MPoint2 size) => Size = size;
 
         /// <summary>
         /// Gets the size of the camera. 
@@ -42,7 +37,7 @@ namespace MonoKle
             set
             {
                 _size = value;
-                _matrixNeedsUpdate = true;
+                _matrixOutdated = true;
             }
         }
 
@@ -55,7 +50,7 @@ namespace MonoKle
             set
             {
                 _position = value;
-                _matrixNeedsUpdate = true;
+                _matrixOutdated = true;
             }
         }
 
@@ -68,7 +63,7 @@ namespace MonoKle
             set
             {
                 _rotation = value;
-                _matrixNeedsUpdate = true;
+                _matrixOutdated = true;
             }
         }
 
@@ -81,7 +76,7 @@ namespace MonoKle
             set
             {
                 _scale = ClampScale(value);
-                _matrixNeedsUpdate = true;
+                _matrixOutdated = true;
             }
         }
         private float ClampScale(float scale) => Math.Clamp(scale, MinScale, MaxScale);
@@ -96,7 +91,7 @@ namespace MonoKle
             {
                 _minScale = value;
                 Scale = Scale;  // Update clamping
-                _matrixNeedsUpdate = true;
+                _matrixOutdated = true;
             }
         }
 
@@ -110,19 +105,41 @@ namespace MonoKle
             {
                 _maxScale = value;
                 Scale = Scale;  // Update clamping
-                _matrixNeedsUpdate = true;
+                _matrixOutdated = true;
             }
         }
 
         /// <summary>
         /// Gets the camera transformation matrix, going from world -> camera space.
         /// </summary>
-        public Matrix TransformMatrix => _transformMatrix;
+        public Matrix TransformMatrix
+        {
+            get
+            {
+                if (_matrixOutdated)
+                {
+                    (_transformMatrix, _transformMatrixInv) = CalculateMatrices(_position, _rotation, _scale, _size);
+                    _matrixOutdated = false;
+                }
+                return _transformMatrix;
+            }
+        }
 
         /// <summary>
         /// Gets the inverse transformation matrix, going from camera -> world space.
         /// </summary>
-        public Matrix TransformMatrixInv => _transformMatrixInv;
+        public Matrix TransformMatrixInv
+        {
+            get
+            {
+                if (_matrixOutdated)
+                {
+                    (_transformMatrix, _transformMatrixInv) = CalculateMatrices(_position, _rotation, _scale, _size);
+                    _matrixOutdated = false;
+                }
+                return _transformMatrixInv;
+            }
+        }
 
         /// <summary>
         /// Scales seamlessly towards the given coordinate by keeping it in the same spot in
@@ -172,18 +189,6 @@ namespace MonoKle
         /// <param name="coordinate">The coordinate to transform.</param>
         /// <returns>Transformed coordinate.</returns>
         public MVector2 TransformInv(MVector2 coordinate) => Vector2.Transform(coordinate, _transformMatrixInv);
-
-        /// <summary>
-        /// Updates camera composition with the given amount of delta time.
-        /// </summary>
-        /// <param name="timeDelta">Delta time.</param>
-        public virtual void Update(TimeSpan timeDelta)
-        {
-            if (_matrixNeedsUpdate)
-            {
-                (_transformMatrix, _transformMatrixInv) = CalculateMatrices(_position, _rotation, _scale, _size);
-            }
-        }
 
         private static (Matrix Transform, Matrix TransformInv) CalculateMatrices(MVector2 position, float rotation, float scale, MPoint2 size)
         {

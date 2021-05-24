@@ -7,13 +7,25 @@ namespace MonoKle.Tests
     public class TimerTests
     {
         [TestMethod]
-        public void Constructor_CorrectState()
+        public void ParameterlessConstructor_CorrectState()
         {
             var span = TimeSpan.FromSeconds(123);
-            var timer = new Timer(span);
+            var timer = new Timer(span, false);
+            var sut = new Timer(span);
+            Assert.IsTrue(AreEqual(timer, sut));
+        }
+
+        [DataTestMethod]
+        [DataRow(false, DisplayName = "Non-triggered constructor")]
+        [DataRow(true, DisplayName = "Triggered constructor")]
+        public void Constructor_CorrectState(bool triggered)
+        {
+            var span = TimeSpan.FromSeconds(123);
+            var timer = new Timer(span, triggered);
             Assert.AreEqual(span, timer.Duration);
-            Assert.IsFalse(timer.IsDone);
-            Assert.AreEqual(span, timer.TimeLeft);
+            Assert.AreEqual(triggered ? TimeSpan.Zero : span, timer.TimeLeft);
+            Assert.AreEqual(triggered, timer.IsDone);
+            Assert.AreEqual(triggered, timer.IsTriggered);
         }
 
         [TestMethod]
@@ -186,6 +198,12 @@ namespace MonoKle.Tests
             Assert.IsTrue(timer.IsTriggered);
             timer.Update(spanToUpdate);
             Assert.IsFalse(timer.IsTriggered);
+        }
+
+        private bool AreEqual(Timer first, Timer second)
+        {
+            return first.Duration == second.Duration && first.TimeLeft == second.TimeLeft &&
+                first.IsTriggered == second.IsTriggered && first.IsDone == second.IsDone;
         }
     }
 }

@@ -14,7 +14,21 @@ namespace MonoKle
         /// Initializes a new instance of the <see cref="Timer"/> class and sets it to the provided duration.
         /// </summary>
         /// <param name="duration">The <see cref="TimeSpan"/> duration to set the timer to.</param>
-        public Timer(TimeSpan duration) => Set(duration);
+        public Timer(TimeSpan duration) : this(duration, false) { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Timer"/> class and sets it to the provided duration.
+        /// </summary>
+        /// <param name="duration">The <see cref="TimeSpan"/> duration to set the timer to.</param>
+        /// <param name="triggered">If true, the timer will start triggered (no duration left).</param>
+        public Timer(TimeSpan duration, bool triggered)
+        {
+            Set(duration);
+            if (triggered)
+            {
+                Trigger();
+            }
+        }
 
         /// <summary>
         /// Gets a value indicating the total duration of the timer.

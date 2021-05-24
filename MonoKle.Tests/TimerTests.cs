@@ -196,6 +196,19 @@ namespace MonoKle.Tests
         }
 
         [TestMethod]
+        public void UpdateWithReset_Done_TriggeredAndReset()
+        {
+            var span = TimeSpan.FromSeconds(10);
+            var spanToUpdate = TimeSpan.FromSeconds(100);
+            var timer = new Timer(span);
+
+            Assert.IsTrue(timer.Update(spanToUpdate, true));
+            Assert.IsFalse(timer.IsDone);
+            Assert.IsFalse(timer.IsTriggered);
+            Assert.AreEqual(timer.Duration, timer.TimeLeft);
+        }
+
+        [TestMethod]
         public void Trigger_LogicWorks()
         {
             var span = TimeSpan.FromSeconds(123);

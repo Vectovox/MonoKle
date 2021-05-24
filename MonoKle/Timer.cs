@@ -100,15 +100,39 @@ namespace MonoKle
         /// </summary>
         /// <param name="elapsedTime">The elapsed time.</param>
         /// <returns>True if triggered, otherwise false.</returns>
-        public bool Update(TimeSpan elapsedTime)
+        public bool Update(TimeSpan elapsedTime) => Update(elapsedTime, false);
+
+        /// <summary>
+        /// Updates the timer with the given elapsed time and returns whether the timer was finished by the update.
+        /// If specified, resets the timer upon triggering.
+        /// </summary>
+        /// <param name="elapsedTime">The elapsed time.</param>
+        /// <param name="resetOnTrigger">If true, resets the timer if the update triggers.</param>
+        /// <returns>True if triggered, otherwise false.</returns>
+        public bool Update(TimeSpan elapsedTime, bool resetOnTrigger)
         {
+            // Record the pre-update state
             _wasDone = IsDone;
+
+            // Decrease the remaining time
             TimeLeft -= elapsedTime;
             if (TimeLeft < TimeSpan.Zero)
             {
                 TimeLeft = TimeSpan.Zero;
             }
-            return IsTriggered;
+
+            // Check for trigger condition
+            if (IsTriggered)
+            {
+                if (resetOnTrigger)
+                {
+                    Reset();
+                }
+                return true;
+            }
+
+            // No trigger
+            return false;
         }
     }
 }

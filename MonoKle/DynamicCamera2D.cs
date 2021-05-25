@@ -115,7 +115,7 @@ namespace MonoKle
         /// Updates camera composition with the given amount of delta time.
         /// </summary>
         /// <param name="timeDelta">Delta time.</param>
-        public void Update(TimeSpan timeDelta)
+        public virtual void Update(TimeSpan timeDelta)
         {
             UpdateScale(timeDelta);
             UpdateRotation(timeDelta);

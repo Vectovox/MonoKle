@@ -5,7 +5,7 @@ namespace MonoKle.Input.Keyboard
     /// <summary>
     /// Class for making strings from keyboard input using common text editor behavior.
     /// </summary>
-    public class KeyboardTextInput : AbstractTextInput
+    public class KeyboardTextInput : SimpleTextInput
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="KeyboardTextInput"/> class.
@@ -79,37 +79,37 @@ namespace MonoKle.Input.Keyboard
         public Keys EraseKey { get; set; }
 
         /// <summary>
-        /// Updates this instance.
+        /// Updates this instance to poll the keyboard state.
         /// </summary>
-        public override void Update()
+        public void Update()
         {
             if (CharacterInput.GetChar(out var typedCharacter))
             {
-                base.Type(typedCharacter);
+                Type(typedCharacter);
             }
             if (CharacterInput.KeyboardTyper.IsTyped(EraseKey))
             {
-                base.Erase();
+                Erase();
             }
             if (CharacterInput.KeyboardTyper.IsTyped(DeleteKey))
             {
-                base.Delete();
+                Delete();
             }
             if (CharacterInput.KeyboardTyper.IsTyped(CursorBeginningKey))
             {
-                base.CursorBeginning();
+                CursorBeginning();
             }
             if (CharacterInput.KeyboardTyper.IsTyped(CursorEndKey))
             {
-                base.CursorEnd();
+                CursorEnd();
             }
             if (CharacterInput.KeyboardTyper.IsTyped(CursorLeftKey))
             {
-                base.CursorLeft();
+                CursorBackward();
             }
             if (CharacterInput.KeyboardTyper.IsTyped(CursorRightKey))
             {
-                base.CursorRight();
+                CursorForward();
             }
         }
     }

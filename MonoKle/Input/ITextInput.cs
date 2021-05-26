@@ -27,8 +27,57 @@
         void Clear();
 
         /// <summary>
-        /// Updates this instance.
+        /// Sets the cursor to before the text.
         /// </summary>
-        void Update();
+        void CursorBeginning();
+
+        /// <summary>
+        /// Sets the cursor to after the text.
+        /// </summary>
+        void CursorEnd();
+
+        /// <summary>
+        /// Moves the cursor towards the beginning.
+        /// </summary>
+        void CursorBackward();
+        
+        /// <summary>
+        /// Moves the cursor towards the end.
+        /// </summary>
+        void CursorForward();
+
+        /// <summary>
+        /// Moves the cursor the specified delta.
+        /// </summary>
+        /// <param name="amount">The amount of characters to move. Negative values indicate movement towards the beginning of the text.</param>
+        void CursorMove(int amount);
+
+        /// <summary>
+        /// Sets the cursor position.
+        /// </summary>
+        /// <param name="position">The position.</param>
+        void CursorSet(int position);
+        
+        /// <summary>
+        /// Removes the character after the cursor.
+        /// </summary>
+        void Delete();
+
+        /// <summary>
+        /// Removes the character before the cursor.
+        /// </summary>
+        void Erase();
+
+        /// <summary>
+        /// Types the specified character at the current cursor position.
+        /// </summary>
+        /// <param name="character">The character to type.</param>
+        void Type(char character);
+
+        /// <summary>
+        /// Types the specified string at the current cursor position.
+        /// </summary>
+        /// <param name="text">The text to type.</param>
+        void Type(string text);
     }
 }

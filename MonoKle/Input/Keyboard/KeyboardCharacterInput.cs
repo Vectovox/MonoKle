@@ -8,9 +8,6 @@ namespace MonoKle.Input.Keyboard
     /// </summary>
     public class KeyboardCharacterInput : AbstractCharacterInput
     {
-        private IKeyConverter converter;
-        private KeyboardTyper keyboardTyper;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="KeyboardCharacterInput" /> class, using <see cref="EnglishKeyConverter" /> as key converter.
         /// </summary>
@@ -27,59 +24,35 @@ namespace MonoKle.Input.Keyboard
         /// <param name="converter">The input converter.</param>
         public KeyboardCharacterInput(KeyboardTyper keyboardTyper, IKeyConverter converter)
         {
-            if (keyboardTyper == null)
-            {
-                throw new ArgumentNullException("Keyboard typer must not be null.");
-            }
-            if (converter == null)
-            {
-                throw new ArgumentNullException("Key converter must not be null.");
-            }
-            this.keyboardTyper = keyboardTyper;
-            Converter = converter;
+            KeyboardTyper = keyboardTyper ?? throw new ArgumentNullException("Keyboard typer must not be null.");
+            Converter = converter ?? throw new ArgumentNullException("Key converter must not be null.");
         }
 
         /// <summary>
         /// Gets or sets the keyboard input converter.
         /// </summary>
-        /// <value>
-        /// The keyboard input converter.
-        /// </value>
-        public IKeyConverter Converter
-        {
-            get { return converter; }
-            set { converter = value; }
-        }
+        public IKeyConverter Converter { get; set; }
 
         /// <summary>
         /// Gets or sets the underlying keyboard typer.
         /// </summary>
-        /// <value>
-        /// The keyboard typer.
-        /// </value>
-        public KeyboardTyper KeyboardTyper => keyboardTyper;
+        public KeyboardTyper KeyboardTyper { get; }
 
-        /// <summary>
-        /// Gets the currently typed character. If no character is typed then the default <see cref="char" /> value is returned.
-        /// </summary>
-        /// <returns>
-        /// The typed character or the default <see cref="char" /> value.
-        /// </returns>
         public override char GetChar()
         {
-            bool shift = keyboardTyper.Keyboard.IsKeyDown(Keys.LeftShift) || keyboardTyper.Keyboard.IsKeyDown(Keys.RightShift);
-            bool altgr = keyboardTyper.Keyboard.IsKeyDown(Keys.RightAlt);
+            bool shift = KeyboardTyper.Keyboard.IsKeyDown(Keys.LeftShift) || KeyboardTyper.Keyboard.IsKeyDown(Keys.RightShift);
+            bool altgr = KeyboardTyper.Keyboard.IsKeyDown(Keys.RightAlt);
 
-            foreach (Keys k in keyboardTyper.Keyboard.GetKeysDown())
+            foreach (Keys k in KeyboardTyper.Keyboard.GetKeysDown())
             {
-                if (converter.Convert(k, shift, altgr, out var c)
-                    && keyboardTyper.IsTyped(k))
+                if (Converter.Convert(k, shift, altgr, out var c)
+                    && KeyboardTyper.IsTyped(k))
                 {
                     return c;
                 }
             }
 
-            return default(char);
+            return default;
         }
     }
 }

@@ -113,7 +113,7 @@ namespace MonoKle.Console
                 // Draw all lines
                 foreach (var line in _textEntries.Skip(_scrollOffset))
                 {
-                    string stringToDraw = TextFont.Wrap(line.Text, Area.Width);
+                    var stringToDraw = TextFont.Wrap(line.Text, Area.Width);
                     var stringHeight = TextFont.Measure(stringToDraw).Y;
                     textPosition.Y -= stringHeight;
                     TextFont.Draw(_spriteBatch, stringToDraw, textPosition, line.Color);
@@ -152,10 +152,10 @@ namespace MonoKle.Console
             var entryBuilder = new StringBuilder();
 
             // Convert string to entries, based on newlines
-            foreach (string row in text.Split('\n'))
+            foreach (var row in text.Split('\n'))
             {
                 entryBuilder.Clear();
-                int column = 0;
+                var column = 0;
 
                 // Add characters to entry
                 foreach (char character in row)

@@ -53,10 +53,14 @@ namespace MonoKle.Console
         /// <param name="text">The text to remember.</param>
         public void Remember(string text)
         {
+            // Remove duplicates from history
+            _history.RemoveAll(t => t == text);
+            // Clamp to capacity
             if (_history.Count == _history.Capacity)
             {
                 _history.RemoveAt(0);
             }
+            // Remember
             _history.Add(text);
         }
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -34,6 +35,10 @@ namespace MonoKle.Input
                 OnTextChange();
             }
         }
+
+        public event Action? CursorChanged;
+
+        public event Action? TextChanged;
 
         public int MaxLength { get; set; } = int.MaxValue;
         
@@ -101,16 +106,12 @@ namespace MonoKle.Input
         /// <summary>
         /// Called when cursor changes.
         /// </summary>
-        protected virtual void OnCursorChange()
-        {
-        }
+        protected virtual void OnCursorChange() => CursorChanged?.Invoke();
 
         /// <summary>
         /// Called when text changes.
         /// </summary>
-        protected virtual void OnTextChange()
-        {
-        }
+        protected virtual void OnTextChange() => TextChanged?.Invoke();
 
         public void Type(char character)
         {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace MonoKle.Input
 {
@@ -42,6 +43,16 @@ namespace MonoKle.Input
         /// Gets or sets the maximum amount of characters allowed.
         /// </summary>
         int MaxLength { get; set; }
+
+        /// <summary>
+        /// Called when the cursor location has changed.
+        /// </summary>
+        event Action? CursorChanged;
+
+        /// <summary>
+        /// Called when the text has changed.
+        /// </summary>
+        event Action? TextChanged;
 
         /// <summary>
         /// Clears the current text.

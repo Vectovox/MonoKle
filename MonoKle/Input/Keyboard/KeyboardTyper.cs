@@ -8,31 +8,16 @@ namespace MonoKle.Input.Keyboard
     /// </summary>
     public class KeyboardTyper
     {
-        /// <summary>
-        /// Gets the keyboard.
-        /// </summary>
-        /// <value>
-        /// The keyboard.
-        /// </value>
-        public IKeyboard Keyboard { get; private set; }
+        private readonly int[] _cycleArray;
 
         /// <summary>
-        /// Gets or sets the activation delay.
+        /// Initializes a new instance of the <see cref="KeyboardTyper"/> class with decent repetition delay values.
         /// </summary>
-        /// <value>
-        /// The activation delay.
-        /// </value>
-        public TimeSpan ActivationDelay { get; set; }
-
-        /// <summary>
-        /// Gets or sets the repeat delay.
-        /// </summary>
-        /// <value>
-        /// The repeat delay.
-        /// </value>
-        public TimeSpan RepeatDelay { get; set; }
-
-        private int[] cycleArray;
+        /// <param name="keyboard">The keyboard input to use.</param>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="keyboard"/> is null.</exception>
+        public KeyboardTyper(IKeyboard keyboard) : this(keyboard, TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(50))
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="KeyboardTyper"/> class.
@@ -40,15 +25,30 @@ namespace MonoKle.Input.Keyboard
         /// <param name="keyboard">The keyboard.</param>
         /// <param name="activationDelay">The activation delay.</param>
         /// <param name="repeatDelay">The repeat delay.</param>
-        /// <exception cref="ArgumentNullException">Input must not be null.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="keyboard"/> is null.</exception>
         public KeyboardTyper(IKeyboard keyboard, TimeSpan activationDelay, TimeSpan repeatDelay)
         {
-            Keyboard = keyboard ?? throw new ArgumentNullException("Input must not be null.");
-            ActivationDelay = activationDelay;
+            Keyboard = keyboard ?? throw new ArgumentNullException($"{nameof(keyboard)} must not be null.");
+            RepeatActivationDelay = activationDelay;
             RepeatDelay = repeatDelay;
             var values = Enum.GetValues(typeof(Keys));
-            cycleArray = new int[(int)values.GetValue(values.GetUpperBound(0)) + 1];
+            _cycleArray = new int[(int)values.GetValue(values.GetUpperBound(0)) + 1];
         }
+
+        /// <summary>
+        /// Gets the keyboard used.
+        /// </summary>
+        public IKeyboard Keyboard { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the duration that a key needs to be held before it is repeated.
+        /// </summary>
+        public TimeSpan RepeatActivationDelay { get; set; }
+
+        /// <summary>
+        /// Gets or sets the duration between consecutive repeated keys.
+        /// </summary>
+        public TimeSpan RepeatDelay { get; set; }
 
         /// <summary>
         /// Determines whether the specified key is typed.
@@ -61,14 +61,18 @@ namespace MonoKle.Input.Keyboard
             {
                 TimeSpan timeHeld = Keyboard.GetKeyHeldTime(key);
 
-                if (timeHeld >= ActivationDelay)
+                // Check if we are repeating the key
+                if (timeHeld >= RepeatActivationDelay)
                 {
-                    int previousCycle = cycleArray[(int)key];
-                    int currentCycle = RepeatDelay == TimeSpan.Zero ? previousCycle : (int)((timeHeld - ActivationDelay).Ticks / RepeatDelay.Ticks);
+                    // Check if enough time has passed to repeat the key
+                    var previousCycle = _cycleArray[(int)key];
+                    var currentCycle = RepeatDelay == TimeSpan.Zero
+                        ? previousCycle
+                        : (int)((timeHeld - RepeatActivationDelay).Ticks / RepeatDelay.Ticks);
 
                     if (previousCycle != currentCycle)
                     {
-                        cycleArray[(int)key] = currentCycle;
+                        _cycleArray[(int)key] = currentCycle;
                         return true;
                     }
                 }
@@ -79,7 +83,8 @@ namespace MonoKle.Input.Keyboard
             }
             else
             {
-                cycleArray[(int)key] = -1;
+                // Cancel repetition
+                _cycleArray[(int)key] = -1;
             }
 
             return false;

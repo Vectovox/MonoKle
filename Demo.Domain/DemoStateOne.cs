@@ -21,8 +21,7 @@ namespace Demo.Domain
         private string _stateSwitchMessage = string.Empty;
         private MVector2 _lastInversionPosition;
         private MVector2 _errorBoxPosition = new Vector2(50, 50);
-        private readonly KeyboardTextInput _textInput =
-            new KeyboardTextInput(new KeyboardCharacterInput(new KeyboardTyper(MGame.Keyboard, TimeSpan.FromSeconds(0.5), TimeSpan.FromMilliseconds(50))));
+        private readonly KeyboardTextInput _textInput = new KeyboardTextInput(new KeyboardCharacterInput(new KeyboardTyper(MGame.Keyboard)));
         private bool _outlineFont = false;
 
         public override void Draw(TimeSpan deltaTime)

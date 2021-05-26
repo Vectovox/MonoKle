@@ -14,13 +14,13 @@ namespace MonoKle.Input
         private string _text = "";
         private readonly StringBuilder _textBuilder = new StringBuilder();
 
+        public bool CursorEnabled { get; set; } = true;
+
         public int CursorPosition
         {
             get => _cursorPos;
             set => CursorSet(value);
         }
-
-        public bool CursorEnabled { get; set; } = true;
 
         public string Text
         {
@@ -35,7 +35,10 @@ namespace MonoKle.Input
             }
         }
 
+        public int MaxLength { get; set; } = int.MaxValue;
+        
         public HashSet<char> IncludedCharacters { get; set; } = new HashSet<char>(0);
+        
         public HashSet<char> ExcludedCharacters { get; set; } = new HashSet<char>(0);
 
         public void Clear() => Text = "";
@@ -143,6 +146,10 @@ namespace MonoKle.Input
                 return false;
             }
             if (ExcludedCharacters.Count != 0 && ExcludedCharacters.Contains(character))
+            {
+                return false;
+            }
+            if (_textBuilder.Length >= MaxLength)
             {
                 return false;
             }

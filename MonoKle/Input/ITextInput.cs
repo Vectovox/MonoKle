@@ -39,6 +39,11 @@ namespace MonoKle.Input
         HashSet<char> ExcludedCharacters { get; set; }
 
         /// <summary>
+        /// Gets or sets the maximum amount of characters allowed.
+        /// </summary>
+        int MaxLength { get; set; }
+
+        /// <summary>
         /// Clears the current text.
         /// </summary>
         void Clear();
@@ -88,6 +93,11 @@ namespace MonoKle.Input
         /// <summary>
         /// Types the specified character at the current cursor position.
         /// </summary>
+        /// <remarks>
+        /// If character is not available due to <see cref="IncludedCharacters"/> or <see cref="ExcludedCharacters"/>
+        /// it will be skipped. The text will only become as long as <see cref="MaxLength"/>, after which characters are
+        /// swallowed.
+        /// </remarks>
         /// <param name="character">The character to type.</param>
         void Type(char character);
 
@@ -95,6 +105,11 @@ namespace MonoKle.Input
         /// Types the specified string at the current cursor position.
         /// </summary>
         /// <param name="text">The text to type.</param>
+        /// <remarks>
+        /// If character is not available due to <see cref="IncludedCharacters"/> or <see cref="ExcludedCharacters"/>
+        /// it will be skipped. The text will only become as long as <see cref="MaxLength"/>, after which characters are
+        /// swallowed.
+        /// </remarks>
         void Type(string text);
     }
 }

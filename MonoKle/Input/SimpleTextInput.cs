@@ -54,6 +54,10 @@ namespace MonoKle.Input
 
         public void CursorSet(int position)
         {
+            // Record where it was
+            var oldPos = _cursorPos;
+
+            // Do the change
             if (CursorEnabled)
             {
                 _cursorPos = MathHelper.Clamp(position, 0, _textBuilder.Length);
@@ -62,7 +66,12 @@ namespace MonoKle.Input
             {
                 _cursorPos = _textBuilder.Length;
             }
-            OnCursorChange();
+
+            // Notify if changed
+            if (_cursorPos != oldPos)
+            {
+                OnCursorChange();
+            }
         }
 
         public void Delete()
@@ -106,12 +115,13 @@ namespace MonoKle.Input
             {
                 UpdatePublicText();
                 OnTextChange();
+                OnCursorChange();
             }
         }
 
         public void Type(string text)
         {
-            bool anyTyped = false;
+            var anyTyped = false;
             foreach (var c in text)
             {
                 anyTyped |= InternalType(c);
@@ -121,6 +131,7 @@ namespace MonoKle.Input
             {
                 UpdatePublicText();
                 OnTextChange();
+                OnCursorChange();
             }
         }
 
@@ -137,7 +148,7 @@ namespace MonoKle.Input
             }
             // Type the character
             _textBuilder.Insert(_cursorPos, character);
-            CursorMove(1);
+            _cursorPos++;
             return true;
         }
 

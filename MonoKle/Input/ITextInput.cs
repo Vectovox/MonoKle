@@ -1,4 +1,6 @@
-﻿namespace MonoKle.Input
+﻿using System.Collections.Generic;
+
+namespace MonoKle.Input
 {
     /// <summary>
     /// Defines text input methods.
@@ -25,6 +27,16 @@
         /// Gets or sets whether the cursor is enabled.
         /// </summary>
         bool CursorEnabled { get; set; }
+
+        /// <summary>
+        /// Gets or sets the characters that are included. If empty, all characters are considered included.
+        /// </summary>
+        HashSet<char> IncludedCharacters { get; set; }
+
+        /// <summary>
+        /// Gets or sets the characters that are excluded. If empty, no characters are considered excluded.
+        /// </summary>
+        HashSet<char> ExcludedCharacters { get; set; }
 
         /// <summary>
         /// Clears the current text.

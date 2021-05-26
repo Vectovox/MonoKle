@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 using System.Text;
 
 namespace MonoKle.Input
@@ -33,6 +34,9 @@ namespace MonoKle.Input
                 OnTextChange();
             }
         }
+
+        public HashSet<char> IncludedCharacters { get; set; } = new HashSet<char>(0);
+        public HashSet<char> ExcludedCharacters { get; set; } = new HashSet<char>(0);
 
         public void Clear() => Text = "";
 
@@ -96,14 +100,45 @@ namespace MonoKle.Input
         {
         }
 
-        public void Type(char character) => Type(character.ToString());
+        public void Type(char character)
+        {
+            if (InternalType(character))
+            {
+                UpdatePublicText();
+                OnTextChange();
+            }
+        }
 
         public void Type(string text)
         {
-            _textBuilder.Insert(_cursorPos, text);
-            UpdatePublicText();
-            CursorMove(text.Length);
-            OnTextChange();
+            bool anyTyped = false;
+            foreach (var c in text)
+            {
+                anyTyped |= InternalType(c);
+            }
+
+            if (anyTyped)
+            {
+                UpdatePublicText();
+                OnTextChange();
+            }
+        }
+
+        private bool InternalType(char character)
+        {
+            // Include and Exclude character
+            if (IncludedCharacters.Count != 0 && !IncludedCharacters.Contains(character))
+            {
+                return false;
+            }
+            if (ExcludedCharacters.Count != 0 && ExcludedCharacters.Contains(character))
+            {
+                return false;
+            }
+            // Type the character
+            _textBuilder.Insert(_cursorPos, character);
+            CursorMove(1);
+            return true;
         }
 
         private void UpdatePublicText() => _text = _textBuilder.ToString();

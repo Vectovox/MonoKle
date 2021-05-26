@@ -19,6 +19,8 @@ namespace MonoKle.Input
             set => CursorSet(value);
         }
 
+        public bool CursorEnabled { get; set; } = true;
+
         public string Text
         {
             get => _text;
@@ -48,7 +50,14 @@ namespace MonoKle.Input
 
         public void CursorSet(int position)
         {
-            _cursorPos = MathHelper.Clamp(position, 0, _textBuilder.Length);
+            if (CursorEnabled)
+            {
+                _cursorPos = MathHelper.Clamp(position, 0, _textBuilder.Length);
+            }
+            else
+            {
+                _cursorPos = _textBuilder.Length;
+            }
             OnCursorChange();
         }
 

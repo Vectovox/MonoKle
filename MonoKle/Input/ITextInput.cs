@@ -22,6 +22,11 @@
         string Text { get; set; }
 
         /// <summary>
+        /// Gets or sets whether the cursor is enabled.
+        /// </summary>
+        bool CursorEnabled { get; set; }
+
+        /// <summary>
         /// Clears the current text.
         /// </summary>
         void Clear();
@@ -57,7 +62,7 @@
         /// </summary>
         /// <param name="position">The position.</param>
         void CursorSet(int position);
-        
+
         /// <summary>
         /// Removes the character after the cursor.
         /// </summary>

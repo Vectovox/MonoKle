@@ -291,9 +291,14 @@ namespace MonoKle
         public float LengthSquared => X * X + Y * Y;
 
         /// <summary>
-        /// Returns the <see cref="MPoint2"/> representation, round down each component to closest integer value.
+        /// Returns the <see cref="MPoint2"/> representation, rounding down each component to closest integer.
         /// </summary>
         public MPoint2 ToMPoint2() => new MPoint2(this);
+
+        /// <summary>
+        /// Returns the <see cref="MPoint2"/> representation, rounding up each component to closest integer.
+        /// </summary>
+        public MPoint2 ToMPoint2RoundUp() => new MPoint2((int)Math.Ceiling(X), (int)Math.Ceiling(Y));
 
         /// <summary>
         /// Returns the string representation.

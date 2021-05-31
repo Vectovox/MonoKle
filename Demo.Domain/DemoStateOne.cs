@@ -248,6 +248,10 @@ namespace Demo.Domain
                 {
                     _lastInversionPosition = tapCoordinate.ToMVector2();
                 }
+                else if (MGame.TouchScreen.Touch.Press.IsHeldFor(TimeSpan.FromMilliseconds(500)))
+                {
+                    _errorBoxPosition = _gameDisplay.DisplayToWorld(MGame.TouchScreen.Touch.Position.Coordinate);
+                }
 
                 if (MGame.Mouse.Right.IsPressed)
                 {

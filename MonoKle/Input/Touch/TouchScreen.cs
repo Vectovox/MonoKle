@@ -70,14 +70,15 @@ namespace MonoKle.Input.Touch
             }
             else
             {
-                UpdateGestures();
-                UpdateTouchInput(timeDelta);
+                var anyGestures = UpdateGestures();
+                UpdateTouchInput(timeDelta, anyGestures);
             }
         }
 
-        private void UpdateGestures()
+        private bool UpdateGestures()
         {
             // Iterate all available gestures and act on them
+            var anyGestures = false;
             while (TouchPanel.IsGestureAvailable)
             {
                 var gesture = TouchPanel.ReadGesture();
@@ -106,24 +107,32 @@ namespace MonoKle.Input.Touch
                     var deltaFactor = 2 * (currentDistance - previousDistance) / previousDistance;   // Multiplied by two to get the full change
                     pinchAction.Set(origin.ToPoint(), deltaFactor);
                 }
+
+                anyGestures = true;
             }
+
+            return anyGestures;
         }
 
-        private void UpdateTouchInput(TimeSpan timeDelta)
+        private void UpdateTouchInput(TimeSpan timeDelta, bool anyGestures)
         {
             // Poll the screen state
             var state = TouchPanel.GetState();
 
             // Iterate to check if the screen is continuously touched
             bool touched = false;
-            foreach (TouchLocation location in state)
+
+            if (!anyGestures)
             {
-                if (location.State == TouchLocationState.Moved)
+                foreach (TouchLocation location in state)
                 {
-                    // Touched so update the data
-                    touched = true;
-                    _touchInput.Update(timeDelta, location.Position.ToPoint());
-                    break;
+                    if (location.State == TouchLocationState.Moved)
+                    {
+                        // Touched so update the data
+                        touched = true;
+                        _touchInput.Update(timeDelta, location.Position.ToPoint());
+                        break;
+                    }
                 }
             }
 
@@ -136,20 +145,6 @@ namespace MonoKle.Input.Touch
 
         private void UpdateMouseInput(TimeSpan delta)
         {
-            if (_mouse.Left.IsHeldForOnce(TimeSpan.FromSeconds(1)))
-            {
-                _pressActions[GestureType.Hold].Set(_mouse.Position.Coordinate);
-            }
-            else if (_mouse.Left.IsPressed)
-            {
-                _pressActions[GestureType.Tap].Set(_mouse.Position.Coordinate);
-            }
-
-            if (_mouse.Right.IsHeldFor(TimeSpan.FromMilliseconds(50)))
-            {
-                _dragActions[GestureType.FreeDrag].Set(_mouse.Position.Coordinate, _mouse.Position.Delta);
-            }
-
             if (_mouse.ScrollDirection == MouseScrollDirection.Down)
             {
                 _pinchActions[GestureType.Pinch].Set(_mouse.Position.Coordinate, -0.1f);
@@ -158,8 +153,19 @@ namespace MonoKle.Input.Touch
             {
                 _pinchActions[GestureType.Pinch].Set(_mouse.Position.Coordinate, 0.1f);
             }
-
-            if (_mouse.Left.IsDown)
+            else if (_mouse.Right.IsHeldFor(TimeSpan.FromMilliseconds(50)))
+            {
+                _dragActions[GestureType.FreeDrag].Set(_mouse.Position.Coordinate, _mouse.Position.Delta);
+            }
+            else if (_mouse.Left.IsHeldForOnce(TimeSpan.FromSeconds(1)))
+            {
+                _pressActions[GestureType.Hold].Set(_mouse.Position.Coordinate);
+            }
+            else if (_mouse.Left.IsPressed)
+            {
+                _pressActions[GestureType.Tap].Set(_mouse.Position.Coordinate);
+            }
+            else if (_mouse.Left.IsDown)
             {
                 _touchInput.Update(delta, _mouse.Position.Coordinate);
             }

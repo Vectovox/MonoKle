@@ -48,6 +48,11 @@ namespace MonoKle
         public bool IsDone => TimeLeft == TimeSpan.Zero;
 
         /// <summary>
+        /// Gets whether no time has passed. I.e. <see cref="TimeLeft"/> is equal to <see cref="Duration"/>.
+        /// </summary>
+        public bool IsSet => TimeLeft == Duration;
+
+        /// <summary>
         /// Gets the elapsed time.
         /// </summary>
         public TimeSpan Elapsed => Duration - TimeLeft;

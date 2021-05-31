@@ -110,6 +110,15 @@ namespace MonoKle
         }
 
         /// <summary>
+        /// Gets the ratio of how much scaling is applied.
+        /// </summary>
+        /// <value>Number in the range [0, 1]. 0 means <see cref="Scale"/> is <see cref="MinScale"/> and 1 <see cref="MaxScale"/>.</value>
+        /// <remarks>Returns 1 when <see cref="MinScale"/> is equivalent to <see cref="MaxScale"/>.</remarks>
+        public float ScaleRatio => _maxScale == _minScale
+            ? 1f
+            : (_scale - _minScale) / (_maxScale - _minScale);
+
+        /// <summary>
         /// Gets the camera transformation matrix, going from world -> camera space.
         /// </summary>
         public Matrix TransformMatrix

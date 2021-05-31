@@ -19,9 +19,9 @@ namespace MonoKle.Engine
         /// <param name="logger">The logger to use.</param>
         internal VariableStorage(Logger logger)
         {
-            this.Logger = logger;
-            this.Variables = new CVarSystem(logger);
-            this.VariablePopulator = new CVarFileLoader(this.Variables);
+            Logger = logger;
+            Variables = new CVarSystem(logger);
+            VariablePopulator = new CVarFileLoader(Variables);
         }
 
         /// <summary>
@@ -49,9 +49,9 @@ namespace MonoKle.Engine
         public CVarSystem Variables { get; private set; }
 
         /// <summary>
-        /// Loads the default settings from the default path (<see cref="VariableStorage.DefaultFilePath"/>).
+        /// Loads the default settings from the default path (<see cref="DefaultFilePath"/>).
         /// </summary>
         /// <returns>True if default path contained a setting file; otherwise false.</returns>
-        public bool LoadDefaultVariables() => this.VariablePopulator.LoadFile(VariableStorage.DefaultFilePath).Successes == 1;
+        public bool LoadDefaultVariables() => VariablePopulator.LoadFile(DefaultFilePath).Successes == 1;
     }
 }

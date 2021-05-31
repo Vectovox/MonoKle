@@ -71,24 +71,53 @@ namespace MonoKle.Configuration
         /// <summary>
         /// Binds the properties declared with <see cref="CVarAttribute"/> of the provided object.
         /// </summary>
+        /// <remarks>
+        /// Assigns any existing value to the bound instance. 
+        /// </remarks>
         /// <param name="instance">The object instance to bind.</param>
-        public void BindProperties(object instance)
+        public void BindProperties(object instance) => BindProperties(instance, true);
+
+        /// <summary>
+        /// Binds the properties declared with <see cref="CVarAttribute"/> of the provided object.
+        /// </summary>
+        /// <param name="instance">The object instance to bind.</param>
+        /// <param name="assignOld">If set to true, assigns any existing value to the bound instance.</param>
+        public void BindProperties(object instance, bool assignOld)
         {
-            GetInstanceProperties(instance).ForEach(t => Bind(new PropertyCVar(t.Property, instance), t.Attribute.Identifier));
+            GetInstanceProperties(instance).ForEach(t => Bind(new PropertyCVar(t.Property, instance), t.Attribute.Identifier, assignOld));
             BindProperties(instance.GetType());
         }
 
         /// <summary>
         /// Binds the static properties declared with <see cref="CVarAttribute"/> of the provided type argument.
         /// </summary>
+        /// <remarks>
+        /// Assigns any existing value to the bound type. 
+        /// </remarks>
         public void BindProperties<T>() => BindProperties(typeof(T));
+
+        /// <summary>
+        /// Binds the static properties declared with <see cref="CVarAttribute"/> of the provided type argument.
+        /// </summary>
+        /// <param name="assignOld">If set to true, assigns any existing value to the bound type.</param>
+        public void BindProperties<T>(bool assignOld) => BindProperties(typeof(T), assignOld);
+
+        /// <summary>
+        /// Binds the static properties declared with <see cref="CVarAttribute"/> of the provided type.
+        /// </summary>
+        /// <remarks>
+        /// Assigns any existing value to the bound type. 
+        /// </remarks>
+        /// <param name="type">The type to bind static properties to.</param>
+        public void BindProperties(Type type) => BindProperties(type, true);
 
         /// <summary>
         /// Binds the static properties declared with <see cref="CVarAttribute"/> of the provided type.
         /// </summary>
         /// <param name="type">The type to bind static properties to.</param>
-        public void BindProperties(Type type) =>
-            GetClassProperties(type).ForEach(t => Bind(new PropertyCVar(t.Property, null), t.Attribute.Identifier));
+        /// <param name="assignOld">If set to true, assigns any existing value to the bound type.</param>
+        public void BindProperties(Type type, bool assignOld) =>
+            GetClassProperties(type).ForEach(t => Bind(new PropertyCVar(t.Property, null), t.Attribute.Identifier, assignOld));
 
         /// <summary>
         /// Determines whether the specified variable can be set or is read-only.

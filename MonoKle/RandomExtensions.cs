@@ -16,13 +16,21 @@ namespace MonoKle
             NextPoint(random, min.ToMPoint2(), max.ToMPoint2()).ToMVector2();
 
         /// <summary>
-        /// Returns a random <see cref="MPoint2"/> with components within the given range.
+        /// Returns a random <see cref="MPoint2"/> with components within the given inclusive range.
         /// </summary>
         /// <param name="random">The random object to use.</param>
-        /// <param name="min">The minimum values.</param>
-        /// <param name="max">The maximum values.</param>
+        /// <param name="min">The inclusive minimum values.</param>
+        /// <param name="max">The inclusive maximum values.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if the maximum value is not greater than the minimum.</exception>
         public static MPoint2 NextPoint(this Random random, MPoint2 min, MPoint2 max) =>
             new MPoint2(random.Next(min.X, max.X + 1), random.Next(min.Y, max.Y + 1));
+
+        /// <summary>
+        /// Returns a random <see cref="MPoint2"/> located inside the provided inclusive space.
+        /// </summary>
+        /// <param name="random">The random object to use.</param>
+        /// <param name="randomSpace">The available space to generate random numbers for.</param>
+        public static MPoint2 NextPoint(this Random random, MDiscreteRectangle randomSpace) =>
+            random.NextPoint(randomSpace.TopLeft, randomSpace.BottomRight);
     }
 }

@@ -112,9 +112,9 @@ namespace MonoKle
         /// If specified, resets the timer upon triggering.
         /// </summary>
         /// <param name="elapsedTime">The elapsed time.</param>
-        /// <param name="resetOnTrigger">If true, resets the timer if the update triggers.</param>
+        /// <param name="resetWhenDone">If true, resets the timer when the timer is done.</param>
         /// <returns>True if triggered, otherwise false.</returns>
-        public bool Update(TimeSpan elapsedTime, bool resetOnTrigger)
+        public bool Update(TimeSpan elapsedTime, bool resetWhenDone)
         {
             // Record the pre-update state
             _wasDone = IsDone;
@@ -126,18 +126,15 @@ namespace MonoKle
                 TimeLeft = TimeSpan.Zero;
             }
 
-            // Check for trigger condition
-            if (IsTriggered)
+            // Remember trigger state as it may be reset
+            var wasTriggered = IsTriggered;
+
+            if (IsDone && resetWhenDone)
             {
-                if (resetOnTrigger)
-                {
-                    Reset();
-                }
-                return true;
+                Reset();
             }
 
-            // No trigger
-            return false;
+            return wasTriggered;
         }
     }
 }

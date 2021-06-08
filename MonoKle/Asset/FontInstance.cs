@@ -9,8 +9,10 @@ namespace MonoKle.Asset
     /// </summary>
     public class FontInstance
     {
-        private readonly FontData _fontData;
+        private static readonly Func<char, Color, Color> _defaultColorFunc = new Func<char, Color, Color>(DefaultColorMethod);
 
+        private readonly FontData _fontData;
+        
         /// <summary>
         /// Initializes a new instance of <see cref="FontInstance"/> class with the
         /// default <see cref="Size"/> assigned from the font data.
@@ -23,24 +25,9 @@ namespace MonoKle.Asset
         }
 
         /// <summary>
-        /// Returns a new instance of the same font with the given size.
-        /// </summary>
-        /// <param name="size">The font size to use.</param>
-        /// <returns>New instance of <see cref="FontInstance"/> with the provided size.</returns>
-        public FontInstance WithSize(int size) => new FontInstance(_fontData) { Size = size, LinePadding = LinePadding };
-
-        /// <summary>
-        /// Returns a new instance of the same font with the given line height padding.
-        /// </summary>
-        /// <param name="padding">The line height padding to use.</param>
-        /// <returns>New instance of <see cref="FontInstance"/> with the provided line height padding.</returns>
-        public FontInstance WithLinePadding(int padding) => new FontInstance(_fontData) { LinePadding = padding, Size = Size };
-
-        /// <summary>
         /// Gets or sets the size, in pixels.
         /// </summary>
         public int Size { get; set; }
-        private float ScaleFactor => Size / (float)_fontData.Size;
 
         /// <summary>
         /// Gets or sets the line height padding, in pixels.
@@ -51,6 +38,22 @@ namespace MonoKle.Asset
         /// Gets or sets the character denoting opening and closing of a non-rendered color tag section.
         /// </summary>
         public char ColorTag { get; set; } = '\\';
+
+        private float ScaleFactor => Size / (float)_fontData.Size;
+
+        /// <summary>
+        /// Returns a new instance of the same font with the given size.
+        /// </summary>
+        /// <param name="size">The font size to use.</param>
+        /// <returns>New instance of <see cref="FontInstance"/> with the provided size.</returns>
+        public FontInstance WithSize(int size) => new FontInstance(_fontData) { Size = size, LinePadding = LinePadding, ColorTag = ColorTag };
+
+        /// <summary>
+        /// Returns a new instance of the same font with the given line height padding.
+        /// </summary>
+        /// <param name="padding">The line height padding to use.</param>
+        /// <returns>New instance of <see cref="FontInstance"/> with the provided line height padding.</returns>
+        public FontInstance WithLinePadding(int padding) => new FontInstance(_fontData) { LinePadding = padding, Size = Size, ColorTag = ColorTag };
 
         /// <summary>
         /// Returns the size of the given text.
@@ -207,9 +210,7 @@ namespace MonoKle.Asset
         /// <param name="effect">The sprite effects to apply.</param>
         public void Draw(SpriteBatch spriteBatch, string text, Vector2 position, Color color,
             float rotation, Vector2 origin, float layerDepth, SpriteEffects effect) =>
-            Draw(spriteBatch, text, position, color, rotation, origin, layerDepth, effect, ColorFunc);
-        private static Func<char, Color, Color> ColorFunc = new Func<char, Color, Color>(ColorMethod);
-        private static Color ColorMethod(char token, Color original) => original;
+            Draw(spriteBatch, text, position, color, rotation, origin, layerDepth, effect, _defaultColorFunc);
 
         /// <summary>
         /// Draws the given string with an active spritebatch.
@@ -280,5 +281,7 @@ namespace MonoKle.Asset
                 }
             }
         }
+
+        private static Color DefaultColorMethod(char token, Color original) => original;
     }
 }

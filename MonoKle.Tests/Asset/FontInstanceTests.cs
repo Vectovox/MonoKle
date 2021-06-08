@@ -104,12 +104,16 @@ namespace MonoKle.Asset
         [TestMethod]
         public void FluentSettings_Chained_SettingsRetained()
         {
-            var instance = new FontInstance(_fontData);
-            instance.LinePadding = 15;
-            instance.Size = 19;
-            var testedInstance = _font.WithLinePadding(instance.LinePadding).WithSize(instance.Size);
-            Assert.AreEqual(instance.LinePadding, testedInstance.LinePadding);
-            Assert.AreEqual(instance.Size, testedInstance.Size);
+            var expected = new FontInstance(_fontData)
+            {
+                LinePadding = 15,
+                Size = 19,
+                ColorTag = '#',
+            };
+            var testedInstance = _font.WithLinePadding(expected.LinePadding).WithSize(expected.Size);
+            Assert.AreEqual(expected.LinePadding, testedInstance.LinePadding);
+            Assert.AreEqual(expected.Size, testedInstance.Size);
+            Assert.AreEqual(expected.ColorTag, testedInstance.ColorTag);
         }
     }
 }

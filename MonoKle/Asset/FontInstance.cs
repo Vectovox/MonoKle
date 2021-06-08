@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Text;
 
 namespace MonoKle.Asset
 {
@@ -9,6 +10,7 @@ namespace MonoKle.Asset
     /// </summary>
     public class FontInstance
     {
+        private static readonly StringBuilder _stringBuilderCache = new StringBuilder();
         private static readonly Func<char, Color, Color> _defaultColorFunc = new Func<char, Color, Color>(DefaultColorMethod);
         private static readonly char[] _wrapCharacters = new char[] { ' ' };
 
@@ -65,7 +67,7 @@ namespace MonoKle.Asset
         /// </remarks>
         /// <param name="text">The text to measure.</param>
         /// <returns>An <see cref="MVector2"/> representing the size.</returns>
-        public MVector2 Measure(string text)
+        public MVector2 Measure(ReadOnlySpan<char> text)
         {
             // Precompute for efficiency
             var scaleFactor = ScaleFactor;
@@ -120,34 +122,43 @@ namespace MonoKle.Asset
         /// <returns>A string containing the wrapped text.</returns>
         public string Wrap(string text, float maximumWidth)
         {
-            float width = Measure(text).X;
-            string newText = text;
-            if (width > maximumWidth)
+            var originalWidth = Measure(text).X;
+            
+            // Check if NOOP
+            if (originalWidth > maximumWidth)
             {
-                int lineStartIndex = 0;
+                // Prepare string manipulation
+                _stringBuilderCache.Clear();
+                var wrappedText = _stringBuilderCache.Append(text);
+                var textSpan = text.AsSpan();
+                var lineStartIndex = 0;
+
+                // Iterate all characters and update the new string as we go
                 for (int i = 1; i <= text.Length; i++)
                 {
                     // Measure the current line to the pointer index
-                    var lineSubString = newText[lineStartIndex..i];
-                    float lineWidth = Measure(lineSubString).X;
+                    var lineWidth = Measure(textSpan[lineStartIndex..i]).X;
+
                     if (lineWidth > maximumWidth)
                     {
                         // Too wide so put a newline in the last previous space
-                        int lastPlaceToCut = newText.LastIndexOfAny(_wrapCharacters, i - 1, i - lineStartIndex);
+                        int lastPlaceToCut = text.LastIndexOfAny(_wrapCharacters, i - 1, i - lineStartIndex);
                         if (lastPlaceToCut == -1)
                         {
                             // No good place to cut the text so end it here already
                             break;
                         }
-                        newText = newText.Remove(lastPlaceToCut, 1).Insert(lastPlaceToCut, "\n");
+                        wrappedText.Remove(lastPlaceToCut, 1).Insert(lastPlaceToCut, "\n");
 
                         // Update indices
-                        lineStartIndex = lastPlaceToCut;
+                        lineStartIndex = lastPlaceToCut + 1;
                     }
                 }
+
+                return wrappedText.ToString();
             }
 
-            return newText;
+            return text;
         }
 
         /// <summary>

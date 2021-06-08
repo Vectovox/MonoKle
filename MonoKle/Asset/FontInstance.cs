@@ -208,7 +208,8 @@ namespace MonoKle.Asset
         public void Draw(SpriteBatch spriteBatch, string text, Vector2 position, Color color,
             float rotation, Vector2 origin, float layerDepth, SpriteEffects effect) =>
             Draw(spriteBatch, text, position, color, rotation, origin, layerDepth, effect, ColorFunc);
-        private static Color ColorFunc(char token, Color original) => original;
+        private static Func<char, Color, Color> ColorFunc = new Func<char, Color, Color>(ColorMethod);
+        private static Color ColorMethod(char token, Color original) => original;
 
         /// <summary>
         /// Draws the given string with an active spritebatch.

@@ -16,10 +16,10 @@ namespace MonoKle
         /// <summary>
         /// The raw data that the <see cref="MTexture"/> maps on.
         /// </summary>
-        public readonly Texture2D TextureData;
+        public readonly Texture2D Data;
 
         /// <summary>
-        /// The source rectangle mapping the texture on <see cref="TextureData"/>.
+        /// The source rectangle mapping the texture on <see cref="Data"/>.
         /// </summary>
         public readonly MRectangleInt AtlasRectangle;
 
@@ -96,7 +96,7 @@ namespace MonoKle
                 throw new ArgumentException($"Invalid row count, margin, or width. Rows with margin must add up to the height.");
             }
 
-            TextureData = texture;
+            Data = texture;
             Identifier = identifier;
             AtlasRectangle = atlasRectangle;
             FrameMargin = frameMargin;
@@ -134,47 +134,75 @@ namespace MonoKle
         /// </remarks>
         /// <param name="column">Zero-based index of the column to get.</param>
         /// <param name="row">Zero-based index of the row to get.</param>
-        public MTexture GetCell(int column, int row)
+        public MTexture GetCell(int column, int row) => new MTexture(Data, Identifier, GetCellAtlas(column, row));
+
+        /// <summary>
+        /// Gets the atlas rectangle for the provided column and row.
+        /// </summary>
+        /// <param name="column">Zero-based index of the column to get.</param>
+        /// <param name="row">Zero-based index of the row to get.</param>
+        public MRectangleInt GetCellAtlas(int column, int row)
         {
             int wrappedColumn = column % FrameColumns;
             int wrappedRow = row % FrameRows;
-            return new MTexture(TextureData, Identifier, AtlasRectangle
+            return AtlasRectangle
                 .RedimensionWidth(FrameWidth)
                 .RedimensionHeight(FrameHeight)
                 .TranslateX(wrappedColumn * (FrameWidth + FrameMargin + FrameMargin) + FrameMargin)
-                .TranslateY(wrappedRow * (FrameHeight + FrameMargin + FrameMargin) + FrameMargin)
-            );
+                .TranslateY(wrappedRow * (FrameHeight + FrameMargin + FrameMargin) + FrameMargin);
         }
 
         /// <summary>
-        /// Gets the whole provided column, only applying <see cref="FrameMargin"/> between columns.
+        /// Returns a new instance of <see cref="MTexture"/>, getting the whole provided column, only applying <see cref="FrameMargin"/> between columns.
         /// </summary>
         /// <remarks>
         /// Wraps around when the provided column is outside of the atlas.
         /// </remarks>
         /// <param name="column">Zero-based index of the column to get.</param>
-        public MTexture GetColumn(int column)
+        public MTexture GetColumn(int column) => new MTexture(Data, Identifier, GetColumnAtlas(column));
+
+        /// <summary>
+        /// Gets the atlas rectangle for the provided column.
+        /// </summary>
+        /// <param name="column">Zero-based index of the column to get.</param>
+        public MRectangleInt GetColumnAtlas(int column)
         {
             int wrappedColumn = column % FrameColumns;
-            return new MTexture(TextureData, Identifier, AtlasRectangle
+            return AtlasRectangle
                 .RedimensionWidth(FrameWidth)
-                .TranslateX(wrappedColumn * (FrameWidth + FrameMargin + FrameMargin) + FrameMargin));
+                .TranslateX(wrappedColumn * (FrameWidth + FrameMargin + FrameMargin) + FrameMargin);
         }
 
         /// <summary>
-        /// Gets the whole provided row, only applying <see cref="FrameMargin"/> between rows.
+        /// Returns a new instance of <see cref="MTexture"/>, getting the whole provided row, only applying <see cref="FrameMargin"/> between rows.
         /// </summary>
         /// <remarks>
         /// Wraps around when the provided row is outside of the atlas.
         /// </remarks>
         /// <param name="row">Zero-based index of the row to get.</param>
-        public MTexture GetRow(int row)
+        public MTexture GetRow(int row) => new MTexture(Data, Identifier, GetRowAtlas(row));
+
+        /// <summary>
+        /// Gets the atlas rectangle for the provided column.
+        /// </summary>
+        /// <param name="row">Zero-based index of the row to get.</param>
+        public MRectangleInt GetRowAtlas(int row)
         {
             int wrappedRow = row % FrameRows;
-            return new MTexture(TextureData, Identifier, AtlasRectangle
+            return AtlasRectangle
                 .RedimensionHeight(FrameHeight)
-                .TranslateY(wrappedRow * (FrameHeight + FrameMargin + FrameMargin) + FrameMargin));
+                .TranslateY(wrappedRow * (FrameHeight + FrameMargin + FrameMargin) + FrameMargin);
         }
+
+        /// <summary>
+        /// Returns a new instance of <see cref="MTexture"/>, animated to the given row to the provided frame.
+        /// </summary>
+        /// <remarks>
+        /// Wraps around when the provided frame is outside of the atlas.
+        /// </remarks>
+        /// <param name="row">Zero-based index of the row to use.</param>
+        /// <param name="frame">Zero-based index of the frame to show.</param>
+        public MTexture AnimateRow(int row, int frame) => new MTexture(Data, Identifier, AnimateRowAtlas(row, frame));
 
         /// <summary>
         /// Animates the given row to the provided frame.
@@ -184,7 +212,17 @@ namespace MonoKle
         /// </remarks>
         /// <param name="row">Zero-based index of the row to use.</param>
         /// <param name="frame">Zero-based index of the frame to show.</param>
-        public MTexture AnimateRow(int row, int frame) => GetCell(frame, row);
+        public MRectangleInt AnimateRowAtlas(int row, int frame) => GetCellAtlas(frame, row);
+
+        /// <summary>
+        /// Returns a new instance of <see cref="MTexture"/>, animated to the given row to the frame at the provided elapsed time.
+        /// </summary>
+        /// <remarks>
+        /// Wraps around when the frame is outside of the atlas.
+        /// </remarks>
+        /// <param name="row">Zero-based index of the row to use.</param>
+        /// <param name="elapsed">Elapsed time used to pick out the frame.</param>
+        public MTexture AnimateRow(int row, TimeSpan elapsed) => new MTexture(Data, Identifier, AnimateRowAtlas(row, elapsed));
 
         /// <summary>
         /// Animates the given row to the frame at the provided elapsed time.
@@ -194,7 +232,17 @@ namespace MonoKle
         /// </remarks>
         /// <param name="row">Zero-based index of the row to use.</param>
         /// <param name="elapsed">Elapsed time used to pick out the frame.</param>
-        public MTexture AnimateRow(int row, TimeSpan elapsed) => AnimateRow(row, (int)(FrameRate * elapsed.TotalSeconds));
+        public MRectangleInt AnimateRowAtlas(int row, TimeSpan elapsed) => AnimateRowAtlas(row, (int)(FrameRate * elapsed.TotalSeconds));
+
+        /// <summary>
+        /// Returns a new instance of <see cref="MTexture"/>, animated to the frame at the provided elapsed time.
+        /// The whole texture makes a singular row, only applying <see cref="FrameMargin"/> between columns.
+        /// </summary>
+        /// <remarks>
+        /// Wraps around when the frame is outside of the atlas.
+        /// </remarks>
+        /// <param name="elapsed">Elapsed time used to pick out the frame.</param>
+        public MTexture AnimateRow(TimeSpan elapsed) => new MTexture(Data, Identifier, AnimateRowAtlas(elapsed));
 
         /// <summary>
         /// Animates to the frame at the provided elapsed time. The whole texture makes a singular row, only applying <see cref="FrameMargin"/> between columns.
@@ -203,7 +251,17 @@ namespace MonoKle
         /// Wraps around when the frame is outside of the atlas.
         /// </remarks>
         /// <param name="elapsed">Elapsed time used to pick out the frame.</param>
-        public MTexture AnimateRow(TimeSpan elapsed) => GetColumn((int)(FrameRate * elapsed.TotalSeconds));
+        public MRectangleInt AnimateRowAtlas(TimeSpan elapsed) => GetColumnAtlas((int)(FrameRate * elapsed.TotalSeconds));
+
+        /// <summary>
+        /// Returns a new instance of <see cref="MTexture"/>, animated to the given column to the provided frame.
+        /// </summary>
+        /// <param name="column">Zero-based index of the column to use.</param>
+        /// <param name="frame">Zero-based index of the frame to show.</param>
+        /// <remarks>
+        /// Wraps around when the provided frame is outside of the atlas.
+        /// </remarks>
+        public MTexture AnimateColumn(int column, int frame) => new MTexture(Data, Identifier, AnimateColumnAtlas(column, frame));
 
         /// <summary>
         /// Animates the given column to the provided frame.
@@ -213,7 +271,17 @@ namespace MonoKle
         /// <remarks>
         /// Wraps around when the provided frame is outside of the atlas.
         /// </remarks>
-        public MTexture AnimateColumn(int column, int frame) => GetCell(column, frame);
+        public MRectangleInt AnimateColumnAtlas(int column, int frame) => GetCellAtlas(column, frame);
+
+        /// <summary>
+        /// Returns a new instance of <see cref="MTexture"/>, animated to the given column to the frame at the provided elapsed time.
+        /// </summary>
+        /// <remarks>
+        /// Wraps around when the frame is outside of the atlas.
+        /// </remarks>
+        /// <param name="column">Zero-based index of the column to use.</param>
+        /// <param name="elapsed">Elapsed time used to pick out the frame.</param>
+        public MTexture AnimateColumn(int column, TimeSpan elapsed) => new MTexture(Data, Identifier, AnimateColumnAtlas(column, elapsed));
 
         /// <summary>
         /// Animates the given column to the frame at the provided elapsed time.
@@ -223,7 +291,17 @@ namespace MonoKle
         /// </remarks>
         /// <param name="column">Zero-based index of the column to use.</param>
         /// <param name="elapsed">Elapsed time used to pick out the frame.</param>
-        public MTexture AnimateColumn(int column, TimeSpan elapsed) => AnimateColumn(column, (int)(FrameRate * elapsed.TotalSeconds));
+        public MRectangleInt AnimateColumnAtlas(int column, TimeSpan elapsed) => AnimateColumnAtlas(column, (int)(FrameRate * elapsed.TotalSeconds));
+
+        /// <summary>
+        /// Returns a new instance of <see cref="MTexture"/>, animated to the frame at the provided elapsed time.
+        /// The whole texture makes a singular column, only applying <see cref="FrameMargin"/> between rows.
+        /// </summary>
+        /// <remarks>
+        /// Wraps around when the frame is outside of the atlas.
+        /// </remarks>
+        /// <param name="elapsed">Elapsed time used to pick out the frame.</param>
+        public MTexture AnimateColumn(TimeSpan elapsed) => new MTexture(Data, Identifier, AnimateColumnAtlas(elapsed));
 
         /// <summary>
         /// Animates to the frame at the provided elapsed time. The whole texture makes a singular column, only applying <see cref="FrameMargin"/> between rows.
@@ -232,7 +310,7 @@ namespace MonoKle
         /// Wraps around when the frame is outside of the atlas.
         /// </remarks>
         /// <param name="elapsed">Elapsed time used to pick out the frame.</param>
-        public MTexture AnimateColumn(TimeSpan elapsed) => GetRow((int)(FrameRate * elapsed.TotalSeconds));
+        public MRectangleInt AnimateColumnAtlas(TimeSpan elapsed) => GetRowAtlas((int)(FrameRate * elapsed.TotalSeconds));
 
         /// <summary>
         /// Returns new instance of <see cref="MTexture"/> that represents the frame at the provided row and column.
@@ -248,13 +326,13 @@ namespace MonoKle
         /// Returns a new instance of <see cref="MTexture"/> with the atlas rectangle set to the provided value.
         /// </summary>
         /// <param name="atlas">The atlas rectangle to use.</param>
-        public MTexture WithAtlas(MRectangleInt atlas) => new MTexture(TextureData, Identifier, atlas, FrameColumns, FrameRows, FrameRate, FrameMargin);
+        public MTexture WithAtlas(MRectangleInt atlas) => new MTexture(Data, Identifier, atlas, FrameColumns, FrameRows, FrameRate, FrameMargin);
 
         /// <summary>
         /// Returns a new instance of <see cref="MTexture"/> with the atlas margin set to the provided value.
         /// </summary>
         /// <param name="margin">The margin to use.</param>
-        public MTexture WithMargin(int margin) => new MTexture(TextureData, Identifier, AtlasRectangle, FrameColumns, FrameRows, FrameRate, margin);
+        public MTexture WithMargin(int margin) => new MTexture(Data, Identifier, AtlasRectangle, FrameColumns, FrameRows, FrameRate, margin);
 
         public override string ToString() => $"{Identifier} | {AtlasRectangle}";
     }

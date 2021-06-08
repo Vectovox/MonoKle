@@ -43,7 +43,7 @@ namespace Demo.Domain
                 RasterizerState.CullCounterClockwise, null, _gameDisplay.Camera.TransformMatrix);
 
             // Test animation
-            _spriteBatch.Draw(MGame.TextureStorage["animation"].AnimateRow(_timer.Elapsed), new Vector2(0, -20), Color.White);
+            _spriteBatch.Draw(MGame.TextureStorage["animation"].Data, new Vector2(0, -20), MGame.TextureStorage["animation"].AnimateRowAtlas(_timer.Elapsed), Color.White);
 
             // Test textures in general
             _spriteBatch.Draw(MGame.TextureStorage.Error, new MRectangleInt(0, 50, 16, 16), Color.White);
@@ -54,10 +54,11 @@ namespace Demo.Domain
             _spriteBatch.Draw(MGame.TextureStorage["blue"], new Vector2(250, 50), Color.White);
 
             // Test atlasing
-            _spriteBatch.Draw(MGame.TextureStorage["colorAtlas"].GetCell(0, 0), new Vector2(500, 50), Color.White);
-            _spriteBatch.Draw(MGame.TextureStorage["colorAtlas"].GetCell(1, 0), new Vector2(550, 50), Color.White);
-            _spriteBatch.Draw(MGame.TextureStorage["colorAtlas"].GetCell(0, 1), new Vector2(600, 50), Color.White);
-            _spriteBatch.Draw(MGame.TextureStorage["colorAtlas"].GetCell(1, 1), new Vector2(650, 50), Color.White);
+            var colorAtlas = MGame.TextureStorage["colorAtlas"];
+            _spriteBatch.Draw(colorAtlas.Data, new Vector2(500, 50), colorAtlas.GetCellAtlas(0, 0), Color.White);
+            _spriteBatch.Draw(colorAtlas.Data, new Vector2(550, 50), colorAtlas.GetCellAtlas(1, 0), Color.White);
+            _spriteBatch.Draw(colorAtlas.Data, new Vector2(600, 50), colorAtlas.GetCellAtlas(0, 1), Color.White);
+            _spriteBatch.Draw(colorAtlas.Data, new Vector2(650, 50), colorAtlas.GetCellAtlas(1, 1), Color.White);
 
             FontInstance font = _outlineFont ? MGame.FontStorage["testfont_o"] : MGame.FontStorage["testfont"];
 

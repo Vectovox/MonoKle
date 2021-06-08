@@ -15,6 +15,7 @@ namespace MonoKle.Asset
         private readonly GraphicsDevice _graphicsDevice;
         private readonly Dictionary<string, Texture2D> _textureByPath = new Dictionary<string, Texture2D>();
         private readonly Dictionary<string, TextureData> _textureDataByIdentifier = new Dictionary<string, TextureData>();
+        private readonly Dictionary<string, MTexture> _textureCache = new Dictionary<string, MTexture>();
 
         /// <summary>
         /// Gets a square white texture.
@@ -47,19 +48,28 @@ namespace MonoKle.Asset
         {
             get
             {
+                // Check if texture has been cached
+                if (_textureCache.TryGetValue(identifier, out var cachedTexture))
+                {
+                    return cachedTexture;
+                }
+
+                // Cache and return new texture
                 if (_textureDataByIdentifier.TryGetValue(identifier, out var data))
                 {
                     try
                     {
-                        return data.AtlasRectangle == null
+                        var newTexture = data.AtlasRectangle == null
                             ? new MTexture(_textureByPath[data.Path], identifier, data.FrameColumns,
                                 data.FrameRows, data.FrameMargin, data.FrameRate)
                             : new MTexture(_textureByPath[data.Path], identifier, data.AtlasRectangle.Value,
                                 data.FrameColumns, data.FrameRows, data.FrameMargin, data.FrameRate);
+                        _textureCache.Add(identifier, newTexture);
+                        return newTexture;
                     }
                     catch (Exception e)
                     {
-                        _logger.Log($"Error accessing texture '{identifier}': {e.Message}", LogLevel.Error);
+                        _logger.Log($"Error instantiating texture '{identifier}': {e.Message}", LogLevel.Error);
                     }
                 }
                 else
@@ -187,6 +197,7 @@ namespace MonoKle.Asset
             int amountUnloaded = _textureDataByIdentifier.Count;
             _textureByPath.Clear();
             _textureDataByIdentifier.Clear();
+            _textureCache.Clear();
             return amountUnloaded;
         }
 

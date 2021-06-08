@@ -10,6 +10,7 @@ namespace MonoKle.Asset
     public class FontInstance
     {
         private static readonly Func<char, Color, Color> _defaultColorFunc = new Func<char, Color, Color>(DefaultColorMethod);
+        private static readonly char[] _wrapCharacters = new char[] { ' ' };
 
         private readonly FontData _fontData;
         
@@ -132,7 +133,7 @@ namespace MonoKle.Asset
                     if (lineWidth > maximumWidth)
                     {
                         // Too wide so put a newline in the last previous space
-                        int lastPlaceToCut = newText.LastIndexOfAny(new char[] { ' ' }, i - 1, i - lineStartIndex);
+                        int lastPlaceToCut = newText.LastIndexOfAny(_wrapCharacters, i - 1, i - lineStartIndex);
                         if (lastPlaceToCut == -1)
                         {
                             // No good place to cut the text so end it here already

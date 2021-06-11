@@ -19,6 +19,10 @@ namespace MonoKle.Engine
     /// </summary>
     public class MGame : Game
     {
+        private static readonly FrameCounter _updateCounter = new FrameCounter();
+        private static readonly FrameCounter _drawCounter = new FrameCounter();
+        private static SpriteBatch _spriteBatch;
+
         private static bool _initializing = true;
 
         /// <summary>
@@ -147,7 +151,10 @@ namespace MonoKle.Engine
             AudioStorage = new AudioStorage(Logger);
             EffectStorage = new EffectStorage(GraphicsManager.GraphicsDevice, Logger);
             InitializeFontStorage();
+            
+            // Initialize other services
             InitializeConsole();
+            _spriteBatch = new SpriteBatch(GraphicsManager.GraphicsDevice);
 
             // Set up commands and settings
             Console.CommandBroker.RegisterCallingAssembly();
@@ -164,24 +171,36 @@ namespace MonoKle.Engine
 
         protected override void Draw(GameTime time)
         {
-            if (_initializing == false)
+            if (!_initializing)
             {
+                _drawCounter.Begin();
                 var deltaTime = time.ElapsedGameTime;
 
                 GraphicsManager.GraphicsDevice.Clear(Color.CornflowerBlue);
                 _stateSystem.Draw(deltaTime);
 
+                if (Settings.FrameTimeEnabled)
+                {
+                    _spriteBatch.Begin();
+                    FontStorage.Default.Draw(_spriteBatch,
+                        $"Update: {_updateCounter.TimePerUpdate.TotalMilliseconds:0.00ms}\nDraw: {_drawCounter.TimePerUpdate.TotalMilliseconds:0.00ms}",
+                        MVector2.Zero, Color.White);
+                    _spriteBatch.End();
+                }
+
                 if (Settings.ConsoleEnabled)
                 {
                     _console.Draw(deltaTime);
                 }
+                _drawCounter.End();
             }
         }
 
         protected override void Update(GameTime time)
         {
-            if (_initializing == false)
+            if (!_initializing)
             {
+                _updateCounter.Begin();
                 var deltaTime = time.ElapsedGameTime;
                 IsRunningSlowly = time.IsRunningSlowly;
                 TotalGameTime = time.TotalGameTime;
@@ -217,6 +236,8 @@ namespace MonoKle.Engine
                 {
                     _console.Update(deltaTime);
                 }
+
+                _updateCounter.End();
             }
         }
 

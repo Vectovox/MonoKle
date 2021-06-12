@@ -176,7 +176,6 @@ namespace MonoKle.Engine
                 _drawCounter.Begin();
                 var deltaTime = time.ElapsedGameTime;
 
-                GraphicsManager.GraphicsDevice.Clear(Color.CornflowerBlue);
                 _stateSystem.Draw(deltaTime);
 
                 if (Settings.FrameTimeEnabled)

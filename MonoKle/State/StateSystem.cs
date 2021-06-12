@@ -120,8 +120,8 @@ namespace MonoKle.State
         }
 
         private GameState GetStateWithIdentifier(string identifier) =>
-            _stateByString.ContainsKey(identifier)
-                ? _stateByString[identifier]
+            _stateByString.TryGetValue(identifier, out var state)
+                ? state
                 : Void;
 
         private static GameState Void { get; } = new VoidState();

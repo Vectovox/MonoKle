@@ -120,13 +120,13 @@ namespace MonoKle.Engine
         /// <summary>
         /// Initializes the MonoKle backend, returning a runnable game instance.
         /// </summary>
-        /// <param name="fullscreen">The initial fullscreen setting.</param>
-        public static MGame Create(bool fullscreen)
+        /// <param name="graphicsMode">The initial graphics mode setting.</param>
+        public static MGame Create(GraphicsMode graphicsMode)
         {
             // Graphics device has to be created immediately but cannot be used before LoadContent
             GraphicsManager = new GraphicsManager(new GraphicsDeviceManager(GameInstance));
             GraphicsManager.ResolutionChanged += ResolutionChanged;
-            GraphicsManager.IsFullscreen = fullscreen;
+            GraphicsManager.GraphicsMode = graphicsMode;
 
             Settings.GamePadEnabled = true;
             Settings.KeyboardEnabled = true;
@@ -224,7 +224,7 @@ namespace MonoKle.Engine
                     _touchScreen.Update(deltaTime);
                 }
 
-                GraphicsManager.Update(Window.ClientBounds.Size);
+                GraphicsManager.Update();
 
                 if (Console.IsOpen == false)
                 {
@@ -281,7 +281,7 @@ namespace MonoKle.Engine
         {
             if (Console != null)
             {
-                Console.Area = new Rectangle(0, 0, GraphicsManager.ResolutionWidth, GraphicsManager.ResolutionHeight / 3);
+                Console.Area = new Rectangle(0, 0, e.NewScreenSize.X, e.NewScreenSize.Y / 3);
             }
         }
 

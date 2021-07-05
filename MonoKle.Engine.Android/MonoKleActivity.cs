@@ -1,6 +1,7 @@
 ﻿using Android.OS;
 using Android.Views;
 using Microsoft.Xna.Framework;
+using MonoKle.Graphics;
 
 namespace MonoKle.Engine.Android
 {
@@ -19,7 +20,7 @@ namespace MonoKle.Engine.Android
             base.OnCreate(bundle);
 
             // Create MonoKleGame
-            var game = MGame.Create(true);
+            var game = MGame.Create(GraphicsMode.Fullscreen);
             
             // Hook up MonoGame
             View = game.Services.GetService(typeof(View)) as View;

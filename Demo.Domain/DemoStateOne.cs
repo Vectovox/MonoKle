@@ -150,7 +150,7 @@ namespace Demo.Domain
 
             // Render inverting stuff 
             using RenderTarget2D _inverterRenderTarget =
-                new RenderTarget2D(MGame.GraphicsManager.GraphicsDevice, MGame.GraphicsManager.ResolutionWidth, MGame.GraphicsManager.ResolutionHeight);
+                new RenderTarget2D(MGame.GraphicsManager.GraphicsDevice, _gameDisplay.DisplayResolution.X, _gameDisplay.DisplayResolution.Y);
             MGame.GraphicsManager.GraphicsDevice.SetRenderTarget(_inverterRenderTarget);
 
             _spriteBatch.Begin();

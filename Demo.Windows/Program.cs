@@ -1,5 +1,6 @@
 ﻿using Demo.Domain;
 using MonoKle.Engine;
+using MonoKle.Graphics;
 using System;
 
 namespace Demo.Windows
@@ -15,7 +16,7 @@ namespace Demo.Windows
         [STAThread]
         private static void Main()
         {
-            using var game = MGame.Create(false);
+            using var game = MGame.Create(GraphicsMode.Windowed);
             Boilerplate.ConfigureStates();
             game.Run();
         }

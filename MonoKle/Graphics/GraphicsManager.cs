@@ -9,16 +9,11 @@ namespace MonoKle.Graphics
     /// </summary>
     public class GraphicsManager
     {
-        private readonly GraphicsDeviceManager _graphicsDeviceManager;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="GraphicsManager"/> class.
         /// </summary>
         /// <param name="graphicsDeviceManager">The graphics device manager.</param>
-        public GraphicsManager(GraphicsDeviceManager graphicsDeviceManager)
-        {
-            _graphicsDeviceManager = graphicsDeviceManager;
-        }
+        public GraphicsManager(GraphicsDeviceManager graphicsDeviceManager) => GraphicsDeviceManager = graphicsDeviceManager;
 
         /// <summary>
         /// Occurs when resolution is changed.
@@ -26,32 +21,28 @@ namespace MonoKle.Graphics
         public event ResolutionChangedEventHandler? ResolutionChanged;
 
         /// <summary>
-        /// Gets the graphics device.
+        /// Gets the underlying graphics device.
         /// </summary>
-        /// <value>
-        /// The graphics device.
-        /// </value>
-        public GraphicsDevice GraphicsDevice => _graphicsDeviceManager.GraphicsDevice;
+        public GraphicsDevice GraphicsDevice => GraphicsDeviceManager.GraphicsDevice;
 
         /// <summary>
-        /// Gets or sets the resolution.
+        /// Gets the underlying <see cref="Microsoft.Xna.Framework.GraphicsDeviceManager"/>.
         /// </summary>
-        /// <value>
-        /// The resolution.
-        /// </value>
+        public GraphicsDeviceManager GraphicsDeviceManager { get; }
+
+        /// <summary>
+        /// Gets or sets the backbuffer resolution.
+        /// </summary>
         [CVar("graphics_backbuffer_size")]
         public MPoint2 Resolution
         {
-            get { return new MPoint2(_graphicsDeviceManager.PreferredBackBufferWidth, _graphicsDeviceManager.PreferredBackBufferHeight); }
+            get { return new MPoint2(GraphicsDeviceManager.PreferredBackBufferWidth, GraphicsDeviceManager.PreferredBackBufferHeight); }
             set { SetResolution(value); }
         }
 
         /// <summary>
-        /// Gets or sets the height of the resolution.
+        /// Gets or sets the height of the backbuffer resolution.
         /// </summary>
-        /// <value>
-        /// The height of the resolution.
-        /// </value>
         [CVar("graphics_backbuffer_size_y")]
         public int ResolutionHeight
         {
@@ -60,11 +51,8 @@ namespace MonoKle.Graphics
         }
 
         /// <summary>
-        /// Gets or sets the width of the resolution.
+        /// Gets or sets the width of the backbuffer resolution.
         /// </summary>
-        /// <value>
-        /// The width of the resolution.
-        /// </value>
         [CVar("graphics_backbuffer_size_x")]
         public int ResolutionWidth
         {
@@ -83,33 +71,32 @@ namespace MonoKle.Graphics
         [CVar("graphics_fullscreen")]
         public bool IsFullscreen
         {
-            get { return _graphicsDeviceManager.IsFullScreen; }
+            get { return GraphicsDeviceManager.IsFullScreen; }
             set { SetFullscreenEnabled(value); }
         }
 
         private void SetFullscreenEnabled(bool enabled)
         {
-            if (enabled && IsFullscreen == false ||
-                enabled == false && IsFullscreen)
+            if (enabled != IsFullscreen)
             {
-                ToggleFullscren();
+                ToggleFullscreen();
             }
         }
 
         /// <summary>
         /// Toggles fullscren.
         /// </summary>
-        public void ToggleFullscren()
+        public void ToggleFullscreen()
         {
-            _graphicsDeviceManager.ToggleFullScreen();
-            _graphicsDeviceManager.ApplyChanges();
+            GraphicsDeviceManager.ToggleFullScreen();
+            GraphicsDeviceManager.ApplyChanges();
         }
 
         private void SetResolution(MPoint2 resolution)
         {
-            _graphicsDeviceManager.PreferredBackBufferWidth = resolution.X;
-            _graphicsDeviceManager.PreferredBackBufferHeight = resolution.Y;
-            _graphicsDeviceManager.ApplyChanges();
+            GraphicsDeviceManager.PreferredBackBufferWidth = resolution.X;
+            GraphicsDeviceManager.PreferredBackBufferHeight = resolution.Y;
+            GraphicsDeviceManager.ApplyChanges();
             OnResolutionChanged(resolution);
         }
 

@@ -19,10 +19,7 @@ namespace MonoKle.Engine
     /// </summary>
     public class MGame : Game
     {
-        private static readonly FrameCounter _updateCounter = new FrameCounter();
-        private static readonly FrameCounter _drawCounter = new FrameCounter();
-        private static SpriteBatch _spriteBatch;
-
+        private static PerformanceWidget _performanceWidget;
         private static bool _initializing = true;
 
         /// <summary>
@@ -147,21 +144,21 @@ namespace MonoKle.Engine
             base.LoadContent();
 
             // Initialize storages
-            TextureStorage = new TextureStorage(GraphicsManager.GraphicsDevice, Logger);
+            TextureStorage = new TextureStorage(GraphicsDevice, Logger);
             AudioStorage = new AudioStorage(Logger);
-            EffectStorage = new EffectStorage(GraphicsManager.GraphicsDevice, Logger);
+            EffectStorage = new EffectStorage(GraphicsDevice, Logger);
             InitializeFontStorage();
             
             // Initialize other services
             InitializeConsole();
-            _spriteBatch = new SpriteBatch(GraphicsManager.GraphicsDevice);
+            _performanceWidget = new PerformanceWidget(GraphicsDevice, FontStorage.Default);
 
             // Set up commands and settings
             Console.CommandBroker.RegisterCallingAssembly();
             BindSettings();
 
             // Set up virtual mouse
-            _mouse.VirtualRegion = new MRectangleInt(GraphicsManager.Resolution);
+            _mouse.VirtualRegion = new MRectangleInt(GraphicsManager.Resolution);   // TODO: Virtual mouse seems to have low fps? And the region may not work properly?
 
             // Done initializing
             _console.WriteLine("MonoKle Engine initialized!", Console.CommandTextColour);
@@ -173,25 +170,19 @@ namespace MonoKle.Engine
         {
             if (!_initializing)
             {
-                _drawCounter.Begin();
+                _performanceWidget.BeginDraw();
+
                 var deltaTime = time.ElapsedGameTime;
 
                 _stateSystem.Draw(deltaTime);
 
-                if (Settings.FrameTimeEnabled)
-                {
-                    _spriteBatch.Begin();
-                    FontStorage.Default.Draw(_spriteBatch,
-                        $"Update: {_updateCounter.TimePerUpdate.TotalMilliseconds:0.00ms}\nDraw: {_drawCounter.TimePerUpdate.TotalMilliseconds:0.00ms}",
-                        MVector2.Zero, Color.White);
-                    _spriteBatch.End();
-                }
+                _performanceWidget.Draw();
 
                 if (Settings.ConsoleEnabled)
                 {
                     _console.Draw(deltaTime);
                 }
-                _drawCounter.End();
+                _performanceWidget.EndDraw();
             }
         }
 
@@ -199,7 +190,8 @@ namespace MonoKle.Engine
         {
             if (!_initializing)
             {
-                _updateCounter.Begin();
+                _performanceWidget.BeginUpdate();
+
                 var deltaTime = time.ElapsedGameTime;
                 IsRunningSlowly = time.IsRunningSlowly;
                 TotalGameTime = time.TotalGameTime;
@@ -236,7 +228,7 @@ namespace MonoKle.Engine
                     _console.Update(deltaTime);
                 }
 
-                _updateCounter.End();
+                _performanceWidget.EndUpdate();
             }
         }
 
@@ -254,6 +246,7 @@ namespace MonoKle.Engine
             Variables.Variables.BindProperties(Settings);
             Variables.Variables.BindProperties(Mouse);
             Variables.Variables.BindProperties(TouchScreen);
+            Variables.Variables.BindProperties(_performanceWidget);
         }
 
         private static void InitializeConsole()

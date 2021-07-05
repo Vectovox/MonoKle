@@ -12,23 +12,24 @@ namespace MonoKle
         private TimeSpan _timeSpent;
         private int _updates;
         private DateTime _startTime;
-        private bool _begun;
+        
+        public bool IsActive { get; private set; }
 
         public TimeSpan TimePerUpdate { get; private set; }
 
         public void Begin()
         {
-            if (_begun)
+            if (IsActive)
             {
                 throw new InvalidOperationException($"{nameof(Begin)} has already been called");
             }
             _startTime = DateTime.UtcNow;
-            _begun = true;
+            IsActive = true;
         }
 
         public void End()
         {
-            if (!_begun)
+            if (!IsActive)
             {
                 throw new InvalidOperationException($"{nameof(Begin)} has not been called");
             }
@@ -43,7 +44,7 @@ namespace MonoKle
                 _updates = 0;
             }
 
-            _begun = false;
+            IsActive = false;
         }
     }
 }

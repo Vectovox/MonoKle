@@ -35,12 +35,6 @@ namespace MonoKle.Engine
         public bool ConsoleEnabled { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether frame counter is enabled.
-        /// </summary>
-        [CVar("frameTime_enabled")]
-        public bool FrameTimeEnabled { get; set; }
-
-        /// <summary>
         /// Gets or sets a value indicating whether the mouse cursor is visible inside the application.
         /// </summary>
         [CVar("mouse_visible")]

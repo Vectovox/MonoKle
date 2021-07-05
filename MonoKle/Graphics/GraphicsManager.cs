@@ -12,6 +12,7 @@ namespace MonoKle.Graphics
     {
         private MPoint2 _resolution;
         private GraphicsMode _graphicsMode;
+        private bool _vSync;
         private bool _displayDirty;
         private bool _disposedValue;
 
@@ -78,6 +79,16 @@ namespace MonoKle.Graphics
             set { _graphicsMode = value; _displayDirty = true; }
         }
 
+        /// <summary>
+        /// Gets or sets wether VSync is enabled.
+        /// </summary>
+        [CVar("graphics_vsync")]
+        public bool VSync
+        {
+            get => _vSync;
+            set { _vSync = value; _displayDirty = true; }
+        }
+
         public void Update()
         {
             if (_displayDirty)
@@ -100,6 +111,7 @@ namespace MonoKle.Graphics
                     GraphicsDeviceManager.PreferredBackBufferHeight = _resolution.Y;
                     GraphicsDeviceManager.IsFullScreen = _graphicsMode == GraphicsMode.Fullscreen;
                 }
+                GraphicsDeviceManager.SynchronizeWithVerticalRetrace = _vSync;
                 GraphicsDeviceManager.ApplyChanges();
                 _displayDirty = false;
                 OnResolutionChanged(new MPoint2(GraphicsDeviceManager.PreferredBackBufferWidth, GraphicsDeviceManager.PreferredBackBufferHeight));

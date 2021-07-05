@@ -65,6 +65,17 @@ namespace MonoKle.Console
         }
 
         /// <summary>
+        /// Calls the given command, using the provided positionals.
+        /// </summary>
+        /// <remarks>
+        /// The positionals will be evaluated using <see cref="object.ToString"/>.
+        /// </remarks>
+        /// <param name="command">The identifier of the command to call.</param>
+        /// <param name="positionals">The positional arguments to call with.</param>
+        /// <returns>True if the command was called succesfully; otherwise false.</returns>
+        public bool Call(string command, params object[] positionals) => Call($"{command} {string.Join(' ', positionals)}");
+
+        /// <summary>
         /// Clears all registered commands.
         /// </summary>
         public void Clear() => _typeCommands.Clear();

@@ -1,17 +1,19 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoKle.Configuration;
+using System;
 
 namespace MonoKle.Graphics
 {
     /// <summary>
     /// Facade for graphics management.
     /// </summary>
-    public class GraphicsManager
+    public class GraphicsManager : IDisposable
     {
         private MPoint2 _resolution;
         private GraphicsMode _graphicsMode;
         private bool _displayDirty;
+        private bool _disposedValue;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GraphicsManager"/> class.
@@ -105,5 +107,34 @@ namespace MonoKle.Graphics
         }
 
         private void OnResolutionChanged(MPoint2 newResolution) => ResolutionChanged?.Invoke(this, new ResolutionChangedEventArgs(newResolution));
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    // Workaround for HDR issue in Windows. Without it, windows becomes washed out. 
+                    if (_graphicsMode == GraphicsMode.Borderless)
+                    {
+                        GraphicsDeviceManager.IsFullScreen = true;
+                        GraphicsDeviceManager.HardwareModeSwitch = true;
+                        GraphicsDeviceManager.ApplyChanges();
+                    }
+                    // Free managed resources
+                    GraphicsDeviceManager.Dispose();
+                }
+
+                // Set large fields to null
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

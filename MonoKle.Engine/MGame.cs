@@ -240,6 +240,12 @@ namespace MonoKle.Engine
             }
         }
 
+        protected override void OnExiting(object sender, EventArgs args)
+        {
+            base.OnExiting(sender, args);
+            GraphicsManager.Dispose();
+        }
+
         private static void BindSettings()
         {
             Variables.Variables.BindProperties(Logger);

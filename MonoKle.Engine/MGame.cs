@@ -151,7 +151,7 @@ namespace MonoKle.Engine
             
             // Initialize other services
             InitializeConsole();
-            _performanceWidget = new PerformanceWidget(GraphicsDevice, FontStorage.Default);
+            _performanceWidget = new PerformanceWidget(GraphicsDevice, FontStorage.Default, TextureStorage.White);
 
             // Set up commands and settings
             Console.CommandBroker.RegisterCallingAssembly();

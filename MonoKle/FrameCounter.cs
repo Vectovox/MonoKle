@@ -7,15 +7,16 @@ namespace MonoKle
     /// </summary>
     public class FrameCounter
     {
-        private const float FrameTimeUpdateFrequency = 0.5f;
+        private const int UpdateFrequencyMs = 500;
+        private const int UpdateFrameCutoff = 200;
 
         private TimeSpan _timeSpent;
         private int _updates;
         private DateTime _startTime;
         
         public bool IsActive { get; private set; }
-
-        public TimeSpan TimePerUpdate { get; private set; }
+        public TimeSpan FrameTime { get; private set; }
+        public int FramesPerSecond { get; private set; }
 
         public void Begin()
         {
@@ -27,24 +28,28 @@ namespace MonoKle
             IsActive = true;
         }
 
-        public void End()
+        public TimeSpan End()
         {
             if (!IsActive)
             {
                 throw new InvalidOperationException($"{nameof(Begin)} has not been called");
             }
 
-            _timeSpent += DateTime.UtcNow - _startTime;
+            var delta = DateTime.UtcNow - _startTime;
+            _timeSpent += delta;
             _updates++;
 
-            if (_timeSpent.TotalSeconds > FrameTimeUpdateFrequency || _updates > 200)
+            if (_timeSpent.TotalMilliseconds >= UpdateFrequencyMs || _updates >= UpdateFrameCutoff)
             {
-                TimePerUpdate = _timeSpent / _updates;
+                FrameTime = _timeSpent / _updates;
+                FramesPerSecond = (int)(_updates / _timeSpent.TotalSeconds);
                 _timeSpent = TimeSpan.Zero;
                 _updates = 0;
             }
 
             IsActive = false;
+
+            return delta;
         }
     }
 }

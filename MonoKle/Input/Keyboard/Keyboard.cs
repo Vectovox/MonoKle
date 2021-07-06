@@ -10,18 +10,23 @@ namespace MonoKle.Input.Keyboard
     /// </summary>
     public class Keyboard : IKeyboard, IUpdateable
     {
-        private KeyState[] keyArray;
+        private readonly Keys[] _possibleKeys;
+        private readonly Button[] _keyArray;
+        private readonly Keys[] _keysDown;
+        private int _keysDownLength;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Keyboard"/> class.
         /// </summary>
         public Keyboard()
         {
-            var values = Enum.GetValues(typeof(Keys));
-            keyArray = new KeyState[(int)values.GetValue(values.GetUpperBound(0)) + 1];
-            foreach (Keys k in values)
+            _possibleKeys = Enum.GetValues(typeof(Keys)).Cast<Keys>().ToArray();
+            _keyArray = new Button[(int)_possibleKeys.Max() + 1];
+            _keysDown = new Keys[_possibleKeys.Length];
+
+            foreach (Keys key in _possibleKeys)
             {
-                keyArray[(int)k] = new KeyState(k);
+                _keyArray[(int)key] = new Button();
             }
         }
 
@@ -161,7 +166,7 @@ namespace MonoKle.Input.Keyboard
         /// <returns>
         /// Collection of keys down.
         /// </returns>
-        public IEnumerable<Keys> GetKeysDown() => keyArray.Where(o => o != null && o.IsDown).Select(o => o.Key);
+        public Span<Keys> GetKeysDown() => new Span<Keys>(_keysDown, 0, _keysDownLength);
 
         /// <summary>
         /// Gets the state of the provided key.
@@ -170,7 +175,7 @@ namespace MonoKle.Input.Keyboard
         /// <returns>
         /// State of the key.
         /// </returns>
-        public IPressable GetKeyState(Keys key) => keyArray[(int)key];
+        public IPressable GetKeyState(Keys key) => _keyArray[(int)key];
 
         /// <summary>
         /// Queries whether the specified key is down.
@@ -229,21 +234,23 @@ namespace MonoKle.Input.Keyboard
 
         public void Update(TimeSpan timeDelta)
         {
+            // Reset keys that are down
+            _keysDownLength = 0;
+
             var keyboardState = Microsoft.Xna.Framework.Input.Keyboard.GetState();
-            foreach (KeyState s in keyArray)
+            foreach (var key in _possibleKeys)
             {
-                s?.Update(keyboardState.IsKeyDown(s.Key), timeDelta);
+                var keyDown = keyboardState.IsKeyDown(key);
+                
+                // Update this key
+                _keyArray[(int)key].Update(keyDown, timeDelta);
+
+                // Register key as down
+                if (keyDown)
+                {
+                    _keysDown[_keysDownLength++] = key;
+                }
             }
-        }
-
-        /// <summary>
-        /// Class containing the status of a key. Used to avoid autoboxings.
-        /// </summary>
-        private class KeyState : Button
-        {
-            public readonly Keys Key;
-
-            public KeyState(Keys key) => Key = key;
         }
     }
 }

@@ -68,8 +68,7 @@ namespace MonoKle.Input.Keyboard
         /// <summary>
         /// Gets the keys that are down.
         /// </summary>
-        /// <returns>Collection of keys down.</returns>
-        IEnumerable<Keys> GetKeysDown();
+        Span<Keys> GetKeysDown();
 
         /// <summary>
         /// Gets the state of the provided key.

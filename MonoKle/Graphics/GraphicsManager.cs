@@ -11,10 +11,10 @@ namespace MonoKle.Graphics
     public class GraphicsManager : IDisposable
     {
         private MPoint2 _resolution;
-        private GraphicsMode _graphicsMode;
-        private bool _vSync;
-        private bool _displayDirty;
-        private bool _disposedValue;
+        private GraphicsMode _graphicsMode = GraphicsMode.Windowed;
+        private bool _vSync = true;
+        private bool _displayDirty = true;
+        private bool _isDisposed;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GraphicsManager"/> class.
@@ -122,7 +122,7 @@ namespace MonoKle.Graphics
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!_disposedValue)
+            if (!_isDisposed)
             {
                 if (disposing)
                 {
@@ -138,7 +138,7 @@ namespace MonoKle.Graphics
                 }
 
                 // Set large fields to null
-                _disposedValue = true;
+                _isDisposed = true;
             }
         }
 

@@ -86,7 +86,7 @@ namespace MonoKle.Graphics
         /// Gets or sets wether VSync is enabled.
         /// </summary>
         [CVar("graphics_vsync")]
-        public bool VSync
+        public bool VSyncEnabled
         {
             get => _vSync;
             set { _vSync = value; _displayDirty = true; }
@@ -96,7 +96,7 @@ namespace MonoKle.Graphics
         /// Gets or sets wether frames are locked to the frequency set by <see cref="Game.TargetElapsedTime"/>.
         /// </summary>
         [CVar("graphics_framelock")]
-        public bool FrameLock
+        public bool FrameLockEnabled
         {
             get => _gameInstance.IsFixedTimeStep;
             set { _gameInstance.IsFixedTimeStep = value; }

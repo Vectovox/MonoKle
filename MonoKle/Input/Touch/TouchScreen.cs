@@ -17,15 +17,8 @@ namespace MonoKle.Input.Touch
             { GestureType.Hold, new PressAction() },
         };
 
-        private readonly Dictionary<GestureType, DragAction> _dragActions = new Dictionary<GestureType, DragAction>
-        {
-            { GestureType.FreeDrag, new DragAction() },
-        };
-
-        private readonly Dictionary<GestureType, PinchAction> _pinchActions = new Dictionary<GestureType, PinchAction>
-        {
-            { GestureType.Pinch, new PinchAction() },
-        };
+        private readonly DragAction _dragAction = new DragAction();
+        private readonly PinchAction _pinchAction = new PinchAction();
 
         private readonly IMouse _mouse;
         private readonly TouchInput _touchInput = new TouchInput();
@@ -45,9 +38,9 @@ namespace MonoKle.Input.Touch
 
         public IPressAction Hold => _pressActions[GestureType.Hold];
 
-        public IDragAction Drag => _dragActions[GestureType.FreeDrag];
+        public IDragAction Drag => _dragAction;
 
-        public IPinchAction Pinch => _pinchActions[GestureType.Pinch];
+        public IPinchAction Pinch => _pinchAction;
 
         public ITouchInput Touch => _touchInput;
 
@@ -60,9 +53,12 @@ namespace MonoKle.Input.Touch
         public void Update(TimeSpan timeDelta)
         {
             // Reset all actions
-            _pressActions.Values.ForEach(action => action.Reset());
-            _dragActions.Values.ForEach(action => action.Reset());
-            _pinchActions.Values.ForEach(action => action.Reset());
+            foreach (var pressAction in _pressActions)
+            {
+                pressAction.Value.Reset();
+            }
+            _dragAction.Reset();
+            _pinchAction.Reset();
 
             if (VirtualTouch)
             {
@@ -88,11 +84,11 @@ namespace MonoKle.Input.Touch
                 {
                     pressAction.Set(gesture.Position.ToPoint());
                 }
-                else if (_dragActions.TryGetValue(gesture.GestureType, out var dragAction))
+                else if (gesture.GestureType == GestureType.FreeDrag)
                 {
-                    dragAction.Set(gesture.Position.ToPoint(), gesture.Delta.ToPoint());
+                    _dragAction.Set(gesture.Position.ToPoint(), gesture.Delta.ToPoint());
                 }
-                else if (_pinchActions.TryGetValue(gesture.GestureType, out var pinchAction))
+                else if (gesture.GestureType == GestureType.Pinch)
                 {
                     // Current
                     var currentDistance = Vector2.Distance(gesture.Position, gesture.Position2);
@@ -105,7 +101,7 @@ namespace MonoKle.Input.Touch
                     // Calculate origin and factor
                     var origin = (previousTouchA + previousTouchB) * 0.5f;
                     var deltaFactor = 2 * (currentDistance - previousDistance) / previousDistance;   // Multiplied by two to get the full change
-                    pinchAction.Set(origin.ToPoint(), deltaFactor);
+                    _pinchAction.Set(origin.ToPoint(), deltaFactor);
                 }
 
                 anyGestures = true;
@@ -147,15 +143,15 @@ namespace MonoKle.Input.Touch
         {
             if (_mouse.ScrollDirection == MouseScrollDirection.Down)
             {
-                _pinchActions[GestureType.Pinch].Set(_mouse.Position.Coordinate, -0.1f);
+                _pinchAction.Set(_mouse.Position.Coordinate, -0.1f);
             }
             else if (_mouse.ScrollDirection == MouseScrollDirection.Up)
             {
-                _pinchActions[GestureType.Pinch].Set(_mouse.Position.Coordinate, 0.1f);
+                _pinchAction.Set(_mouse.Position.Coordinate, 0.1f);
             }
             else if (_mouse.Right.IsHeldFor(TimeSpan.FromMilliseconds(50)))
             {
-                _dragActions[GestureType.FreeDrag].Set(_mouse.Position.Coordinate, _mouse.Position.Delta);
+                _dragAction.Set(_mouse.Position.Coordinate, _mouse.Position.Delta);
             }
             else if (_mouse.Left.IsHeldForOnce(TimeSpan.FromSeconds(1)))
             {

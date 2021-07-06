@@ -131,8 +131,8 @@ namespace MonoKle
 
                 float ScaleGraphValue(float value) => (value - minFrameTime) / maxFrameTime * ChartDelta;
                 Color GetGraphColor(float value) => value <= FrameTime60FPS
-                    ? LerpHelper.Lerp(Color.SpringGreen, Color.Orange, value / FrameTime60FPS)
-                    : LerpHelper.Lerp(Color.Orange, Color.Red, value / FrameTime30FPS);
+                    ? LerpHelper.Lerp(Color.SpringGreen, Color.Yellow, value / FrameTime60FPS)
+                    : LerpHelper.Lerp(Color.Yellow, Color.Red, value / FrameTime30FPS);
 
                 var deltaXPerStep = textSize.X / ChartDataLength;
 

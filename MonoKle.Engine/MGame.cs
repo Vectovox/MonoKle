@@ -121,7 +121,7 @@ namespace MonoKle.Engine
         public static MGame Create(GraphicsMode graphicsMode)
         {
             // Graphics device has to be created immediately but cannot be used before LoadContent
-            GraphicsManager = new GraphicsManager(new GraphicsDeviceManager(GameInstance));
+            GraphicsManager = new GraphicsManager(GameInstance);
             GraphicsManager.ResolutionChanged += ResolutionChanged;
             GraphicsManager.GraphicsMode = graphicsMode;
 

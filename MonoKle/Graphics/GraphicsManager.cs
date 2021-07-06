@@ -10,18 +10,21 @@ namespace MonoKle.Graphics
     /// </summary>
     public class GraphicsManager : IDisposable
     {
+        private readonly Game _gameInstance;
+
         private MPoint2 _resolution;
         private GraphicsMode _graphicsMode = GraphicsMode.Windowed;
         private bool _vSync = true;
         private bool _displayDirty = true;
         private bool _isDisposed;
-
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="GraphicsManager"/> class.
         /// </summary>
-        public GraphicsManager(GraphicsDeviceManager graphicsDeviceManager)
+        public GraphicsManager(Game gameInstance)
         {
-            GraphicsDeviceManager = graphicsDeviceManager;
+            GraphicsDeviceManager = new GraphicsDeviceManager(gameInstance);
+            _gameInstance = gameInstance;
         }
 
         /// <summary>
@@ -87,6 +90,16 @@ namespace MonoKle.Graphics
         {
             get => _vSync;
             set { _vSync = value; _displayDirty = true; }
+        }
+
+        /// <summary>
+        /// Gets or sets wether frames are locked to the frequency set by <see cref="Game.TargetElapsedTime"/>.
+        /// </summary>
+        [CVar("graphics_framelock")]
+        public bool FrameLock
+        {
+            get => _gameInstance.IsFixedTimeStep;
+            set { _gameInstance.IsFixedTimeStep = value; }
         }
 
         public void Update()

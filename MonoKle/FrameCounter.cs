@@ -8,14 +8,16 @@ namespace MonoKle
     public class FrameCounter
     {
         private const int UpdateFrequencyMs = 500;
-        private const int UpdateFrameCutoff = 200;
 
         private TimeSpan _timeSpent;
-        private int _updates;
-        private DateTime _startTime;
+        private int _frames;
+        private DateTime _beginTime;
+
+        private DateTime _globalTimerStart = DateTime.UtcNow;
         
         public bool IsActive { get; private set; }
         public TimeSpan FrameTime { get; private set; }
+        public int TheoreticalFramesPerSecond { get; private set; }
         public int FramesPerSecond { get; private set; }
 
         public void Begin()
@@ -24,8 +26,9 @@ namespace MonoKle
             {
                 throw new InvalidOperationException($"{nameof(Begin)} has already been called");
             }
-            _startTime = DateTime.UtcNow;
+
             IsActive = true;
+            _beginTime = DateTime.UtcNow;
         }
 
         public TimeSpan End()
@@ -35,21 +38,27 @@ namespace MonoKle
                 throw new InvalidOperationException($"{nameof(Begin)} has not been called");
             }
 
-            var delta = DateTime.UtcNow - _startTime;
-            _timeSpent += delta;
-            _updates++;
+            var beginEndDelta = DateTime.UtcNow - _beginTime;
+            _timeSpent += beginEndDelta;
+            _frames++;
 
-            if (_timeSpent.TotalMilliseconds >= UpdateFrequencyMs || _updates >= UpdateFrameCutoff)
+            var globalTimeDelta = DateTime.UtcNow - _globalTimerStart;
+            if (globalTimeDelta.TotalMilliseconds >= UpdateFrequencyMs)
             {
-                FrameTime = _timeSpent / _updates;
-                FramesPerSecond = (int)(_updates / _timeSpent.TotalSeconds);
+                // Update metrics
+                FrameTime = _timeSpent / _frames;
+                TheoreticalFramesPerSecond = (int)(_frames / _timeSpent.TotalSeconds);
+                FramesPerSecond = (int)(_frames / globalTimeDelta.TotalSeconds);
+                
+                // Reset measurements
                 _timeSpent = TimeSpan.Zero;
-                _updates = 0;
+                _frames = 0;
+                _globalTimerStart = DateTime.UtcNow;
             }
 
             IsActive = false;
 
-            return delta;
+            return beginEndDelta;
         }
     }
 }

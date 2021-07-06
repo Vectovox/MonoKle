@@ -4,7 +4,6 @@ using MonoKle.Asset;
 using MonoKle.Configuration;
 using MonoKle.Graphics;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -13,9 +12,12 @@ namespace MonoKle
     public class PerformanceWidget
     {
         private const int ChartDataLength = 120;
-        private const int ChartBottom = 120;
+        private const int ChartBottom = 185;
         private const int ChartDelta = 50;
         private const int ChartTop = ChartBottom - ChartDelta;
+        
+        private const float FrameTime30FPS = 33.33f;
+        private const float FrameTime60FPS = 16.66f;
 
         private readonly FrameCounter _drawCounter = new FrameCounter();
         private readonly FrameCounter _updateCounter = new FrameCounter();
@@ -92,38 +94,67 @@ namespace MonoKle
                 return;
             }
 
-            var maxValue = _chartData.Max();
-            var minValue = _chartData.Min();
+            var totalFrameTime = _updateCounter.FrameTime + _drawCounter.FrameTime;
+            var theoreticalTotalFPS = (int)(1 / totalFrameTime.TotalSeconds);
+            var maxFrameTime = _chartData.Max();
+            var minFrameTime = _chartData.Min();
+            
+            // Draw the text
+            var builder = new StringBuilder();
+            builder.AppendLine($"FPS: {_drawCounter.FramesPerSecond}");
+            builder.AppendLine();
+            builder.AppendLine($"Frame time: {totalFrameTime.TotalMilliseconds:0.00ms} ({theoreticalTotalFPS}/s)");
+            builder.AppendLine($"    Update: {_updateCounter.FrameTime.TotalMilliseconds:0.00ms} ({_updateCounter.TheoreticalFramesPerSecond}/s)");
+            builder.AppendLine($"      Draw: {_drawCounter.FrameTime.TotalMilliseconds:0.00ms} ({_drawCounter.TheoreticalFramesPerSecond}/s)");
+            builder.AppendLine();
+            builder.AppendLine("Frame times");
+            builder.AppendLine($"MAX: {maxFrameTime:0.00ms}");
+            builder.AppendLine();
+            builder.AppendLine();
+            builder.AppendLine();
+            builder.AppendLine();
+            builder.AppendLine($"MIN: {minFrameTime:0.00ms}");
+
+            var text = builder.ToString();
+            var textSize = _font.Measure(text);
+
+            _spriteBatch.Begin();
+            _spriteBatch.Draw(_whiteTexture, new MRectangleInt(0, 0, (int)Math.Ceiling(textSize.X), (int)Math.Ceiling(textSize.Y)), new Color(0, 0, 0, 150));
+            _font.Draw(_spriteBatch, text, MVector2.Zero, Color.White);
+            _spriteBatch.End();
 
             // Draw graph
             _primitiveBatch.Begin();
-            int coordinateX = 0;
+            var coordinateX = 0;
+
+            float ScaleGraphValue(float value) => (value - minFrameTime) / maxFrameTime * ChartDelta;
+            Color GetGraphColor(float value) => value <= FrameTime60FPS
+                ? Lerp(Color.SpringGreen, Color.Orange, value / FrameTime60FPS)
+                : Lerp(Color.Orange, Color.Red, value / FrameTime30FPS);
+
+            var deltaXPerStep = textSize.X / ChartDataLength;
+
             // Iterate all points and connect with lines
             for (int i = _chartStartIndex; i != _chartEndIndex; IncrementChartPointer(ref i))
             {
-                var first = (_chartData[i] - minValue) / maxValue * ChartDelta;
-                var second = (_chartData[WrapChartPointer(i + 1)] - minValue) / maxValue * ChartDelta;
+                var firstValue = _chartData[i];
+                var secondValue = _chartData[WrapChartPointer(i + 1)];
+                var firstY = ScaleGraphValue(firstValue);
+                var secondY = ScaleGraphValue(secondValue);
+                var firstX = coordinateX * deltaXPerStep;
+                var secondX = (coordinateX + 1) * deltaXPerStep;
 
-                _primitiveBatch.DrawLine(new MVector2(coordinateX, ChartBottom - first), new MVector2(coordinateX + 1, ChartBottom - second), Color.White);
+                _primitiveBatch.DrawLine(new MVector2(firstX, ChartBottom - firstY), new MVector2(secondX, ChartBottom - secondY), GetGraphColor(firstValue), GetGraphColor(secondValue));
                 coordinateX++;
             }
+
             // Draw top and bottom limits
-            _primitiveBatch.DrawLine(new MVector2(0, ChartTop), new MVector2(coordinateX, ChartTop), Color.White);
-            _primitiveBatch.DrawLine(new MVector2(0, ChartBottom), new MVector2(coordinateX, ChartBottom), Color.White);
+            _primitiveBatch.DrawLine(new MVector2(0, ChartTop), new MVector2(textSize.X, ChartTop), Color.White);
+            _primitiveBatch.DrawLine(new MVector2(0, ChartBottom), new MVector2(textSize.X, ChartBottom), Color.White);
             _primitiveBatch.End();
-
-            // Draw the text
-            var builder = new StringBuilder();
-            builder.AppendLine($"Update: {_updateCounter.FrameTime.TotalMilliseconds:0.00ms} ({_updateCounter.FramesPerSecond}/s)");
-            builder.AppendLine($"  Draw: {_drawCounter.FrameTime.TotalMilliseconds:0.00ms} ({_drawCounter.FramesPerSecond}/s)");
-            builder.AppendLine();
-            builder.AppendLine($"Max: {maxValue:0.00ms}\n\n\n\n");
-            builder.AppendLine($"Min: {minValue:0.00ms}");
-
-            _spriteBatch.Begin();
-            _spriteBatch.Draw(_whiteTexture, new MRectangleInt(0, 0, 220, 155), new Color(0, 0, 0, 100));
-            _font.Draw(_spriteBatch, builder.ToString(), MVector2.Zero, Color.White);
-            _spriteBatch.End();
         }
+
+        private Color Lerp(Color a, Color b, float amount) =>
+            new Color(MathHelper.Lerp(a.R, b.R, amount) / 255f, MathHelper.Lerp(a.G, b.G, amount) / 255f, MathHelper.Lerp(a.B, b.B, amount) / 255f, MathHelper.Lerp(a.A, b.A, amount) / 255f);
     }
 }

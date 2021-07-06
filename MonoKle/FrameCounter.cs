@@ -7,7 +7,7 @@ namespace MonoKle
     /// </summary>
     public class FrameCounter
     {
-        private const int UpdateFrequencyMs = 500;
+        private const int UpdateFrequencyMs = 1000;
 
         private TimeSpan _timeSpent;
         private int _frames;

@@ -8,6 +8,8 @@ namespace MonoKle
     /// </summary>
     public class CachedProcessProvider
     {
+        private const int SecondsBetweenRefresh = 5;
+
         private Process _process = Process.GetCurrentProcess();
         private DateTime _lastRefresh = DateTime.UtcNow;
 
@@ -15,9 +17,9 @@ namespace MonoKle
 
         public Process GetCurrentProcess()
         {
-            if ((DateTime.UtcNow - _lastRefresh).TotalSeconds >= 2)
+            if ((DateTime.UtcNow - _lastRefresh).TotalSeconds >= SecondsBetweenRefresh)
             {
-                _process = Process.GetCurrentProcess();
+                _process.Refresh();
                 _lastRefresh = DateTime.UtcNow;
             }
             return _process;

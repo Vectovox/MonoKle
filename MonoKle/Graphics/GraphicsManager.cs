@@ -93,13 +93,23 @@ namespace MonoKle.Graphics
         }
 
         /// <summary>
-        /// Gets or sets wether frames are locked to the frequency set by <see cref="Game.TargetElapsedTime"/>.
+        /// Gets or sets wether frames are locked to the frequency set by <see cref="FrameLockTarget"/>.
         /// </summary>
         [CVar("graphics_framelock")]
         public bool FrameLockEnabled
         {
             get => _gameInstance.IsFixedTimeStep;
             set { _gameInstance.IsFixedTimeStep = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the target render frequency.
+        /// </summary>
+        [CVar("graphics_framelock_target")]
+        public int FrameLockTarget
+        {
+            get => (int)(1 / _gameInstance.TargetElapsedTime.TotalSeconds);
+            set { _gameInstance.TargetElapsedTime = TimeSpan.FromSeconds(1f / value); }
         }
 
         public void Update()

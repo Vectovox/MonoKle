@@ -4,6 +4,7 @@ using MonoKle.Asset;
 using MonoKle.Configuration;
 using MonoKle.Graphics;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -11,7 +12,7 @@ namespace MonoKle
 {
     public class PerformanceWidget
     {
-        private const int ChartDataLength = 120;
+        private const int ChartDataLength = 180;
         private const int ChartBottom = 185;
         private const int ChartDelta = 50;
         private const int ChartTop = ChartBottom - ChartDelta;
@@ -25,6 +26,7 @@ namespace MonoKle
         private readonly PrimitiveBatch2D _primitiveBatch;
         private readonly FontInstance _font;
         private readonly MTexture _whiteTexture;
+        private readonly CachedProcessProvider _processProvider;
 
         private readonly float[] _chartData = new float[ChartDataLength];
         private int _chartStartIndex = 0;
@@ -36,6 +38,7 @@ namespace MonoKle
             _primitiveBatch = new PrimitiveBatch2D(graphicsDevice);
             _font = font;
             _whiteTexture = whiteTexture;
+            _processProvider = new CachedProcessProvider();
         }
 
         /// <summary>
@@ -101,19 +104,25 @@ namespace MonoKle
             
             // Draw the text
             var builder = new StringBuilder();
-            builder.AppendLine($"FPS: {_drawCounter.FramesPerSecond}");
+            builder.AppendLine($"= FPS: {_drawCounter.FramesPerSecond}");
             builder.AppendLine();
-            builder.AppendLine($"Frame time: {totalFrameTime.TotalMilliseconds:0.00ms} ({theoreticalTotalFPS}/s)");
-            builder.AppendLine($"    Update: {_updateCounter.FrameTime.TotalMilliseconds:0.00ms} ({_updateCounter.TheoreticalFramesPerSecond}/s)");
-            builder.AppendLine($"      Draw: {_drawCounter.FrameTime.TotalMilliseconds:0.00ms} ({_drawCounter.TheoreticalFramesPerSecond}/s)");
+            builder.AppendLine($"= FRAME TIME");
+            builder.AppendLine($"  Total: {totalFrameTime.TotalMilliseconds:0.00ms} ({theoreticalTotalFPS}/s)");
+            builder.AppendLine($" Update: {_updateCounter.FrameTime.TotalMilliseconds:0.00ms} ({_updateCounter.TheoreticalFramesPerSecond}/s)");
+            builder.AppendLine($"   Draw: {_drawCounter.FrameTime.TotalMilliseconds:0.00ms} ({_drawCounter.TheoreticalFramesPerSecond}/s)");
             builder.AppendLine();
-            builder.AppendLine("Frame times");
-            builder.AppendLine($"MAX: {maxFrameTime:0.00ms}");
-            builder.AppendLine();
-            builder.AppendLine();
+            builder.AppendLine($" MAX: {maxFrameTime:0.00ms}");
             builder.AppendLine();
             builder.AppendLine();
-            builder.AppendLine($"MIN: {minFrameTime:0.00ms}");
+            builder.AppendLine();
+            builder.AppendLine();
+            builder.AppendLine($" MIN: {minFrameTime:0.00ms}");
+            builder.AppendLine();
+            builder.AppendLine($"= PROCESS");
+            builder.AppendLine($" Physical: {_processProvider.Process.WorkingSet64 / 1000000} MB ({_processProvider.Process.PeakWorkingSet64 / 1000000} MB)");
+            builder.AppendLine($"    Paged: {_processProvider.Process.PagedMemorySize64 / 1000000} MB ({_processProvider.Process.PeakPagedMemorySize64 / 1000000} MB)");
+            builder.AppendLine($"  Virtual: {_processProvider.Process.VirtualMemorySize64 / 1000000} MB ({_processProvider.Process.PeakVirtualMemorySize64 / 1000000} MB)");
+            builder.AppendLine($"  Threads: {_processProvider.Process.Threads.Count}");
 
             var text = builder.ToString();
             var textSize = _font.Measure(text);

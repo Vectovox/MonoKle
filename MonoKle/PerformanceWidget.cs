@@ -131,8 +131,8 @@ namespace MonoKle
 
                 float ScaleGraphValue(float value) => (value - minFrameTime) / maxFrameTime * ChartDelta;
                 Color GetGraphColor(float value) => value <= FrameTime60FPS
-                    ? Lerp(Color.SpringGreen, Color.Orange, value / FrameTime60FPS)
-                    : Lerp(Color.Orange, Color.Red, value / FrameTime30FPS);
+                    ? LerpHelper.Lerp(Color.SpringGreen, Color.Orange, value / FrameTime60FPS)
+                    : LerpHelper.Lerp(Color.Orange, Color.Red, value / FrameTime30FPS);
 
                 var deltaXPerStep = textSize.X / ChartDataLength;
 
@@ -201,9 +201,6 @@ namespace MonoKle
 
             return _cachedText;
         }
-
-        private Color Lerp(Color a, Color b, float amount) =>
-            new Color(MathHelper.Lerp(a.R, b.R, amount) / 255f, MathHelper.Lerp(a.G, b.G, amount) / 255f, MathHelper.Lerp(a.B, b.B, amount) / 255f, MathHelper.Lerp(a.A, b.A, amount) / 255f);
 
         public enum MeasurementLevel
         {

@@ -148,7 +148,7 @@ namespace MonoKle.Asset
                             // No good place to cut the text so end it here already
                             break;
                         }
-                        wrappedText.Remove(lastPlaceToCut, 1).Insert(lastPlaceToCut, "\n");
+                        wrappedText.Remove(lastPlaceToCut, 1).Insert(lastPlaceToCut, '\n');
 
                         // Update indices
                         lineStartIndex = lastPlaceToCut + 1;

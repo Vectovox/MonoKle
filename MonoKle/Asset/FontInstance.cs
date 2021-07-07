@@ -270,7 +270,6 @@ namespace MonoKle.Asset
                 }
                 else if (_fontData.TryGetChar(character, out FontChar fontCharacter))
                 {
-                    var sourceRectangle = new Rectangle(fontCharacter.X, fontCharacter.Y, fontCharacter.Width, fontCharacter.Height);
                     var destinationVector = new Vector2(drawPosition.X + fontCharacter.XOffset * scaleFactor, drawPosition.Y + fontCharacter.YOffset * scaleFactor);
 
                     // Apply rotation
@@ -287,8 +286,10 @@ namespace MonoKle.Asset
                         destinationVector.Y = (float)y + position.Y;
                     }
 
-                    spriteBatch.Draw(_fontData.GetPage(fontCharacter.Page), destinationVector, sourceRectangle, currentColor,
-                        rotation, Vector2.Zero, scaleFactor, effect, layerDepth);
+                    var sourceRectangle = new Rectangle(fontCharacter.X, fontCharacter.Y, fontCharacter.Width, fontCharacter.Height);
+
+                    spriteBatch.Draw(_fontData.GetPage(fontCharacter.Page), destinationVector, sourceRectangle,
+                        currentColor, rotation, Vector2.Zero, scaleFactor, effect, layerDepth);
                     drawPosition.X += fontCharacter.XAdvance * scaleFactor + singleOutline;
                 }
             }

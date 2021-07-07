@@ -15,6 +15,13 @@ namespace MonoKle.Input.Keyboard
         private readonly Keys[] _keysDown;
         private int _keysDownLength;
 
+        // Cached funcs for allocation performance
+        private readonly Func<Keys, bool> _isKeyHeldFunc;
+        private readonly Func<Keys, bool> _isKeyDownFunc;
+        private readonly Func<Keys, bool> _isKeyPressedFunc;
+        private readonly Func<Keys, bool> _isKeyReleasedFunc;
+        private readonly Func<Keys, bool> _isKeyUpFunc;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Keyboard"/> class.
         /// </summary>
@@ -28,6 +35,12 @@ namespace MonoKle.Input.Keyboard
             {
                 _keyArray[(int)key] = new Button();
             }
+
+            _isKeyHeldFunc = new Func<Keys, bool>(IsKeyHeld);
+            _isKeyDownFunc = new Func<Keys, bool>(IsKeyDown);
+            _isKeyPressedFunc = new Func<Keys, bool>(IsKeyPressed);
+            _isKeyReleasedFunc = new Func<Keys, bool>(IsKeyReleased);
+            _isKeyUpFunc = new Func<Keys, bool>(IsKeyUp);
         }
 
         /// <summary>
@@ -38,17 +51,9 @@ namespace MonoKle.Input.Keyboard
         /// <returns>
         /// True if the keys are down; otherwise false.
         /// </returns>
-        public bool AreKeysDown(IEnumerable<Keys> keys, CollectionQueryBehavior behavior)
-        {
-            if (behavior == CollectionQueryBehavior.All)
-            {
-                return keys.All(o => IsKeyDown(o));
-            }
-            else
-            {
-                return keys.Any(o => IsKeyDown(o));
-            }
-        }
+        public bool AreKeysDown(IEnumerable<Keys> keys, CollectionQueryBehavior behavior) => behavior == CollectionQueryBehavior.All
+            ? keys.All(_isKeyDownFunc)
+            : keys.Any(_isKeyDownFunc);
 
         /// <summary>
         /// Queries whether the specified keys are held.
@@ -58,17 +63,9 @@ namespace MonoKle.Input.Keyboard
         /// <returns>
         /// True if the keys are held; otherwise false.
         /// </returns>
-        public bool AreKeysHeld(IEnumerable<Keys> keys, CollectionQueryBehavior behavior)
-        {
-            if (behavior == CollectionQueryBehavior.All)
-            {
-                return keys.All(o => IsKeyHeld(o));
-            }
-            else
-            {
-                return keys.Any(o => IsKeyHeld(o));
-            }
-        }
+        public bool AreKeysHeld(IEnumerable<Keys> keys, CollectionQueryBehavior behavior) => behavior == CollectionQueryBehavior.All
+            ? keys.All(_isKeyHeldFunc)
+            : keys.Any(_isKeyHeldFunc);
 
         /// <summary>
         /// Queries whether the specified keys are held for the given amount of time.
@@ -99,17 +96,9 @@ namespace MonoKle.Input.Keyboard
         /// <returns>
         /// True if keys are pressed; otherwise false.
         /// </returns>
-        public bool AreKeysPressed(IEnumerable<Keys> keys, CollectionQueryBehavior behavior)
-        {
-            if (behavior == CollectionQueryBehavior.All)
-            {
-                return keys.All(o => IsKeyPressed(o));
-            }
-            else
-            {
-                return keys.Any(o => IsKeyPressed(o));
-            }
-        }
+        public bool AreKeysPressed(IEnumerable<Keys> keys, CollectionQueryBehavior behavior) => behavior == CollectionQueryBehavior.All
+            ? keys.All(_isKeyPressedFunc)
+            : keys.Any(_isKeyPressedFunc);
 
         /// <summary>
         /// Queries whether the specified keys are released.
@@ -119,17 +108,9 @@ namespace MonoKle.Input.Keyboard
         /// <returns>
         /// True if keys are released; otherwise false.
         /// </returns>
-        public bool AreKeysReleased(IEnumerable<Keys> keys, CollectionQueryBehavior behavior)
-        {
-            if (behavior == CollectionQueryBehavior.All)
-            {
-                return keys.All(o => IsKeyReleased(o));
-            }
-            else
-            {
-                return keys.Any(o => IsKeyReleased(o));
-            }
-        }
+        public bool AreKeysReleased(IEnumerable<Keys> keys, CollectionQueryBehavior behavior) => behavior == CollectionQueryBehavior.All
+            ? keys.All(_isKeyReleasedFunc)
+            : keys.Any(_isKeyReleasedFunc);
 
         /// <summary>
         /// Queries whether the specified keys are up.
@@ -139,17 +120,9 @@ namespace MonoKle.Input.Keyboard
         /// <returns>
         /// True if the keys are up; otherwise false.
         /// </returns>
-        public bool AreKeysUp(IEnumerable<Keys> keys, CollectionQueryBehavior behavior)
-        {
-            if (behavior == CollectionQueryBehavior.All)
-            {
-                return keys.All(o => IsKeyUp(o));
-            }
-            else
-            {
-                return keys.Any(o => IsKeyUp(o));
-            }
-        }
+        public bool AreKeysUp(IEnumerable<Keys> keys, CollectionQueryBehavior behavior) => behavior == CollectionQueryBehavior.All
+            ? keys.All(_isKeyUpFunc)
+            : keys.Any(_isKeyUpFunc);
 
         /// <summary>
         /// Provides the time, in seconds, that the specified key has been continously held.
@@ -241,7 +214,7 @@ namespace MonoKle.Input.Keyboard
             foreach (var key in _possibleKeys)
             {
                 var keyDown = keyboardState.IsKeyDown(key);
-                
+
                 // Update this key
                 _keyArray[(int)key].Update(keyDown, timeDelta);
 

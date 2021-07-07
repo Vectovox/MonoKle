@@ -26,6 +26,12 @@ namespace Demo.Domain
             MaxLength = 50,
         };
         private bool _outlineFont = false;
+        private static Func<char, Color, Color> _colorChanger = (token, original) => token switch
+        {
+            '1' => Color.Red,
+            _ => original,
+        };
+        private RenderTarget2D _inverterRenderTarget;
 
         public override void Draw(TimeSpan deltaTime)
         {
@@ -39,7 +45,7 @@ namespace Demo.Domain
             _primitive2D.DrawLine(new Vector2(380, 500), new Vector2(500, 380), Color.Red, Color.Blue);
             _primitive2D.End();
 
-            _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.Default,
+            _spriteBatch.Begin(SpriteSortMode.Texture, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.Default,
                 RasterizerState.CullCounterClockwise, null, _gameDisplay.Camera.TransformMatrix);
 
             // Test animation
@@ -96,12 +102,7 @@ namespace Demo.Domain
             _spriteBatch.Draw(MGame.TextureStorage.White, new MRectangleInt(0, 1850, wrapLength, -50), new Color(1f, 1f, 1f, 0.3f));
 
             // Test color changing
-            static Color ColorChanger(char token, Color original) => token switch
-            {
-                '1' => Color.Red,
-                _ => original,
-            };
-            font.WithSize(64).Draw(_spriteBatch, "Test changing \\1\\color\\0\\ in text.", new Vector2(500, 500), Color.Green, ColorChanger);
+            font.WithSize(64).Draw(_spriteBatch, "Test changing \\1\\color\\0\\ in text.", new Vector2(500, 500), Color.Green, _colorChanger);
 
             // Test size
             _spriteBatch.Draw(MGame.TextureStorage.White, new MRectangleInt(500, 250, 100, 64), Color.DarkGray);
@@ -149,8 +150,11 @@ namespace Demo.Domain
             _spriteBatch.End();
 
             // Render inverting stuff 
-            using RenderTarget2D _inverterRenderTarget =
-                new RenderTarget2D(MGame.GraphicsManager.GraphicsDevice, _gameDisplay.DisplayResolution.X, _gameDisplay.DisplayResolution.Y);
+            if (_inverterRenderTarget == null || _inverterRenderTarget.Width != _gameDisplay.DisplayResolution.X || _inverterRenderTarget.Height != _gameDisplay.DisplayResolution.Y)
+            {
+                _inverterRenderTarget?.Dispose();
+                _inverterRenderTarget = new RenderTarget2D(MGame.GraphicsManager.GraphicsDevice, _gameDisplay.DisplayResolution.X, _gameDisplay.DisplayResolution.Y);
+            }
             MGame.GraphicsManager.GraphicsDevice.SetRenderTarget(_inverterRenderTarget);
 
             _spriteBatch.Begin();

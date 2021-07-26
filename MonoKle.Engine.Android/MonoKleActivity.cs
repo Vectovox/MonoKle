@@ -20,7 +20,7 @@ namespace MonoKle.Engine.Android
             base.OnCreate(bundle);
 
             // Create MonoKleGame
-            var game = MGame.Create(GraphicsMode.Fullscreen);
+            var game = MGame.Create(GraphicsMode.Borderless);
             
             // Hook up MonoGame
             View = game.Services.GetService(typeof(View)) as View;

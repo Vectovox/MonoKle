@@ -25,6 +25,29 @@ namespace MonoKle.Graphics
         {
             GraphicsDeviceManager = new GraphicsDeviceManager(gameInstance);
             _gameInstance = gameInstance;
+            GraphicsDeviceManager.DeviceCreated += GraphicsDeviceManager_DeviceCreated;
+            gameInstance.Window.ClientSizeChanged += Window_ClientSizeChanged;
+        }
+
+        private void Window_ClientSizeChanged(object sender, EventArgs e)
+        {
+            if (_graphicsMode == GraphicsMode.Windowed)
+            {
+                // Window was manually changed so make a hard resolution assignment
+                Resolution = new MPoint2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+            }
+            else if (_graphicsMode == GraphicsMode.Borderless)
+            {
+                // Fixes orientation change automatically on mobile since 
+                // recalculating borderless assigns backbuffer to adapter values
+                _displayDirty = true;
+            }
+        }
+
+        private void GraphicsDeviceManager_DeviceCreated(object sender, EventArgs e)
+        {
+            // Sets the initial resolution to use
+            Resolution = new MPoint2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
         }
 
         /// <summary>

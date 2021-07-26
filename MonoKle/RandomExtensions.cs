@@ -8,7 +8,7 @@ namespace MonoKle
         /// Returns a random <see cref="MVector2"/> with components within the given range.
         /// </summary>
         /// <remarks>Resulting component values will be integers</remarks>
-        /// <param name="random">The random object to use.</param>
+        /// <param name="random">The random instance to use.</param>
         /// <param name="min">The minimum values.</param>
         /// <param name="max">The maximum values.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if the maximum value is not greater than the minimum.</exception>
@@ -18,7 +18,7 @@ namespace MonoKle
         /// <summary>
         /// Returns a random <see cref="MPoint2"/> with components within the given inclusive range.
         /// </summary>
-        /// <param name="random">The random object to use.</param>
+        /// <param name="random">The random instance to use.</param>
         /// <param name="min">The inclusive minimum values.</param>
         /// <param name="max">The inclusive maximum values.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if the maximum value is not greater than the minimum.</exception>
@@ -28,9 +28,27 @@ namespace MonoKle
         /// <summary>
         /// Returns a random <see cref="MPoint2"/> located inside the provided inclusive space.
         /// </summary>
-        /// <param name="random">The random object to use.</param>
+        /// <param name="random">The random instance to use.</param>
         /// <param name="randomSpace">The available space to generate random numbers for.</param>
         public static MPoint2 NextPoint(this Random random, MDiscreteRectangle randomSpace) =>
             random.NextPoint(randomSpace.TopLeft, randomSpace.BottomRight);
+
+        /// <summary>
+        /// Returns a random value between the provided min and max values.
+        /// </summary>
+        /// <param name="random">The random instance to use.</param>
+        /// <param name="min">The inclusive min value.</param>
+        /// <param name="max">The inclusive max value.</param>
+        public static double NextDouble(this Random random, double min, double max) => min <= max
+            ? min + random.NextDouble() * (max - min)
+            : throw new ArgumentException("Minimum value must be smaller than maximum value");
+
+        /// <summary>
+        /// Returns either the provided value (v) or the negated value (-v).
+        /// </summary>
+        /// <param name="random">The random instance to use.</param>
+        /// <param name="value">The value to potentially negate.</param>
+        public static double NextNegate(this Random random, double value)
+            => random.Next(0, 2) == 0 ? value : -value;
     }
 }

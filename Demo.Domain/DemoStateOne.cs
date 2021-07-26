@@ -239,6 +239,10 @@ namespace Demo.Domain
                 {
                     _gameDisplay.Camera.Scale -= 0.01f;
                 }
+                if (MGame.Keyboard.IsKeyPressed(Keys.F4))
+                {
+                    Microsoft.Xna.Framework.Media.MediaPlayer.Play(MGame.Asset.Song["testsong"]);
+                }
 
                 if (MGame.TouchScreen.Pinch.TryGetValues(out var pinchOrigin, out var pinchFactor))
                 {
@@ -316,6 +320,7 @@ namespace Demo.Domain
             MGame.Console.WriteLine(MGame.Asset.Font.LoadFromManifest("Data/assets.manifest") + " fonts loaded.");
             MGame.Console.WriteLine(MGame.Asset.Effect.LoadFromManifest("Data/assets.manifest") + " effects loaded.");
             MGame.Console.WriteLine(MGame.Asset.SoundEffect.LoadFromManifest("Data/assets.manifest") + " sounds loaded.");
+            MGame.Console.WriteLine(MGame.Asset.Song.LoadFromManifest("Data/assets.manifest") + " songs loaded.");
         }
 
         protected override void Activated(StateSwitchData data)

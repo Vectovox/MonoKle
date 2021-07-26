@@ -26,5 +26,10 @@ namespace MonoKle.Engine
         /// Gets the texture storage, loading and providing textures.
         /// </summary>
         public TextureStorage Texture { get; set; }
+
+        /// <summary>
+        /// Gets the song storage, loading and providing songs.
+        /// </summary>
+        public SongStorage Song { get; set; }
     }
 }

@@ -132,6 +132,7 @@ namespace MonoKle.Engine
             Asset.Texture = new TextureStorage(GraphicsDevice, Logger);
             Asset.SoundEffect = new SoundEffectStorage(Logger);
             Asset.Effect = new EffectStorage(GraphicsDevice, Logger);
+            Asset.Song = new SongStorage(Logger);
             InitializeFontStorage();
             
             // Initialize other services

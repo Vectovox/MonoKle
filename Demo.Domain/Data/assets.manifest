@@ -15,3 +15,5 @@ testfont_o  Data/Fonts/testfont_outline.mfnt
 
 santa       Data/Sounds/santa.wav
 inversion   Data/Effects/inversion.mfx
+
+testsong    Data/Songs/testsong.ogg

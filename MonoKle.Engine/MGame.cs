@@ -100,6 +100,11 @@ namespace MonoKle.Engine
         public static VariableStorage Variables { get; private set; }
 
         /// <summary>
+        /// Gets the sound mixer.
+        /// </summary>
+        public static Mixer Mixer { get; } = new Mixer();
+
+        /// <summary>
         /// Initializes the MonoKle backend, returning a runnable game instance.
         /// </summary>
         /// <param name="graphicsMode">The initial graphics mode setting.</param>
@@ -233,6 +238,7 @@ namespace MonoKle.Engine
             Variables.Variables.BindProperties(Mouse);
             Variables.Variables.BindProperties(TouchScreen);
             Variables.Variables.BindProperties(_performanceWidget);
+            Variables.Variables.BindProperties(Mixer);
         }
 
         private static void InitializeConsole()

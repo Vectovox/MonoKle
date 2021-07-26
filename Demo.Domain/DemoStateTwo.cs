@@ -39,7 +39,7 @@ namespace Demo.Domain
             _primitiveBatch2D.End();
 
             _spriteBatch.Begin();
-            MGame.FontStorage.Default.Draw(_spriteBatch, _tapString, Vector2.Zero, Color.White);
+            MGame.Asset.Font.Default.Draw(_spriteBatch, _tapString, Vector2.Zero, Color.White);
             _spriteBatch.End();
         }
 

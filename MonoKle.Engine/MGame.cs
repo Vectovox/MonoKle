@@ -29,19 +29,9 @@ namespace MonoKle.Engine
         private static GameConsole _console;
 
         /// <summary>
-        /// Gets the sound effect storage, loading and providing sound effects.
+        /// Gets the container of asset storages.
         /// </summary>
-        public static SoundEffectStorage SoundEffectStorage { get; private set; }
-
-        /// <summary>
-        /// Gets the effect storage, loading and providing effects.
-        /// </summary>
-        public static EffectStorage EffectStorage { get; private set; }
-
-        /// <summary>
-        /// Gets the font storage, loading and providing fonts.
-        /// </summary>
-        public static FontStorage FontStorage { get; private set; }
+        public static AssetStorageContainer Asset { get; } = new AssetStorageContainer();
 
         /// <summary>
         /// Gets the graphics manager. This is in charge of screen settings (resolution, full-screen, etc.)
@@ -100,11 +90,6 @@ namespace MonoKle.Engine
         public static MonoKleSettings Settings { get; } = new MonoKleSettings();
 
         /// <summary>
-        /// Gets the texture storage, loading and providing textures.
-        /// </summary>
-        public static TextureStorage TextureStorage { get; private set; }
-
-        /// <summary>
         /// Gets the total time spent in the game.
         /// </summary>
         public static TimeSpan TotalGameTime { get; private set; }
@@ -144,14 +129,14 @@ namespace MonoKle.Engine
             base.LoadContent();
 
             // Initialize storages
-            TextureStorage = new TextureStorage(GraphicsDevice, Logger);
-            SoundEffectStorage = new SoundEffectStorage(Logger);
-            EffectStorage = new EffectStorage(GraphicsDevice, Logger);
+            Asset.Texture = new TextureStorage(GraphicsDevice, Logger);
+            Asset.SoundEffect = new SoundEffectStorage(Logger);
+            Asset.Effect = new EffectStorage(GraphicsDevice, Logger);
             InitializeFontStorage();
             
             // Initialize other services
             InitializeConsole();
-            _performanceWidget = new PerformanceWidget(GraphicsDevice, FontStorage.Default, TextureStorage.White);
+            _performanceWidget = new PerformanceWidget(GraphicsDevice, Asset.Font.Default, Asset.Texture.White);
 
             // Set up commands and settings
             Console.CommandBroker.RegisterCallingAssembly();
@@ -255,19 +240,19 @@ namespace MonoKle.Engine
                 GraphicsManager.GraphicsDevice,
                 _keyboard,
                 _mouse,
-                TextureStorage.White,
-                FontStorage.Default,
+                Asset.Texture.White,
+                Asset.Font.Default,
                 Logger);
             Console.ToggleKey = Microsoft.Xna.Framework.Input.Keys.F1;
-            Console.TextFont = FontStorage.Default;
+            Console.TextFont = Asset.Font.Default;
         }
 
         private static void InitializeFontStorage()
         {
-            FontStorage = new FontStorage(GraphicsManager.GraphicsDevice, Logger);
+            Asset.Font = new FontStorage(GraphicsManager.GraphicsDevice, Logger);
             using var ms = new MemoryStream(Resources.FontResources.DefaultFont);
-            FontStorage.Load(ms, "default");
-            FontStorage.Default = FontStorage["default"];
+            Asset.Font.Load(ms, "default");
+            Asset.Font.Default = Asset.Font["default"];
         }
 
         private static void InitializeVariables()

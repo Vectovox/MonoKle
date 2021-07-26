@@ -49,24 +49,24 @@ namespace Demo.Domain
                 RasterizerState.CullCounterClockwise, null, _gameDisplay.Camera.TransformMatrix);
 
             // Test animation
-            _spriteBatch.Draw(MGame.TextureStorage["animation"].Data, new Vector2(0, -20), MGame.TextureStorage["animation"].AnimateRowAtlas(_timer.Elapsed), Color.White);
+            _spriteBatch.Draw(MGame.Asset.Texture["animation"].Data, new Vector2(0, -20), MGame.Asset.Texture["animation"].AnimateRowAtlas(_timer.Elapsed), Color.White);
 
             // Test textures in general
-            _spriteBatch.Draw(MGame.TextureStorage.Error, new MRectangleInt(0, 50, 16, 16), Color.White);
-            _spriteBatch.Draw(MGame.TextureStorage.White, new MRectangleInt(16, 16).Translate(_errorBoxPosition.ToMPoint2()), Color.Red);
-            _spriteBatch.Draw(MGame.TextureStorage["orange"], new Vector2(100, 50), Color.White);
-            _spriteBatch.Draw(MGame.TextureStorage["red"], new Vector2(150, 50), Color.White);
-            _spriteBatch.Draw(MGame.TextureStorage["green"], new Vector2(200, 50), Color.White);
-            _spriteBatch.Draw(MGame.TextureStorage["blue"], new Vector2(250, 50), Color.White);
+            _spriteBatch.Draw(MGame.Asset.Texture.Error, new MRectangleInt(0, 50, 16, 16), Color.White);
+            _spriteBatch.Draw(MGame.Asset.Texture.White, new MRectangleInt(16, 16).Translate(_errorBoxPosition.ToMPoint2()), Color.Red);
+            _spriteBatch.Draw(MGame.Asset.Texture["orange"], new Vector2(100, 50), Color.White);
+            _spriteBatch.Draw(MGame.Asset.Texture["red"], new Vector2(150, 50), Color.White);
+            _spriteBatch.Draw(MGame.Asset.Texture["green"], new Vector2(200, 50), Color.White);
+            _spriteBatch.Draw(MGame.Asset.Texture["blue"], new Vector2(250, 50), Color.White);
 
             // Test atlasing
-            var colorAtlas = MGame.TextureStorage["colorAtlas"];
+            var colorAtlas = MGame.Asset.Texture["colorAtlas"];
             _spriteBatch.Draw(colorAtlas.Data, new Vector2(500, 50), colorAtlas.GetCellAtlas(0, 0), Color.White);
             _spriteBatch.Draw(colorAtlas.Data, new Vector2(550, 50), colorAtlas.GetCellAtlas(1, 0), Color.White);
             _spriteBatch.Draw(colorAtlas.Data, new Vector2(600, 50), colorAtlas.GetCellAtlas(0, 1), Color.White);
             _spriteBatch.Draw(colorAtlas.Data, new Vector2(650, 50), colorAtlas.GetCellAtlas(1, 1), Color.White);
 
-            FontInstance font = _outlineFont ? MGame.FontStorage["testfont_o"] : MGame.FontStorage["testfont"];
+            FontInstance font = _outlineFont ? MGame.Asset.Font["testfont_o"] : MGame.Asset.Font["testfont"];
 
             // Test non-gesture touch
             if (MGame.TouchScreen.Touch.Press.IsHeldFor(TimeSpan.FromMilliseconds(150)))
@@ -82,7 +82,7 @@ namespace Demo.Domain
             {
                 var newInstance = font.WithSize(fontSize);
                 var size = newInstance.Measure(text);
-                _spriteBatch.Draw(MGame.TextureStorage.White, new MRectangle(position, position + size).ToMRectangleInt(), Color.Gray);
+                _spriteBatch.Draw(MGame.Asset.Texture.White, new MRectangle(position, position + size).ToMRectangleInt(), Color.Gray);
                 newInstance.Draw(_spriteBatch, text, position, Color.White);
                 return size;
             }
@@ -93,19 +93,19 @@ namespace Demo.Domain
             // Test wrapping strings
             int wrapLength = (int)_errorBoxPosition.X;
             DrawTextBox(font.Wrap("Mmm... This is a too long, default string that should be wrapped appropriately", wrapLength), new MVector2(0, 650));
-            _spriteBatch.Draw(MGame.TextureStorage.White, new MRectangleInt(0, 650, wrapLength, -50), new Color(1f, 1f, 1f, 0.3f));
+            _spriteBatch.Draw(MGame.Asset.Texture.White, new MRectangleInt(0, 650, wrapLength, -50), new Color(1f, 1f, 1f, 0.3f));
 
             DrawTextBox(font.WithSize(48).Wrap("Mmm... This is a too long, bigger string that should be wrapped appropriately", wrapLength), new MVector2(0, 1150), 48);
-            _spriteBatch.Draw(MGame.TextureStorage.White, new MRectangleInt(0, 1150, wrapLength, -50), new Color(1f, 1f, 1f, 0.3f));
+            _spriteBatch.Draw(MGame.Asset.Texture.White, new MRectangleInt(0, 1150, wrapLength, -50), new Color(1f, 1f, 1f, 0.3f));
 
             DrawTextBox(font.WithSize(24).Wrap("Mmm... This is a too long, smaller string that should be wrapped appropriately", wrapLength), new MVector2(0, 1850), 24);
-            _spriteBatch.Draw(MGame.TextureStorage.White, new MRectangleInt(0, 1850, wrapLength, -50), new Color(1f, 1f, 1f, 0.3f));
+            _spriteBatch.Draw(MGame.Asset.Texture.White, new MRectangleInt(0, 1850, wrapLength, -50), new Color(1f, 1f, 1f, 0.3f));
 
             // Test color changing
             font.WithSize(64).Draw(_spriteBatch, "Test changing \\1\\color\\0\\ in text.", new Vector2(500, 500), Color.Green, _colorChanger);
 
             // Test size
-            _spriteBatch.Draw(MGame.TextureStorage.White, new MRectangleInt(500, 250, 100, 64), Color.DarkGray);
+            _spriteBatch.Draw(MGame.Asset.Texture.White, new MRectangleInt(500, 250, 100, 64), Color.DarkGray);
             font.WithSize(64).Draw(_spriteBatch, "Text size test", new Vector2(500, 250), Color.Green);
 
             // Test rotation
@@ -125,7 +125,7 @@ namespace Demo.Domain
             Vector2 o = font.Measure(_textInput.Text) * 0.5f;
             font.Draw(_spriteBatch, _textInput.Text, new Vector2(000, 600), Color.Green, 0f, o);
 
-            MGame.FontStorage.Default.Draw(_spriteBatch, _stateSwitchMessage, new Vector2(0, 700), Color.Green);
+            MGame.Asset.Font.Default.Draw(_spriteBatch, _stateSwitchMessage, new Vector2(0, 700), Color.Green);
 
             // Test size measurements.
             var sizeTestPos = new Vector2(50, 450);
@@ -144,7 +144,7 @@ namespace Demo.Domain
             _spriteBatch.Begin();
             var boxLocation = _gameDisplay.WorldToUI(_errorBoxPosition);
             font.Draw(_spriteBatch, "  <- Error box", boxLocation.ToMVector2(), Color.White);
-            _spriteBatch.Draw(MGame.TextureStorage.White,
+            _spriteBatch.Draw(MGame.Asset.Texture.White,
                 new MRectangleInt(64, 64).Translate(_gameDisplay.UiRenderingArea.Render.Width - 64, _gameDisplay.UiRenderingArea.Render.Height - 64),
                 _gameDisplay.DisplayToUI(MGame.Mouse.Position.Coordinate).X >= _gameDisplay.UiRenderingArea.Render.Width - 64 ? Color.Tan : Color.Teal);
             _spriteBatch.End();
@@ -158,7 +158,7 @@ namespace Demo.Domain
             MGame.GraphicsManager.GraphicsDevice.SetRenderTarget(_inverterRenderTarget);
 
             _spriteBatch.Begin();
-            _spriteBatch.Draw(MGame.TextureStorage.White,
+            _spriteBatch.Draw(MGame.Asset.Texture.White,
                 new MRectangle(100, 100)
                     .PositionCenter(_lastInversionPosition)
                     .ToMRectangleInt(), new Color(1f, 1f, 1f, 0.5f));
@@ -166,7 +166,7 @@ namespace Demo.Domain
 
             // Combine scene and inverting stuff to backbuffer
             MGame.GraphicsManager.GraphicsDevice.SetRenderTarget(null);
-            var effect = MGame.EffectStorage["inversion"];
+            var effect = MGame.Asset.Effect["inversion"];
             effect.Parameters["inverterTexture"].SetValue(_inverterRenderTarget);
             
             _spriteBatch.Begin(effect: effect);
@@ -194,7 +194,7 @@ namespace Demo.Domain
                 if (MGame.Keyboard.IsKeyPressed(Keys.Space))
                 {
                     MGame.StateSystem.SwitchState("stateTwo");
-                    MGame.SoundEffectStorage["santa"].WithPitchVariation(0.2f).Play();
+                    MGame.Asset.SoundEffect["santa"].WithPitchVariation(0.2f).Play();
                 }
 
                 if (MGame.Keyboard.AreKeysHeld(new Keys[] { Keys.R, Keys.T }, MonoKle.Input.CollectionQueryBehavior.All))
@@ -312,10 +312,10 @@ namespace Demo.Domain
                 MinScale = 0.3f
             };
             _gameDisplay = new GameDisplay2D<DynamicCamera2D>(MGame.GraphicsManager, camera, new MPoint2(900, 600), new MPoint2(1500, 768));
-            MGame.Console.WriteLine(MGame.TextureStorage.LoadFromManifest("Data/assets.manifest") + " textures loaded.");
-            MGame.Console.WriteLine(MGame.FontStorage.LoadFromManifest("Data/assets.manifest") + " fonts loaded.");
-            MGame.Console.WriteLine(MGame.EffectStorage.LoadFromManifest("Data/assets.manifest") + " effects loaded.");
-            MGame.Console.WriteLine(MGame.SoundEffectStorage.LoadFromManifest("Data/assets.manifest") + " sounds loaded.");
+            MGame.Console.WriteLine(MGame.Asset.Texture.LoadFromManifest("Data/assets.manifest") + " textures loaded.");
+            MGame.Console.WriteLine(MGame.Asset.Font.LoadFromManifest("Data/assets.manifest") + " fonts loaded.");
+            MGame.Console.WriteLine(MGame.Asset.Effect.LoadFromManifest("Data/assets.manifest") + " effects loaded.");
+            MGame.Console.WriteLine(MGame.Asset.SoundEffect.LoadFromManifest("Data/assets.manifest") + " sounds loaded.");
         }
 
         protected override void Activated(StateSwitchData data)

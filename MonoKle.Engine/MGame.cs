@@ -29,9 +29,9 @@ namespace MonoKle.Engine
         private static GameConsole _console;
 
         /// <summary>
-        /// Gets the audio storage, loading and providing sound effects.
+        /// Gets the sound effect storage, loading and providing sound effects.
         /// </summary>
-        public static AudioStorage AudioStorage { get; private set; }
+        public static SoundEffectStorage SoundEffectStorage { get; private set; }
 
         /// <summary>
         /// Gets the effect storage, loading and providing effects.
@@ -145,7 +145,7 @@ namespace MonoKle.Engine
 
             // Initialize storages
             TextureStorage = new TextureStorage(GraphicsDevice, Logger);
-            AudioStorage = new AudioStorage(Logger);
+            SoundEffectStorage = new SoundEffectStorage(Logger);
             EffectStorage = new EffectStorage(GraphicsDevice, Logger);
             InitializeFontStorage();
             

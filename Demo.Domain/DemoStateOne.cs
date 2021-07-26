@@ -194,7 +194,7 @@ namespace Demo.Domain
                 if (MGame.Keyboard.IsKeyPressed(Keys.Space))
                 {
                     MGame.StateSystem.SwitchState("stateTwo");
-                    MGame.AudioStorage["santa"].WithPitchVariation(0.2f).Play();
+                    MGame.SoundEffectStorage["santa"].WithPitchVariation(0.2f).Play();
                 }
 
                 if (MGame.Keyboard.AreKeysHeld(new Keys[] { Keys.R, Keys.T }, MonoKle.Input.CollectionQueryBehavior.All))
@@ -315,7 +315,7 @@ namespace Demo.Domain
             MGame.Console.WriteLine(MGame.TextureStorage.LoadFromManifest("Data/assets.manifest") + " textures loaded.");
             MGame.Console.WriteLine(MGame.FontStorage.LoadFromManifest("Data/assets.manifest") + " fonts loaded.");
             MGame.Console.WriteLine(MGame.EffectStorage.LoadFromManifest("Data/assets.manifest") + " effects loaded.");
-            MGame.Console.WriteLine(MGame.AudioStorage.LoadFromManifest("Data/assets.manifest") + " sounds loaded.");
+            MGame.Console.WriteLine(MGame.SoundEffectStorage.LoadFromManifest("Data/assets.manifest") + " sounds loaded.");
         }
 
         protected override void Activated(StateSwitchData data)

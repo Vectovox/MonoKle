@@ -6,7 +6,7 @@ using System.IO;
 namespace MonoKle.Asset
 {
     /// <summary>
-    /// Loads and maintains audio assets. Supports wave file in the RIFF bitstream format:
+    /// Loads and maintains sound effect assets. Supports wave file in the RIFF bitstream format:
     ///     8-bit unsigned PCM,
     ///     16-bit signed PCM,
     ///     24-bit signed PCM,
@@ -14,9 +14,9 @@ namespace MonoKle.Asset
     ///     4-bit compressed IMA/ADPCM(IMA4),
     ///     4-bit compressed
     /// </summary>
-    public class AudioStorage : BasicAssetStorage<SoundEffect, MSoundEffectInstance>
+    public class SoundEffectStorage : BasicAssetStorage<SoundEffect, MSoundEffectInstance>
     {
-        public AudioStorage(Logger logger) : base(logger)
+        public SoundEffectStorage(Logger logger) : base(logger)
         {
         }
 

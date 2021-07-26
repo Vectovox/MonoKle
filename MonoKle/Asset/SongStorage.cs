@@ -41,8 +41,7 @@ namespace MonoKle.Asset
 
             try
             {
-                var uri = new Uri(path, UriKind.Relative);
-                var song = Song.FromUri(identifier, uri);
+                var song = GetSong(path);
                 _songByIdentifier.Add(identifier, song);
             }
             catch (Exception e)
@@ -52,6 +51,16 @@ namespace MonoKle.Asset
             }
 
             return true;
+        }
+
+        private Song GetSong(string path)
+        {
+            var uri = new Uri(path, UriKind.Relative);
+            // NOTE: Name must be set as path for this to work on Android
+            //       https://github.com/MonoGame/MonoGame/issues/3935
+            //       Song.AssetUri is not set so MonoGame uses the name
+            //       as input for asset storage
+            return Song.FromUri(path, uri);
         }
 
         /// <summary>

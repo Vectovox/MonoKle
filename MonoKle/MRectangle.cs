@@ -453,6 +453,18 @@ namespace MonoKle
         public MRectangle Scale(float factor) => new MRectangle(Dimensions * factor).PositionCenter(this);
 
         /// <summary>
+        /// Scales the <see cref="MRectangle"/> around the provided coordinate with the given factor.
+        /// </summary>
+        /// <param name="factor">The factor with which to scale.</param>
+        /// <param name="coordinate">The coordinate to scale around.</param>
+        public MRectangle Scale(float factor, MVector2 coordinate)
+        {
+            var translated = Translate(-coordinate);
+            var scaled = new MRectangle(new MVector2(translated.Left * factor, translated.Top * factor), new MVector2(translated.Right * factor, translated.Bottom * factor));
+            return scaled.Translate(coordinate);
+        }
+
+        /// <summary>
         /// Translates the <see cref="MRectangle"/> with the given translation and returns the result.
         /// </summary>
         /// <param name="translation">The translation to make.</param>

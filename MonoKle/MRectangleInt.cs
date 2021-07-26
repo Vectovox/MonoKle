@@ -392,6 +392,13 @@ namespace MonoKle
         }
 
         /// <summary>
+        /// Scales the <see cref="MRectangleInt"/> around the provided coordinate with the given factor.
+        /// </summary>
+        /// <param name="factor">The factor with which to scale.</param>
+        /// <param name="coordinate">The coordinate to scale around.</param>
+        public MRectangleInt Scale(float factor, MPoint2 coordinate) => ToMRectangle().Scale(factor, coordinate).ToMRectangleInt();
+
+        /// <summary>
         /// Translates the <see cref="MRectangleInt"/> with the given translation and returns the result.
         /// </summary>
         /// <param name="translation">The translation to make.</param>

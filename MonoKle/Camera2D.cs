@@ -219,14 +219,14 @@ namespace MonoKle
         /// </summary>
         /// <param name="coordinate">The coordinate to transform.</param>
         /// <returns>Transformed coordinate.</returns>
-        public MVector2 Transform(MVector2 coordinate) => Vector2.Transform(coordinate, _transformMatrix);
+        public MVector2 Transform(MVector2 coordinate) => Vector2.Transform(coordinate, TransformMatrix);
 
         /// <summary>
         /// Inversely transforms a given coordinate, effectively untransforming camera space to world space.
         /// </summary>
         /// <param name="coordinate">The coordinate to transform.</param>
         /// <returns>Transformed coordinate.</returns>
-        public MVector2 TransformInv(MVector2 coordinate) => Vector2.Transform(coordinate, _transformMatrixInv);
+        public MVector2 TransformInv(MVector2 coordinate) => Vector2.Transform(coordinate, TransformMatrixInv);
 
         private static (Matrix Transform, Matrix TransformInv) CalculateMatrices(MVector2 position, float rotation, float scale, MPoint2 size)
         {

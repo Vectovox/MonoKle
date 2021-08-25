@@ -35,5 +35,11 @@ namespace MonoKle.Graphics
         /// <param name="color">The color to set the texture to.</param>
         /// <returns>The texture.</returns>
         public static Texture2D Fill(this Texture2D texture, Color color) => texture.Paint(x => color);
+
+        /// <summary>
+        /// Gets the size of the texture.
+        /// </summary>
+        /// <param name="texture">The texture.</param>
+        public static MPoint2 Size(this Texture2D texture) => new MPoint2(texture.Width, texture.Height);
     }
 }

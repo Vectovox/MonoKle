@@ -220,6 +220,15 @@ namespace MonoKle.Graphics
         public MPoint2 WorldToUI(MVector2 worldCoordinate) => DisplayToUI(WorldToDisplay(worldCoordinate));
 
         /// <summary>
+        /// Transforms the given world delta vector to UI space.
+        /// </summary>
+        /// <remarks>
+        /// E.g. used for getting UI distance from a world distance.
+        /// </remarks>
+        /// <param name="worldDelta">The world delta to transform.</param>
+        public MPoint2 WorldToUIDelta(MVector2 worldDelta) => WorldToUI(worldDelta) - WorldToUI(MVector2.Zero);
+
+        /// <summary>
         /// Sets the UI as render target for the <see cref="GraphicsDevice"/>.
         /// </summary>
         public void RenderToUI() => GraphicsDevice.SetRenderTarget(UiRenderTarget);

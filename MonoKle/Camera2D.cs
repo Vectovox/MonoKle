@@ -160,27 +160,51 @@ namespace MonoKle
         /// camera space.
         /// </summary>
         /// <param name="worldCoordinate">The camera space coordiante to scale towards.</param>
-        /// <param name="deltaScaling">The amount of scaling to add.</param>
-        public void ScaleAround(MVector2 worldCoordinate, float deltaScaling) =>
-            (Scale, Position) = GetScaleAroundTranslation(worldCoordinate, deltaScaling);
+        /// <param name="newScale">The new scale to set.</param>
+        public void ScaleAround(MVector2 worldCoordinate, float newScale) =>
+            (Scale, Position) = GetScaleAroundTranslation(worldCoordinate, newScale);
 
-        protected (float Scale, MVector2 Position) GetScaleAroundTranslation(MVector2 worldCoordinate, float deltaScaling)
+        /// <summary>
+        /// Scales seamlessly towards the given coordinate by keeping it in the same spot in
+        /// camera space.
+        /// </summary>
+        /// <param name="worldCoordinate">The camera space coordiante to scale towards.</param>
+        /// <param name="deltaScaling">The amount of scaling to add.</param>
+        public void ScaleAroundRelative(MVector2 worldCoordinate, float deltaScaling) =>
+            (Scale, Position) = GetScaleAroundTranslationRelative(worldCoordinate, deltaScaling);
+
+        /// <summary>
+        /// Helper method to get new scale and world position when scaling towards a coordinate.
+        /// </summary>
+        /// <param name="worldCoordinate">The world coodinate to scale to.</param>
+        /// <param name="newScale">The new scale to set to.</param>
+        /// <returns>Absolute scale and position tuple.</returns>
+        protected (float Scale, MVector2 Position) GetScaleAroundTranslation(MVector2 worldCoordinate, float newScale)
         {
             // Store the camera space of the world coordinate
             var cameraCoordinate = Transform(worldCoordinate);
             // Apply scaling
-            var newScale = ClampScale(Scale + deltaScaling);
+            var clampedScale = ClampScale(newScale);
             // Terminate early if no scaling was done
-            if (Scale == newScale)
+            if (Scale == clampedScale)
             {
                 return (Scale, Position);
             }
             // Calculate where in the world space the camera coordinate is now
-            MVector2 newWorldCoordinate = Vector2.Transform(cameraCoordinate, CalculateMatrices(Position, Rotation, newScale, Size).TransformInv);
+            MVector2 newWorldCoordinate = Vector2.Transform(cameraCoordinate, CalculateMatrices(Position, Rotation, clampedScale, Size).TransformInv);
             // Move camera with how much the scaling changed the world coordinate location
             var newPosition = Position - (newWorldCoordinate - worldCoordinate);
-            return (newScale, newPosition);
+            return (clampedScale, newPosition);
         }
+
+        /// <summary>
+        /// Helper method to get new scale and world position when scaling towards a coordinate.
+        /// </summary>
+        /// <param name="worldCoordinate">The world coodinate to scale to.</param>
+        /// <param name="deltaScaling">The relative amount of scaling to add.</param>
+        /// <returns>Absolute scale and position tuple.</returns>
+        protected (float Scale, MVector2 Position) GetScaleAroundTranslationRelative(MVector2 worldCoordinate, float deltaScaling)
+            => GetScaleAroundTranslation(worldCoordinate, Scale + deltaScaling);
 
         /// <summary>
         /// Zooms seamlessly towards/from the given coordinate by keeping it in the same spot in

@@ -247,7 +247,7 @@ namespace Demo.Domain
                 if (MGame.TouchScreen.Pinch.TryGetValues(out var pinchOrigin, out var pinchFactor))
                 {
                     var worldCoordinate = _gameDisplay.DisplayToWorld(pinchOrigin);
-                    _gameDisplay.Camera.ZoomAroundTo(worldCoordinate, pinchFactor, TimeSpan.FromMilliseconds(75));
+                    _gameDisplay.Camera.ScaleAroundToRelative(worldCoordinate, pinchFactor, TimeSpan.FromMilliseconds(75));
                 }
                 else if (MGame.TouchScreen.Drag.TryGetDelta(out var dragDelta))
                 {

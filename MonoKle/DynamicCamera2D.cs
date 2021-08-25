@@ -42,6 +42,15 @@ namespace MonoKle
         }
 
         /// <summary>
+        /// Moves the current camera center position to the given coordinate
+        /// over the provided time.
+        /// </summary>
+        /// <param name="position">The coordinate to set to.</param>
+        /// <param name="duration">The total duration of the movement.</param>
+        public void MoveTo(MVector2 position, TimeSpan duration) =>
+            MoveTo(position, (float)((position - Position).Length / duration.TotalSeconds));
+
+        /// <summary>
         /// Rotates the camera, in radians, to the given value over time with the provided speed.
         /// </summary>
         /// <param name="rotation">The rotation, in radians, to set to.</param>
@@ -90,23 +99,44 @@ namespace MonoKle
         }
 
         /// <summary>
+        /// Scales the camera to the given value over the provided time.
+        /// </summary>
+        /// <param name="scale">The scale factor to set to.</param>
+        /// <param name="duration">The total duration of the scaling.</param>
+        public void ScaleTo(float scale, TimeSpan duration) =>
+            ScaleTo(scale, (float)(Math.Abs(scale - Scale) / duration.TotalSeconds));
+
+        /// <summary>
         /// Scales seamlessly towards the given coordinate over time with the provided speed.
         /// </summary>
         /// <param name="worldCoordinate">The camera space coordiante to scale towards.</param>
-        /// <param name="deltaScaling">The amount of scaling to add.</param>
+        /// <param name="scale">The scale factor to set to.</param>
         /// <param name="duration">The duration of the scaling.</param>
-        public void ScaleAroundTo(MVector2 worldCoordinate, float deltaScaling, TimeSpan duration)
+        public void ScaleAroundTo(MVector2 worldCoordinate, float scale, TimeSpan duration)
         {
-            var (newScale, newPosition) = GetScaleAroundTranslation(worldCoordinate, deltaScaling);
-            ScaleTo(newScale, Math.Abs(deltaScaling) / (float)duration.TotalSeconds);
-            MoveTo(newPosition, (newPosition - Position).Length / (float)duration.TotalSeconds);
+            var (newScale, newPosition) = GetScaleAroundTranslation(worldCoordinate, scale);
+            ScaleTo(newScale, duration);
+            MoveTo(newPosition, duration);
         }
 
         /// <summary>
         /// Scales seamlessly towards the given coordinate over time with the provided speed.
         /// </summary>
         /// <param name="worldCoordinate">The camera space coordiante to scale towards.</param>
-        /// <param name="zoomFactor">The zoom factor, either negative or positive, to apply.</param>
+        /// <param name="deltaScaling">The amount of scaling to add.</param>
+        /// <param name="duration">The duration of the scaling.</param>
+        public void ScaleAroundToRelative(MVector2 worldCoordinate, float deltaScaling, TimeSpan duration)
+        {
+            var (newScale, newPosition) = GetScaleAroundTranslationRelative(worldCoordinate, deltaScaling);
+            ScaleTo(newScale, duration);
+            MoveTo(newPosition, duration);
+        }
+
+        /// <summary>
+        /// Scales seamlessly towards the given coordinate over time with the provided speed.
+        /// </summary>
+        /// <param name="worldCoordinate">The camera space coordiante to scale towards.</param>
+        /// <param name="zoomFactor">The zoom factor to apply.</param>
         /// <param name="duration">The duration of the zooming.</param>
         public void ZoomAroundTo(MVector2 worldCoordinate, float zoomFactor, TimeSpan duration) =>
             ScaleAroundTo(worldCoordinate, Scale * zoomFactor, duration);

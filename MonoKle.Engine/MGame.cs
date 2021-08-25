@@ -187,22 +187,22 @@ namespace MonoKle.Engine
                 IsRunningSlowly = time.IsRunningSlowly;
                 TotalGameTime = time.TotalGameTime;
 
-                if (Settings.GamePadEnabled)
+                if (Settings.GamePadEnabled && GameInstance.IsActive)
                 {
                     _gamepad.Update(deltaTime);
                 }
 
-                if (Settings.KeyboardEnabled)
+                if (Settings.KeyboardEnabled && GameInstance.IsActive)
                 {
                     _keyboard.Update(deltaTime);
                 }
 
-                if (Settings.MouseEnabled)
+                if (Settings.MouseEnabled && GameInstance.IsActive)
                 {
                     _mouse.Update(deltaTime);
                 }
 
-                if (Settings.TouchEnabled)
+                if (Settings.TouchEnabled && GameInstance.IsActive)
                 {
                     _touchScreen.Update(deltaTime);
                 }

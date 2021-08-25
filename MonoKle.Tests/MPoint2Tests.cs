@@ -112,6 +112,9 @@ namespace MonoKle.Tests
         public void TestOperatorPlus() => Assert.AreEqual(new MPoint2(3, -4), new MPoint2(1, 3) + new MPoint2(2, -7));
 
         [TestMethod]
+        public void MemberwiseModulo_Correct() => Assert.AreEqual(new MPoint2(1, 2), new MPoint2(4, 7) % new MPoint2(3, 5));
+
+        [TestMethod]
         public void TestToMVector2()
         {
             int x = 23, y = -19;

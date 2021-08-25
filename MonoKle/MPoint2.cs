@@ -146,6 +146,14 @@ namespace MonoKle
         public static bool operator ==(MPoint2 a, MPoint2 b) => a.X == b.X && a.Y == b.Y;
 
         /// <summary>
+        /// Operator for memberwise modulo.
+        /// </summary>
+        /// <param name="a">Left operand.</param>
+        /// <param name="b">Right operand.</param>
+        /// <returns>Modulo result.</returns>
+        public static MPoint2 operator %(MPoint2 a, MPoint2 b) => new MPoint2(a.X % b.X, a.Y % b.Y);
+
+        /// <summary>
         /// Performs an implicit conversion from <see cref="System.Drawing.Point"/> to <see cref="MPoint2"/>.
         /// </summary>
         /// <param name="p">The point.</param>

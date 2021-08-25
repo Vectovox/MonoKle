@@ -78,5 +78,8 @@ namespace MonoKle.Tests
             MVector2 b = new MVector2(-3, 28);
             Assert.AreEqual(a + -b, a - b);
         }
+
+        [TestMethod]
+        public void MemberwiseModulo_Correct() => Assert.AreEqual(new MVector2(1, 2), new MVector2(4, 7) % new MVector2(3, 5));
     }
 }

@@ -112,7 +112,7 @@ namespace MonoKle.Engine
         {
             // Graphics device has to be created immediately but cannot be used before LoadContent
             GraphicsManager = new GraphicsManager(GameInstance);
-            GraphicsManager.ResolutionChanged += ResolutionChanged;
+            GraphicsManager.BackBufferChanged += ResolutionChanged;
             GraphicsManager.GraphicsMode = graphicsMode;
 
             Settings.GamePadEnabled = true;

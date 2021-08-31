@@ -53,7 +53,7 @@ namespace MonoKle.Graphics
         /// <summary>
         /// Occurs when resolution is changed.
         /// </summary>
-        public event ResolutionChangedEventHandler? ResolutionChanged;
+        public event ResolutionChangedEventHandler? BackBufferChanged;
 
         /// <summary>
         /// Gets the underlying graphics device.
@@ -64,6 +64,12 @@ namespace MonoKle.Graphics
         /// Gets the underlying <see cref="Microsoft.Xna.Framework.GraphicsDeviceManager"/>.
         /// </summary>
         public GraphicsDeviceManager GraphicsDeviceManager { get; }
+
+        /// <summary>
+        /// Gets the underlying backbuffer resolution.
+        /// </summary>
+        [CVar("graphics_backbuffer_resolution")]
+        public MPoint2 BackBufferResolution => new MPoint2(GraphicsDeviceManager.PreferredBackBufferWidth, GraphicsDeviceManager.PreferredBackBufferHeight);
 
         /// <summary>
         /// Gets or sets the backbuffer resolution. Used in <see cref="GraphicsMode.Windowed"/> and <see cref="GraphicsMode.Fullscreen"/>.
@@ -160,11 +166,11 @@ namespace MonoKle.Graphics
                 GraphicsDeviceManager.SynchronizeWithVerticalRetrace = _vSync;
                 GraphicsDeviceManager.ApplyChanges();
                 _displayDirty = false;
-                OnResolutionChanged(new MPoint2(GraphicsDeviceManager.PreferredBackBufferWidth, GraphicsDeviceManager.PreferredBackBufferHeight));
+                OnBackbufferChanged(BackBufferResolution);
             }
         }
 
-        private void OnResolutionChanged(MPoint2 newResolution) => ResolutionChanged?.Invoke(this, new ResolutionChangedEventArgs(newResolution));
+        private void OnBackbufferChanged(MPoint2 newResolution) => BackBufferChanged?.Invoke(this, new ResolutionChangedEventArgs(newResolution));
 
         protected virtual void Dispose(bool disposing)
         {
@@ -172,7 +178,8 @@ namespace MonoKle.Graphics
             {
                 if (disposing)
                 {
-                    // Workaround for HDR issue in Windows. Without it, windows becomes washed out. 
+                    // Workaround for HDR issue in Windows. Without it, windows becomes washed out.
+                    // Technically doesn't work when having borderless at some point but then switching to another mode when exiting
                     if (_graphicsMode == GraphicsMode.Borderless)
                     {
                         GraphicsDeviceManager.IsFullScreen = true;

@@ -105,9 +105,9 @@ namespace MonoKle.Graphics
 
             // Graphics manager stuff
             _graphicsManager = graphicsManager;
-            _graphicsManager.ResolutionChanged += ResolutionChanged;
+            _graphicsManager.BackBufferChanged += BackBufferChanged;
             GraphicsDevice = _graphicsManager.GraphicsDevice;
-            DisplayResolution = graphicsManager.Resolution;
+            DisplayResolution = _graphicsManager.BackBufferResolution;
 
             // Set the targets
             WorldTargetResolution = targetWorldResolution;
@@ -154,10 +154,10 @@ namespace MonoKle.Graphics
         {
             WorldRenderTarget.Dispose();
             UiRenderTarget.Dispose();
-            _graphicsManager.ResolutionChanged -= ResolutionChanged;
+            _graphicsManager.BackBufferChanged -= BackBufferChanged;
         }
 
-        private void ResolutionChanged(object sender, ResolutionChangedEventArgs e)
+        private void BackBufferChanged(object sender, ResolutionChangedEventArgs e)
         {
             DisplayResolution = e.NewScreenSize;
             Apply();

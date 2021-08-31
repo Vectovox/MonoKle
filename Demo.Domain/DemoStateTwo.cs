@@ -96,7 +96,7 @@ namespace Demo.Domain
             _spriteBatch = new SpriteBatch(MGame.GraphicsManager.GraphicsDevice);
             _primitiveBatch2D = new PrimitiveBatch2D(MGame.GraphicsManager.GraphicsDevice);
             _renderingArea = new RenderingArea2D(new MPoint2(320, 200), MGame.GraphicsManager.Resolution);
-            MGame.GraphicsManager.ResolutionChanged += GraphicsManager_ResolutionChanged;
+            MGame.GraphicsManager.BackBufferChanged += GraphicsManager_ResolutionChanged;
         }
 
         private void GraphicsManager_ResolutionChanged(object sender, ResolutionChangedEventArgs e)

@@ -14,9 +14,9 @@ namespace Demo.Windows
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        private static void Main()
+        private static void Main(string[] args)
         {
-            using var game = MGame.Create(GraphicsMode.Windowed);
+            using var game = MGame.Create(GraphicsMode.Windowed, args);
             Boilerplate.ConfigureStates();
             game.Run();
         }

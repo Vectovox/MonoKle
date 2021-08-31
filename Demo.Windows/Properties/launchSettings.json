@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Demo.Windows": {
+      "commandName": "Project",
+      "commandLineArgs": "testArg=42"
+    }
+  }
+}

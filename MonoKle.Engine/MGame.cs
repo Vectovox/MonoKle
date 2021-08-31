@@ -108,7 +108,7 @@ namespace MonoKle.Engine
         /// Initializes the MonoKle backend, returning a runnable game instance.
         /// </summary>
         /// <param name="graphicsMode">The initial graphics mode setting.</param>
-        public static MGame Create(GraphicsMode graphicsMode)
+        public static MGame Create(GraphicsMode graphicsMode, string[] arguments)
         {
             // Graphics device has to be created immediately but cannot be used before LoadContent
             GraphicsManager = new GraphicsManager(GameInstance);
@@ -124,7 +124,7 @@ namespace MonoKle.Engine
             // Enable crashdumps
             AppDomain.CurrentDomain.UnhandledException += UnhandledException;
 
-            InitializeVariables();
+            InitializeVariables(arguments);
 
             return GameInstance;
         }
@@ -262,10 +262,14 @@ namespace MonoKle.Engine
             Asset.Font.Default = Asset.Font["default"];
         }
 
-        private static void InitializeVariables()
+        private static void InitializeVariables(string[] arguments)
         {
             Variables = new VariableStorage(Logger);
             Variables.LoadDefaultVariables();
+            foreach (var line in arguments)
+            {
+                Variables.VariablePopulator.LoadText(line);
+            }
         }
 
         private static void ResolutionChanged(object sender, ResolutionChangedEventArgs e)

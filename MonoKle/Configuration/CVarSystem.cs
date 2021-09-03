@@ -90,16 +90,31 @@ namespace MonoKle.Configuration
         /// <param name="instance">The object instance to bind.</param>
         /// <param name="assignOld">If set to true, assigns any existing value to the bound instance.</param>
         /// <param name="recursive">If true, binds member properties recursively.</param>
-        public void BindProperties(object instance, bool assignOld, bool recursive)
+        public void BindProperties(object instance, bool assignOld, bool recursive) => BindProperties(instance, assignOld, recursive, new HashSet<object>());
+
+        private void BindProperties(object instance, bool assignOld, bool recursive, HashSet<object> visited)
         {
             GetInstanceCVarProperties(instance).ForEach(t => Bind(new PropertyCVar(t.Property, instance), t.Attribute.Identifier, assignOld));
             BindProperties(instance.GetType());
 
             if (recursive)
             {
+                visited.Add(instance);
+
                 foreach (var childProperty in GetInstanceProperties(instance).Where(p => !p.PropertyType.IsValueType))
                 {
-                    BindProperties(childProperty.GetValue(instance), assignOld, true);
+                    try
+                    {
+                        var instanceValue = childProperty.GetValue(instance);
+                        if (instanceValue != null && !visited.Contains(instanceValue))
+                        {
+                            BindProperties(instanceValue, assignOld, true, visited);
+                        }
+                    }
+                    catch
+                    {
+                        // Swallow exceptions traversing the tree
+                    }
                 }
             }
         }

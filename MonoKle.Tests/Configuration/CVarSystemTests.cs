@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 
@@ -191,6 +192,14 @@ namespace MonoKle.Configuration.Tests
             Assert.AreEqual(17, sut.Tested.Z);
             Assert.AreEqual(sut.Tested.X, _cvarSystem.GetValue("x"));
             Assert.AreEqual(sut.Tested.Z, _cvarSystem.GetValue("z"));
+        }
+
+        [TestMethod]
+        public void BindProperties_Recursive_Cyclic_NoException()
+        {
+            var list = new LinkedList<int>();
+            _cvarSystem.BindProperties(list, false, true);
+            Assert.AreEqual(0, _cvarSystem.Identifiers.Count);
         }
 
         [TestMethod]

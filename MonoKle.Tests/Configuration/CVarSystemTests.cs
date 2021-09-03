@@ -132,10 +132,33 @@ namespace MonoKle.Configuration.Tests
             _cvarSystem.BindProperties(b);
             _cvarSystem.SetValue("z", 17);
             Assert.AreEqual(2, _cvarSystem.Identifiers.Count);
-            Assert.AreEqual(b.X, 1);
-            Assert.AreEqual(b.Z, 17);
+            Assert.AreEqual(1, b.X);
+            Assert.AreEqual(17, b.Z);
             Assert.AreEqual(b.X, _cvarSystem.GetValue("x"));
             Assert.AreEqual(b.Z, _cvarSystem.GetValue("z"));
+        }
+
+        [TestMethod]
+        public void BindProperties_AssignOld_CorrectlyBound()
+        {
+            var original = new BoundType() { X = 1, Y = 2, Z = 3 };
+            _cvarSystem.BindProperties(original);
+            var newInstance = new BoundType() { X = 0, Y = 0, Z = 0 };
+            _cvarSystem.BindProperties(newInstance, true);
+            // Unaffected old instance
+            Assert.AreEqual(1, original.X);
+            Assert.AreEqual(2, original.Y);
+            Assert.AreEqual(3, original.Z);
+            // Correct amount
+            Assert.AreEqual(2, _cvarSystem.Identifiers.Count);
+            // New instance has taken old values...
+            Assert.AreEqual(original.X, newInstance.X);
+            Assert.AreEqual(original.Z, newInstance.Z);
+            // ...but preserved unbound value
+            Assert.AreEqual(0, newInstance.Y);
+            // Identifier values correct
+            Assert.AreEqual(newInstance.X, _cvarSystem.GetValue("x"));
+            Assert.AreEqual(newInstance.Z, _cvarSystem.GetValue("z"));
         }
 
         [TestMethod]
@@ -144,9 +167,30 @@ namespace MonoKle.Configuration.Tests
             var sut = new PrivatePropertyType();
             _cvarSystem.BindProperties(sut);
             Assert.AreEqual(1, _cvarSystem.Identifiers.Count);
-            Assert.AreEqual(sut.PrivateValue, 0);
+            Assert.AreEqual(0, sut.PrivateValue);
             _cvarSystem.SetValue("private", 99);
-            Assert.AreEqual(sut.PrivateValue, 99);
+            Assert.AreEqual(99, sut.PrivateValue);
+        }
+
+        [TestMethod]
+        public void BindProperties_Recursive_Assigned()
+        {
+            var sut = new RecursiveBoundType
+            {
+                Tested = new BoundType()
+                {
+                    X = 1,
+                    Y = 2,
+                    Z = 3,
+                }
+            };
+            _cvarSystem.BindProperties(sut, false, true);
+            _cvarSystem.SetValue("z", 17);
+            Assert.AreEqual(2, _cvarSystem.Identifiers.Count);
+            Assert.AreEqual(1, sut.Tested.X);
+            Assert.AreEqual(17, sut.Tested.Z);
+            Assert.AreEqual(sut.Tested.X, _cvarSystem.GetValue("x"));
+            Assert.AreEqual(sut.Tested.Z, _cvarSystem.GetValue("z"));
         }
 
         [TestMethod]
@@ -155,9 +199,9 @@ namespace MonoKle.Configuration.Tests
             var sut = new StaticPropertyType();
             _cvarSystem.BindProperties(sut);
             Assert.AreEqual(1, _cvarSystem.Identifiers.Count);
-            Assert.AreEqual(StaticPropertyType.Static, 0);
+            Assert.AreEqual(0, StaticPropertyType.Static);
             _cvarSystem.SetValue("static", 78);
-            Assert.AreEqual(StaticPropertyType.Static, 78);
+            Assert.AreEqual(78, StaticPropertyType.Static);
         }
 
         [TestMethod]
@@ -165,9 +209,9 @@ namespace MonoKle.Configuration.Tests
         {
             _cvarSystem.BindProperties(typeof(StaticClassType));
             Assert.AreEqual(1, _cvarSystem.Identifiers.Count);
-            Assert.AreEqual(StaticClassType.Static, 0);
+            Assert.AreEqual(0, StaticClassType.Static);
             _cvarSystem.SetValue("static_class", 78);
-            Assert.AreEqual(StaticClassType.Static, 78);
+            Assert.AreEqual(78, StaticClassType.Static);
         }
 
         [TestMethod]
@@ -311,6 +355,11 @@ namespace MonoKle.Configuration.Tests
 
             [CVar("mpoint2")]
             public MPoint2 MPoint2 { get; set; }
+        }
+
+        private class RecursiveBoundType
+        {
+            public BoundType Tested { get; set; }
         }
 
         private class BoundType

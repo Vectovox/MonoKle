@@ -238,9 +238,43 @@ namespace MonoKle.Configuration
         /// </summary>
         /// <param name="instance">The object instance to find attributes on.</param>
         /// <returns>The amount of variables unbound.</returns>
-        public int UnbindProperties(object instance) =>
-            GetInstanceCVarProperties(instance).Sum(t => Unbind(t.Attribute.Identifier) ? 1 : 0)
-                + UnbindProperties(instance.GetType());
+        public int UnbindProperties(object instance) => UnbindProperties(instance, false);
+
+        /// <summary>
+        /// Unbinds the properties declared with <see cref="CVarAttribute"/> of the provided object.
+        /// </summary>
+        /// <param name="instance">The object instance to find attributes on.</param>
+        /// <param name="recursive">If true, will unbind properties recursively.</param>
+        /// <returns>The amount of variables unbound.</returns>
+        public int UnbindProperties(object instance, bool recursive) => UnbindProperties(instance, recursive, new HashSet<object>());
+
+        private int UnbindProperties(object instance, bool recursive, HashSet<object> visited)
+        {
+            var unbound = GetInstanceCVarProperties(instance).Sum(t => Unbind(t.Attribute.Identifier) ? 1 : 0) + UnbindProperties(instance.GetType());
+
+            if (recursive)
+            {
+                visited.Add(instance);
+
+                foreach (var childProperty in GetInstanceProperties(instance).Where(p => !p.PropertyType.IsValueType))
+                {
+                    try
+                    {
+                        var instanceValue = childProperty.GetValue(instance);
+                        if (instanceValue != null && !visited.Contains(instanceValue))
+                        {
+                            unbound += UnbindProperties(instanceValue, true, visited);
+                        }
+                    }
+                    catch
+                    {
+                        // Swallow exceptions traversing the tree
+                    }
+                }
+            }
+
+            return unbound;
+        }
 
         /// <summary>
         /// Unbinds the static properties declared with <see cref="CVarAttribute"/> of the provided type argument.

@@ -283,6 +283,25 @@ namespace MonoKle.Configuration.Tests
         }
 
         [TestMethod]
+        public void UnbindProperty_Recursively_RemovedWithoutSideEffects()
+        {
+            // Setup
+            _cvarSystem.SetValue("a", 1);
+            var b = new RecursiveBoundType { Tested = new BoundType { X = 2, Y = 3, Z = 4 } };
+            _cvarSystem.BindProperties(b, false, true);
+
+            // Test
+            var unbound = _cvarSystem.UnbindProperties(b, true);
+
+            // Assert
+            Assert.AreEqual(2, unbound);
+            Assert.AreEqual(1, _cvarSystem.Identifiers.Count);
+            Assert.AreEqual(1, _cvarSystem.GetValue("a"));
+            Assert.IsFalse(_cvarSystem.Contains("x"));
+            Assert.IsFalse(_cvarSystem.Contains("z"));
+        }
+
+        [TestMethod]
         public void SetValue_IntegerFromString_Converted()
         {
             // Setup

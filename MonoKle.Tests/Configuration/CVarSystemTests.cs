@@ -224,6 +224,16 @@ namespace MonoKle.Configuration.Tests
         }
 
         [TestMethod]
+        public void BindProperties_StaticClass_Recursive_Assigned()
+        {
+            _cvarSystem.BindProperties(typeof(StaticClassType), false, true);
+            Assert.AreEqual(3, _cvarSystem.Identifiers.Count);
+            Assert.AreEqual(0, StaticClassType.Recursive.X);
+            _cvarSystem.SetValue("x", 78);
+            Assert.AreEqual(78, StaticClassType.Recursive.X);
+        }
+
+        [TestMethod]
         public void Unbind_Removed()
         {
             _cvarSystem.SetValue("a", 1);
@@ -403,6 +413,8 @@ namespace MonoKle.Configuration.Tests
             public static int Static { get; set; }
 
             public static int NotBound { get; set; }
+
+            public static BoundType Recursive { get; set; } = new BoundType();
         }
 
         /// <summary>

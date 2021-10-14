@@ -134,6 +134,13 @@ namespace MonoKle.Configuration
         public void BindProperties<T>(bool assignOld) => BindProperties(typeof(T), assignOld);
 
         /// <summary>
+        /// Binds the static properties declared with <see cref="CVarAttribute"/> of the provided type argument.
+        /// </summary>
+        /// <param name="assignOld">If set to true, assigns any existing value to the bound type.</param>
+        /// <param name="recursive">If true, binds class properties recursively.</param>
+        public void BindProperties<T>(bool assignOld, bool recursive) => BindProperties(typeof(T), assignOld, recursive);
+
+        /// <summary>
         /// Binds the static properties declared with <see cref="CVarAttribute"/> of the provided type.
         /// </summary>
         /// <remarks>
@@ -147,8 +154,37 @@ namespace MonoKle.Configuration
         /// </summary>
         /// <param name="type">The type to bind static properties to.</param>
         /// <param name="assignOld">If set to true, assigns any existing value to the bound type.</param>
-        public void BindProperties(Type type, bool assignOld) =>
+        public void BindProperties(Type type, bool assignOld) => BindProperties(type, assignOld, false);
+
+        /// <summary>
+        /// Binds the static properties declared with <see cref="CVarAttribute"/> of the provided type.
+        /// </summary>
+        /// <param name="type">The type to bind static properties to.</param>
+        /// <param name="assignOld">If set to true, assigns any existing value to the bound type.</param>
+        /// <param name="recursive">If true, binds class properties recursively.</param>
+        public void BindProperties(Type type, bool assignOld, bool recursive)
+        {
             GetClassCVarProperties(type).ForEach(t => Bind(new PropertyCVar(t.Property, null), t.Attribute.Identifier, assignOld));
+
+            if (recursive)
+            {
+                foreach (var childProperty in GetClassProperties(type).Where(p => !p.PropertyType.IsValueType))
+                {
+                    try
+                    {
+                        var propertyValue = childProperty.GetValue(null);
+                        if (propertyValue != null)
+                        {
+                            BindProperties(propertyValue, assignOld, true);
+                        }
+                    }
+                    catch
+                    {
+                        // Swallow exceptions traversing the tree
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// Determines whether the specified variable can be set or is read-only.
@@ -290,9 +326,17 @@ namespace MonoKle.Configuration
             }
         }
 
-        private IEnumerable<(PropertyInfo Property, CVarAttribute Attribute)> GetClassCVarProperties(Type type)
+        private IEnumerable<PropertyInfo> GetClassProperties(Type type)
         {
             foreach (var property in type.GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic))
+            {
+                yield return property;
+            }
+        }
+
+        private IEnumerable<(PropertyInfo Property, CVarAttribute Attribute)> GetClassCVarProperties(Type type)
+        {
+            foreach (var property in GetClassProperties(type))
             {
                 foreach (CVarAttribute attribute in property.GetCustomAttributes(typeof(CVarAttribute)))
                 {

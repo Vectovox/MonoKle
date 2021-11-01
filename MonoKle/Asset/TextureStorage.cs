@@ -90,6 +90,7 @@ namespace MonoKle.Asset
         /// </summary>
         /// <param name="identifier">The unique identifier for the texture.</param>
         /// <param name="data">The texture data.</param>
+        /// <returns>True if loading was successful; otherwise false.</returns>
         public bool Load(string identifier, TextureData data)
         {
             // Do not allow duplicate identifiers
@@ -115,6 +116,42 @@ namespace MonoKle.Asset
                 }
             }
 
+            _textureDataByIdentifier.Add(identifier, data);
+            return true;
+        }
+
+        /// <summary>
+        /// Loads the provided in-memory texture using the provided <see cref="TextureData"/> and identifier.
+        /// </summary>
+        /// <remarks>
+        /// The <see cref="TextureData.Path"/> property needs to be populated as it serves as the in-memory path representation
+        /// for atlas purposes, e.g. a sub-texture being located in the provided texture.
+        /// </remarks>
+        /// <param name="identifier">The unique identifier for the texture.</param>
+        /// <param name="texture">The texture to load.</param>
+        /// <param name="data">The texture data. Path property must be populated.</param>
+        /// <returns>True if loading was successful; otherwise false.</returns>
+        public bool Load(string identifier, Texture2D texture, TextureData data)
+        {
+            if (_textureDataByIdentifier.ContainsKey(identifier))
+            {
+                _logger.Log($"Identifier already loaded '{identifier}'. Skipping.", LogLevel.Error);
+                return false;
+            }
+
+            if (_textureByPath.ContainsKey(data.Path))
+            {
+                _logger.Log($"Path '{data.Path}' already loaded ({identifier}). Skipping.", LogLevel.Error);
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(data.Path))
+            {
+                _logger.Log($"Path must be proided for '{identifier}'. Skipping.", LogLevel.Error);
+                return false;
+            }
+            
+            _textureByPath.Add(data.Path, texture);
             _textureDataByIdentifier.Add(identifier, data);
             return true;
         }

@@ -58,6 +58,7 @@ namespace Demo.Domain
             _spriteBatch.Draw(MGame.Asset.Texture["red"], new Vector2(150, 50), Color.White);
             _spriteBatch.Draw(MGame.Asset.Texture["green"], new Vector2(200, 50), Color.White);
             _spriteBatch.Draw(MGame.Asset.Texture["blue"], new Vector2(250, 50), Color.White);
+            _spriteBatch.Draw(MGame.Asset.Texture["blue_copy"], new Vector2(300, 50), Color.White);
 
             // Test atlasing
             var colorAtlas = MGame.Asset.Texture["colorAtlas"];
@@ -321,6 +322,17 @@ namespace Demo.Domain
             MGame.Console.WriteLine(MGame.Asset.Effect.LoadFromManifest("Data/assets.manifest") + " effects loaded.");
             MGame.Console.WriteLine(MGame.Asset.SoundEffect.LoadFromManifest("Data/assets.manifest") + " sounds loaded.");
             MGame.Console.WriteLine(MGame.Asset.Song.LoadFromManifest("Data/assets.manifest") + " songs loaded.");
+
+            // In-memory loading
+            MGame.Asset.Texture.Load("copy", MGame.Asset.Texture["colorAtlas"].Data, new TextureStorage.TextureData
+            {
+                Path = "copy_path",
+            });
+            MGame.Asset.Texture.Load("blue_copy", new TextureStorage.TextureData
+            {
+                AtlasRectangle = new MRectangleInt(16,16,16,16),
+                Path = "copy_path",
+            });
         }
 
         protected override void Activated(StateSwitchData data)

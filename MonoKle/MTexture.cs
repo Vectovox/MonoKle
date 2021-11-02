@@ -14,6 +14,11 @@ namespace MonoKle
         public readonly string Identifier;
 
         /// <summary>
+        /// The source path of the texture data.
+        /// </summary>
+        public readonly string Path;
+
+        /// <summary>
         /// The raw data that the <see cref="MTexture"/> maps on.
         /// </summary>
         public readonly Texture2D Data;
@@ -43,28 +48,28 @@ namespace MonoKle
         /// </summary>
         public readonly int FrameMargin;
 
-        public MTexture(Texture2D texture, string identifier)
-            : this(texture, identifier, 1, 1) { }
+        public MTexture(Texture2D texture, string identifier, string path)
+            : this(texture, identifier, path, 1, 1) { }
 
-        public MTexture(Texture2D texture, string identifier, int frameColumns, int frameRows)
-            : this(texture, identifier, frameColumns, frameRows, 0) { }
+        public MTexture(Texture2D texture, string identifier, string path, int frameColumns, int frameRows)
+            : this(texture, identifier, path, frameColumns, frameRows, 0) { }
 
-        public MTexture(Texture2D texture, string identifier, int frameColumns, int frameRows, int frameMargin)
-            : this(texture, identifier, frameColumns, frameRows, frameMargin, 0) { }
+        public MTexture(Texture2D texture, string identifier, string path, int frameColumns, int frameRows, int frameMargin)
+            : this(texture, identifier, path, frameColumns, frameRows, frameMargin, 0) { }
 
-        public MTexture(Texture2D texture, string identifier, int frameColumns, int frameRows, int frameMargin, int frameRate)
-            : this(texture, identifier, new MRectangleInt(0, 0, texture.Width, texture.Height), frameColumns, frameRows, frameMargin, frameRate) { }
+        public MTexture(Texture2D texture, string identifier, string path, int frameColumns, int frameRows, int frameMargin, int frameRate)
+            : this(texture, identifier, path, new MRectangleInt(0, 0, texture.Width, texture.Height), frameColumns, frameRows, frameMargin, frameRate) { }
 
-        public MTexture(Texture2D texture, string identifier, MRectangleInt atlasRectangle)
-            : this(texture, identifier, atlasRectangle, 1, 1) { }
+        public MTexture(Texture2D texture, string identifier, string path, MRectangleInt atlasRectangle)
+            : this(texture, identifier, path, atlasRectangle, 1, 1) { }
 
-        public MTexture(Texture2D texture, string identifier, MRectangleInt atlasRectangle, int frameColumns, int frameRows)
-            : this(texture, identifier, atlasRectangle, frameColumns, frameRows, 0) { }
+        public MTexture(Texture2D texture, string identifier, string path, MRectangleInt atlasRectangle, int frameColumns, int frameRows)
+            : this(texture, identifier, path, atlasRectangle, frameColumns, frameRows, 0) { }
 
-        public MTexture(Texture2D texture, string identifier, MRectangleInt atlasRectangle, int frameColumns, int frameRows, int frameMargin)
-            : this(texture, identifier, atlasRectangle, frameColumns, frameRows, frameMargin, 0) { }
+        public MTexture(Texture2D texture, string identifier, string path, MRectangleInt atlasRectangle, int frameColumns, int frameRows, int frameMargin)
+            : this(texture, identifier, path, atlasRectangle, frameColumns, frameRows, frameMargin, 0) { }
 
-        public MTexture(Texture2D texture, string identifier, MRectangleInt atlasRectangle, int frameColumns, int frameRows, int frameMargin, int frameRate)
+        public MTexture(Texture2D texture, string identifier, string path, MRectangleInt atlasRectangle, int frameColumns, int frameRows, int frameMargin, int frameRate)
         {
             if (frameColumns < 1)
             {
@@ -98,6 +103,7 @@ namespace MonoKle
 
             Data = texture;
             Identifier = identifier;
+            Path = path;
             AtlasRectangle = atlasRectangle;
             FrameMargin = frameMargin;
             FrameColumns = frameColumns;
@@ -134,7 +140,7 @@ namespace MonoKle
         /// </remarks>
         /// <param name="column">Zero-based index of the column to get.</param>
         /// <param name="row">Zero-based index of the row to get.</param>
-        public MTexture GetCell(int column, int row) => new MTexture(Data, Identifier, GetCellAtlas(column, row));
+        public MTexture GetCell(int column, int row) => new MTexture(Data, Identifier, Path, GetCellAtlas(column, row));
 
         /// <summary>
         /// Gets the atlas rectangle for the provided column and row.
@@ -159,7 +165,7 @@ namespace MonoKle
         /// Wraps around when the provided column is outside of the atlas.
         /// </remarks>
         /// <param name="column">Zero-based index of the column to get.</param>
-        public MTexture GetColumn(int column) => new MTexture(Data, Identifier, GetColumnAtlas(column));
+        public MTexture GetColumn(int column) => new MTexture(Data, Identifier, Path, GetColumnAtlas(column));
 
         /// <summary>
         /// Gets the atlas rectangle for the provided column.
@@ -180,7 +186,7 @@ namespace MonoKle
         /// Wraps around when the provided row is outside of the atlas.
         /// </remarks>
         /// <param name="row">Zero-based index of the row to get.</param>
-        public MTexture GetRow(int row) => new MTexture(Data, Identifier, GetRowAtlas(row));
+        public MTexture GetRow(int row) => new MTexture(Data, Identifier, Path, GetRowAtlas(row));
 
         /// <summary>
         /// Gets the atlas rectangle for the provided column.
@@ -202,7 +208,7 @@ namespace MonoKle
         /// </remarks>
         /// <param name="row">Zero-based index of the row to use.</param>
         /// <param name="frame">Zero-based index of the frame to show.</param>
-        public MTexture AnimateRow(int row, int frame) => new MTexture(Data, Identifier, AnimateRowAtlas(row, frame));
+        public MTexture AnimateRow(int row, int frame) => new MTexture(Data, Identifier, Path, AnimateRowAtlas(row, frame));
 
         /// <summary>
         /// Animates the given row to the provided frame.
@@ -222,7 +228,7 @@ namespace MonoKle
         /// </remarks>
         /// <param name="row">Zero-based index of the row to use.</param>
         /// <param name="elapsed">Elapsed time used to pick out the frame.</param>
-        public MTexture AnimateRow(int row, TimeSpan elapsed) => new MTexture(Data, Identifier, AnimateRowAtlas(row, elapsed));
+        public MTexture AnimateRow(int row, TimeSpan elapsed) => new MTexture(Data, Identifier, Path, AnimateRowAtlas(row, elapsed));
 
         /// <summary>
         /// Animates the given row to the frame at the provided elapsed time.
@@ -242,7 +248,7 @@ namespace MonoKle
         /// Wraps around when the frame is outside of the atlas.
         /// </remarks>
         /// <param name="elapsed">Elapsed time used to pick out the frame.</param>
-        public MTexture AnimateRow(TimeSpan elapsed) => new MTexture(Data, Identifier, AnimateRowAtlas(elapsed));
+        public MTexture AnimateRow(TimeSpan elapsed) => new MTexture(Data, Identifier, Path, AnimateRowAtlas(elapsed));
 
         /// <summary>
         /// Animates to the frame at the provided elapsed time. The whole texture makes a singular row, only applying <see cref="FrameMargin"/> between columns.
@@ -261,7 +267,7 @@ namespace MonoKle
         /// <remarks>
         /// Wraps around when the provided frame is outside of the atlas.
         /// </remarks>
-        public MTexture AnimateColumn(int column, int frame) => new MTexture(Data, Identifier, AnimateColumnAtlas(column, frame));
+        public MTexture AnimateColumn(int column, int frame) => new MTexture(Data, Identifier, Path, AnimateColumnAtlas(column, frame));
 
         /// <summary>
         /// Animates the given column to the provided frame.
@@ -281,7 +287,7 @@ namespace MonoKle
         /// </remarks>
         /// <param name="column">Zero-based index of the column to use.</param>
         /// <param name="elapsed">Elapsed time used to pick out the frame.</param>
-        public MTexture AnimateColumn(int column, TimeSpan elapsed) => new MTexture(Data, Identifier, AnimateColumnAtlas(column, elapsed));
+        public MTexture AnimateColumn(int column, TimeSpan elapsed) => new MTexture(Data, Identifier, Path, AnimateColumnAtlas(column, elapsed));
 
         /// <summary>
         /// Animates the given column to the frame at the provided elapsed time.
@@ -301,7 +307,7 @@ namespace MonoKle
         /// Wraps around when the frame is outside of the atlas.
         /// </remarks>
         /// <param name="elapsed">Elapsed time used to pick out the frame.</param>
-        public MTexture AnimateColumn(TimeSpan elapsed) => new MTexture(Data, Identifier, AnimateColumnAtlas(elapsed));
+        public MTexture AnimateColumn(TimeSpan elapsed) => new MTexture(Data, Identifier, Path, AnimateColumnAtlas(elapsed));
 
         /// <summary>
         /// Animates to the frame at the provided elapsed time. The whole texture makes a singular column, only applying <see cref="FrameMargin"/> between rows.
@@ -326,13 +332,13 @@ namespace MonoKle
         /// Returns a new instance of <see cref="MTexture"/> with the atlas rectangle set to the provided value.
         /// </summary>
         /// <param name="atlas">The atlas rectangle to use.</param>
-        public MTexture WithAtlas(MRectangleInt atlas) => new MTexture(Data, Identifier, atlas, FrameColumns, FrameRows, FrameRate, FrameMargin);
+        public MTexture WithAtlas(MRectangleInt atlas) => new MTexture(Data, Identifier, Path, atlas, FrameColumns, FrameRows, FrameRate, FrameMargin);
 
         /// <summary>
         /// Returns a new instance of <see cref="MTexture"/> with the atlas margin set to the provided value.
         /// </summary>
         /// <param name="margin">The margin to use.</param>
-        public MTexture WithMargin(int margin) => new MTexture(Data, Identifier, AtlasRectangle, FrameColumns, FrameRows, FrameRate, margin);
+        public MTexture WithMargin(int margin) => new MTexture(Data, Identifier, Path, AtlasRectangle, FrameColumns, FrameRows, FrameRate, margin);
 
         public override string ToString() => $"{Identifier} | {AtlasRectangle}";
     }

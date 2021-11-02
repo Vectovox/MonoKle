@@ -35,8 +35,8 @@ namespace MonoKle.Asset
         public TextureStorage(GraphicsDevice graphicsDevice, Logger logger) : base(logger)
         {
             _graphicsDevice = graphicsDevice;
-            Error = new MTexture(new Texture2D(graphicsDevice, 1, 1).Fill(Color.Purple), "error");
-            White = new MTexture(new Texture2D(graphicsDevice, 1, 1).Fill(Color.White), "white");
+            Error = new MTexture(new Texture2D(graphicsDevice, 1, 1).Fill(Color.Purple), "error", "~Error");
+            White = new MTexture(new Texture2D(graphicsDevice, 1, 1).Fill(Color.White), "white", "~White");
         }
 
         /// <summary>
@@ -60,10 +60,10 @@ namespace MonoKle.Asset
                     try
                     {
                         var newTexture = data.AtlasRectangle == null
-                            ? new MTexture(_textureByPath[data.Path], identifier, data.FrameColumns,
-                                data.FrameRows, data.FrameMargin, data.FrameRate)
-                            : new MTexture(_textureByPath[data.Path], identifier, data.AtlasRectangle.Value,
-                                data.FrameColumns, data.FrameRows, data.FrameMargin, data.FrameRate);
+                            ? new MTexture(_textureByPath[data.Path], identifier, data.Path,
+                                data.FrameColumns, data.FrameRows, data.FrameMargin, data.FrameRate)
+                            : new MTexture(_textureByPath[data.Path], identifier, data.Path,
+                                data.AtlasRectangle.Value, data.FrameColumns, data.FrameRows, data.FrameMargin, data.FrameRate);
                         _textureCache.Add(identifier, newTexture);
                         return newTexture;
                     }

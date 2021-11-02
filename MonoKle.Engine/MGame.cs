@@ -10,7 +10,10 @@ using MonoKle.Input.Touch;
 using MonoKle.Logging;
 using MonoKle.State;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MonoKle.Engine
 {
@@ -19,6 +22,7 @@ namespace MonoKle.Engine
     /// </summary>
     public class MGame : Game
     {
+        private static readonly Callbacker _uiThreadCallbacker = new Callbacker();
         private static PerformanceWidget _performanceWidget;
         private static bool _initializing = true;
 
@@ -129,6 +133,23 @@ namespace MonoKle.Engine
             return GameInstance;
         }
 
+        /// <summary>
+        /// Runs the given action on the UI thread. Execution will occur at some future frame. Multiple calls are executed in a FIFO order. 
+        /// </summary>
+        /// <param name="action">The action to run.</param>
+        /// <param name="wait">If true, waits blockingly until the action has been executed.</param>
+        public static void RunOnUIThread(Action action, bool wait = true)
+        {
+            if (wait)
+            {
+                _uiThreadCallbacker.AddWait(action);
+            }
+            else
+            {
+                _uiThreadCallbacker.Add(action);
+            }
+        }
+
         protected override void LoadContent()
         {
             base.LoadContent();
@@ -182,6 +203,8 @@ namespace MonoKle.Engine
             if (!_initializing)
             {
                 _performanceWidget.BeginUpdate();
+
+                _uiThreadCallbacker.CallOne();
 
                 var deltaTime = time.ElapsedGameTime;
                 IsRunningSlowly = time.IsRunningSlowly;

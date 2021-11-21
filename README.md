@@ -11,14 +11,12 @@ To use MonoKle, your project needs to support or reference the following:
 * [MoreLINQ](https://github.com/morelinq/MoreLINQ)
 
 ## Usage
-It is easy to get started using MonoKle. Just reference the DLL in your game and you are up and running. Do not forget to copy the .XML documentation file to the same folder as the library!
+It is easy to get started using MonoKle. Just add it via GitHub nuget and you're good to go. Alternatively add a project reference to the .DLL files. The repository has a minimum working example demo project for both Windows and Android.
 
 If you want to contribute to MonoKle or fork it you need to have MonoGame installed (nuget recommended). After that you just clone the repository and open the project file. It is as easy as that!
 
-For full information see the documentation within the repository.
-
 ## State of code
-As this is still a personal project that grows organically, the code is in constant flux and each version may, and likely does, break compatibility. Expect changes!
+As this is still a personal project that grows organically to support ongoing work, the code is in constant flux and each version may, and likely does, break compatibility. Expect changes!
 
 ## License
 MonoKle is under the Microsoft Public License (MS-PL) license, see [the license file](LICENSE.txt) for more details. Third-party libraries used by MonoKle are under their own licenses.

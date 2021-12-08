@@ -7,6 +7,8 @@ namespace MonoKle.State
     /// </summary>
     public class StateSwitchData
     {
+        private static readonly object _voidSwitchObject = new object();
+
         /// <summary>
         /// Initializes a new instance of <see cref="StateSwitchData"/>, providing data to transfer upon state switch.
         /// </summary>
@@ -26,7 +28,7 @@ namespace MonoKle.State
         /// </summary>
         /// <param name="nextState">The string identifier for the next state.</param>
         /// <param name="previousState">The string identifier for the previous state.</param>
-        public StateSwitchData(string nextState, string previousState) : this(nextState, previousState, new object())
+        public StateSwitchData(string nextState, string previousState) : this(nextState, previousState, _voidSwitchObject)
         {
             HasData = false;
         }

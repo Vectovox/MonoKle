@@ -28,7 +28,7 @@ namespace MonoKle.State
         {
             if (state == null || identifier == null)
             {
-                throw new ArgumentNullException("State must not be null.");
+                throw new ArgumentNullException("State and identifier must not be null.");
             }
 
             if (_stateByString.ContainsKey(identifier))

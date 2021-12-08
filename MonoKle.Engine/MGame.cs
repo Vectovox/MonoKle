@@ -112,6 +112,7 @@ namespace MonoKle.Engine
         /// Initializes the MonoKle backend, returning a runnable game instance.
         /// </summary>
         /// <param name="graphicsMode">The initial graphics mode setting.</param>
+        /// <param name="arguments">Variable assignment strings. E.g. 'mySettingEnabled = false'.</param>
         public static MGame Create(GraphicsMode graphicsMode, string[] arguments)
         {
             // Graphics device has to be created immediately but cannot be used before LoadContent

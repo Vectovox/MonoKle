@@ -25,11 +25,12 @@ namespace MonoKle.Asset
 
         protected override MSoundEffectInstance GetInstance(SoundEffect data) => new MSoundEffectInstance(data);
 
-        protected override bool Load(Stream stream, out SoundEffect? result)
+        protected override bool Load(Stream stream, string identifier, out SoundEffect? result)
         {
             try
             {
                 result = SoundEffect.FromStream(stream);
+                result.Name = identifier;
                 return true;
             }
             catch (Exception e)

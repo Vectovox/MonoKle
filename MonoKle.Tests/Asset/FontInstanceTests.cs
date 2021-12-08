@@ -77,7 +77,7 @@ namespace MonoKle.Asset
                     }
                 },
             };
-            _fontData = new FontData(fontFile, new List<Microsoft.Xna.Framework.Graphics.Texture2D>());
+            _fontData = new FontData("ID", fontFile, new List<Microsoft.Xna.Framework.Graphics.Texture2D>());
             _font = new FontInstance(_fontData) { ColorTag = '#' };
         }
 

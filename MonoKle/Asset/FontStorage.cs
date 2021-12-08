@@ -18,13 +18,14 @@ namespace MonoKle.Asset
         /// Initializes a new instance of the <see cref="FontStorage"/> class.
         /// </summary>
         /// <param name="graphicsDevice">Graphics device</param>
+        /// <param name="logger">The logger to use.</param>
         public FontStorage(GraphicsDevice graphicsDevice, Logger logger) : base(logger) => _graphicsDevice = graphicsDevice;
 
         protected override bool FileSupported(string extension) => extension.Equals(".mfnt", StringComparison.InvariantCultureIgnoreCase);
 
         protected override FontInstance GetInstance(FontData data) => new FontInstance(data);
 
-        protected override bool Load(Stream stream, out FontData? result)
+        protected override bool Load(Stream stream, string identifier, out FontData? result)
         {
             var serializer = new XmlSerializer(typeof(BakedFont));
             
@@ -46,7 +47,7 @@ namespace MonoKle.Asset
                 return Texture2D.FromStream(_graphicsDevice, textureStream);
             }).ToList();
 
-            result = new FontData(baked.FontFile, texList);
+            result = new FontData(identifier, baked.FontFile, texList);
             return true;
         }
     }

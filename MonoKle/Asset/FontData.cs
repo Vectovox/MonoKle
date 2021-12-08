@@ -17,15 +17,25 @@ namespace MonoKle.Asset
         /// </summary>
         public int Size { get; }
 
+        /// <summary>
+        /// Gets the outline, in pixels.
+        /// </summary>
         public int Outline { get; }
+
+        /// <summary>
+        /// Gets the name of the font data.
+        /// </summary>
+        public string Name { get; }
 
         /// <summary>
         /// Creates a new instance of <see cref="FontData"/>.
         /// </summary>
+        /// <param name="name">The name of the font data.</param>
         /// <param name="data">The data representation.</param>
         /// <param name="pageList">The image representations.</param>
-        public FontData(FontFile data, List<Texture2D> pageList)
+        public FontData(string name, FontFile data, List<Texture2D> pageList)
         {
+            Name = name;
             Size = data.Common.LineHeight;
             Outline = data.Info.OutLine;
             _fontCharByChar = data.Chars.ToDictionary(ch => (char)ch.ID);

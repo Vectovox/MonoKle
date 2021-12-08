@@ -59,7 +59,7 @@ namespace MonoKle.Asset
 
             try
             {
-                if (Load(stream, out var result))
+                if (Load(stream, identifier, out var result))
                 {
                     _assetStorage.Add(identifier, result!);
                     return true;
@@ -89,7 +89,7 @@ namespace MonoKle.Asset
             return false;
         }
 
-        protected abstract bool Load(Stream stream, out TData? result);
+        protected abstract bool Load(Stream stream, string identifier, out TData? result);
 
         /// <summary>
         /// Unloads all assets, returning the amount of asset identifiers unloaded.

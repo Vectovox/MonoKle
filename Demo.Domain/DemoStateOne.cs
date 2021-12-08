@@ -79,9 +79,9 @@ namespace Demo.Domain
             font.Draw(_spriteBatch, "Timer: " + _timer.TimeLeft + " (" + _timer.Duration + ") Done? " + _timer.IsDone,
                 new Vector2(50, 150), Color.Green);
 
-            Vector2 DrawTextBox(string text, MVector2 position, int fontSize = 32)
+            Vector2 DrawTextBox(string text, MVector2 position, int fontSize = 32, bool compact = false)
             {
-                var newInstance = font.WithSize(fontSize);
+                var newInstance = font.WithSize(fontSize).WithCompactHeight(compact);
                 var size = newInstance.Measure(text);
                 _spriteBatch.Draw(MGame.Asset.Texture.White, new MRectangle(position, position + size).ToMRectangleInt(), Color.Gray);
                 newInstance.Draw(_spriteBatch, text, position, Color.White);
@@ -137,6 +137,8 @@ namespace Demo.Domain
             sizeTestPos.X += DrawTextBox(threeString, sizeTestPos).X;
             sizeTestPos.X += DrawTextBox("Four", sizeTestPos, 64).X;
             DrawTextBox("Five", sizeTestPos);
+            // Compact mode
+            DrawTextBox("100.00", new Vector2(-200, 450), 32, true);
             _spriteBatch.End();
 
             // Draw "UI"

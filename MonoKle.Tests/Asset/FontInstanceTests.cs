@@ -20,6 +20,13 @@ namespace MonoKle.Asset
         private const int SpaceWidth = 15;
         private const int AWidth = 14;
         private const int BWidth = 13;
+        private const int GWidth = 17;
+        private const int JWidth = 17;
+
+        private const int AHeight = 15;
+        private const int BHeight = 20;
+        private const int GHeight = 21;
+        private const int JHeight = 26;
 
         public FontInstanceTests()
         {
@@ -44,17 +51,45 @@ namespace MonoKle.Asset
                     {
                         ID = 97, // a
                         XAdvance = AWidth,
+                        Height = AHeight,
+                        YOffset = 9,
                     },
                     new FontChar
                     {
                         ID = 98, // b
                         XAdvance = BWidth,
+                        Height = BHeight,
+                        YOffset = 4,
+                    },
+                    new FontChar
+                    {
+                        ID = 103, // g
+                        XAdvance = GWidth,
+                        Height = GHeight,
+                        YOffset = 9,
+                    },
+                    new FontChar
+                    {
+                        ID = 106, // j
+                        XAdvance = JWidth,
+                        Height = JHeight,
+                        YOffset = 4,
                     }
                 },
             };
             _fontData = new FontData(fontFile, new List<Microsoft.Xna.Framework.Graphics.Texture2D>());
             _font = new FontInstance(_fontData) { ColorTag = '#' };
         }
+
+        [DataTestMethod]
+        [DataRow("", 0, 0, DisplayName = "Empty string")]
+        [DataRow("a", AWidth, AHeight, DisplayName = "Single character 'a'")]
+        [DataRow("g", GWidth, GHeight, DisplayName = "Single character 'g'")]
+        [DataRow("j", JWidth, JHeight, DisplayName = "Single character 'j'")]
+        [DataRow("ab", AWidth + BWidth, BHeight, DisplayName = "Two characters of different height")]
+        [DataRow("ag", AWidth + GWidth, GHeight, DisplayName = "Two characters of different starting position")]
+        public void MeasureString_Compact_CorrectValue(string testString, float expectedWidth, float expectedHeight) =>
+            Assert.AreEqual(new MVector2(expectedWidth, expectedHeight), _font.WithCompactHeight(true).Measure(testString));
 
         [DataTestMethod]
         [DataRow("", 0, Size, DisplayName = "Empty string")]
@@ -109,11 +144,13 @@ namespace MonoKle.Asset
                 LinePadding = 15,
                 Size = 19,
                 ColorTag = '#',
+                CompactHeight = true,
             };
-            var testedInstance = _font.WithLinePadding(expected.LinePadding).WithSize(expected.Size);
+            var testedInstance = _font.WithLinePadding(expected.LinePadding).WithSize(expected.Size).WithCompactHeight(expected.CompactHeight);
             Assert.AreEqual(expected.LinePadding, testedInstance.LinePadding);
             Assert.AreEqual(expected.Size, testedInstance.Size);
             Assert.AreEqual(expected.ColorTag, testedInstance.ColorTag);
+            Assert.AreEqual(expected.CompactHeight, testedInstance.CompactHeight);
         }
     }
 }

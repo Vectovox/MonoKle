@@ -42,6 +42,16 @@ namespace MonoKle.Asset
         /// </summary>
         public char ColorTag { get; set; } = '\\';
 
+        /// <summary>
+        /// Gets or sets whether compact mode should be used. If true, line height is discarded and text is
+        /// measured and drawn as close to the drawing position as possible.
+        /// </summary>
+        /// <remarks>
+        /// If true, text can easily be centered visually correct on the Y axis but may "jump around"
+        /// when text changes. Does not work for multi-line strings.
+        /// </remarks>
+        public bool CompactHeight { get; set; }
+
         private float ScaleFactor => Size / (float)_fontData.Size;
 
         /// <summary>
@@ -49,14 +59,24 @@ namespace MonoKle.Asset
         /// </summary>
         /// <param name="size">The font size to use.</param>
         /// <returns>New instance of <see cref="FontInstance"/> with the provided size.</returns>
-        public FontInstance WithSize(int size) => new FontInstance(_fontData) { Size = size, LinePadding = LinePadding, ColorTag = ColorTag };
+        public FontInstance WithSize(int size) => new FontInstance(_fontData)
+            { Size = size, LinePadding = LinePadding, ColorTag = ColorTag, CompactHeight = CompactHeight };
 
         /// <summary>
         /// Returns a new instance of the same font with the given line height padding.
         /// </summary>
         /// <param name="padding">The line height padding to use.</param>
         /// <returns>New instance of <see cref="FontInstance"/> with the provided line height padding.</returns>
-        public FontInstance WithLinePadding(int padding) => new FontInstance(_fontData) { LinePadding = padding, Size = Size, ColorTag = ColorTag };
+        public FontInstance WithLinePadding(int padding) => new FontInstance(_fontData)
+            { Size = Size, LinePadding = padding, ColorTag = ColorTag, CompactHeight = CompactHeight };
+
+        /// <summary>
+        /// Returns a new instance of the same font with the given compact height mode.
+        /// </summary>
+        /// <param name="compactHeight">The compact height mode to use.</param>
+        /// <returns>New instance of <see cref="FontInstance"/> with the provided compact height mode.</returns>
+        public FontInstance WithCompactHeight(bool compactHeight) => new FontInstance(_fontData)
+            { Size = Size, LinePadding = LinePadding, ColorTag = ColorTag, CompactHeight = compactHeight };
 
         /// <summary>
         /// Returns the size of the given text.
@@ -76,8 +96,10 @@ namespace MonoKle.Asset
             var lineHeightIncrease = Size + LinePadding + singleOutline;
             
             // Set initial values
-            var rowSize = 0;
-            var totalSize = new Vector2(0f, Size + LinePadding + doubleOutline);
+            var rowWidth = 0f;
+            var rowHeightMin = Size;
+            var rowHeightMax = 0f;
+            var totalSize = new Vector2(0f, CompactHeight ? 0f : Size + LinePadding + doubleOutline);
             var tagOpen = false;
 
             // Iterate all characters to measure string
@@ -96,8 +118,8 @@ namespace MonoKle.Asset
                 {
                     // Update totals on linebreak
                     // X-component
-                    totalSize.X = Math.Max(totalSize.X, rowSize);
-                    rowSize = 0;
+                    totalSize.X = Math.Max(totalSize.X, rowWidth);
+                    rowWidth = 0f;
 
                     // Y-component
                     totalSize.Y += lineHeightIncrease;
@@ -105,12 +127,21 @@ namespace MonoKle.Asset
                 else if (_fontData.TryGetChar(character, out FontChar fontCharacter))
                 {
                     // Measure character and set the line size
-                    rowSize += fontCharacter.XAdvance + _fontData.Outline;
+                    rowWidth += fontCharacter.XAdvance + _fontData.Outline;
+                    if (CompactHeight)
+                    {
+                        rowHeightMin = Math.Min(rowHeightMin, fontCharacter.YOffset + _fontData.Outline);
+                        rowHeightMax = Math.Max(rowHeightMax, fontCharacter.Height + _fontData.Outline + fontCharacter.YOffset);
+                    }
                 }
             }
 
             // Final update to total size
-            totalSize.X = Math.Max(totalSize.X, rowSize) * scaleFactor;
+            totalSize.X = Math.Max(totalSize.X, rowWidth) * scaleFactor;
+            if (CompactHeight)
+            {
+                totalSize.Y = (totalSize.Y + Math.Max(0f, rowHeightMax - rowHeightMin)) * scaleFactor;
+            }
             return totalSize;
         }
 
@@ -239,6 +270,11 @@ namespace MonoKle.Asset
         public void Draw(SpriteBatch spriteBatch, string text, Vector2 position, Color color,
             float rotation, Vector2 origin, float layerDepth, SpriteEffects effect, Func<char, Color, Color> colorSelector)
         {
+            if (CompactHeight)
+            {
+                position.Y -= MinimumYOffset(text);
+            }
+
             // Precompute for efficiency
             var scaleFactor = ScaleFactor;
             var singleOutline = _fontData.Outline * scaleFactor;
@@ -296,5 +332,18 @@ namespace MonoKle.Asset
         }
 
         private static Color DefaultColorMethod(char token, Color original) => original;
+
+        private int MinimumYOffset(ReadOnlySpan<char> text)
+        {
+            var smallestOffset = int.MaxValue;
+            foreach (var character in text)
+            {
+                if (_fontData.TryGetChar(character, out FontChar fontCharacter))
+                {
+                    smallestOffset = Math.Min(fontCharacter.YOffset + _fontData.Outline, smallestOffset);
+                }
+            }
+            return smallestOffset;
+        }
     }
 }

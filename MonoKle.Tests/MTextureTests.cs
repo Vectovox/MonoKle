@@ -8,19 +8,19 @@ namespace MonoKle.Tests
     {
         [TestMethod]
         public void DurationRow_Animated_Correct() =>
-            Assert.AreEqual(TimeSpan.FromMilliseconds(500), new MTexture(null, string.Empty, new MRectangleInt(10, 10, 30, 40), 5, 1, 0, 10).DurationRow);
+            Assert.AreEqual(TimeSpan.FromMilliseconds(500), new MTexture(null, string.Empty, string.Empty, new MRectangleInt(10, 10, 30, 40), 5, 1, 0, 10).DurationRow);
 
         [TestMethod]
         public void DurationRow_NonAnimated_Correct() =>
-            Assert.AreEqual(TimeSpan.MaxValue, new MTexture(null, string.Empty, new MRectangleInt(10, 10, 30, 40), 5, 1, 0, 0).DurationRow);
+            Assert.AreEqual(TimeSpan.MaxValue, new MTexture(null, string.Empty, string.Empty, new MRectangleInt(10, 10, 30, 40), 5, 1, 0, 0).DurationRow);
 
         [TestMethod]
         public void DurationColumn_Animated_Correct() =>
-            Assert.AreEqual(TimeSpan.FromMilliseconds(500), new MTexture(null, string.Empty, new MRectangleInt(10, 10, 30, 40), 1, 5, 0, 10).DurationColumn);
+            Assert.AreEqual(TimeSpan.FromMilliseconds(500), new MTexture(null, string.Empty, string.Empty, new MRectangleInt(10, 10, 30, 40), 1, 5, 0, 10).DurationColumn);
 
         [TestMethod]
         public void DurationColumn_NonAnimated_Correct() =>
-            Assert.AreEqual(TimeSpan.MaxValue, new MTexture(null, string.Empty, new MRectangleInt(10, 10, 30, 40), 1, 5, 0, 0).DurationColumn);
+            Assert.AreEqual(TimeSpan.MaxValue, new MTexture(null, string.Empty, string.Empty, new MRectangleInt(10, 10, 30, 40), 1, 5, 0, 0).DurationColumn);
 
         [DataTestMethod]
         [DataRow(14, 2, 2, 3, DisplayName = "2 Margin")] // [][][X][X][X][][][][][Y][Y][Y][][]
@@ -28,7 +28,7 @@ namespace MonoKle.Tests
         [DataRow(6, 3, 0, 2, DisplayName = "0 Margin")]  // [X][X][Y][Y][Z][Z]
         public void FrameWidth_Correct(int width, int frameCount, int atlasMargin, int expectedResult)
         {
-            var sut = new MTexture(null, string.Empty, new MRectangleInt(0, 0, width, 5), frameCount, 1, atlasMargin);
+            var sut = new MTexture(null, string.Empty, string.Empty, new MRectangleInt(0, 0, width, 5), frameCount, 1, atlasMargin);
             Assert.AreEqual(expectedResult, sut.FrameWidth);
         }
 
@@ -38,7 +38,7 @@ namespace MonoKle.Tests
         [DataRow(6, 3, 0, 2, DisplayName = "0 Margin")]  // [X][X][Y][Y][Z][Z]
         public void FrameHeight_Correct(int height, int frameCount, int atlasMargin, int expectedResult)
         {
-            var sut = new MTexture(null, string.Empty, new MRectangleInt(0, 0, 5, height), 1, frameCount, atlasMargin);
+            var sut = new MTexture(null, string.Empty, string.Empty, new MRectangleInt(0, 0, 5, height), 1, frameCount, atlasMargin);
             Assert.AreEqual(expectedResult, sut.FrameHeight);
         }
 
@@ -70,7 +70,7 @@ namespace MonoKle.Tests
         [DataRow(72, 40, 2, 2, 2, 1, 1, 38, 22, DisplayName = "Matrix - 2 Margin - Bottom Right frame")]
         public void GetCell_AtlasRectangleCorrect(int width, int height, int columns, int rows, int margin, int column, int row, int posX, int posY)
         {
-            var sut = new MTexture(null, string.Empty, new MRectangleInt(0, 0, width, height), columns, rows, margin);
+            var sut = new MTexture(null, string.Empty, string.Empty, new MRectangleInt(0, 0, width, height), columns, rows, margin);
             var result = sut.GetCell(column, row);
             Assert.AreEqual(new MRectangleInt(posX, posY, result.FrameWidth, result.FrameHeight), result.AtlasRectangle);
             Assert.AreEqual(1, result.FrameRows);
@@ -89,7 +89,7 @@ namespace MonoKle.Tests
         [DataRow(1, 1, 1, DisplayName = "Bottom Right - 1 Margin")]
         public void GetCell_AfterLastFrame_WrapsAround(int x, int y, int margin)
         {
-            var sut = new MTexture(null, string.Empty, new MRectangleInt(10, 10, 68, 36), 2, 2, margin);
+            var sut = new MTexture(null, string.Empty, string.Empty, new MRectangleInt(10, 10, 68, 36), 2, 2, margin);
             Assert.AreEqual(sut.GetCell(x, y).AtlasRectangle, sut.GetCell(x + 2, y).AtlasRectangle);
             Assert.AreEqual(sut.GetCell(x, y).AtlasRectangle, sut.GetCell(x, y + 2).AtlasRectangle);
             Assert.AreEqual(sut.GetCell(x, y).AtlasRectangle, sut.GetCell(x + 2, y + 2).AtlasRectangle);
@@ -108,7 +108,7 @@ namespace MonoKle.Tests
         [DataRow(68, 2, 2, 1, 1, 35, DisplayName = "Multiple rows - Margin - Last frame")]
         public void GetColumn_AtlasRectangleCorrect(int width, int columns, int rows, int margin, int column, int posX)
         {
-            var sut = new MTexture(null, string.Empty, new MRectangleInt(0, 0, width, 32), columns, rows, margin);
+            var sut = new MTexture(null, string.Empty, string.Empty, new MRectangleInt(0, 0, width, 32), columns, rows, margin);
             var result = sut.GetColumn(column);
             Assert.AreEqual(new MRectangleInt(posX, 0, result.FrameWidth, 32), result.AtlasRectangle);
             Assert.AreEqual(1, result.FrameColumns);
@@ -122,7 +122,7 @@ namespace MonoKle.Tests
         [DataRow(true, DisplayName = "With margin")]
         public void GetColumn_AfterLastFrame_WrapsAround(bool margin)
         {
-            var sut = new MTexture(null, string.Empty, new MRectangleInt(10, 10, 30, 40), 6, 1, margin ? 1 : 0);
+            var sut = new MTexture(null, string.Empty, string.Empty, new MRectangleInt(10, 10, 30, 40), 6, 1, margin ? 1 : 0);
             Assert.AreEqual(sut.GetColumn(0).AtlasRectangle, sut.GetColumn(6).AtlasRectangle);
             Assert.AreEqual(sut.GetColumn(5).AtlasRectangle, sut.GetColumn(11).AtlasRectangle);
             Assert.AreEqual(sut.GetColumn(6).AtlasRectangle, sut.GetColumn(12).AtlasRectangle);
@@ -141,7 +141,7 @@ namespace MonoKle.Tests
         [DataRow(68, 2, 2, 1, 1, 35, DisplayName = "Multiple rows - Margin - Last frame")]
         public void GetRow_AtlasRectangleCorrect(int height, int columns, int rows, int margin, int row, int posY)
         {
-            var sut = new MTexture(null, string.Empty, new MRectangleInt(0, 0, 32, height), columns, rows, margin);
+            var sut = new MTexture(null, string.Empty, string.Empty, new MRectangleInt(0, 0, 32, height), columns, rows, margin);
             var result = sut.GetRow(row);
             Assert.AreEqual(new MRectangleInt(0, posY, 32, result.FrameHeight), result.AtlasRectangle);
             Assert.AreEqual(1, result.FrameColumns);
@@ -155,7 +155,7 @@ namespace MonoKle.Tests
         [DataRow(true, DisplayName = "With margin")]
         public void GetRow_AfterLastFrame_WrapsAround(bool margin)
         {
-            var sut = new MTexture(null, string.Empty, new MRectangleInt(10, 10, 30, 60), 1, 6, margin ? 1 : 0);
+            var sut = new MTexture(null, string.Empty, string.Empty, new MRectangleInt(10, 10, 30, 60), 1, 6, margin ? 1 : 0);
             Assert.AreEqual(sut.GetRow(0).AtlasRectangle, sut.GetRow(6).AtlasRectangle);
             Assert.AreEqual(sut.GetRow(5).AtlasRectangle, sut.GetRow(11).AtlasRectangle);
             Assert.AreEqual(sut.GetRow(6).AtlasRectangle, sut.GetRow(12).AtlasRectangle);
@@ -164,7 +164,7 @@ namespace MonoKle.Tests
         [TestMethod]
         public void AnimateRow_Frame_EqualToGetCell()
         {
-            var sut = new MTexture(null, string.Empty, new MRectangleInt(10, 10, 30, 40), 2, 2, 0);
+            var sut = new MTexture(null, string.Empty, string.Empty, new MRectangleInt(10, 10, 30, 40), 2, 2, 0);
             Assert.AreEqual(sut[0, 0].AtlasRectangle, sut.AnimateRow(0, 0).AtlasRectangle);
             Assert.AreEqual(sut[1, 0].AtlasRectangle, sut.AnimateRow(0, 1).AtlasRectangle);
             Assert.AreEqual(sut[0, 1].AtlasRectangle, sut.AnimateRow(1, 0).AtlasRectangle);
@@ -174,7 +174,7 @@ namespace MonoKle.Tests
         [TestMethod]
         public void AnimateRow_Elapsed_EqualToFrame()
         {
-            var sut = new MTexture(null, string.Empty, new MRectangleInt(10, 10, 30, 40), 2, 2, 0, 2);
+            var sut = new MTexture(null, string.Empty, string.Empty, new MRectangleInt(10, 10, 30, 40), 2, 2, 0, 2);
             Assert.AreEqual(sut.AnimateRow(0, 0).AtlasRectangle, sut.AnimateRow(0, TimeSpan.Zero).AtlasRectangle);
             Assert.AreEqual(sut.AnimateRow(1, 0).AtlasRectangle, sut.AnimateRow(1, TimeSpan.Zero).AtlasRectangle);
             Assert.AreEqual(sut.AnimateRow(0, 1).AtlasRectangle, sut.AnimateRow(0, TimeSpan.FromMilliseconds(500)).AtlasRectangle);
@@ -184,7 +184,7 @@ namespace MonoKle.Tests
         [TestMethod]
         public void AnimateColumn_Frame_EqualToGetCell()
         {
-            var sut = new MTexture(null, string.Empty, new MRectangleInt(10, 10, 30, 40), 2, 2, 0);
+            var sut = new MTexture(null, string.Empty, string.Empty, new MRectangleInt(10, 10, 30, 40), 2, 2, 0);
             Assert.AreEqual(sut[0, 0].AtlasRectangle, sut.AnimateColumn(0, 0).AtlasRectangle);
             Assert.AreEqual(sut[0, 1].AtlasRectangle, sut.AnimateColumn(0, 1).AtlasRectangle);
             Assert.AreEqual(sut[1, 0].AtlasRectangle, sut.AnimateColumn(1, 0).AtlasRectangle);
@@ -194,7 +194,7 @@ namespace MonoKle.Tests
         [TestMethod]
         public void AnimateColumn_Elapsed_EqualToFrame()
         {
-            var sut = new MTexture(null, string.Empty, new MRectangleInt(10, 10, 30, 40), 2, 2, 0, 2);
+            var sut = new MTexture(null, string.Empty, string.Empty, new MRectangleInt(10, 10, 30, 40), 2, 2, 0, 2);
             Assert.AreEqual(sut.AnimateColumn(0, 0).AtlasRectangle, sut.AnimateColumn(0, TimeSpan.Zero).AtlasRectangle);
             Assert.AreEqual(sut.AnimateColumn(1, 0).AtlasRectangle, sut.AnimateColumn(1, TimeSpan.Zero).AtlasRectangle);
             Assert.AreEqual(sut.AnimateColumn(0, 1).AtlasRectangle, sut.AnimateColumn(0, TimeSpan.FromMilliseconds(500)).AtlasRectangle);
@@ -213,6 +213,6 @@ namespace MonoKle.Tests
         [DataRow(56, 100, 3, 1, 1, 1, DisplayName = "Margin breaking column divisibility")]
         [DataRow(100, 56, 1, 3, 1, 1, DisplayName = "Margin breaking row divisibility")]
         public void ConstructorAssertion_ThrowsException(int width, int height, int columns, int rows, int margin, int frameRate) =>
-            Assert.ThrowsException<ArgumentException>(() => new MTexture(null, string.Empty, new MRectangleInt(0, 0, width, height), columns, rows, margin, frameRate));
+            Assert.ThrowsException<ArgumentException>(() => new MTexture(null, string.Empty, string.Empty, new MRectangleInt(0, 0, width, height), columns, rows, margin, frameRate));
     }
 }

@@ -9,7 +9,7 @@ namespace MonoKle.Input.Tests
         [TestMethod]
         public void IsDown()
         {
-            Button sut = new Button();
+            var sut = new Button();
 
             Assert.IsFalse(sut.IsDown);
             sut.Update(true, TimeSpan.FromSeconds(1));
@@ -21,7 +21,7 @@ namespace MonoKle.Input.Tests
         [TestMethod]
         public void IsUp()
         {
-            Button sut = new Button();
+            var sut = new Button();
 
             Assert.IsTrue(sut.IsUp);
             sut.Update(true, TimeSpan.FromSeconds(1));
@@ -33,7 +33,7 @@ namespace MonoKle.Input.Tests
         [TestMethod]
         public void IsHeld()
         {
-            Button sut = new Button();
+            var sut = new Button();
 
             Assert.IsFalse(sut.IsHeld);
             sut.Update(true, TimeSpan.FromSeconds(1));
@@ -47,7 +47,7 @@ namespace MonoKle.Input.Tests
         [TestMethod]
         public void IsPressed()
         {
-            Button sut = new Button();
+            var sut = new Button();
 
             Assert.IsFalse(sut.IsPressed);
             sut.Update(true, TimeSpan.FromSeconds(1));
@@ -63,7 +63,7 @@ namespace MonoKle.Input.Tests
         [TestMethod]
         public void IsReleased()
         {
-            Button sut = new Button();
+            var sut = new Button();
 
             Assert.IsFalse(sut.IsReleased);
             sut.Update(true, TimeSpan.FromSeconds(1));
@@ -81,8 +81,8 @@ namespace MonoKle.Input.Tests
         [TestMethod]
         public void IsHeldFor()
         {
-            Button sut = new Button();
-            TimeSpan duration = TimeSpan.FromSeconds(2);
+            var sut = new Button();
+            var duration = TimeSpan.FromSeconds(2);
 
             Assert.IsFalse(sut.IsHeldFor(duration));
             sut.Update(true, TimeSpan.FromSeconds(1));
@@ -100,8 +100,8 @@ namespace MonoKle.Input.Tests
         [TestMethod]
         public void IsHeldForOnce()
         {
-            Button sut = new Button();
-            TimeSpan duration = TimeSpan.FromSeconds(2);
+            var sut = new Button();
+            var duration = TimeSpan.FromSeconds(2);
 
             Assert.IsFalse(sut.IsHeldForOnce(duration));
             sut.Update(true, TimeSpan.FromSeconds(1));
@@ -123,7 +123,7 @@ namespace MonoKle.Input.Tests
         [TestMethod]
         public void HeldTime()
         {
-            Button sut = new Button();
+            var sut = new Button();
 
             Assert.AreEqual(TimeSpan.FromSeconds(0), sut.HeldTime);
             sut.Update(true, TimeSpan.FromSeconds(1));
@@ -132,6 +132,30 @@ namespace MonoKle.Input.Tests
             Assert.AreEqual(TimeSpan.FromSeconds(3), sut.HeldTime);
             sut.Update(false, TimeSpan.FromSeconds(2));
             Assert.AreEqual(TimeSpan.FromSeconds(0), sut.HeldTime);
+        }
+
+        [TestMethod]
+        public void IsReleasedAfter()
+        {
+            var sut = new Button();
+            var duration = TimeSpan.FromSeconds(2);
+
+            // Initial value
+            Assert.IsFalse(sut.IsReleasedAfter(duration));
+            // Released before duration
+            sut.Update(true, TimeSpan.FromSeconds(1));
+            sut.Update(false, TimeSpan.Zero);
+            Assert.IsFalse(sut.IsReleasedAfter(duration));
+            // Released after duration
+            sut.Update(true, TimeSpan.FromSeconds(2));
+            sut.Update(false, TimeSpan.Zero);
+            Assert.IsTrue(sut.IsReleasedAfter(duration));
+            // Not released anymore
+            sut.Update(false, TimeSpan.FromSeconds(2));
+            Assert.IsFalse(sut.IsReleasedAfter(duration));
+            // Duration passed but not released
+            sut.Update(true, TimeSpan.FromSeconds(2));
+            Assert.IsFalse(sut.IsReleasedAfter(duration));
         }
     }
 }

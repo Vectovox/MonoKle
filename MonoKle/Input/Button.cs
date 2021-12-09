@@ -8,7 +8,13 @@ namespace MonoKle.Input
     /// <seealso cref="IPressable" />
     public class Button : IPressable
     {
-        public TimeSpan HeldTime { get; private set; }
+        private bool _hasBeenUp = true;
+        private bool _wasDown = false;
+        private TimeSpan _lastHeldTime = TimeSpan.Zero;
+
+        public TimeSpan HeldTime => IsDown
+            ? _lastHeldTime
+            : TimeSpan.Zero;
 
         public bool IsDown { get; private set; }
 
@@ -22,10 +28,6 @@ namespace MonoKle.Input
 
         public bool IsHeldFor(TimeSpan duration) => HeldTime >= duration;
 
-        private bool _hasBeenUp = true;
-
-        private bool _wasDown;
-
         public bool IsHeldForOnce(TimeSpan duration)
         {
             if (IsHeldFor(duration) && _hasBeenUp)
@@ -36,11 +38,24 @@ namespace MonoKle.Input
             return false;
         }
 
+        public bool IsReleasedAfter(TimeSpan duration) => IsReleased && _lastHeldTime >= duration;
+
         public virtual void Update(bool down, TimeSpan deltaTime)
         {
+            // Update down state
             _wasDown = IsDown;
             IsDown = down;
-            HeldTime = down ? HeldTime + deltaTime : TimeSpan.Zero;
+            // Set held time
+            if (IsPressed)
+            {
+                // Reset
+                _lastHeldTime = deltaTime;
+            }
+            else if (IsDown)
+            {
+                // Increase
+                _lastHeldTime += deltaTime;
+            }
             _hasBeenUp = _hasBeenUp || !down;
         }
     }

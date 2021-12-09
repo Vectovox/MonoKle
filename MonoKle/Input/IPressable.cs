@@ -70,5 +70,13 @@ namespace MonoKle.Input
         /// <param name="duration">The time to have been held.</param>
         /// <returns>True if held for at least the provided amount of time; otherwise false.</returns>
         bool IsHeldForOnce(TimeSpan duration);
+
+        /// <summary>
+        /// Gets a value indicating whether this instance is released after having been held for at least
+        /// the provided amount of time.
+        /// </summary>
+        /// <param name="duration">The time to have been held before released.</param>
+        /// <returns>True if held and released after at least the provided amount of time; otherwise false.</returns>
+        bool IsReleasedAfter(TimeSpan duration);
     }
 }

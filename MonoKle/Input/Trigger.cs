@@ -28,6 +28,8 @@ namespace MonoKle.Input
 
         public bool IsHeldForOnce(TimeSpan duration) => _buttonState.IsHeldForOnce(duration);
 
+        public bool IsReleasedAfter(TimeSpan duration) => _buttonState.IsReleasedAfter(duration);
+
         /// <summary>
         /// Updates the state of the <see cref="Trigger"/>.
         /// </summary>

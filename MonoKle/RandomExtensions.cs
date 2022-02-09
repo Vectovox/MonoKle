@@ -50,5 +50,17 @@ namespace MonoKle
         /// <param name="value">The value to potentially negate.</param>
         public static double NextNegate(this Random random, double value)
             => random.Next(0, 2) == 0 ? value : -value;
+
+        /// <summary>
+        /// Returns a random timespan between the provided min- and max-values.
+        /// </summary>
+        /// <param name="random">The random instance to use.</param>
+        /// <param name="min">The inclusive minimum timespan boundary.</param>
+        /// <param name="max">The inclusive maximum timespan boundary.</param>
+        public static TimeSpan NextTimeSpan(this Random random, TimeSpan min, TimeSpan max)
+        {
+            var ticks = random.Next((int)(max.Ticks - min.Ticks));
+            return new TimeSpan(min.Ticks + ticks);
+        }
     }
 }

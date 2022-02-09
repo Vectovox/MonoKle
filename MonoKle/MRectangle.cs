@@ -150,6 +150,26 @@ namespace MonoKle
         public MVector2 TopRight => new MVector2(BottomRight.X, TopLeft.Y);
 
         /// <summary>
+        /// Returns the <see cref="Right"/> coordinate aligned to the vertical center.
+        /// </summary>
+        public MVector2 CenterRight => new MVector2(Right, Center.Y);
+
+        /// <summary>
+        /// Returns the <see cref="Left"/> coordinate aligned to the vertical center.
+        /// </summary>
+        public MVector2 CenterLeft => new MVector2(Left, Center.Y);
+
+        /// <summary>
+        /// Returns the <see cref="Top"/> coordinate aligned to the horizontal center.
+        /// </summary>
+        public MVector2 CenterTop => new MVector2(Center.X, Top);
+
+        /// <summary>
+        /// Returns the <see cref="Bottom"/> coordinate aligned to the horizontal center.
+        /// </summary>
+        public MVector2 CenterBottom => new MVector2(Center.X, Bottom);
+
+        /// <summary>
         /// Gets the <see cref="MVector2"/> representing width and height.
         /// </summary>
         public MVector2 Dimensions => new MVector2(Width, Height);

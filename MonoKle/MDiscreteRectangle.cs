@@ -125,6 +125,26 @@ namespace MonoKle
         public MPoint2 TopRight => new MPoint2(BottomRight.X, TopLeft.Y);
 
         /// <summary>
+        /// Returns the <see cref="Right"/> coordinate aligned to the vertical center.
+        /// </summary>
+        public MPoint2 CenterRight => new MPoint2(Right, (int)Center.Y);
+
+        /// <summary>
+        /// Returns the <see cref="Left"/> coordinate aligned to the vertical center.
+        /// </summary>
+        public MPoint2 CenterLeft => new MPoint2(Left, (int)Center.Y);
+
+        /// <summary>
+        /// Returns the <see cref="Top"/> coordinate aligned to the horizontal center.
+        /// </summary>
+        public MPoint2 CenterTop => new MPoint2((int)Center.X, Top);
+
+        /// <summary>
+        /// Returns the <see cref="Bottom"/> coordinate aligned to the horizontal center.
+        /// </summary>
+        public MPoint2 CenterBottom => new MPoint2((int)Center.X, Bottom);
+
+        /// <summary>
         /// Gets the <see cref="MPoint2"/> representing width and height.
         /// </summary>
         public MPoint2 Dimensions => new MPoint2(Width, Height);

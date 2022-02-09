@@ -1,4 +1,5 @@
 ﻿using MonoKle.Console;
+using System;
 using System.Collections.Generic;
 
 namespace MonoKle.Engine.Commands
@@ -8,6 +9,6 @@ namespace MonoKle.Engine.Commands
     {
         public void Call(IGameConsole console) => MGame.GameInstance.Exit();
 
-        public ICollection<string> GetPositionalSuggestions() => new string[0];
+        public ICollection<string> GetPositionalSuggestions() => Array.Empty<string>();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using MonoKle.Console;
 using MoreLinq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -19,6 +20,6 @@ namespace MonoKle.Engine.Commands
             MGame.Console.WriteLine(text, color);
         }
 
-        public ICollection<string> GetPositionalSuggestions() => new string[0];
+        public ICollection<string> GetPositionalSuggestions() => Array.Empty<string>();
     }
 }

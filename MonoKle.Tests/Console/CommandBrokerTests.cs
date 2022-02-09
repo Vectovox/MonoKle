@@ -401,7 +401,7 @@ namespace MonoKle.Console.Tests
                 LastFlag = Flag;
             }
 
-            public ICollection<string> GetPositionalSuggestions() => new string[0];
+            public ICollection<string> GetPositionalSuggestions() => Array.Empty<string>();
         }
 
         [ConsoleCommand("argumentUsageTest")]
@@ -432,7 +432,7 @@ namespace MonoKle.Console.Tests
             {
             }
 
-            public ICollection<string> GetPositionalSuggestions() => new string[0];
+            public ICollection<string> GetPositionalSuggestions() => Array.Empty<string>();
         }
 
         [ConsoleCommand("typeTestCommand", Description = "testDescription")]
@@ -474,7 +474,7 @@ namespace MonoKle.Console.Tests
                 LastBool = Bool;
             }
 
-            public ICollection<string> GetPositionalSuggestions() => new string[0];
+            public ICollection<string> GetPositionalSuggestions() => Array.Empty<string>();
         }
 
         [ConsoleCommand("defaultValueTestCommand")]
@@ -494,7 +494,7 @@ namespace MonoKle.Console.Tests
             {
             }
 
-            public ICollection<string> GetPositionalSuggestions() => new string[0];
+            public ICollection<string> GetPositionalSuggestions() => Array.Empty<string>();
         }
 
         [ConsoleCommand("emptyTestCommand", Description = "emptyDescription")]
@@ -512,7 +512,7 @@ namespace MonoKle.Console.Tests
                 WasCalled = true;
             }
 
-            public ICollection<string> GetPositionalSuggestions() => new string[0];
+            public ICollection<string> GetPositionalSuggestions() => Array.Empty<string>();
         }
 
         [ConsoleCommand("instanceTestCommand", Description = "emptyDescription")]
@@ -531,7 +531,7 @@ namespace MonoKle.Console.Tests
                 WasCalledWith = _toCallWith;
             }
 
-            public ICollection<string> GetPositionalSuggestions() => new string[0];
+            public ICollection<string> GetPositionalSuggestions() => Array.Empty<string>();
         }
     }
 }

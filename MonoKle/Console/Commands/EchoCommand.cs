@@ -1,4 +1,5 @@
 ﻿using MonoKle.Console;
+using System;
 using System.Collections.Generic;
 
 namespace MonoKle.Engine.Console.Commands
@@ -11,6 +12,6 @@ namespace MonoKle.Engine.Console.Commands
 
         public void Call(IGameConsole console) => console.WriteLine(Text);
 
-        public ICollection<string> GetPositionalSuggestions() => new string[0];
+        public ICollection<string> GetPositionalSuggestions() => Array.Empty<string>();
     }
 }

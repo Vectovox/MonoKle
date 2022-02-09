@@ -91,7 +91,7 @@ namespace MonoKle.Console
         /// </summary>
         /// <param name="command">The command to retrieve.</param>
         public ICollection<string> GetPositionalSuggestions(string command) =>
-            GetCommandInstance(command)?.GetPositionalSuggestions() ?? new string[0];
+            GetCommandInstance(command)?.GetPositionalSuggestions() ?? Array.Empty<string>();
 
         /// <summary>
         /// Gets information about the provided command.

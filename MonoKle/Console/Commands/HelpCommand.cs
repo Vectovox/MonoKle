@@ -24,7 +24,7 @@ namespace MonoKle.Engine.Console.Commands
             }
         }
 
-        public ICollection<string> GetPositionalSuggestions() => new string[0];
+        public ICollection<string> GetPositionalSuggestions() => Array.Empty<string>();
 
         private static void PrintHelp(IGameConsole console, string command)
         {

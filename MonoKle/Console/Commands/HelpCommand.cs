@@ -14,7 +14,7 @@ namespace MonoKle.Engine.Console.Commands
 
         public void Call(IGameConsole console)
         {
-            if (Command.Length == 0)
+            if (string.IsNullOrEmpty(Command))
             {
                 PrintHelpList(console);
             }

@@ -350,6 +350,14 @@ namespace MonoKle
         }
 
         /// <summary>
+        /// Returns whether this intersects the provided <see cref="MRectangle"/>.
+        /// </summary>
+        /// <param name="other">The rectangle to test intersection with.</param>
+        /// <returns>True if intersecting; otherwise false.</returns>
+        public bool Intersects(MRectangle other) =>
+            Contains(other.TopLeft) || Contains(other.BottomRight) || Contains(other.TopRight) || Contains(other.BottomLeft);
+
+        /// <summary>
         /// Returns whether this is equal to the provided object.
         /// </summary>
         /// <param name="obj">The object to check for equality with.</param>
@@ -444,6 +452,19 @@ namespace MonoKle
         /// <param name="deltaHeight">The change in height.</param>
         public MRectangle Resize(float deltaWidth, float deltaHeight) =>
             new MRectangle(TopLeft.X, TopLeft.Y, Width + deltaWidth, Height + deltaHeight);
+
+        /// <summary>
+        /// Repositions the <see cref="MRectangle"/> to the provided coordinate.
+        /// </summary>
+        /// <param name="x">The x component.</param>
+        /// <param name="y">The y component.</param>
+        public MRectangle Reposition(float x, float y) => new MRectangle(Dimensions).Translate(x, y);
+
+        /// <summary>
+        /// Repositions the <see cref="MRectangle"/> to the provided coordinate.
+        /// </summary>
+        /// <param name="coordinate">The coordinate.</param>
+        public MRectangle Reposition(MVector2 coordinate) => new MRectangle(Dimensions).Translate(coordinate);
 
         /// <summary>
         /// Uniformly scales the <see cref="MRectangle"/> around <see cref="Center"/> with the given factor.

@@ -254,6 +254,14 @@ namespace MonoKle
         }
 
         /// <summary>
+        /// Returns whether this intersects the provided <see cref="MDiscreteRectangle"/>.
+        /// </summary>
+        /// <param name="other">The rectangle to test intersection with.</param>
+        /// <returns>True if intersecting; otherwise false.</returns>
+        public bool Intersects(MDiscreteRectangle other) =>
+            Contains(other.TopLeft) || Contains(other.BottomRight) || Contains(other.TopRight) || Contains(other.BottomLeft);
+
+        /// <summary>
         /// Returns whether this is equal to the provided object.
         /// </summary>
         /// <param name="obj">The object to check for equality with.</param>
@@ -348,6 +356,19 @@ namespace MonoKle
         /// <param name="deltaHeight">The change in height.</param>
         public MDiscreteRectangle Resize(int deltaWidth, int deltaHeight) =>
             new MDiscreteRectangle(TopLeft.X, TopLeft.Y, Width + deltaWidth, Height + deltaHeight);
+
+        /// <summary>
+        /// Repositions the <see cref="MDiscreteRectangle"/> to the provided coordinate.
+        /// </summary>
+        /// <param name="x">The x component.</param>
+        /// <param name="y">The y component.</param>
+        public MDiscreteRectangle Reposition(int x, int y) => new MDiscreteRectangle(Dimensions).Translate(x, y);
+
+        /// <summary>
+        /// Repositions the <see cref="MDiscreteRectangle"/> to the provided coordinate.
+        /// </summary>
+        /// <param name="coordinate">The coordinate.</param>
+        public MDiscreteRectangle Reposition(MPoint2 coordinate) => new MDiscreteRectangle(Dimensions).Translate(coordinate);
 
         /// <summary>
         /// Translates the <see cref="MDiscreteRectangle"/> with the given translation and returns the result.

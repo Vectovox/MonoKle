@@ -282,6 +282,14 @@ namespace MonoKle
         }
 
         /// <summary>
+        /// Returns whether this intersects the provided <see cref="MRectangleInt"/>.
+        /// </summary>
+        /// <param name="other">The rectangle to test intersection with.</param>
+        /// <returns>True if intersecting; otherwise false.</returns>
+        public bool Intersects(MRectangleInt other) =>
+            Contains(other.TopLeft) || Contains(other.BottomRight) || Contains(other.TopRight) || Contains(other.BottomLeft);
+
+        /// <summary>
         /// Returns whether this is equal to the provided object.
         /// </summary>
         /// <param name="obj">The object to check for equality with.</param>
@@ -368,6 +376,19 @@ namespace MonoKle
         /// </summary>
         /// <param name="deltaHeight">The change in height.</param>
         public MRectangleInt ResizeHeight(int deltaHeight) => Resize(0, deltaHeight);
+
+        /// <summary>
+        /// Repositions the <see cref="MRectangleInt"/> to the provided coordinate.
+        /// </summary>
+        /// <param name="x">The x component.</param>
+        /// <param name="y">The y component.</param>
+        public MRectangleInt Reposition(int x, int y) => new MRectangleInt(Dimensions).Translate(x, y);
+
+        /// <summary>
+        /// Repositions the <see cref="MRectangleInt"/> to the provided coordinate.
+        /// </summary>
+        /// <param name="coordinate">The coordinate.</param>
+        public MRectangleInt Reposition(MPoint2 coordinate) => new MRectangleInt(Dimensions).Translate(coordinate);
 
         /// <summary>
         /// Resizes the <see cref="MRectangleInt"/> width the provide delta values.

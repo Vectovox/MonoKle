@@ -21,7 +21,7 @@ namespace MonoKle.Engine.Android
             base.OnCreate(bundle);
 
             // Create MonoKleGame
-            var game = MGame.Create(GraphicsMode.Borderless, Array.Empty<string>());
+            var game = MGame.Create("MonoKle", GraphicsMode.Borderless, Array.Empty<string>());
             
             // Hook up MonoGame
             View = game.Services.GetService(typeof(View)) as View;

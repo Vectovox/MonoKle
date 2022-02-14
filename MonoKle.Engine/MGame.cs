@@ -10,10 +10,7 @@ using MonoKle.Input.Touch;
 using MonoKle.Logging;
 using MonoKle.State;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace MonoKle.Engine
 {
@@ -22,6 +19,7 @@ namespace MonoKle.Engine
     /// </summary>
     public class MGame : Game
     {
+        private static string _title = string.Empty;
         private static readonly Callbacker _uiThreadCallbacker = new Callbacker();
         private static PerformanceWidget _performanceWidget;
         private static bool _initializing = true;
@@ -111,10 +109,13 @@ namespace MonoKle.Engine
         /// <summary>
         /// Initializes the MonoKle backend, returning a runnable game instance.
         /// </summary>
+        /// <param name="title">Title of the game window.</param>
         /// <param name="graphicsMode">The initial graphics mode setting.</param>
         /// <param name="arguments">Variable assignment strings. E.g. 'mySettingEnabled = false'.</param>
-        public static MGame Create(GraphicsMode graphicsMode, string[] arguments)
+        public static MGame Create(string title, GraphicsMode graphicsMode, string[] arguments)
         {
+            _title = title;
+
             // Graphics device has to be created immediately but cannot be used before LoadContent
             GraphicsManager = new GraphicsManager(GameInstance);
             GraphicsManager.BackBufferChanged += ResolutionChanged;
@@ -132,6 +133,12 @@ namespace MonoKle.Engine
             InitializeVariables(arguments);
 
             return GameInstance;
+        }
+
+        protected override void Initialize()
+        {
+            base.Initialize();
+            Window.Title = _title;
         }
 
         /// <summary>

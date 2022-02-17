@@ -57,10 +57,13 @@ namespace MonoKle.Input.Gamepad
         public IPressable Y => _buttonY;
 
         public bool WasActivated { get; private set; }
+        public bool WasDisconnected { get; private set; }
 
         public void Update(TimeSpan timeDelta)
         {
+            var wasConnected = IsConnected;
             _currentState = Microsoft.Xna.Framework.Input.GamePad.GetState(_playerIndex);
+            WasDisconnected = false;
 
             if (_currentState.IsConnected)
             {
@@ -96,6 +99,10 @@ namespace MonoKle.Input.Gamepad
             else
             {
                 WasActivated = false;
+                if (wasConnected)
+                {
+                    WasDisconnected = true;
+                }
             }
         }
     }

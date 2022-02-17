@@ -20,6 +20,8 @@ namespace MonoKle.Input.Gamepad
 
         public bool WasActivated => _playerOne.WasActivated || _playerTwo.WasActivated || _playerThree.WasActivated || _playerFour.WasActivated;
 
+        public bool AnyDisconnected => _playerOne.WasDisconnected || _playerTwo.WasDisconnected || _playerThree.WasDisconnected || _playerFour.WasDisconnected;
+
         public IGamePad GetGamePad(PlayerIndex playerIndex) => playerIndex switch
         {
             PlayerIndex.One => _playerOne,

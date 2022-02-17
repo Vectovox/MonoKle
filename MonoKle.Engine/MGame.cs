@@ -118,6 +118,11 @@ namespace MonoKle.Engine
         public static event Action<InputMode, InputMode> InputModeChanged;
 
         /// <summary>
+        /// Event invoked when a gamepad has been disconnected.
+        /// </summary>
+        public static event Action GamepadDisconnected;
+
+        /// <summary>
         /// Initializes the MonoKle backend, returning a runnable game instance.
         /// </summary>
         /// <param name="title">Title of the game window.</param>
@@ -235,6 +240,10 @@ namespace MonoKle.Engine
                     if (_gamepad.WasActivated)
                     {
                         SetInputMode(InputMode.Gamepad);
+                    }
+                    if (_gamepad.AnyDisconnected)
+                    {
+                        GamepadDisconnected?.Invoke();
                     }
                 }
 

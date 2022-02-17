@@ -142,5 +142,10 @@ namespace MonoKle.Input.Gamepad
         /// The right thumbstick.
         /// </value>
         IPressableStick RightThumbstick { get; }
+
+        /// <summary>
+        /// Gets whether the gamepad was disconnected.
+        /// </summary>
+        bool WasDisconnected { get; }
     }
 }

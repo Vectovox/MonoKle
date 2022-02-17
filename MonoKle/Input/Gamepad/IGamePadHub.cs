@@ -45,5 +45,10 @@ namespace MonoKle.Input.Gamepad
         /// <param name="playerIndex">Index of the player.</param>
         /// <returns>A gamepad.</returns>
         IGamePad GetGamePad(PlayerIndex playerIndex);
+
+        /// <summary>
+        /// Gets whether any player was disconnected.
+        /// </summary>
+        bool AnyDisconnected { get; }
     }
 }

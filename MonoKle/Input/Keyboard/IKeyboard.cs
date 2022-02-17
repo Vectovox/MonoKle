@@ -7,7 +7,7 @@ namespace MonoKle.Input.Keyboard
     /// <summary>
     /// Interface providing polling-based keyboard input.
     /// </summary>
-    public interface IKeyboard
+    public interface IKeyboard : IActivatableInput
     {
         /// <summary>
         /// Queries whether the specified keys are down.

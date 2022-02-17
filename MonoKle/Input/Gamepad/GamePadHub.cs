@@ -1,83 +1,40 @@
+using Microsoft.Xna.Framework;
 using System;
 
 namespace MonoKle.Input.Gamepad
 {
     /// <summary>
-    /// Class providing methods to get gamepads.
+    /// Class providing gamepad instances for different players.
     /// </summary>
-    public class GamePadHub : IGamePadHub, IUpdateable
+    public sealed class GamePadHub : IGamePadHub, IUpdateable
     {
-        private GamePad playerFour = new GamePad(Microsoft.Xna.Framework.PlayerIndex.Four);
-        private GamePad playerOne = new GamePad(Microsoft.Xna.Framework.PlayerIndex.One);
-        private GamePad playerThree = new GamePad(Microsoft.Xna.Framework.PlayerIndex.Three);
-        private GamePad playerTwo = new GamePad(Microsoft.Xna.Framework.PlayerIndex.Two);
+        private readonly GamePad _playerFour = new GamePad(PlayerIndex.Four);
+        private readonly GamePad _playerOne = new GamePad(PlayerIndex.One);
+        private readonly GamePad _playerThree = new GamePad(PlayerIndex.Three);
+        private readonly GamePad _playerTwo = new GamePad(PlayerIndex.Two);
 
-        /// <summary>
-        /// Gets the player four.
-        /// </summary>
-        /// <value>
-        /// The player four.
-        /// </value>
-        public IGamePad PlayerFour => playerFour;
+        public IGamePad PlayerOne => _playerOne;
+        public IGamePad PlayerThree => _playerThree;
+        public IGamePad PlayerTwo => _playerTwo;
+        public IGamePad PlayerFour => _playerFour;
 
-        /// <summary>
-        /// Gets the player one.
-        /// </summary>
-        /// <value>
-        /// The player one.
-        /// </value>
-        public IGamePad PlayerOne => playerOne;
+        public bool WasActivated => _playerOne.WasActivated || _playerTwo.WasActivated || _playerThree.WasActivated || _playerFour.WasActivated;
 
-        /// <summary>
-        /// Gets the player three.
-        /// </summary>
-        /// <value>
-        /// The player three.
-        /// </value>
-        public IGamePad PlayerThree => playerThree;
-
-        /// <summary>
-        /// Gets the player two.
-        /// </summary>
-        /// <value>
-        /// The player two.
-        /// </value>
-        public IGamePad PlayerTwo => playerTwo;
-
-        /// <summary>
-        /// Gets the game pad for the provided player.
-        /// </summary>
-        /// <param name="playerIndex">Index of the player.</param>
-        /// <returns>
-        /// A gamepad.
-        /// </returns>
-        public IGamePad GetGamePad(Microsoft.Xna.Framework.PlayerIndex playerIndex)
+        public IGamePad GetGamePad(PlayerIndex playerIndex) => playerIndex switch
         {
-            switch (playerIndex)
-            {
-                case Microsoft.Xna.Framework.PlayerIndex.One:
-                    return playerOne;
-
-                case Microsoft.Xna.Framework.PlayerIndex.Two:
-                    return playerTwo;
-
-                case Microsoft.Xna.Framework.PlayerIndex.Three:
-                    return playerThree;
-
-                case Microsoft.Xna.Framework.PlayerIndex.Four:
-                    return playerFour;
-
-                default:
-                    throw new ArgumentException("Invalid player index provided.");
-            }
-        }
+            PlayerIndex.One => _playerOne,
+            PlayerIndex.Two => _playerTwo,
+            PlayerIndex.Three => _playerThree,
+            PlayerIndex.Four => _playerFour,
+            _ => throw new ArgumentException("Invalid player index provided."),
+        };
 
         public void Update(TimeSpan timeDelta)
         {
-            playerOne.Update(timeDelta);
-            playerTwo.Update(timeDelta);
-            playerThree.Update(timeDelta);
-            playerFour.Update(timeDelta);
+            _playerOne.Update(timeDelta);
+            _playerTwo.Update(timeDelta);
+            _playerThree.Update(timeDelta);
+            _playerFour.Update(timeDelta);
         }
     }
 }

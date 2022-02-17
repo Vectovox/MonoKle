@@ -139,6 +139,10 @@ namespace Demo.Domain
             DrawTextBox("Five", sizeTestPos);
             // Compact mode
             DrawTextBox("100.00", new Vector2(-200, 450), 32, true);
+
+            // Input mode
+            font.WithSize(32).Draw(_spriteBatch, MGame.InputMode == MonoKle.Input.InputMode.Gamepad ? "Gamepad" : "Keyboard + Mouse", new Vector2(-500, 0), Color.Red);
+
             _spriteBatch.End();
 
             // Draw "UI"

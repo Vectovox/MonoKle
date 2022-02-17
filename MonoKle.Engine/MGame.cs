@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoKle.Asset;
 using MonoKle.Console;
 using MonoKle.Graphics;
+using MonoKle.Input;
 using MonoKle.Input.Gamepad;
 using MonoKle.Input.Keyboard;
 using MonoKle.Input.Mouse;
@@ -71,6 +72,11 @@ namespace MonoKle.Engine
         private static readonly TouchScreen _touchScreen = new TouchScreen(_mouse);
 
         /// <summary>
+        /// Gets the most recently activated input mode.
+        /// </summary>
+        public static InputMode InputMode { get; private set; }
+
+        /// <summary>
         /// Gets the logging utility, same as <see cref="Logger.Global"/>.
         /// </summary>
         public static Logger Logger { get; private set; } = Logger.Global;
@@ -105,6 +111,11 @@ namespace MonoKle.Engine
         /// Gets the sound mixer.
         /// </summary>
         public static Mixer Mixer { get; } = new Mixer();
+
+        /// <summary>
+        /// Callback for when the input mode changed. Supplies the previous mode and the new mode as input parameters.
+        /// </summary>
+        public static event Action<InputMode, InputMode> InputModeChanged;
 
         /// <summary>
         /// Initializes the MonoKle backend, returning a runnable game instance.
@@ -221,16 +232,28 @@ namespace MonoKle.Engine
                 if (Settings.GamePadEnabled && GameInstance.IsActive)
                 {
                     _gamepad.Update(deltaTime);
+                    if (_gamepad.WasActivated)
+                    {
+                        SetInputMode(InputMode.Gamepad);
+                    }
                 }
 
                 if (Settings.KeyboardEnabled && GameInstance.IsActive)
                 {
                     _keyboard.Update(deltaTime);
+                    if (_keyboard.WasActivated)
+                    {
+                        SetInputMode(InputMode.KeyboardMouse);
+                    }
                 }
 
                 if (Settings.MouseEnabled && GameInstance.IsActive)
                 {
                     _mouse.Update(deltaTime);
+                    if (_mouse.WasActivated)
+                    {
+                        SetInputMode(InputMode.KeyboardMouse);
+                    }
                 }
 
                 if (Settings.TouchEnabled && GameInstance.IsActive)
@@ -258,6 +281,16 @@ namespace MonoKle.Engine
         {
             base.OnExiting(sender, args);
             GraphicsManager.Dispose();
+        }
+
+        private static void SetInputMode(InputMode mode)
+        {
+            var prevMode = InputMode;
+            if (prevMode != mode)
+            {
+                InputMode = mode;
+                InputModeChanged?.Invoke(prevMode, mode);
+            }
         }
 
         private static void BindSettings()

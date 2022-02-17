@@ -5,7 +5,7 @@ namespace MonoKle.Input.Gamepad
     /// <summary>
     /// Interface for a gamepad.
     /// </summary>
-    public interface IGamePad
+    public interface IGamePad : IActivatableInput
     {
         /// <summary>
         /// Gets a value indicating whether this instance is connected.

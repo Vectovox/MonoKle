@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
 
@@ -10,196 +11,91 @@ namespace MonoKle.Input.Gamepad
     /// <seealso cref="IUpdateable" />
     public class GamePad : IGamePad, IUpdateable
     {
-        private Button buttonA = new Button();
-        private Button buttonB = new Button();
-        private Button buttonBack = new Button();
-        private Button buttonBig = new Button();
-        private Button buttonLeftShoulder = new Button();
-        private Button buttonRightShoulder = new Button();
-        private Button buttonStart = new Button();
-        private Button buttonX = new Button();
-        private Button buttonY = new Button();
-        private GamePadState currentState;
-        private DPad dPad = new DPad();
-        private Microsoft.Xna.Framework.PlayerIndex playerIndex;
-        private PressableStick stickLeft = new PressableStick();
-        private PressableStick stickRight = new PressableStick();
-        private Trigger triggerLeft = new Trigger();
-        private Trigger triggerRight = new Trigger();
+        private readonly Button _buttonA = new Button();
+        private readonly Button _buttonB = new Button();
+        private readonly Button _buttonBack = new Button();
+        private readonly Button _buttonBig = new Button();
+        private readonly Button _buttonLeftShoulder = new Button();
+        private readonly Button _buttonRightShoulder = new Button();
+        private readonly Button _buttonStart = new Button();
+        private readonly Button _buttonX = new Button();
+        private readonly Button _buttonY = new Button();
+        private GamePadState _currentState;
+        private readonly DPad _dPad = new DPad();
+        private readonly PlayerIndex _playerIndex;
+        private readonly PressableStick _stickLeft = new PressableStick();
+        private readonly PressableStick _stickRight = new PressableStick();
+        private readonly Trigger _triggerLeft = new Trigger();
+        private readonly Trigger _triggerRight = new Trigger();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GamePad"/> class.
         /// </summary>
         /// <param name="playerIndex">Index of the player.</param>
-        public GamePad(Microsoft.Xna.Framework.PlayerIndex playerIndex)
+        public GamePad(PlayerIndex playerIndex)
         {
-            this.playerIndex = playerIndex;
-            currentState = new GamePadState();
+            _playerIndex = playerIndex;
+            _currentState = new GamePadState();
         }
 
-        /// <summary>
-        /// Gets the A button.
-        /// </summary>
-        /// <value>
-        /// A button.
-        /// </value>
-        public IPressable A => buttonA;
+        public IPressable A => _buttonA;
+        public IPressable B => _buttonB;
+        public IPressable Back => _buttonBack;
+        public IPressable Big => _buttonBig;
+        public IDPad DPad => _dPad;
+        public bool IsConnected => _currentState.IsConnected;
+        public IPressable LeftShoulder => _buttonLeftShoulder;
+        public IPressableStick LeftThumbstick => _stickLeft;
+        public ITrigger LeftTrigger => _triggerLeft;
+        public int PacketNumber => _currentState.PacketNumber;
+        public PlayerIndex PlayerIndex => _playerIndex;
+        public IPressable RightShoulder => _buttonRightShoulder;
+        public IPressableStick RightThumbstick => _stickRight;
+        public ITrigger RightTrigger => _triggerRight;
+        public IPressable Start => _buttonStart;
+        public IPressable X => _buttonX;
+        public IPressable Y => _buttonY;
 
-        /// <summary>
-        /// Gets the B button.</summary>
-        /// <value>
-        /// B button.
-        /// </value>
-        public IPressable B => buttonB;
-
-        /// <summary>
-        /// Gets the Back button.
-        /// </summary>
-        /// <value>
-        /// Back button.
-        /// </value>
-        public IPressable Back => buttonBack;
-
-        /// <summary>
-        /// Gets the Big button.
-        /// </summary>
-        /// <value>
-        /// Big button.
-        /// </value>
-        public IPressable Big => buttonBig;
-
-        /// <summary>
-        /// Gets the D-pad.
-        /// </summary>
-        /// <value>
-        /// The D-pad.
-        /// </value>
-        public IDPad DPad => dPad;
-
-        /// <summary>
-        /// Gets a value indicating whether this instance is connected.
-        /// </summary>
-        /// <value>
-        /// <c>true</c> if this instance is connected; otherwise, <c>false</c>.
-        /// </value>
-        public bool IsConnected => currentState.IsConnected;
-
-        /// <summary>
-        /// Gets the Left Shoulder button.
-        /// </summary>
-        /// <value>
-        /// Left Shoulder button.
-        /// </value>
-        public IPressable LeftShoulder => buttonLeftShoulder;
-
-        /// <summary>
-        /// Gets the left thumbstick.
-        /// </summary>
-        /// <value>
-        /// The left thumbstick.
-        /// </value>
-        public IPressableStick LeftThumbstick => stickLeft;
-
-        /// <summary>
-        /// Gets the left trigger.
-        /// </summary>
-        /// <value>
-        /// The left trigger.
-        /// </value>
-        public ITrigger LeftTrigger => triggerLeft;
-
-        /// <summary>
-        /// Gets the packet number.
-        /// </summary>
-        /// <value>
-        /// The packet number.
-        /// </value>
-        public int PacketNumber => currentState.PacketNumber;
-
-        /// <summary>
-        /// Gets the index of the player.
-        /// </summary>
-        /// <value>
-        /// The index of the player.
-        /// </value>
-        public Microsoft.Xna.Framework.PlayerIndex PlayerIndex => playerIndex;
-
-        /// <summary>
-        /// Gets the Right Shoulder button.
-        /// </summary>
-        /// <value>
-        /// Right Shoulder button.
-        /// </value>
-        public IPressable RightShoulder => buttonRightShoulder;
-
-        /// <summary>
-        /// Gets the right thumbstick.
-        /// </summary>
-        /// <value>
-        /// The right thumbstick.
-        /// </value>
-        public IPressableStick RightThumbstick => stickRight;
-
-        /// <summary>
-        /// Gets the right trigger.
-        /// </summary>
-        /// <value>
-        /// The right trigger.
-        /// </value>
-        public ITrigger RightTrigger => triggerRight;
-
-        /// <summary>
-        /// Gets the Start button.
-        /// </summary>
-        /// <value>
-        /// Start button.
-        /// </value>
-        public IPressable Start => buttonStart;
-
-        /// <summary>
-        /// Gets the X button.</summary>
-        /// <value>
-        /// X button.
-        /// </value>
-        public IPressable X => buttonX;
-
-        /// <summary>
-        /// Gets the Y button.
-        /// </summary>
-        /// <value>
-        /// Y button.
-        /// </value>
-        public IPressable Y => buttonY;
+        public bool WasActivated { get; private set; }
 
         public void Update(TimeSpan timeDelta)
         {
-            currentState = Microsoft.Xna.Framework.Input.GamePad.GetState(playerIndex);
+            _currentState = Microsoft.Xna.Framework.Input.GamePad.GetState(_playerIndex);
 
-            if (currentState.IsConnected)
+            if (_currentState.IsConnected)
             {
-                buttonA.Update(currentState.Buttons.A == ButtonState.Pressed, timeDelta);
-                buttonB.Update(currentState.Buttons.B == ButtonState.Pressed, timeDelta);
-                buttonBack.Update(currentState.Buttons.Back == ButtonState.Pressed, timeDelta);
-                buttonBig.Update(currentState.Buttons.BigButton == ButtonState.Pressed, timeDelta);
-                buttonLeftShoulder.Update(currentState.Buttons.LeftShoulder == ButtonState.Pressed, timeDelta);
-                buttonRightShoulder.Update(currentState.Buttons.RightShoulder == ButtonState.Pressed, timeDelta);
-                buttonStart.Update(currentState.Buttons.Start == ButtonState.Pressed, timeDelta);
-                buttonX.Update(currentState.Buttons.X == ButtonState.Pressed, timeDelta);
-                buttonY.Update(currentState.Buttons.Y == ButtonState.Pressed, timeDelta);
+                _buttonA.Update(_currentState.Buttons.A == ButtonState.Pressed, timeDelta);
+                _buttonB.Update(_currentState.Buttons.B == ButtonState.Pressed, timeDelta);
+                _buttonBack.Update(_currentState.Buttons.Back == ButtonState.Pressed, timeDelta);
+                _buttonBig.Update(_currentState.Buttons.BigButton == ButtonState.Pressed, timeDelta);
+                _buttonLeftShoulder.Update(_currentState.Buttons.LeftShoulder == ButtonState.Pressed, timeDelta);
+                _buttonRightShoulder.Update(_currentState.Buttons.RightShoulder == ButtonState.Pressed, timeDelta);
+                _buttonStart.Update(_currentState.Buttons.Start == ButtonState.Pressed, timeDelta);
+                _buttonX.Update(_currentState.Buttons.X == ButtonState.Pressed, timeDelta);
+                _buttonY.Update(_currentState.Buttons.Y == ButtonState.Pressed, timeDelta);
 
-                stickLeft.Update(currentState.Buttons.LeftStick == ButtonState.Pressed,
-                    currentState.ThumbSticks.Left, timeDelta);
-                stickRight.Update(currentState.Buttons.RightStick == ButtonState.Pressed,
-                    currentState.ThumbSticks.Right, timeDelta);
+                _stickLeft.Update(_currentState.Buttons.LeftStick == ButtonState.Pressed,
+                    _currentState.ThumbSticks.Left, timeDelta);
+                _stickRight.Update(_currentState.Buttons.RightStick == ButtonState.Pressed,
+                    _currentState.ThumbSticks.Right, timeDelta);
 
-                dPad.Update(currentState.DPad.Left == ButtonState.Pressed,
-                                 currentState.DPad.Right == ButtonState.Pressed,
-                                 currentState.DPad.Up == ButtonState.Pressed,
-                                 currentState.DPad.Down == ButtonState.Pressed,
+                _dPad.Update(_currentState.DPad.Left == ButtonState.Pressed,
+                                 _currentState.DPad.Right == ButtonState.Pressed,
+                                 _currentState.DPad.Up == ButtonState.Pressed,
+                                 _currentState.DPad.Down == ButtonState.Pressed,
                                  timeDelta);
 
-                triggerLeft.Update(currentState.Triggers.Left, timeDelta);
-                triggerRight.Update(currentState.Triggers.Right, timeDelta);
+                _triggerLeft.Update(_currentState.Triggers.Left, timeDelta);
+                _triggerRight.Update(_currentState.Triggers.Right, timeDelta);
+
+                WasActivated = _buttonA.IsDown || _buttonB.IsDown || _buttonBack.IsDown || _buttonBig.IsDown || _buttonLeftShoulder.IsDown
+                    || _buttonRightShoulder.IsDown || _buttonStart.IsDown || _buttonX.IsDown || _buttonY.IsDown || _stickLeft.Button.IsDown
+                    || _stickLeft.Direction.LengthSquared > 0.25f || _stickRight.Button.IsDown || _stickRight.Direction.LengthSquared > 0.25f
+                    || _dPad.Left.IsDown || _dPad.Right.IsDown || _dPad.Up.IsDown || _dPad.Down.IsDown || _triggerLeft.IsDown || _triggerRight.IsDown;
+            }
+            else
+            {
+                WasActivated = false;
             }
         }
     }

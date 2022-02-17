@@ -5,7 +5,7 @@ namespace MonoKle.Input.Gamepad
     /// <summary>
     /// Interface providing methods to get gamepads.
     /// </summary>
-    public interface IGamePadHub
+    public interface IGamePadHub : IActivatableInput
     {
         /// <summary>
         /// Gets the player four.

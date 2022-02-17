@@ -1,9 +1,11 @@
-﻿namespace MonoKle.Input.Mouse
+﻿using System;
+
+namespace MonoKle.Input.Mouse
 {
     /// <summary>
     /// Interface providing polling functionality for mouse input.
     /// </summary>
-    public interface IMouse
+    public interface IMouse : IActivatableInput
     {
         /// <summary>
         /// Gets or sets whether the virtual mouse is enabled.
@@ -26,11 +28,12 @@
         /// </value>
         IInputPosition Position { get; }
 
+
         /// <summary>
         /// Gets the provided mouse button.
         /// </summary>
         /// <param name="button">The button.</param>
-        /// <returns></returns>
+        /// <exception cref="ArgumentException">Non supported mouse button value provided.</exception>
         IPressable GetButton(MouseButton button);
 
         /// <summary>

@@ -28,45 +28,14 @@ namespace MonoKle.Input.Mouse
         /// <param name="virtualMouseRegion">The virtual mouse region.</param>
         public Mouse(MRectangleInt virtualMouseRegion) => VirtualRegion = virtualMouseRegion;
 
-        /// <summary>
-        /// Gets the left button.
-        /// </summary>
-        /// <value>
-        /// The left button.
-        /// </value>
         public IPressable Left => _left;
-
-        /// <summary>
-        /// Gets the middle button.
-        /// </summary>
-        /// <value>
-        /// The middle button.
-        /// </value>
         public IPressable Middle => _middle;
-
-        /// <summary>
-        /// Gets the position relative the upper left corner of the game window.
-        /// </summary>
-        /// <value>
-        /// The position.
-        /// </value>
         public IInputPosition Position => _position;
-
-        /// <summary>
-        /// Gets the right button.
-        /// </summary>
-        /// <value>
-        /// The right button.
-        /// </value>
         public IPressable Right => _right;
-
-        /// <summary>
-        /// Gets the scroll direction.
-        /// </summary>
-        /// <value>
-        /// The scroll direction.
-        /// </value>
         public MouseScrollDirection ScrollDirection { get; private set; } = MouseScrollDirection.None;
+        public IPressable X1 => _x1;
+        public IPressable X2 => _x2;
+        public MRectangleInt VirtualRegion { get; set; } = new MRectangleInt();
 
         /// <summary>
         /// Gets or sets whether the virtual mouse is enabled.
@@ -78,61 +47,21 @@ namespace MonoKle.Input.Mouse
             set;
         }
 
-        /// <summary>
-        /// Gets or sets the region of the screen used for the virtual mouse.
-        /// </summary>
-        /// <value>
-        /// The virtual mouse region.
-        /// </value>
-        public MRectangleInt VirtualRegion { get; set; } = new MRectangleInt();
+        public bool WasActivated { get; private set; }
 
-        /// <summary>
-        /// Gets the first extra button.</summary>
-        /// <value>
-        /// The first extra button.
-        /// </value>
-        public IPressable X1 => _x1;
-
-        /// <summary>
-        /// Gets the second extra button.</summary>
-        /// <value>
-        /// The second extra button.
-        /// </value>
-        public IPressable X2 => _x2;
-
-        /// <summary>
-        /// Gets the provided mouse button.
-        /// </summary>
-        /// <param name="button">The button.</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException">Non supported mouse button value provided.</exception>
-        public IPressable GetButton(MouseButton button)
+        public IPressable GetButton(MouseButton button) => button switch
         {
-            switch (button)
-            {
-                case MouseButton.Left:
-                    return _left;
-
-                case MouseButton.Middle:
-                    return _middle;
-
-                case MouseButton.Right:
-                    return _right;
-
-                case MouseButton.XButton1:
-                    return _x1;
-
-                case MouseButton.XButton2:
-                    return _x2;
-
-                default:
-                    throw new ArgumentException("Non supported mouse button value provided.");
-            }
-        }
+            MouseButton.Left => _left,
+            MouseButton.Middle => _middle,
+            MouseButton.Right => _right,
+            MouseButton.XButton1 => _x1,
+            MouseButton.XButton2 => _x2,
+            _ => throw new ArgumentException("Non supported mouse button value provided."),
+        };
 
         public void Update(TimeSpan timeDelta)
         {
-            MouseState currentState = Microsoft.Xna.Framework.Input.Mouse.GetState();
+            var currentState = Microsoft.Xna.Framework.Input.Mouse.GetState();
 
             // Buttons
             _left.Update(currentState.LeftButton == ButtonState.Pressed, timeDelta);
@@ -158,6 +87,9 @@ namespace MonoKle.Input.Mouse
                 Microsoft.Xna.Framework.Input.Mouse.SetPosition(center.X, center.Y);
             }
             _position.Update(mousePosition);
+
+            WasActivated = _left.IsDown || _middle.IsDown || _right.IsDown || _x1.IsDown || _x2.IsDown
+                || ScrollDirection != MouseScrollDirection.None || _position.Delta != MPoint2.Zero;
         }
     }
 }

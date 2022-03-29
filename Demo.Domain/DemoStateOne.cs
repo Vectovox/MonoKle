@@ -154,6 +154,10 @@ namespace Demo.Domain
             _spriteBatch.Draw(MGame.Asset.Texture.White,
                 new MRectangleInt(64, 64).Translate(_gameDisplay.UiRenderingArea.Render.Width - 64, _gameDisplay.UiRenderingArea.Render.Height - 64),
                 _gameDisplay.DisplayToUI(MGame.Mouse.Position.Coordinate).X >= _gameDisplay.UiRenderingArea.Render.Width - 64 ? Color.Tan : Color.Teal);
+            if (MGame.Mouse.IsVirtual)
+            {
+                _spriteBatch.Draw(MGame.Asset.Texture.White, new MRectangleInt(10, 10).Reposition(_gameDisplay.DisplayToUI(MGame.Mouse.Position.Coordinate)), Color.White);
+            }
             _spriteBatch.End();
 
             // Render inverting stuff 

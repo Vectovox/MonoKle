@@ -1,4 +1,5 @@
 ﻿using Demo.Domain;
+using Microsoft.Xna.Framework;
 using MonoKle.Engine;
 using MonoKle.Graphics;
 using System;
@@ -16,9 +17,17 @@ namespace Demo.Windows
         [STAThread]
         private static void Main(string[] args)
         {
-            using var game = MGame.Create("MonoKle", GraphicsMode.Windowed, args);
+            using var game = MGame.Create(new TestGame(), "MonoKle", GraphicsMode.Windowed, args);
             Boilerplate.ConfigureStates();
             game.Run();
+        }
+    }
+
+    public class TestGame : MGame
+    {
+        protected override void Update(GameTime time)
+        {
+            base.Update(time);
         }
     }
 }

@@ -90,7 +90,7 @@ namespace MonoKle.Engine
         /// <summary>
         /// Gets the running game instance.
         /// </summary>
-        public static MGame GameInstance { get; } = new MGame();
+        public static MGame GameInstance { get; private set; }
 
         /// <summary>
         /// Gets or sets the global game settings.
@@ -128,8 +128,19 @@ namespace MonoKle.Engine
         /// <param name="title">Title of the game window.</param>
         /// <param name="graphicsMode">The initial graphics mode setting.</param>
         /// <param name="arguments">Variable assignment strings. E.g. 'mySettingEnabled = false'.</param>
-        public static MGame Create(string title, GraphicsMode graphicsMode, string[] arguments)
+        public static MGame Create(string title, GraphicsMode graphicsMode, string[] arguments) => Create(new MGame(), title, graphicsMode, arguments);
+
+        /// <summary>
+        /// Initializes the MonoKle backend with the given game instance.
+        /// </summary>
+        /// <param name="gameInstance">The instance to use for the MonoKle backend.</param>
+        /// <param name="title">Title of the game window.</param>
+        /// <param name="graphicsMode">The initial graphics mode setting.</param>
+        /// <param name="arguments">Variable assignment strings. E.g. 'mySettingEnabled = false'.</param>
+        public static MGame Create(MGame gameInstance, string title, GraphicsMode graphicsMode, string[] arguments)
         {
+            GameInstance = gameInstance;
+
             _title = title;
 
             // Graphics device has to be created immediately but cannot be used before LoadContent

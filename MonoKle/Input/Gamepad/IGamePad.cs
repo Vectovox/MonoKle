@@ -1,4 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace MonoKle.Input.Gamepad
 {
@@ -147,5 +149,17 @@ namespace MonoKle.Input.Gamepad
         /// Gets whether the gamepad was disconnected.
         /// </summary>
         bool WasDisconnected { get; }
+
+        /// <summary>
+        /// Gets the enum value for all available pressable buttons.
+        /// </summary>
+        Span<Buttons> GetPressableButtons();
+
+        /// <summary>
+        /// Gets the corresponding pressable button.
+        /// </summary>
+        /// <exception cref="NotSupportedException">Thrown if the button is not a supported pressable button.</exception>
+        /// <param name="button">The button to get.</param>
+        IPressable GetPressableButton(Buttons button);
     }
 }

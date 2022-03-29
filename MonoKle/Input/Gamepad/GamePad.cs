@@ -11,6 +11,26 @@ namespace MonoKle.Input.Gamepad
     /// <seealso cref="IUpdateable" />
     public class GamePad : IGamePad, IUpdateable
     {
+        private static readonly Buttons[] _pressableButtons = new Buttons[]
+        {
+            Buttons.A,
+            Buttons.B,
+            Buttons.Back,
+            Buttons.BigButton,
+            Buttons.DPadDown,
+            Buttons.DPadLeft,
+            Buttons.DPadUp,
+            Buttons.DPadRight,
+            Buttons.LeftShoulder,
+            Buttons.LeftStick,
+            Buttons.LeftTrigger,
+            Buttons.RightShoulder,
+            Buttons.RightStick,
+            Buttons.RightTrigger,
+            Buttons.Start,
+            Buttons.X,
+            Buttons.Y,
+        };
         private readonly Button _buttonA = new Button();
         private readonly Button _buttonB = new Button();
         private readonly Button _buttonBack = new Button();
@@ -105,5 +125,29 @@ namespace MonoKle.Input.Gamepad
                 }
             }
         }
+
+        public Span<Buttons> GetPressableButtons() => _pressableButtons;
+
+        public IPressable GetPressableButton(Buttons button) => button switch
+        {
+            Buttons.DPadUp => DPad.Up,
+            Buttons.DPadDown => DPad.Down,
+            Buttons.DPadLeft => DPad.Left,
+            Buttons.DPadRight => DPad.Right,
+            Buttons.Start => Start,
+            Buttons.Back => Back,
+            Buttons.LeftStick => LeftThumbstick.Button,
+            Buttons.RightStick => RightThumbstick.Button,
+            Buttons.LeftShoulder => LeftShoulder,
+            Buttons.RightShoulder => RightShoulder,
+            Buttons.BigButton => Big,
+            Buttons.A => A,
+            Buttons.B => B,
+            Buttons.X => X,
+            Buttons.Y => Y,
+            Buttons.RightTrigger => RightTrigger,
+            Buttons.LeftTrigger => LeftTrigger,
+            _ => throw new NotImplementedException(),
+        };
     }
 }

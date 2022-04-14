@@ -234,12 +234,12 @@ namespace MonoKle.Configuration.Tests
         }
 
         [TestMethod]
-        public void Unbind_Removed()
+        public void Remove_Removed()
         {
             _cvarSystem.SetValue("a", 1);
             _cvarSystem.SetValue("b", 2);
             _cvarSystem.SetValue("c", 3);
-            _cvarSystem.Unbind("b");
+            _cvarSystem.Remove("b");
             Assert.AreEqual(2, _cvarSystem.Identifiers.Count);
             Assert.AreEqual(1, _cvarSystem.GetValue("a"));
             Assert.AreEqual(3, _cvarSystem.GetValue("c"));
@@ -247,7 +247,7 @@ namespace MonoKle.Configuration.Tests
         }
 
         [TestMethod]
-        public void UnbindProperty_RemovedWithNoSideEffects()
+        public void UnbindProperty_UnboundWithNoSideEffects()
         {
             // Setup
             _cvarSystem.SetValue("a", 1);
@@ -259,10 +259,33 @@ namespace MonoKle.Configuration.Tests
 
             // Assert
             Assert.AreEqual(2, unbound);
-            Assert.AreEqual(1, _cvarSystem.Identifiers.Count);
+            Assert.AreEqual(3, _cvarSystem.Identifiers.Count);
             Assert.AreEqual(1, _cvarSystem.GetValue("a"));
-            Assert.IsFalse(_cvarSystem.Contains("x"));
-            Assert.IsFalse(_cvarSystem.Contains("z"));
+            Assert.AreEqual(2, _cvarSystem.GetValue("x"));
+            Assert.AreEqual(4, _cvarSystem.GetValue("z"));
+            Assert.AreEqual(2, b.X);
+            Assert.AreEqual(3, b.Y);
+            Assert.AreEqual(4, b.Z);
+        }
+
+        [TestMethod]
+        public void UnbindProperty_PropertyNotBound()
+        {
+            // Setup
+            var b = new BoundType() { X = 2, Y = 3, Z = 4 };
+            _cvarSystem.BindProperties(b);
+
+            // Test
+            _cvarSystem.UnbindProperties(b);
+            _cvarSystem.SetValue("x", 1);
+            _cvarSystem.SetValue("z", 1);
+
+            // Assert
+            Assert.AreEqual(2, b.X);
+            Assert.AreEqual(3, b.Y);
+            Assert.AreEqual(4, b.Z);
+            Assert.AreEqual(1, _cvarSystem.GetValue("x"));
+            Assert.AreEqual(1, _cvarSystem.GetValue("z"));
         }
 
         [TestMethod]
@@ -277,9 +300,25 @@ namespace MonoKle.Configuration.Tests
 
             // Assert
             Assert.AreEqual(1, unbound);
-            Assert.AreEqual(1, _cvarSystem.Identifiers.Count);
+            Assert.AreEqual(2, _cvarSystem.Identifiers.Count);
             Assert.AreEqual(1, _cvarSystem.GetValue("a"));
-            Assert.IsFalse(_cvarSystem.Contains("static_class"));
+            Assert.IsTrue(_cvarSystem.Contains("static_class"));
+        }
+
+        [TestMethod]
+        public void UnbindProperty_StaticClass_PropertyNotBound()
+        {
+            // Setup
+            _cvarSystem.BindProperties(typeof(StaticClassType));
+            StaticClassType.Static = 0;
+
+            // Test
+            _cvarSystem.UnbindProperties(typeof(StaticClassType));
+            _cvarSystem.SetValue("static_class", 127);
+
+            // Assert
+            Assert.AreEqual(0, StaticClassType.Static);
+            Assert.AreEqual(127, _cvarSystem.GetValue("static_class"));
         }
 
         [TestMethod]
@@ -295,10 +334,33 @@ namespace MonoKle.Configuration.Tests
 
             // Assert
             Assert.AreEqual(2, unbound);
-            Assert.AreEqual(1, _cvarSystem.Identifiers.Count);
+            Assert.AreEqual(3, _cvarSystem.Identifiers.Count);
             Assert.AreEqual(1, _cvarSystem.GetValue("a"));
-            Assert.IsFalse(_cvarSystem.Contains("x"));
-            Assert.IsFalse(_cvarSystem.Contains("z"));
+            Assert.AreEqual(2, _cvarSystem.GetValue("x"));
+            Assert.AreEqual(4, _cvarSystem.GetValue("z"));
+            Assert.AreEqual(2, b.Tested.X);
+            Assert.AreEqual(3, b.Tested.Y);
+            Assert.AreEqual(4, b.Tested.Z);
+        }
+
+        [TestMethod]
+        public void UnbindProperty_Recursively_NotBound()
+        {
+            // Setup
+            var b = new RecursiveBoundType { Tested = new BoundType { X = 2, Y = 3, Z = 4 } };
+            _cvarSystem.BindProperties(b, false, true);
+
+            // Test
+            _cvarSystem.UnbindProperties(b, true);
+            _cvarSystem.SetValue("x", 1);
+            _cvarSystem.SetValue("z", 1);
+
+            // Assert
+            Assert.AreEqual(2, b.Tested.X);
+            Assert.AreEqual(3, b.Tested.Y);
+            Assert.AreEqual(4, b.Tested.Z);
+            Assert.AreEqual(1, _cvarSystem.GetValue("x"));
+            Assert.AreEqual(1, _cvarSystem.GetValue("z"));
         }
 
         [TestMethod]

@@ -227,10 +227,24 @@ namespace MonoKle.Configuration
         /// </summary>
         /// <param name="identifier">The identifier of the variable to remove.</param>
         /// <returns>True if a variable was removed; otherwise false.</returns>
+        public bool Remove(string identifier)
+        {
+            Log($"Removed variable: {identifier}", LogLevel.Debug);
+            return _variables.Remove(identifier);
+        }
+
+        /// <summary>
+        /// Unbinds the specified variable. The value is still assigned.
+        /// </summary>
+        /// <param name="identifier">The identifier of the variable to unbind.</param>
         public bool Unbind(string identifier)
         {
-            Log($"Removed occurences of variable: {identifier}", LogLevel.Debug);
-            return _variables.Remove(identifier);
+            if (_variables.ContainsKey(identifier))
+            {
+                Bind(new ValueCVar(0), identifier, true);
+                return true;
+            }
+            return false;
         }
 
         /// <summary>

@@ -1,6 +1,7 @@
 ﻿using MoreLinq;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -328,13 +329,13 @@ namespace MonoKle.Console
             {
                 propertyInfo.SetValue(instance, default(bool));
             }
-            else if (propertyInfo.PropertyType == typeof(string))
+            else if (propertyInfo.PropertyType.IsValueType)
             {
-                propertyInfo.SetValue(instance, null);
+                propertyInfo.SetValue(instance, Activator.CreateInstance(propertyInfo.PropertyType));
             }
             else
             {
-                _console.WriteError("Could not assign default argument value.");
+                propertyInfo.SetValue(instance, null);
             }
         }
 
@@ -343,25 +344,38 @@ namespace MonoKle.Console
             if (propertyInfo.PropertyType == typeof(int) && int.TryParse(value, out int intResult))
             {
                 propertyInfo.SetValue(instance, intResult);
+                return true;
             }
             else if (propertyInfo.PropertyType == typeof(float) && float.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out float floatResult))
             {
                 propertyInfo.SetValue(instance, floatResult);
+                return true;
             }
             else if (propertyInfo.PropertyType == typeof(bool) && bool.TryParse(value, out bool boolResult))
             {
                 propertyInfo.SetValue(instance, boolResult);
+                return true;
             }
             else if (propertyInfo.PropertyType == typeof(string))
             {
                 propertyInfo.SetValue(instance, value);
+                return true;
             }
-            else
+            else if (propertyInfo.PropertyType.IsValueType)
             {
-                return false;
+                try
+                {
+                    var typeConverter = TypeDescriptor.GetConverter(propertyInfo.PropertyType);
+                    object converted = typeConverter.ConvertFromInvariantString(null, value);
+                    propertyInfo.SetValue(instance, converted);
+                    return true;
+                }
+                catch (Exception)
+                {
+                }
             }
 
-            return true;
+            return false;
         }
 
         private class ArgumentProperty<T>

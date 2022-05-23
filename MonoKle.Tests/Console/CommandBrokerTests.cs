@@ -303,6 +303,25 @@ namespace MonoKle.Console.Tests
             Assert.IsFalse(result);
         }
 
+        [TestMethod]
+        public void Call_EnumParameter_Assigned()
+        {
+            // Setup
+            var console = new Mock<IGameConsole>();
+            var commandBroker = new CommandBroker(console.Object);
+            var command = new EnumTestCommand();
+            commandBroker.Register(command);
+
+            // Assert
+            CommandString.TryParse("enumTestCommand One", out var commandString);
+            Assert.IsTrue(commandBroker.Call(commandString));
+            Assert.AreEqual(EnumTestCommand.TestEnum.One, command.Positional);
+
+            CommandString.TryParse("enumTestCommand 2", out commandString);
+            Assert.IsTrue(commandBroker.Call(commandString));
+            Assert.AreEqual(EnumTestCommand.TestEnum.Two, command.Positional);
+        }
+
         [ConsoleCommand("NoParameterlessConstructorTestCommand")]
         private class NoParameterlessConstructorTestCommand : IConsoleCommand
         {
@@ -532,6 +551,29 @@ namespace MonoKle.Console.Tests
             }
 
             public ICollection<string> GetPositionalSuggestions() => Array.Empty<string>();
+        }
+
+        [ConsoleCommand("enumTestCommand", Description = "emptyDescription")]
+        private class EnumTestCommand : IConsoleCommand
+        {
+            [ConsolePositional(0, IsRequired = false)]
+            public TestEnum Positional { get; set; }
+
+            public EnumTestCommand()
+            {
+            }
+
+            public void Call(IGameConsole console)
+            {
+            }
+
+            public ICollection<string> GetPositionalSuggestions() => Array.Empty<string>();
+
+            public enum TestEnum
+            {
+                One = 1,
+                Two = 2,
+            }
         }
     }
 }

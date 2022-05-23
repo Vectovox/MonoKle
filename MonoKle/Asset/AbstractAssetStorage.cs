@@ -17,9 +17,6 @@ namespace MonoKle.Asset
             _logger = logger;
         }
 
-        protected abstract bool FileSupported(string extension);
-        protected abstract bool Load(string path, string identifier, string[] args);
-
         /// <summary>
         /// Loads the asset at the specified path, using the given identifier.
         /// </summary>
@@ -91,5 +88,14 @@ namespace MonoKle.Asset
 
             return counter;
         }
+
+        /// <summary>
+        /// Returns whether the given identifier is present in the <see cref="AbstractAssetStorage"/>.
+        /// </summary>
+        /// <param name="identifier">The identifier to check for.</param>
+        /// <returns>True if present; otherwise false.</returns>
+        public abstract bool ContainsIdentifier(string identifier);
+        protected abstract bool FileSupported(string extension);
+        protected abstract bool Load(string path, string identifier, string[] args);
     }
 }

@@ -27,6 +27,35 @@ namespace MonoKle.Asset
         /// <param name="identifier">The identifier of the song to access.</param>
         public Song this[string identifier] => _songByIdentifier[identifier];
 
+        /// <summary>
+        /// Gets the song with the given identifier.
+        /// </summary>
+        /// <param name="identifier">The identifier of the song to get.</param>
+        /// <param name="asset">When this method returns, this contains the requested song. Will be null if the song does not exist.</param>
+        /// <returns>True if the song was successfully assigned; otherwise false.</returns>
+        public bool TryGet(string identifier, out Song? asset)
+        {
+            if (ContainsIdentifier(identifier))
+            {
+                asset = this[identifier];
+                return true;
+            }
+            asset = default;
+            return false;
+        }
+
+        /// <summary>
+        /// Unloads all songs, returning the amount of songs unloaded.
+        /// </summary>
+        public int Unload()
+        {
+            var amount = _songByIdentifier.Count;
+            _songByIdentifier.Clear();
+            return amount;
+        }
+
+        public override bool ContainsIdentifier(string identifier) => _songByIdentifier.ContainsKey(identifier);
+
         protected override bool FileSupported(string extension) =>
             extension.Equals(".ogg", StringComparison.InvariantCultureIgnoreCase) ||
             extension.Equals(".mp3", StringComparison.InvariantCultureIgnoreCase);
@@ -61,16 +90,6 @@ namespace MonoKle.Asset
             //       Song.AssetUri is not set so MonoGame uses the name
             //       as input for asset storage
             return Song.FromUri(path, uri);
-        }
-
-        /// <summary>
-        /// Unloads all songs, returning the amount of songs unloaded.
-        /// </summary>
-        public int Unload()
-        {
-            var amount = _songByIdentifier.Count;
-            _songByIdentifier.Clear();
-            return amount;
         }
     }
 }

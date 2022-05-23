@@ -43,6 +43,25 @@ namespace MonoKle.Asset
 
         protected abstract TInstance GetInstance(TData data);
 
+        public override bool ContainsIdentifier(string identifier) => _assetStorage.ContainsKey(identifier);
+
+        /// <summary>
+        /// Gets the asset with the given identifier.
+        /// </summary>
+        /// <param name="identifier">The identifier of the asset to get.</param>
+        /// <param name="asset">When this method returns, this contains the requested asset. Will be <see cref="Default"/> if the asset does not exist.</param>
+        /// <returns>True if the asset was successfully assigned; otherwise false.</returns>
+        public bool TryGet(string identifier, out TInstance asset)
+        {
+            if (ContainsIdentifier(identifier))
+            {
+                asset = this[identifier];
+                return true;
+            }
+            asset = Default;
+            return false;
+        }
+
         /// <summary>
         /// Gets the available identifiers.
         /// </summary>

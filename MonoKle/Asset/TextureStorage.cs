@@ -80,6 +80,25 @@ namespace MonoKle.Asset
             }
         }
 
+        public override bool ContainsIdentifier(string identifier) => _textureDataByIdentifier.ContainsKey(identifier);
+
+        /// <summary>
+        /// Gets the texture with the given identifier.
+        /// </summary>
+        /// <param name="identifier">The identifier of the texture to get.</param>
+        /// <param name="asset">When this method returns, this contains the requested texture. Will be <see cref="Error"/> if the texture does not exist.</param>
+        /// <returns>True if the texture was successfully assigned; otherwise false.</returns>
+        public bool TryGet(string identifier, out MTexture asset)
+        {
+            if (ContainsIdentifier(identifier))
+            {
+                asset = this[identifier];
+                return true;
+            }
+            asset = Error;
+            return false;
+        }
+
         /// <summary>
         /// Gets the available texture identifiers.
         /// </summary>
@@ -150,7 +169,7 @@ namespace MonoKle.Asset
                 _logger.Log($"Path must be proided for '{identifier}'. Skipping.", LogLevel.Error);
                 return false;
             }
-            
+
             _textureByPath.Add(data.Path, texture);
             _textureDataByIdentifier.Add(identifier, data);
             return true;

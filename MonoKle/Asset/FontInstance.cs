@@ -151,7 +151,7 @@ namespace MonoKle.Asset
         /// <param name="text">The text to wrap.</param>
         /// <param name="maximumWidth">The maximum width the text can take up.</param>
         /// <returns>A string containing the wrapped text.</returns>
-        public string Wrap(string text, float maximumWidth)
+        public ReadOnlySpan<char> Wrap(ReadOnlySpan<char> text, float maximumWidth)
         {
             var originalWidth = Measure(text).X;
             
@@ -161,19 +161,18 @@ namespace MonoKle.Asset
                 // Prepare string manipulation
                 _stringBuilderCache.Clear();
                 var wrappedText = _stringBuilderCache.Append(text);
-                var textSpan = text.AsSpan();
                 var lineStartIndex = 0;
 
                 // Iterate all characters and update the new string as we go
                 for (int i = 1; i <= text.Length; i++)
                 {
                     // Measure the current line to the pointer index
-                    var lineWidth = Measure(textSpan[lineStartIndex..i]).X;
+                    var lineWidth = Measure(text[lineStartIndex..i]).X;
 
                     if (lineWidth > maximumWidth)
                     {
                         // Too wide so put a newline in the last previous space
-                        int lastPlaceToCut = text.LastIndexOfAny(_wrapCharacters, i - 1, i - lineStartIndex);
+                        int lastPlaceToCut = LastIndexOfAny(text, _wrapCharacters, i - 1, i - lineStartIndex);
                         if (lastPlaceToCut == -1)
                         {
                             // No good place to cut the text so end it here already
@@ -190,6 +189,23 @@ namespace MonoKle.Asset
             }
 
             return text;
+
+            // Helper for span that emulates the string version
+            static int LastIndexOfAny(ReadOnlySpan<char> text, char[] characters, int startIndex, int count)
+            {
+                var end = startIndex - count;
+                for (int i = startIndex; i > end; i--)
+                {
+                    for (int j = 0; j < characters.Length; j++)
+                    {
+                        if (characters[j] == text[i])
+                        {
+                            return i;
+                        }
+                    }
+                }
+                return -1;
+            }
         }
 
         /// <summary>
@@ -199,7 +215,7 @@ namespace MonoKle.Asset
         /// <param name="text">The text to draw.</param>
         /// <param name="position">The position to draw the text in.</param>
         /// <param name="color">The color with which to draw the text.</param>
-        public void Draw(SpriteBatch spriteBatch, string text, Vector2 position, Color color) =>
+        public void Draw(SpriteBatch spriteBatch, ReadOnlySpan<char> text, Vector2 position, Color color) =>
             Draw(spriteBatch, text, position, color, 0f, MVector2.Zero, 0, SpriteEffects.None);
 
         /// <summary>
@@ -210,7 +226,7 @@ namespace MonoKle.Asset
         /// <param name="position">The position to draw the text in.</param>
         /// <param name="color">The color with which to draw the text.</param>
         /// <param name="colorSelector">Color selector function called on color tags.</param>
-        public void Draw(SpriteBatch spriteBatch, string text, Vector2 position, Color color, Func<char, Color, Color> colorSelector) =>
+        public void Draw(SpriteBatch spriteBatch, ReadOnlySpan<char> text, Vector2 position, Color color, Func<char, Color, Color> colorSelector) =>
             Draw(spriteBatch, text, position, color, 0f, MVector2.Zero, 0, SpriteEffects.None, colorSelector);
 
         /// <summary>
@@ -222,7 +238,7 @@ namespace MonoKle.Asset
         /// <param name="color">The color with which to draw the text.</param>
         /// <param name="rotation">The rotation of the text.</param>
         /// <param name="origin">The origin of the text rotation.</param>
-        public void Draw(SpriteBatch spriteBatch, string text, Vector2 position, Color color,
+        public void Draw(SpriteBatch spriteBatch, ReadOnlySpan<char> text, Vector2 position, Color color,
             float rotation, Vector2 origin) =>
                 Draw(spriteBatch, text, position, color, rotation, origin, 0, SpriteEffects.None);
 
@@ -236,7 +252,7 @@ namespace MonoKle.Asset
         /// <param name="rotation">The rotation of the text.</param>
         /// <param name="origin">The origin of the text rotation.</param>
         /// <param name="layerDepth">The layer depth.</param>
-        public void Draw(SpriteBatch spriteBatch, string text, Vector2 position, Color color,
+        public void Draw(SpriteBatch spriteBatch, ReadOnlySpan<char> text, Vector2 position, Color color,
             float rotation, Vector2 origin, int layerDepth) =>
                 Draw(spriteBatch, text, position, color, rotation, origin, layerDepth, SpriteEffects.None);
 
@@ -251,7 +267,7 @@ namespace MonoKle.Asset
         /// <param name="origin">The origin of the text rotation.</param>
         /// <param name="layerDepth">The layer depth.</param>
         /// <param name="effect">The sprite effects to apply.</param>
-        public void Draw(SpriteBatch spriteBatch, string text, Vector2 position, Color color,
+        public void Draw(SpriteBatch spriteBatch, ReadOnlySpan<char> text, Vector2 position, Color color,
             float rotation, Vector2 origin, float layerDepth, SpriteEffects effect) =>
             Draw(spriteBatch, text, position, color, rotation, origin, layerDepth, effect, _defaultColorFunc);
 
@@ -267,7 +283,7 @@ namespace MonoKle.Asset
         /// <param name="layerDepth">The layer depth.</param>
         /// <param name="effect">The sprite effects to apply.</param>
         /// <param name="colorSelector">Color selector function called on color tags.</param>
-        public void Draw(SpriteBatch spriteBatch, string text, Vector2 position, Color color,
+        public void Draw(SpriteBatch spriteBatch, ReadOnlySpan<char> text, Vector2 position, Color color,
             float rotation, Vector2 origin, float layerDepth, SpriteEffects effect, Func<char, Color, Color> colorSelector)
         {
             if (CompactHeight)

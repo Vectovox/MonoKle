@@ -79,7 +79,7 @@ namespace Demo.Domain
             font.Draw(_spriteBatch, "Timer: " + _timer.TimeLeft + " (" + _timer.Duration + ") Done? " + _timer.IsDone,
                 new Vector2(50, 150), Color.Green);
 
-            Vector2 DrawTextBox(string text, MVector2 position, int fontSize = 32, bool compact = false)
+            Vector2 DrawTextBox(ReadOnlySpan<char> text, MVector2 position, int fontSize = 32, bool compact = false)
             {
                 var newInstance = font.WithSize(fontSize).WithCompactHeight(compact);
                 var size = newInstance.Measure(text);

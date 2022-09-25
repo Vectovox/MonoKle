@@ -306,8 +306,14 @@ namespace MonoKle
         /// </summary>
         /// <param name="other">The rectangle to test intersection with.</param>
         /// <returns>True if intersecting; otherwise false.</returns>
-        public bool Intersects(MRectangleInt other) =>
-            Contains(other.TopLeft) || Contains(other.BottomRight) || Contains(other.TopRight) || Contains(other.BottomLeft);
+        public bool Intersects(MRectangleInt other)
+        {
+            if (Left > other.Right || Top > other.Bottom || Right < other.Left || Bottom < other.Top)
+            {
+                return false;
+            }
+            return true;
+        }
 
         /// <summary>
         /// Returns whether this is equal to the provided object.

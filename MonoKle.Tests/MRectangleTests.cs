@@ -647,5 +647,37 @@ namespace MonoKle.Tests
             Assert.AreEqual(expectedRectangle, testRectangle.Intersect(intersectRectangle));
             Assert.AreEqual(expectedRectangle, intersectRectangle.Intersect(testRectangle));
         }
+
+        [DataTestMethod]
+        [DataRow(0, 0, 100, 100, 0, 0, 100, 100, DisplayName = "Self intersect")]
+        [DataRow(0, 0, 100, 100, 10, 10, 50, 50, DisplayName = "A contains B")]
+        [DataRow(10, 10, 50, 50, 0, 0, 100, 100, DisplayName = "B contains A")]
+        [DataRow(-50, -50, 75, 75, 0, 0, 100, 100, DisplayName = "A intersects top-left B")]
+        [DataRow(25, -25, 50, 50, 0, 0, 100, 100, DisplayName = "A intersects top B")]
+        [DataRow(75, -25, 50, 50, 0, 0, 100, 100, DisplayName = "A intersects top-right B")]
+        [DataRow(75, 25, 50, 50, 0, 0, 100, 100, DisplayName = "A intersects right B")]
+        [DataRow(75, 75, 50, 50, 0, 0, 100, 100, DisplayName = "A intersects bottom-right B")]
+        [DataRow(25, 75, 50, 50, 0, 0, 100, 100, DisplayName = "A intersects bottom B")]
+        [DataRow(-25, 75, 50, 50, 0, 0, 100, 100, DisplayName = "A intersects bottom-left B")]
+        [DataRow(-25, 25, 50, 50, 0, 0, 100, 100, DisplayName = "A intersects left B")]
+        [DataRow(-25, -25, 50, 200, 0, 0, 100, 100, DisplayName = "A covers left B")]
+        [DataRow(-25, -25, 200, 50, 0, 0, 100, 100, DisplayName = "A covers top B")]
+        [DataRow(-25, -25, 25, 25, 0, 0, 100, 100, DisplayName = "A touches B")]
+        public void Intersects_TrueAndCommutative(float ax, float ay, float aw, float ah, float bx, float by, float bw, float bh)
+        {
+            var rectangleA = new MRectangle(ax, ay, aw, ah);
+            var rectangleB = new MRectangle(bx, by, bw, bh);
+            Assert.IsTrue(rectangleA.Intersects(rectangleB), "A does not intersect B");
+            Assert.IsTrue(rectangleB.Intersects(rectangleA), "B does not intersect A");
+        }
+
+        [TestMethod]
+        public void Intersects_FalseAndCommutative()
+        {
+            var rectangleA = new MRectangle(0, 0, 25, 25);
+            var rectangleB = new MRectangle(-25, -25, 15, 15);
+            Assert.IsFalse(rectangleA.Intersects(rectangleB), "A does intersect B");
+            Assert.IsFalse(rectangleB.Intersects(rectangleA), "B does intersect A");
+        }
     }
 }

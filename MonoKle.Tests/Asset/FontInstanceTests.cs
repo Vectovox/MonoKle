@@ -113,7 +113,7 @@ namespace MonoKle.Asset
         [DataRow("a a aaaaa a a", AWidth, "a\na\naaaaa a a", DisplayName = "Sentence with word that can never fit")]
         [DataRow("aaaa aa a aaa", 5.5f * AWidth + SpaceWidth, "aaaa\naa a\naaa", DisplayName = "Newline correctly resets width calculation")]
         public void WrapString_DefaultSettings_CorrectValue(string testString, float testWidth, string expectedResult) =>
-            Assert.AreEqual(expectedResult, _font.Wrap(testString, testWidth));
+            Assert.AreEqual(expectedResult, _font.Wrap(testString, testWidth).ToString());
 
         [DataTestMethod]
         [DataRow("", 0, Size2, DisplayName = "Empty string")]

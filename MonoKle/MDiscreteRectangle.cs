@@ -187,6 +187,14 @@ namespace MonoKle
         public static implicit operator Rectangle(MDiscreteRectangle r) => new Rectangle(r.TopLeft.X, r.TopLeft.Y, r.Width, r.Height);
 
         /// <summary>
+        /// Returns the area.
+        /// </summary>
+        /// <remarks>
+        /// Value could also be seen as the amount of cells or possible coordinates within the rectangle.
+        /// </remarks>
+        public int Area() => Width * Height;
+
+        /// <summary>
         /// Clamps the provided <see cref="MDiscreteRectangle"/> to be within.
         /// </summary>
         /// <param name="area">The <see cref="MDiscreteRectangle"/> to clamp.</param>

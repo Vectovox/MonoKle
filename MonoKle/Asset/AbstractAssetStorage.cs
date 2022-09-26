@@ -99,6 +99,12 @@ namespace MonoKle.Asset
         /// Unloads all assets, returning the amount of asset identifiers unloaded.
         /// </summary>
         public abstract int Unload();
+        /// <summary>
+        /// Unloads the asset with the given identifier.
+        /// </summary>
+        /// <param name="identifier">Identifier of the asset to unload.</param>
+        /// <returns>True if unloaded; otherwise false.</returns>
+        public abstract bool Unload(string identifier);
 
         protected abstract bool ExtensionSupported(string extension);
         protected abstract bool Load(string path, string identifier, string[] args);

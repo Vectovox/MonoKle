@@ -254,6 +254,33 @@ namespace MonoKle.Asset
             return amountUnloaded;
         }
 
+        public override bool Unload(string identifier)
+        {
+            // Check if identifier exists
+            if (!_textureDataByIdentifier.TryGetValue(identifier, out var textureData))
+            {
+                return false;
+            }
+
+            // Remove data container and cache
+            _textureDataByIdentifier.Remove(identifier);
+            _textureCache.Remove(identifier);
+
+            // Check if the texture is now unused and can be removed
+            foreach (var otherData in _textureDataByIdentifier)
+            {
+                if (otherData.Value.Path == textureData.Path)
+                {
+                    // Other use found so return early
+                    return true;
+                }
+            }
+
+            // No use found so remove texture
+            _textureByPath.Remove(textureData.Path);
+            return true;
+        }
+
         public class TextureData
         {
             public string Path = string.Empty;

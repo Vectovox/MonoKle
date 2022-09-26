@@ -89,5 +89,7 @@ namespace MonoKle.Asset
             //       as input for asset storage
             return Song.FromUri(path, uri);
         }
+
+        public override bool Unload(string identifier) => _songByIdentifier.Remove(identifier);
     }
 }

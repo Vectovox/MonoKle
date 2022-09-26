@@ -116,5 +116,7 @@ namespace MonoKle.Asset
             _assetStorage.Clear();
             return amountUnloaded;
         }
+
+        public override bool Unload(string identifier) => _assetStorage.Remove(identifier);
     }
 }

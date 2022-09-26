@@ -13,9 +13,9 @@ namespace MonoKle.Asset
     public class TextureStorage : AbstractAssetStorage
     {
         private readonly GraphicsDevice _graphicsDevice;
-        private readonly Dictionary<string, Texture2D> _textureByPath = new Dictionary<string, Texture2D>();
-        private readonly Dictionary<string, TextureData> _textureDataByIdentifier = new Dictionary<string, TextureData>();
-        private readonly Dictionary<string, MTexture> _textureCache = new Dictionary<string, MTexture>();
+        private readonly Dictionary<string, Texture2D> _textureByPath = new();
+        private readonly Dictionary<string, TextureData> _textureDataByIdentifier = new();
+        private readonly Dictionary<string, MTexture> _textureCache = new();
 
         /// <summary>
         /// Gets a square white texture.

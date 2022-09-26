@@ -31,22 +31,22 @@ namespace MonoKle.Input.Gamepad
             Buttons.X,
             Buttons.Y,
         };
-        private readonly Button _buttonA = new Button();
-        private readonly Button _buttonB = new Button();
-        private readonly Button _buttonBack = new Button();
-        private readonly Button _buttonBig = new Button();
-        private readonly Button _buttonLeftShoulder = new Button();
-        private readonly Button _buttonRightShoulder = new Button();
-        private readonly Button _buttonStart = new Button();
-        private readonly Button _buttonX = new Button();
-        private readonly Button _buttonY = new Button();
+        private readonly Button _buttonA = new();
+        private readonly Button _buttonB = new();
+        private readonly Button _buttonBack = new();
+        private readonly Button _buttonBig = new();
+        private readonly Button _buttonLeftShoulder = new();
+        private readonly Button _buttonRightShoulder = new();
+        private readonly Button _buttonStart = new();
+        private readonly Button _buttonX = new();
+        private readonly Button _buttonY = new();
         private GamePadState _currentState;
-        private readonly DPad _dPad = new DPad();
+        private readonly DPad _dPad = new();
         private readonly PlayerIndex _playerIndex;
-        private readonly PressableStick _stickLeft = new PressableStick();
-        private readonly PressableStick _stickRight = new PressableStick();
-        private readonly Trigger _triggerLeft = new Trigger();
-        private readonly Trigger _triggerRight = new Trigger();
+        private readonly PressableStick _stickLeft = new();
+        private readonly PressableStick _stickRight = new();
+        private readonly Trigger _triggerLeft = new();
+        private readonly Trigger _triggerRight = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GamePad"/> class.

@@ -17,7 +17,7 @@ namespace MonoKle
         /// <param name="amount">The amount to interpolate with [0, 1].</param>
         /// <returns>Interpolated <see cref="Color"/>.</returns>
         public static Color Lerp(Color from, Color to, float amount) =>
-            new Color(MathHelper.Lerp(from.R, to.R, amount) * ByteToFloatFactor,
+            new(MathHelper.Lerp(from.R, to.R, amount) * ByteToFloatFactor,
                 MathHelper.Lerp(from.G, to.G, amount) * ByteToFloatFactor,
                 MathHelper.Lerp(from.B, to.B, amount) * ByteToFloatFactor,
                 MathHelper.Lerp(from.A, to.A, amount) * ByteToFloatFactor);

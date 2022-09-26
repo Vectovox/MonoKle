@@ -50,13 +50,13 @@
         /// </summary>
         /// <param name="displayCoordinate">The display coordinate to transform.</param>
         public MVector2 TransformDisplayToRender(MVector2 displayCoordinate) =>
-            new MVector2(displayCoordinate.X / Display.Width * Render.Width, displayCoordinate.Y / Display.Height * Render.Height);
+            new(displayCoordinate.X / Display.Width * Render.Width, displayCoordinate.Y / Display.Height * Render.Height);
 
         /// <summary>
         /// Transforms the given render coordinate to display space.
         /// </summary>
         /// <param name="renderCoordinate">The render coordinate to transform.</param>
         public MVector2 TransformRenderToDisplay(MVector2 renderCoordinate) =>
-            new MVector2(renderCoordinate.X / Render.Width * Display.Width, renderCoordinate.Y / Render.Height * Display.Height);
+            new(renderCoordinate.X / Render.Width * Display.Width, renderCoordinate.Y / Render.Height * Display.Height);
     }
 }

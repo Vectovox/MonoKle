@@ -10,8 +10,8 @@ namespace MonoKle.Asset
     /// </summary>
     public class FontInstance
     {
-        private static readonly StringBuilder _stringBuilderCache = new StringBuilder();
-        private static readonly Func<char, Color, Color> _defaultColorFunc = new Func<char, Color, Color>(DefaultColorMethod);
+        private static readonly StringBuilder _stringBuilderCache = new();
+        private static readonly Func<char, Color, Color> _defaultColorFunc = new(DefaultColorMethod);
         private static readonly char[] _wrapCharacters = new char[] { ' ' };
 
         private readonly FontData _fontData;
@@ -59,7 +59,7 @@ namespace MonoKle.Asset
         /// </summary>
         /// <param name="size">The font size to use.</param>
         /// <returns>New instance of <see cref="FontInstance"/> with the provided size.</returns>
-        public FontInstance WithSize(int size) => new FontInstance(_fontData)
+        public FontInstance WithSize(int size) => new(_fontData)
             { Size = size, LinePadding = LinePadding, ColorTag = ColorTag, CompactHeight = CompactHeight };
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace MonoKle.Asset
         /// </summary>
         /// <param name="padding">The line height padding to use.</param>
         /// <returns>New instance of <see cref="FontInstance"/> with the provided line height padding.</returns>
-        public FontInstance WithLinePadding(int padding) => new FontInstance(_fontData)
+        public FontInstance WithLinePadding(int padding) => new(_fontData)
             { Size = Size, LinePadding = padding, ColorTag = ColorTag, CompactHeight = CompactHeight };
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace MonoKle.Asset
         /// </summary>
         /// <param name="compactHeight">The compact height mode to use.</param>
         /// <returns>New instance of <see cref="FontInstance"/> with the provided compact height mode.</returns>
-        public FontInstance WithCompactHeight(bool compactHeight) => new FontInstance(_fontData)
+        public FontInstance WithCompactHeight(bool compactHeight) => new(_fontData)
             { Size = Size, LinePadding = LinePadding, ColorTag = ColorTag, CompactHeight = compactHeight };
 
         /// <summary>

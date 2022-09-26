@@ -13,7 +13,7 @@ namespace MonoKle.Logging
         private static Logger globalLogger;
 
         private LogLevel loggingLevel;
-        private LinkedList<Log> logs = new LinkedList<Log>();
+        private readonly LinkedList<Log> logs = new();
         private short size;
 
         /// <summary>

@@ -23,7 +23,7 @@ namespace MonoKle
         /// <param name="max">The inclusive maximum values.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if the maximum value is not greater than the minimum.</exception>
         public static MPoint2 NextPoint(this Random random, MPoint2 min, MPoint2 max) =>
-            new MPoint2(random.Next(min.X, max.X + 1), random.Next(min.Y, max.Y + 1));
+            new(random.Next(min.X, max.X + 1), random.Next(min.Y, max.Y + 1));
 
         /// <summary>
         /// Returns a random <see cref="MPoint2"/> located inside the provided inclusive space.

@@ -8,10 +8,10 @@ namespace MonoKle.Input
     /// <seealso cref="IDPad" />
     public class DPad : IDPad
     {
-        private Button up = new Button();
-        private Button down = new Button();
-        private Button left = new Button();
-        private Button right = new Button();
+        private readonly Button up = new();
+        private readonly Button down = new();
+        private readonly Button left = new();
+        private readonly Button right = new();
 
         /// <summary>
         /// Gets the down direction.

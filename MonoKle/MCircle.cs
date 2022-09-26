@@ -46,7 +46,7 @@ namespace MonoKle
         /// <value>
         /// The bounding rectangle.
         /// </value>
-        public MRectangle BoundingRectangle => new MRectangle(this);
+        public MRectangle BoundingRectangle => new(this);
 
         /// <summary>
         /// Gets the circumference of the <see cref="MCircle"/>.
@@ -85,21 +85,21 @@ namespace MonoKle
         /// </summary>
         /// <param name="position">The position to move to.</param>
         /// <returns></returns>
-        public MCircle MoveTo(MVector2 position) => new MCircle(position, Radius);
+        public MCircle MoveTo(MVector2 position) => new(position, Radius);
 
         /// <summary>
         /// Resizes the <see cref="MCircle"/> to the specified radius.
         /// </summary>
         /// <param name="radius">The radius to resize to.</param>
         /// <returns></returns>
-        public MCircle Resize(float radius) => new MCircle(Origin, radius);
+        public MCircle Resize(float radius) => new(Origin, radius);
 
         /// <summary>
         /// Scales the <see cref="MCircle"/> with the specified factor.
         /// </summary>
         /// <param name="factor">The factor to scale with.</param>
         /// <returns></returns>
-        public MCircle Scale(float factor) => new MCircle(Origin, Radius * factor);
+        public MCircle Scale(float factor) => new(Origin, Radius * factor);
 
         /// <summary>
         /// Separates the <see cref="MCircle"/> from the specified <see cref="MCircle"/>, translating it with the shortest distance that makes them not intersect.
@@ -225,6 +225,6 @@ namespace MonoKle
         /// </summary>
         /// <param name="translation">The translation to perform.</param>
         /// <returns></returns>
-        public MCircle Translate(MVector2 translation) => new MCircle(Origin.Translate(translation), Radius);
+        public MCircle Translate(MVector2 translation) => new(Origin.Translate(translation), Radius);
     }
 }

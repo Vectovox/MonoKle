@@ -11,7 +11,7 @@ namespace MonoKle.Asset
     // NOTE: Doesn't use BasicAssetStorage since Song can only be created from URI
     public class SongStorage : AbstractAssetStorage
     {
-        private readonly Dictionary<string, Song> _songByIdentifier = new Dictionary<string, Song>();
+        private readonly Dictionary<string, Song> _songByIdentifier = new();
 
         public SongStorage(Logger logger) : base(logger)
         {

@@ -16,7 +16,7 @@ namespace MonoKle.Asset
     {
         public BasicAssetStorage(Logger logger) : base(logger) { }
 
-        private readonly Dictionary<string, TData> _assetStorage = new Dictionary<string, TData>();
+        private readonly Dictionary<string, TData> _assetStorage = new();
 
         /// <summary>
         /// Gets or sets the default asset.

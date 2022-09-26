@@ -8,10 +8,10 @@ namespace MonoKle.Input.Gamepad
     /// </summary>
     public sealed class GamePadHub : IGamePadHub, IUpdateable
     {
-        private readonly GamePad _playerOne = new GamePad(PlayerIndex.One);
-        private readonly GamePad _playerTwo = new GamePad(PlayerIndex.Two);
-        private readonly GamePad _playerThree = new GamePad(PlayerIndex.Three);
-        private readonly GamePad _playerFour = new GamePad(PlayerIndex.Four);
+        private readonly GamePad _playerOne = new(PlayerIndex.One);
+        private readonly GamePad _playerTwo = new(PlayerIndex.Two);
+        private readonly GamePad _playerThree = new(PlayerIndex.Three);
+        private readonly GamePad _playerFour = new(PlayerIndex.Four);
 
         public IGamePad PlayerOne => _playerOne;
         public IGamePad PlayerTwo => _playerTwo;

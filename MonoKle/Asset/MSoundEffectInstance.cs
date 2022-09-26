@@ -9,7 +9,7 @@ namespace MonoKle.Asset
     public class MSoundEffectInstance
     {
         private readonly SoundEffectInstance _instance;
-        private static readonly Random _random = new Random();
+        private static readonly Random _random = new();
 
         /// <summary>
         /// Gets the underlying sound effect.

@@ -20,8 +20,8 @@ namespace MonoKle.Asset
 
         public bool Bake(string fontPath, string outputPath)
         {
-            FileInfo fontPathInfo = new FileInfo(fontPath);
-            FontFile fontFile = new FontFile();
+            FileInfo fontPathInfo = new(fontPath);
+            FontFile fontFile = new();
 
             // Open the font XML
             try

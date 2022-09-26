@@ -40,6 +40,6 @@ namespace MonoKle.Graphics
         /// Gets the size of the texture.
         /// </summary>
         /// <param name="texture">The texture.</param>
-        public static MPoint2 Size(this Texture2D texture) => new MPoint2(texture.Width, texture.Height);
+        public static MPoint2 Size(this Texture2D texture) => new(texture.Width, texture.Height);
     }
 }

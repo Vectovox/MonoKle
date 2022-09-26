@@ -10,7 +10,7 @@ namespace MonoKle
     {
         private const int SecondsBetweenRefresh = 5;
 
-        private Process _process = Process.GetCurrentProcess();
+        private readonly Process _process = Process.GetCurrentProcess();
         private DateTime _lastRefresh = DateTime.UtcNow;
 
         public Process Process => GetCurrentProcess();

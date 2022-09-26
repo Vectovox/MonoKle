@@ -79,7 +79,7 @@ namespace MonoKle.Input.Keyboard
 
         public TimeSpan GetKeyHeldTime(Keys key) => GetKeyState(key).HeldTime;
 
-        public Span<Keys> GetKeysDown() => new Span<Keys>(_keysDown, 0, _keysDownLength);
+        public Span<Keys> GetKeysDown() => new(_keysDown, 0, _keysDownLength);
 
         public IPressable GetKeyState(Keys key) => _keyArray[(int)key];
 

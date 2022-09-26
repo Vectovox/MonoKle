@@ -23,7 +23,7 @@ namespace MonoKle.Asset
 
         protected override bool ExtensionSupported(string extension) => extension.Equals(".mfnt", StringComparison.InvariantCultureIgnoreCase);
 
-        protected override FontInstance GetInstance(FontData data) => new FontInstance(data);
+        protected override FontInstance GetInstance(FontData data) => new(data);
 
         protected override bool Load(Stream stream, string identifier, out FontData? result)
         {

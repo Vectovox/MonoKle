@@ -92,12 +92,12 @@ namespace MonoKle
         /// <summary>
         /// Gets the bottom left corner.
         /// </summary>
-        public MPoint2 BottomLeft => new MPoint2(TopLeft.X, BottomRight.Y);
+        public MPoint2 BottomLeft => new(TopLeft.X, BottomRight.Y);
 
         /// <summary>
         /// Gets the center of the <see cref="MDiscreteRectangle"/>.
         /// </summary>
-        public MVector2 Center => new MVector2(TopLeft.X + (Width - 1) * 0.5f, TopLeft.Y + (Height - 1) * 0.5f);
+        public MVector2 Center => new(TopLeft.X + (Width - 1) * 0.5f, TopLeft.Y + (Height - 1) * 0.5f);
 
         /// <summary>
         /// Gets the height.
@@ -122,32 +122,32 @@ namespace MonoKle
         /// <summary>
         /// Gets the top right corner.
         /// </summary>
-        public MPoint2 TopRight => new MPoint2(BottomRight.X, TopLeft.Y);
+        public MPoint2 TopRight => new(BottomRight.X, TopLeft.Y);
 
         /// <summary>
         /// Returns the <see cref="Right"/> coordinate aligned to the vertical center.
         /// </summary>
-        public MPoint2 CenterRight => new MPoint2(Right, (int)Center.Y);
+        public MPoint2 CenterRight => new(Right, (int)Center.Y);
 
         /// <summary>
         /// Returns the <see cref="Left"/> coordinate aligned to the vertical center.
         /// </summary>
-        public MPoint2 CenterLeft => new MPoint2(Left, (int)Center.Y);
+        public MPoint2 CenterLeft => new(Left, (int)Center.Y);
 
         /// <summary>
         /// Returns the <see cref="Top"/> coordinate aligned to the horizontal center.
         /// </summary>
-        public MPoint2 CenterTop => new MPoint2((int)Center.X, Top);
+        public MPoint2 CenterTop => new((int)Center.X, Top);
 
         /// <summary>
         /// Returns the <see cref="Bottom"/> coordinate aligned to the horizontal center.
         /// </summary>
-        public MPoint2 CenterBottom => new MPoint2((int)Center.X, Bottom);
+        public MPoint2 CenterBottom => new((int)Center.X, Bottom);
 
         /// <summary>
         /// Gets the <see cref="MPoint2"/> representing width and height.
         /// </summary>
-        public MPoint2 Dimensions => new MPoint2(Width, Height);
+        public MPoint2 Dimensions => new(Width, Height);
 
         /// <summary>
         /// Gets the height.
@@ -176,7 +176,7 @@ namespace MonoKle
         /// <returns>
         /// The result of the conversion.
         /// </returns>
-        public static implicit operator MDiscreteRectangle(Rectangle r) => new MDiscreteRectangle(r.X, r.Y, r.Width, r.Height);
+        public static implicit operator MDiscreteRectangle(Rectangle r) => new(r.X, r.Y, r.Width, r.Height);
 
         /// <summary>
         /// Performs an implicit conversion from <see cref="MDiscreteRectangle"/> to <see cref="Rectangle"/>.
@@ -184,7 +184,7 @@ namespace MonoKle
         /// <returns>
         /// The result of the conversion.
         /// </returns>
-        public static implicit operator Rectangle(MDiscreteRectangle r) => new Rectangle(r.TopLeft.X, r.TopLeft.Y, r.Width, r.Height);
+        public static implicit operator Rectangle(MDiscreteRectangle r) => new(r.TopLeft.X, r.TopLeft.Y, r.Width, r.Height);
 
         /// <summary>
         /// Returns the area.
@@ -363,7 +363,7 @@ namespace MonoKle
         /// </summary>
         /// <param name="width">The new width.</param>
         /// <param name="height">The new height.</param>
-        public MDiscreteRectangle Redimension(int width, int height) => new MDiscreteRectangle(TopLeft.X, TopLeft.Y, width, height);
+        public MDiscreteRectangle Redimension(int width, int height) => new(TopLeft.X, TopLeft.Y, width, height);
 
         /// <summary>
         /// Resizes the <see cref="MDiscreteRectangle"/> width with the provide delta values.
@@ -389,7 +389,7 @@ namespace MonoKle
         /// <param name="deltaWidth">The change in width.</param>
         /// <param name="deltaHeight">The change in height.</param>
         public MDiscreteRectangle Resize(int deltaWidth, int deltaHeight) =>
-            new MDiscreteRectangle(TopLeft.X, TopLeft.Y, Width + deltaWidth, Height + deltaHeight);
+            new(TopLeft.X, TopLeft.Y, Width + deltaWidth, Height + deltaHeight);
 
         /// <summary>
         /// Repositions the <see cref="MDiscreteRectangle"/> to the provided coordinate.
@@ -432,7 +432,7 @@ namespace MonoKle
         /// <param name="dy">The translation along the Y-axis.</param>
         /// <returns>Translated <see cref="MDiscreteRectangle"/>.</returns>
         public MDiscreteRectangle Translate(int dx, int dy) =>
-            new MDiscreteRectangle(TopLeft.Translate(dx, dy), BottomRight.Translate(dx, dy));
+            new(TopLeft.Translate(dx, dy), BottomRight.Translate(dx, dy));
 
         /// <summary>
         /// Iterates all the points contained within the <see cref="MDiscreteRectangle"/>.

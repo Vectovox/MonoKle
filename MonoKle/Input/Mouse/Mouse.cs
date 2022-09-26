@@ -9,13 +9,13 @@ namespace MonoKle.Input.Mouse
     /// </summary>
     public class Mouse : IMouse, IUpdateable
     {
-        private readonly Button _left = new Button();
-        private readonly Button _middle = new Button();
-        private readonly InputPosition _position = new InputPosition();
+        private readonly Button _left = new();
+        private readonly Button _middle = new();
+        private readonly InputPosition _position = new();
         private int _previousScrollValue = 0;
-        private readonly Button _right = new Button();
-        private readonly Button _x1 = new Button();
-        private readonly Button _x2 = new Button();
+        private readonly Button _right = new();
+        private readonly Button _x1 = new();
+        private readonly Button _x2 = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Mouse"/> class.

@@ -8,7 +8,7 @@ namespace MonoKle.Input
     /// <seealso cref="ITrigger" />
     public class Trigger : ITrigger
     {
-        private readonly Button _buttonState = new Button();
+        private readonly Button _buttonState = new();
 
         public TimeSpan HeldTime => _buttonState.HeldTime;
 

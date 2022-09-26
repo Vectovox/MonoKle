@@ -5,10 +5,10 @@ namespace MonoKle.Input.Touch
     public class TouchInput : ITouchInput
     {
         public IInputPosition Position => _position;
-        private InputPosition _position = new InputPosition();
+        private readonly InputPosition _position = new();
 
         public IPressable Press => _press;
-        private Button _press = new Button();
+        private readonly Button _press = new();
 
         public void Reset(TimeSpan timeDelta)
         {

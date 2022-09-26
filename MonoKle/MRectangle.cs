@@ -111,12 +111,12 @@ namespace MonoKle
         /// <summary>
         /// Gets the bottom left corner.
         /// </summary>
-        public MVector2 BottomLeft => new MVector2(TopLeft.X, BottomRight.Y);
+        public MVector2 BottomLeft => new(TopLeft.X, BottomRight.Y);
 
         /// <summary>
         /// Gets the center of the <see cref="MRectangle"/>.
         /// </summary>
-        public MVector2 Center => new MVector2(TopLeft.X + Width * 0.5f, TopLeft.Y + Height * 0.5f);
+        public MVector2 Center => new(TopLeft.X + Width * 0.5f, TopLeft.Y + Height * 0.5f);
 
         /// <summary>
         /// Gets the width.
@@ -147,32 +147,32 @@ namespace MonoKle
         /// <summary>
         /// Gets the top right corner.
         /// </summary>
-        public MVector2 TopRight => new MVector2(BottomRight.X, TopLeft.Y);
+        public MVector2 TopRight => new(BottomRight.X, TopLeft.Y);
 
         /// <summary>
         /// Returns the <see cref="Right"/> coordinate aligned to the vertical center.
         /// </summary>
-        public MVector2 CenterRight => new MVector2(Right, Center.Y);
+        public MVector2 CenterRight => new(Right, Center.Y);
 
         /// <summary>
         /// Returns the <see cref="Left"/> coordinate aligned to the vertical center.
         /// </summary>
-        public MVector2 CenterLeft => new MVector2(Left, Center.Y);
+        public MVector2 CenterLeft => new(Left, Center.Y);
 
         /// <summary>
         /// Returns the <see cref="Top"/> coordinate aligned to the horizontal center.
         /// </summary>
-        public MVector2 CenterTop => new MVector2(Center.X, Top);
+        public MVector2 CenterTop => new(Center.X, Top);
 
         /// <summary>
         /// Returns the <see cref="Bottom"/> coordinate aligned to the horizontal center.
         /// </summary>
-        public MVector2 CenterBottom => new MVector2(Center.X, Bottom);
+        public MVector2 CenterBottom => new(Center.X, Bottom);
 
         /// <summary>
         /// Gets the <see cref="MVector2"/> representing width and height.
         /// </summary>
-        public MVector2 Dimensions => new MVector2(Width, Height);
+        public MVector2 Dimensions => new(Width, Height);
 
         /// <summary>
         /// Gets the height.
@@ -199,7 +199,7 @@ namespace MonoKle
         /// Clamps the provided <see cref="MRectangle"/> to fit within this.
         /// </summary>
         /// <param name="area">The <see cref="MRectangle"/> to clamp.</param>
-        public MRectangle Clamp(MRectangle area) => new MRectangle(Clamp(area.TopLeft), Clamp(area.BottomRight));
+        public MRectangle Clamp(MRectangle area) => new(Clamp(area.TopLeft), Clamp(area.BottomRight));
 
         /// <summary>
         /// Clamps the provided <see cref="MVector2"/> to be positioned within this.
@@ -285,7 +285,7 @@ namespace MonoKle
         /// <see cref="MVector2"/>.
         /// </summary>
         /// <param name="position">The point to align to.</param>
-        public MRectangle PositionCenter(MVector2 position) => new MRectangle(position.X - Width * 0.5f, position.Y - Height * 0.5f, Width, Height);
+        public MRectangle PositionCenter(MVector2 position) => new(position.X - Width * 0.5f, position.Y - Height * 0.5f, Width, Height);
 
         /// <summary>
         /// Checks if contains the provided <see cref="MRectangle"/>.
@@ -451,7 +451,7 @@ namespace MonoKle
         /// </summary>
         /// <param name="width">The new width.</param>
         /// <param name="height">The new height.</param>
-        public MRectangle Redimension(float width, float height) => new MRectangle(TopLeft.X, TopLeft.Y, width, height);
+        public MRectangle Redimension(float width, float height) => new(TopLeft.X, TopLeft.Y, width, height);
 
         /// <summary>
         /// Resizes the <see cref="MRectangle"/> with the provide delta values.
@@ -477,7 +477,7 @@ namespace MonoKle
         /// <param name="deltaWidth">The change in width.</param>
         /// <param name="deltaHeight">The change in height.</param>
         public MRectangle Resize(float deltaWidth, float deltaHeight) =>
-            new MRectangle(TopLeft.X, TopLeft.Y, Width + deltaWidth, Height + deltaHeight);
+            new(TopLeft.X, TopLeft.Y, Width + deltaWidth, Height + deltaHeight);
 
         /// <summary>
         /// Repositions the <see cref="MRectangle"/> to the provided coordinate.
@@ -539,12 +539,12 @@ namespace MonoKle
         /// <param name="dy">The translation along the Y-axis.</param>
         /// <returns>Translated <see cref="MRectangle"/>.</returns>
         public MRectangle Translate(float dx, float dy) =>
-            new MRectangle(TopLeft.X + dx, TopLeft.Y + dy, BottomRight.X - TopLeft.X, BottomRight.Y - TopLeft.Y);
+            new(TopLeft.X + dx, TopLeft.Y + dy, BottomRight.X - TopLeft.X, BottomRight.Y - TopLeft.Y);
 
         /// <summary>
         /// Converts the <see cref="MRectangle"/> to an <see cref="MRectangleInt"/> by cutting of the factions,
         /// basically a float -> int conversion.
         /// </summary>
-        public MRectangleInt ToMRectangleInt() => new MRectangleInt(TopLeft.ToMPoint2(), BottomRight.ToMPoint2());
+        public MRectangleInt ToMRectangleInt() => new(TopLeft.ToMPoint2(), BottomRight.ToMPoint2());
     }
 }

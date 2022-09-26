@@ -68,18 +68,18 @@ namespace MonoKle
 
     public class PerformanceWidget
     {
-        private readonly FrameCounter _drawCounter = new FrameCounter();
-        private readonly FrameCounter _updateCounter = new FrameCounter();
+        private readonly FrameCounter _drawCounter = new();
+        private readonly FrameCounter _updateCounter = new();
         private readonly SpriteBatch _spriteBatch;
         private readonly PrimitiveBatch2D _primitiveBatch;
         private readonly FontInstance _font;
         private readonly MTexture _whiteTexture;
         private readonly CachedProcessProvider _processProvider;
-        private readonly PerformanceChartData _drawChartData = new PerformanceChartData(180);
-        private readonly PerformanceChartData _updateChartData = new PerformanceChartData(180);
+        private readonly PerformanceChartData _drawChartData = new(180);
+        private readonly PerformanceChartData _updateChartData = new(180);
 
         // Fields for calculating text with relatively good performance
-        private readonly StringBuilder _textBuilder = new StringBuilder();
+        private readonly StringBuilder _textBuilder = new();
         private string _cachedText = string.Empty;
         private TimeSpan _cachedTotalFrameTime;
 

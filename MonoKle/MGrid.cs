@@ -34,7 +34,7 @@ namespace MonoKle
         /// <param name="point">The provided point.</param>
         /// <returns>Cell containing the provided point.</returns>
         public MPoint2 CellFromPoint(MVector2 point) =>
-            new MPoint2((int)(point.X / CellSize) + (point.X > 0 ? 0 : -1),
+            new((int)(point.X / CellSize) + (point.X > 0 ? 0 : -1),
                 (int)(point.Y / CellSize) + (point.Y > 0 ? 0 : -1));
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace MonoKle
         /// </summary>
         /// <param name="cell">The cell.</param>
         /// <returns>Bounding area.</returns>
-        public MRectangle CellRectangle(MPoint2 cell) => new MRectangle(cell.X * CellSize, cell.Y * CellSize, CellSize, CellSize);
+        public MRectangle CellRectangle(MPoint2 cell) => new(cell.X * CellSize, cell.Y * CellSize, CellSize, CellSize);
 
         /// <summary>
         /// Returns all the cells containing the provided circle.
@@ -98,7 +98,7 @@ namespace MonoKle
         {
             private Vector2 end;
             private Vector2 start;
-            private MGrid traverser;
+            private readonly MGrid traverser;
 
             internal LineEnumerable(MGrid traverser, MVector2 start, MVector2 end)
             {
@@ -124,16 +124,16 @@ namespace MonoKle
             {
                 private int currentX;
                 private int currentY;
-                private float dx;
-                private float dy;
-                private LineEnumerable e;
-                private MPoint2 endPoint;
+                private readonly float dx;
+                private readonly float dy;
+                private readonly LineEnumerable e;
+                private readonly MPoint2 endPoint;
                 private bool first;
                 private bool over;
-                private int stepX;
-                private int stepY;
-                private float tDeltaX;
-                private float tDeltaY;
+                private readonly int stepX;
+                private readonly int stepY;
+                private readonly float tDeltaX;
+                private readonly float tDeltaY;
                 private float tMaxX;
                 private float tMaxY;
 
@@ -157,7 +157,7 @@ namespace MonoKle
                 /// <summary>
                 /// Gets the element in the collection at the current position of the enumerator.
                 /// </summary>
-                public MPoint2 Current => new MPoint2(currentX, currentY);
+                public MPoint2 Current => new(currentX, currentY);
 
                 object IEnumerator.Current => Current;
 

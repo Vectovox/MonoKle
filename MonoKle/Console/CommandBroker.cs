@@ -14,7 +14,7 @@ namespace MonoKle.Console
     public sealed class CommandBroker
     {
         private readonly IGameConsole _console;
-        private readonly Dictionary<string, IConsoleCommand> _typeCommands = new Dictionary<string, IConsoleCommand>();
+        private readonly Dictionary<string, IConsoleCommand> _typeCommands = new();
 
         /// <summary>
         /// Gets the registered commands.

@@ -13,9 +13,9 @@ namespace MonoKle.State
 
         private string _currentState = string.Empty;
 
-        private readonly Dictionary<string, GameState> _stateByString = new Dictionary<string, GameState>();
+        private readonly Dictionary<string, GameState> _stateByString = new();
 
-        private readonly Queue<StateSwitch> _switchQueue = new Queue<StateSwitch>();
+        private readonly Queue<StateSwitch> _switchQueue = new();
 
         public ICollection<string> StateIdentifiers => _stateByString.Keys;
 

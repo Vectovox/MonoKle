@@ -25,7 +25,7 @@ namespace MonoKle.Console
 
         private readonly InputField _inputField;
         private readonly KeyboardTyper _keyboard;
-        private readonly LinkedList<TextEntry> _textEntries = new LinkedList<TextEntry>();
+        private readonly LinkedList<TextEntry> _textEntries = new();
         private readonly SpriteBatch _spriteBatch;
         private readonly IMouse _mouse;
         private readonly MTexture _whiteTexture;

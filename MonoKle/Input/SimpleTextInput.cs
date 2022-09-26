@@ -13,7 +13,7 @@ namespace MonoKle.Input
     {
         private int _cursorPos;
         private string _text = "";
-        private readonly StringBuilder _textBuilder = new StringBuilder();
+        private readonly StringBuilder _textBuilder = new();
 
         public bool CursorEnabled { get; set; } = true;
 

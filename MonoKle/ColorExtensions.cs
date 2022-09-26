@@ -33,13 +33,13 @@ namespace MonoKle
         /// </summary>
         /// <param name="color">The color.</param>
         /// <param name="alpha">Alpha value between [0, 1].</param>
-        public static Color WithAlpha(this Color color, float alpha) => new Color(color, alpha);
+        public static Color WithAlpha(this Color color, float alpha) => new(color, alpha);
 
         /// <summary>
         /// Returns a new <see cref="Color"/> with the provided alpha.
         /// </summary>
         /// <param name="color">The color.</param>
         /// <param name="alpha">Alpha value between [0, 255].</param>
-        public static Color WithAlpha(this Color color, int alpha) => new Color(color, alpha);
+        public static Color WithAlpha(this Color color, int alpha) => new(color, alpha);
     }
 }

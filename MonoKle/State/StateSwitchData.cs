@@ -7,7 +7,7 @@ namespace MonoKle.State
     /// </summary>
     public class StateSwitchData
     {
-        private static readonly object _voidSwitchObject = new object();
+        private static readonly object _voidSwitchObject = new();
 
         /// <summary>
         /// Initializes a new instance of <see cref="StateSwitchData"/>, providing data to transfer upon state switch.

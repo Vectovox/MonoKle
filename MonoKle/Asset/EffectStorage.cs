@@ -25,7 +25,7 @@ namespace MonoKle.Asset
         protected override bool Load(Stream stream, string identifier, out Effect? result)
         {
             int val = stream.ReadByte();
-            List<byte> bytes = new List<byte>();
+            List<byte> bytes = new();
             while (val != -1)
             {
                 bytes.Add((byte)val);

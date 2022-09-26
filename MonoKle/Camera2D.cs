@@ -44,7 +44,7 @@ namespace MonoKle
         /// <summary>
         /// Gets the current world-coordinate viewing frustum of the camera.
         /// </summary>
-        public MRectangle View => new MRectangle(TransformInv(MPoint2.Zero), TransformInv(Size));
+        public MRectangle View => new(TransformInv(MPoint2.Zero), TransformInv(Size));
 
         /// <summary>
         /// Gets or sets the current camera center position.

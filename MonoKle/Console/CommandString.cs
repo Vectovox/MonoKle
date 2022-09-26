@@ -18,23 +18,23 @@ namespace MonoKle.Console
         /// Gets the positional arguments to the command.
         /// </summary>
         public IReadOnlyList<string> PositionalArguments => positionalArguments;
-        private readonly List<string> positionalArguments = new List<string>(0);
+        private readonly List<string> positionalArguments = new(0);
 
         /// <summary>
         /// Gets the flags that are set for the command.
         /// </summary>
         public IReadOnlyCollection<string> Flags => flags;
-        private readonly HashSet<string> flags = new HashSet<string>(0);
+        private readonly HashSet<string> flags = new(0);
 
         /// <summary>
         /// Gets the named arguments that are set for the command.
         /// </summary>
         public IReadOnlyDictionary<string, string> NamedArguments => namedArguments;
-        private readonly Dictionary<string, string> namedArguments = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> namedArguments = new();
 
         public static bool TryParse(string line, out CommandString commandString)
         {
-            CommandString builtString = new CommandString();
+            CommandString builtString = new();
 
             if (line.Length == 0)
             {
@@ -157,7 +157,7 @@ namespace MonoKle.Console
         /// </summary>
         private static IEnumerable<string> GetParseTokens(string line)
         {
-            StringBuilder builder = new StringBuilder();
+            StringBuilder builder = new();
             bool inToken = false;
             foreach (char c in line)
             {

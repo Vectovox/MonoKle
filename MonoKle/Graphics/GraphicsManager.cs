@@ -69,7 +69,7 @@ namespace MonoKle.Graphics
         /// Gets the underlying backbuffer resolution.
         /// </summary>
         [CVar("graphics_backbuffer_resolution")]
-        public MPoint2 BackBufferResolution => new MPoint2(GraphicsDeviceManager.PreferredBackBufferWidth, GraphicsDeviceManager.PreferredBackBufferHeight);
+        public MPoint2 BackBufferResolution => new(GraphicsDeviceManager.PreferredBackBufferWidth, GraphicsDeviceManager.PreferredBackBufferHeight);
 
         /// <summary>
         /// Gets or sets the backbuffer resolution. Used in <see cref="GraphicsMode.Windowed"/> and <see cref="GraphicsMode.Fullscreen"/>.

@@ -10,18 +10,18 @@ namespace MonoKle.Input.Touch
 {
     public class TouchScreen : ITouchScreen
     {
-        private readonly Dictionary<GestureType, PressAction> _pressActions = new Dictionary<GestureType, PressAction>
+        private readonly Dictionary<GestureType, PressAction> _pressActions = new()
         {
             { GestureType.Tap, new PressAction() },
             { GestureType.DoubleTap, new PressAction() },
             { GestureType.Hold, new PressAction() },
         };
 
-        private readonly DragAction _dragAction = new DragAction();
-        private readonly PinchAction _pinchAction = new PinchAction();
+        private readonly DragAction _dragAction = new();
+        private readonly PinchAction _pinchAction = new();
 
         private readonly IMouse _mouse;
-        private readonly TouchInput _touchInput = new TouchInput();
+        private readonly TouchInput _touchInput = new();
 
         /// <summary>
         /// Creates and initializes a new instance of <see cref="TouchScreen"/>.

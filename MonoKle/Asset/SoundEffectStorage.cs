@@ -23,7 +23,7 @@ namespace MonoKle.Asset
         protected override bool ExtensionSupported(string extension) =>
             extension.Equals(".wav", StringComparison.InvariantCultureIgnoreCase);
 
-        protected override MSoundEffectInstance GetInstance(SoundEffect data) => new MSoundEffectInstance(data);
+        protected override MSoundEffectInstance GetInstance(SoundEffect data) => new(data);
 
         protected override bool Load(Stream stream, string identifier, out SoundEffect? result)
         {

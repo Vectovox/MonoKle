@@ -7,7 +7,7 @@ namespace MonoKle.Input
     /// </summary>
     public class PressableStick : IPressableStick
     {
-        private Button buttonState = new Button();
+        private readonly Button buttonState = new();
 
         /// <summary>
         /// Gets the direction.

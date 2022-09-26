@@ -10,7 +10,7 @@ namespace MonoKle
     /// </summary>
     public class Callbacker
     {
-        private readonly ConcurrentQueue<(Action, ManualResetEvent)> _operationQueue = new ConcurrentQueue<(Action, ManualResetEvent)>();
+        private readonly ConcurrentQueue<(Action, ManualResetEvent)> _operationQueue = new();
 
         /// <summary>
         /// Adds the given action as a callback.

@@ -152,7 +152,7 @@ namespace MonoKle.Engine
             Settings.KeyboardEnabled = true;
             Settings.MouseEnabled = true;
             Settings.TouchEnabled = true;
-            Settings.CrashDumpPath = "./crashdump.log";
+            Settings.CrashLogPath = "./crash.log";
 
             // Enable crashdumps
             AppDomain.CurrentDomain.UnhandledException += UnhandledException;
@@ -367,7 +367,7 @@ namespace MonoKle.Engine
         private static void UnhandledException(object sender, UnhandledExceptionEventArgs unhandledException)
         {
             Logger.Log(unhandledException.ExceptionObject.ToString(), LogLevel.Error);
-            var fs = new FileStream(Settings.CrashDumpPath, FileMode.Append);
+            var fs = new FileStream(Settings.CrashLogPath, FileMode.Append);
             using var separatorWriter = new StreamWriter(fs);
             separatorWriter.WriteLine("=========== CRASH ===========");
             separatorWriter.Flush();

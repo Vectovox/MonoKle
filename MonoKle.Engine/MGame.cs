@@ -21,7 +21,7 @@ namespace MonoKle.Engine
     public class MGame : Game
     {
         private static string _title = string.Empty;
-        private static readonly Callbacker _uiThreadCallbacker = new Callbacker();
+        private static readonly Callbacker _uiThreadCallbacker = new();
         private static PerformanceWidget _performanceWidget;
         private static bool _initializing = true;
 
@@ -51,25 +51,25 @@ namespace MonoKle.Engine
         /// Gets the hub for gamepad input.
         /// </summary>
         public static IGamePadHub GamePad => _gamepad;
-        private static readonly GamePadHub _gamepad = new GamePadHub();
+        private static readonly GamePadHub _gamepad = new();
 
         /// <summary>
         /// Gets the keyboard input.
         /// </summary>
         public static IKeyboard Keyboard => _keyboard;
-        private static readonly Keyboard _keyboard = new Keyboard();
+        private static readonly Keyboard _keyboard = new();
 
         /// <summary>
         /// Gets the current mouse input.
         /// </summary>
         public static IMouse Mouse => _mouse;
-        private static readonly Mouse _mouse = new Mouse();
+        private static readonly Mouse _mouse = new();
 
         /// <summary>
         /// Gets the touch screen input.
         /// </summary>
         public static ITouchScreen TouchScreen => _touchScreen;
-        private static readonly TouchScreen _touchScreen = new TouchScreen(_mouse);
+        private static readonly TouchScreen _touchScreen = new(_mouse);
 
         /// <summary>
         /// Gets the most recently activated input mode.
@@ -85,7 +85,7 @@ namespace MonoKle.Engine
         /// Gets the state system, which keeps track of the states and switches between them.
         /// </summary>
         public static IStateSystem StateSystem => _stateSystem;
-        private static readonly StateSystem _stateSystem = new StateSystem(Logger);
+        private static readonly StateSystem _stateSystem = new(Logger);
 
         /// <summary>
         /// Gets the running game instance.
@@ -209,7 +209,7 @@ namespace MonoKle.Engine
 
             // Done initializing
             _console.WriteLine("MonoKle Engine initialized!", Console.CommandTextColour);
-            _console.WriteLine($"Running version: {ThisAssembly.AssemblyInformationalVersion}", Console.CommandTextColour);
+            _console.CommandBroker.Call(Commands.VersionCommand.Name);
             _initializing = false;
         }
 

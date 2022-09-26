@@ -8,6 +8,7 @@ namespace MonoKle.Asset
     /// <summary>
     /// Loads and maintains song assets that are streamed at playback. Supported types are .ogg and .mp3.
     /// </summary>
+    // NOTE: Doesn't use BasicAssetStorage since Song can only be created from URI
     public class SongStorage : AbstractAssetStorage
     {
         private readonly Dictionary<string, Song> _songByIdentifier = new Dictionary<string, Song>();

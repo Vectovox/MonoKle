@@ -34,10 +34,43 @@ namespace MonoKle.Asset
         }
 
         /// <summary>
-        /// Load assets from the manifest in the provided path.
+        /// Loads assets specified in the provided manifest.
         /// </summary>
+        /// <param name="manifestPath">Path to the manifest file.</param>
         /// <remarks>Case sensitive on some platforms.</remarks>
-        public int LoadFromManifest(string manifestPath)
+        /// <returns>Amount of loaded assets.</returns>
+        public int LoadFromManifest(string manifestPath) =>
+            OperateOnManifest(manifestPath, (path, identifier, lineParts) => Load(path, identifier, lineParts));
+
+        /// <summary>
+        /// Unloads assets specified in the provided manifest.
+        /// </summary>
+        /// <param name="manifestPath">Path to the manifest file.</param>
+        /// <returns>Amount of unloaded assets.</returns>
+        public int UnloadFromManifest(string manifestPath) =>
+            OperateOnManifest(manifestPath, (path, identifier, lineParts) => Unload(identifier));
+
+        /// <summary>
+        /// Returns whether the given identifier is present in the <see cref="AbstractAssetStorage"/>.
+        /// </summary>
+        /// <param name="identifier">The identifier to check for.</param>
+        /// <returns>True if present; otherwise false.</returns>
+        public abstract bool Contains(string identifier);
+        /// <summary>
+        /// Unloads all assets, returning the amount of asset identifiers unloaded.
+        /// </summary>
+        public abstract int Unload();
+        /// <summary>
+        /// Unloads the asset with the given identifier.
+        /// </summary>
+        /// <param name="identifier">Identifier of the asset to unload.</param>
+        /// <returns>True if unloaded; otherwise false.</returns>
+        public abstract bool Unload(string identifier);
+
+        protected abstract bool ExtensionSupported(string extension);
+        protected abstract bool Load(string path, string identifier, string[] args);
+
+        private int OperateOnManifest(string manifestPath, Func<string, string, string[], bool> operation)
         {
             // Open manifest
             StreamReader reader;
@@ -74,39 +107,18 @@ namespace MonoKle.Asset
 
                 if (ExtensionSupported(new FileInfo(path).Extension))
                 {
-                    // Load file and send remaining parts as arguments
-                    if (Load(path, identifier, lineParts.Length > 2 ? lineParts[2..] : Array.Empty<string>()))
+                    if (operation(path, identifier, lineParts.Length > 2 ? lineParts[2..] : Array.Empty<string>()))
                     {
                         counter++;
                     }
                     else
                     {
-                        _logger.Log($"Could not load asset '{line}' from manifest", LogLevel.Error);
+                        _logger.Log($"Could not operate on asset '{line}' from manifest", LogLevel.Error);
                     }
                 }
             }
 
             return counter;
         }
-
-        /// <summary>
-        /// Returns whether the given identifier is present in the <see cref="AbstractAssetStorage"/>.
-        /// </summary>
-        /// <param name="identifier">The identifier to check for.</param>
-        /// <returns>True if present; otherwise false.</returns>
-        public abstract bool Contains(string identifier);
-        /// <summary>
-        /// Unloads all assets, returning the amount of asset identifiers unloaded.
-        /// </summary>
-        public abstract int Unload();
-        /// <summary>
-        /// Unloads the asset with the given identifier.
-        /// </summary>
-        /// <param name="identifier">Identifier of the asset to unload.</param>
-        /// <returns>True if unloaded; otherwise false.</returns>
-        public abstract bool Unload(string identifier);
-
-        protected abstract bool ExtensionSupported(string extension);
-        protected abstract bool Load(string path, string identifier, string[] args);
     }
 }

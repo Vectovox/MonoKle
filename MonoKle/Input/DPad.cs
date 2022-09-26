@@ -58,7 +58,7 @@ namespace MonoKle.Input
             right.Update(rightDown, deltaTime);
         }
 
-        public MPoint2 PressedDirection()
+        public MPoint2 DirectionPressed()
         {
             int x = 0, y = 0;
             if (Left.IsPressed)
@@ -82,7 +82,7 @@ namespace MonoKle.Input
             return new MPoint2(x, y);
         }
 
-        public MPoint2 DownDirection()
+        public MPoint2 Direction()
         {
             int x = 0, y = 0;
             if (Left.IsDown)

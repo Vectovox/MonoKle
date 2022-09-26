@@ -36,5 +36,17 @@
         /// The up direction.
         /// </value>
         IPressable Up { get; }
+
+        /// <summary>
+        /// Gets the direction of the DPad.
+        /// </summary>
+        /// <returns>Point with X and Y components taking the values {-1, 0, 1}</returns>
+        MPoint2 Direction();
+
+        /// <summary>
+        /// Gets the direction of the DPad. Only takes on values when pressed.
+        /// </summary>
+        /// <returns>Point with X and Y components taking the values {-1, 0, 1}</returns>
+        MPoint2 DirectionPressed();
     }
 }

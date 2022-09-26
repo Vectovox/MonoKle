@@ -333,7 +333,7 @@ namespace MonoKle.Console.Tests
 
             public void Call(IGameConsole console) => throw new NotImplementedException(_nothingToSeeHere.ToString());
 
-            public ICollection<string> GetPositionalSuggestions() => throw new NotImplementedException();
+            public ICollection<string> GetPositionalSuggestions(IGameConsole console) => throw new NotImplementedException();
         }
 
         [ConsoleCommand("NoInterfaceTestCommand")]
@@ -345,7 +345,7 @@ namespace MonoKle.Console.Tests
         {
             public void Call(IGameConsole console) => throw new NotImplementedException();
 
-            public ICollection<string> GetPositionalSuggestions() => throw new NotImplementedException();
+            public ICollection<string> GetPositionalSuggestions(IGameConsole console) => throw new NotImplementedException();
         }
 
         [ConsoleCommand("NoPositionalZeroTestCommand")]
@@ -356,7 +356,7 @@ namespace MonoKle.Console.Tests
 
             public void Call(IGameConsole console) => throw new NotImplementedException();
 
-            public ICollection<string> GetPositionalSuggestions() => throw new NotImplementedException();
+            public ICollection<string> GetPositionalSuggestions(IGameConsole console) => throw new NotImplementedException();
         }
 
         [ConsoleCommand("PositionalGapTestCommand")]
@@ -370,7 +370,7 @@ namespace MonoKle.Console.Tests
 
             public void Call(IGameConsole console) => throw new NotImplementedException();
 
-            public ICollection<string> GetPositionalSuggestions() => throw new NotImplementedException();
+            public ICollection<string> GetPositionalSuggestions(IGameConsole console) => throw new NotImplementedException();
         }
 
         [ConsoleCommand("RequiredAfterOptionalPositionalTestCommand")]
@@ -387,7 +387,7 @@ namespace MonoKle.Console.Tests
 
             public void Call(IGameConsole console) => throw new NotImplementedException();
 
-            public ICollection<string> GetPositionalSuggestions() => throw new NotImplementedException();
+            public ICollection<string> GetPositionalSuggestions(IGameConsole console) => throw new NotImplementedException();
         }
 
         [ConsoleCommand("argumentAssignmentTest")]
@@ -420,7 +420,7 @@ namespace MonoKle.Console.Tests
                 LastFlag = Flag;
             }
 
-            public ICollection<string> GetPositionalSuggestions() => Array.Empty<string>();
+            public ICollection<string> GetPositionalSuggestions(IGameConsole console) => Array.Empty<string>();
         }
 
         [ConsoleCommand("argumentUsageTest")]
@@ -451,7 +451,7 @@ namespace MonoKle.Console.Tests
             {
             }
 
-            public ICollection<string> GetPositionalSuggestions() => Array.Empty<string>();
+            public ICollection<string> GetPositionalSuggestions(IGameConsole console) => Array.Empty<string>();
         }
 
         [ConsoleCommand("typeTestCommand", Description = "testDescription")]
@@ -493,7 +493,7 @@ namespace MonoKle.Console.Tests
                 LastBool = Bool;
             }
 
-            public ICollection<string> GetPositionalSuggestions() => Array.Empty<string>();
+            public ICollection<string> GetPositionalSuggestions(IGameConsole console) => Array.Empty<string>();
         }
 
         [ConsoleCommand("defaultValueTestCommand")]
@@ -513,7 +513,7 @@ namespace MonoKle.Console.Tests
             {
             }
 
-            public ICollection<string> GetPositionalSuggestions() => Array.Empty<string>();
+            public ICollection<string> GetPositionalSuggestions(IGameConsole console) => Array.Empty<string>();
         }
 
         [ConsoleCommand("emptyTestCommand", Description = "emptyDescription")]
@@ -531,7 +531,7 @@ namespace MonoKle.Console.Tests
                 WasCalled = true;
             }
 
-            public ICollection<string> GetPositionalSuggestions() => Array.Empty<string>();
+            public ICollection<string> GetPositionalSuggestions(IGameConsole console) => Array.Empty<string>();
         }
 
         [ConsoleCommand("instanceTestCommand", Description = "emptyDescription")]
@@ -550,7 +550,7 @@ namespace MonoKle.Console.Tests
                 WasCalledWith = _toCallWith;
             }
 
-            public ICollection<string> GetPositionalSuggestions() => Array.Empty<string>();
+            public ICollection<string> GetPositionalSuggestions(IGameConsole console) => Array.Empty<string>();
         }
 
         [ConsoleCommand("enumTestCommand", Description = "emptyDescription")]
@@ -567,7 +567,7 @@ namespace MonoKle.Console.Tests
             {
             }
 
-            public ICollection<string> GetPositionalSuggestions() => Array.Empty<string>();
+            public ICollection<string> GetPositionalSuggestions(IGameConsole console) => Array.Empty<string>();
 
             public enum TestEnum
             {

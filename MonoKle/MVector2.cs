@@ -49,7 +49,7 @@ namespace MonoKle
         /// <summary>
         /// Gets the <see cref="MVector2"/> with both components being positive.
         /// </summary>
-        public MVector2 Absolute => new MVector2(Math.Abs(X), Math.Abs(Y));
+        public MVector2 Absolute => new(Math.Abs(X), Math.Abs(Y));
 
         /// <summary>
         /// Gets the normalized <see cref="MVector2"/>.
@@ -70,12 +70,12 @@ namespace MonoKle
         /// <summary>
         /// Gets a <see cref="MVector2"/> with all components set to 1, the identity vector.
         /// </summary>
-        public static MVector2 One => new MVector2(1f);
+        public static MVector2 One => new(1f);
 
         /// <summary>
         /// Gets a <see cref="MVector2"/> with all components set to 0.
         /// </summary>
-        public static MVector2 Zero => new MVector2(0f);
+        public static MVector2 Zero => new(0f);
 
         /// <summary>
         /// Operator for subtraction with another <see cref="MVector2"/>.
@@ -83,7 +83,7 @@ namespace MonoKle
         /// <param name="a">Left operand.</param>
         /// <param name="b">Right operand.</param>
         /// <returns>Added result.</returns>
-        public static MVector2 operator -(MVector2 a, MVector2 b) => new MVector2(a.X - b.X, a.Y - b.Y);
+        public static MVector2 operator -(MVector2 a, MVector2 b) => new(a.X - b.X, a.Y - b.Y);
 
         /// <summary>
         /// Unary operator for negating the components of the <see cref="MVector2"/>.
@@ -106,7 +106,7 @@ namespace MonoKle
         /// <param name="a">Left operand.</param>
         /// <param name="b">Right operand.</param>
         /// <returns>Multiplied result.</returns>
-        public static MVector2 operator *(MVector2 a, float b) => new MVector2(a.X * b, a.Y * b);
+        public static MVector2 operator *(MVector2 a, float b) => new(a.X * b, a.Y * b);
 
         /// <summary>
         /// Operator for multiplication with scalar.
@@ -114,7 +114,7 @@ namespace MonoKle
         /// <param name="a">Left operand.</param>
         /// <param name="b">Right operand.</param>
         /// <returns>Multiplied result.</returns>
-        public static MVector2 operator *(float b, MVector2 a) => new MVector2(a.X * b, a.Y * b);
+        public static MVector2 operator *(float b, MVector2 a) => new(a.X * b, a.Y * b);
 
         /// <summary>
         /// Operator for division with a scalar.
@@ -122,7 +122,7 @@ namespace MonoKle
         /// <param name="a">Left operand.</param>
         /// <param name="b">Right operand.</param>
         /// <returns>Divided result.</returns>
-        public static MVector2 operator /(MVector2 a, float b) => new MVector2(a.X / b, a.Y / b);
+        public static MVector2 operator /(MVector2 a, float b) => new(a.X / b, a.Y / b);
 
         /// <summary>
         /// Operator for addition with another <see cref="MVector2"/>.
@@ -130,7 +130,7 @@ namespace MonoKle
         /// <param name="a">Left operand.</param>
         /// <param name="b">Right operand.</param>
         /// <returns>Added result.</returns>
-        public static MVector2 operator +(MVector2 a, MVector2 b) => new MVector2(a.X + b.X, a.Y + b.Y);
+        public static MVector2 operator +(MVector2 a, MVector2 b) => new(a.X + b.X, a.Y + b.Y);
 
         /// <summary>
         /// Operator for memberwise multiplication with another <see cref="MVector2"/>.
@@ -138,7 +138,7 @@ namespace MonoKle
         /// <param name="a">Left operand.</param>
         /// <param name="b">Right operand.</param>
         /// <returns>Multiplied result.</returns>
-        public static MVector2 operator *(MVector2 a, MVector2 b) => new MVector2(a.X * b.X, a.Y * b.Y);
+        public static MVector2 operator *(MVector2 a, MVector2 b) => new(a.X * b.X, a.Y * b.Y);
 
         /// <summary>
         /// Operator for memberwise division with another <see cref="MVector2"/>.
@@ -146,7 +146,7 @@ namespace MonoKle
         /// <param name="a">Left operand.</param>
         /// <param name="b">Right operand.</param>
         /// <returns>Division result.</returns>
-        public static MVector2 operator /(MVector2 a, MVector2 b) => new MVector2(a.X / b.X, a.Y / b.Y);
+        public static MVector2 operator /(MVector2 a, MVector2 b) => new(a.X / b.X, a.Y / b.Y);
 
         /// <summary>
         /// Operator for memberwise modulo.
@@ -154,7 +154,7 @@ namespace MonoKle
         /// <param name="a">Left operand.</param>
         /// <param name="b">Right operand.</param>
         /// <returns>Modulo result.</returns>
-        public static MVector2 operator %(MVector2 a, MVector2 b) => new MVector2(a.X % b.X, a.Y % b.Y);
+        public static MVector2 operator %(MVector2 a, MVector2 b) => new(a.X % b.X, a.Y % b.Y);
 
         /// <summary>
         /// Logic operator for equality.
@@ -168,19 +168,19 @@ namespace MonoKle
         /// Performs an implicit conversion from <see cref="Vector2"/> to <see cref="MVector2"/>.
         /// </summary>
         /// <param name="vector">The vector.</param>
-        public static implicit operator MVector2(Vector2 vector) => new MVector2(vector.X, vector.Y);
+        public static implicit operator MVector2(Vector2 vector) => new(vector.X, vector.Y);
 
         /// <summary>
         /// Performs an implicit conversion from <see cref="MVector2"/> to <see cref="Vector2"/>.
         /// </summary>
         /// <param name="vector">The vector.</param>
-        public static implicit operator Vector2(MVector2 vector) => new Vector2(vector.X, vector.Y);
+        public static implicit operator Vector2(MVector2 vector) => new(vector.X, vector.Y);
 
         /// <summary>
         /// Performs an implicit conversion from <see cref="MPoint2"/> to <see cref="MVector2"/>.
         /// </summary>
         /// <param name="p">The point.</param>
-        public static implicit operator MVector2(MPoint2 p) => new MVector2(p);
+        public static implicit operator MVector2(MPoint2 p) => new(p);
 
         /// <summary>
         /// Parses the specified string.
@@ -220,6 +220,51 @@ namespace MonoKle
         }
 
         /// <summary>
+        /// Returns whether the <see cref="MVector2"/> is equal to the provided object.
+        /// </summary>
+        /// <param name="obj">The object to compare with.</param>
+        /// <returns>True if they are equal, else false.</returns>
+        public override bool Equals(object obj) => obj is MVector2 other && Equals(other);
+
+        /// <summary>
+        /// Returns equality to another <see cref="MVector2"/>.
+        /// </summary>
+        /// <param name="other">Another <see cref="MVector2"/>.</param>
+        /// <returns>True if equal, else false.</returns>
+        public bool Equals(MVector2 other) => this == other;
+
+        /// <summary>
+        /// Returns the hash code representation.
+        /// </summary>
+        /// <returns>Hash code representation.</returns>
+        public override int GetHashCode()
+        {
+            const int HASH_CODE_MULTIPLIER = 101;
+            unchecked
+            {
+                int hash = 73;
+                hash = hash * HASH_CODE_MULTIPLIER + X.GetHashCode();
+                hash = hash * HASH_CODE_MULTIPLIER + Y.GetHashCode();
+                return hash;
+            }
+        }
+
+        /// <summary>
+        /// Returns a new instance of the <see cref="MVector2"/>, with the sign changed for the X and Y components.
+        /// </summary>
+        public MVector2 Negate() => -this;
+
+        /// <summary>
+        /// Returns a new instance of the <see cref="MVector2"/>, with the sign changed for the X component.
+        /// </summary>
+        public MVector2 NegateX() => new(-X, Y);
+
+        /// <summary>
+        /// Returns a new instance of the <see cref="MVector2"/>, with the sign changed for the Y component.
+        /// </summary>
+        public MVector2 NegateY() => new(X, -Y);
+
+        /// <summary>
         /// Interpreting <see cref="MVector2"/> as a point, calculates which <see cref="MVector2"/> in a collection that is the closest.
         /// </summary>
         /// <param name="comparisonPoints">The compared points.</param>
@@ -257,36 +302,6 @@ namespace MonoKle
         }
 
         /// <summary>
-        /// Returns whether the <see cref="MVector2"/> is equal to the provided object.
-        /// </summary>
-        /// <param name="obj">The object to compare with.</param>
-        /// <returns>True if they are equal, else false.</returns>
-        public override bool Equals(object obj) => obj is MVector2 other && Equals(other);
-
-        /// <summary>
-        /// Returns equality to another <see cref="MVector2"/>.
-        /// </summary>
-        /// <param name="other">Another <see cref="MVector2"/>.</param>
-        /// <returns>True if equal, else false.</returns>
-        public bool Equals(MVector2 other) => this == other;
-
-        /// <summary>
-        /// Returns the hash code representation.
-        /// </summary>
-        /// <returns>Hash code representation.</returns>
-        public override int GetHashCode()
-        {
-            const int HASH_CODE_MULTIPLIER = 101;
-            unchecked
-            {
-                int hash = 73;
-                hash = hash * HASH_CODE_MULTIPLIER + X.GetHashCode();
-                hash = hash * HASH_CODE_MULTIPLIER + Y.GetHashCode();
-                return hash;
-            }
-        }
-
-        /// <summary>
         /// Returns the length of the vector.
         /// </summary>
         /// <returns>Length of the vector.</returns>
@@ -301,12 +316,12 @@ namespace MonoKle
         /// <summary>
         /// Returns the <see cref="MPoint2"/> representation, rounding down each component to closest integer.
         /// </summary>
-        public MPoint2 ToMPoint2() => new MPoint2(this);
+        public MPoint2 ToMPoint2() => new(this);
 
         /// <summary>
         /// Returns the <see cref="MPoint2"/> representation, rounding up each component to closest integer.
         /// </summary>
-        public MPoint2 ToMPoint2RoundUp() => new MPoint2((int)Math.Ceiling(X), (int)Math.Ceiling(Y));
+        public MPoint2 ToMPoint2RoundUp() => new((int)Math.Ceiling(X), (int)Math.Ceiling(Y));
 
         /// <summary>
         /// Returns the string representation.
@@ -328,7 +343,7 @@ namespace MonoKle
         /// </summary>
         /// <param name="dx">The x translation.</param>
         /// <param name="dy">The y translation.</param>
-        public MVector2 Translate(float dx, float dy) => new MVector2(X + dx, Y + dy);
+        public MVector2 Translate(float dx, float dy) => new(X + dx, Y + dy);
 
         /// <summary>
         /// Translates the <see cref="MVector2"/> with the specified delta.

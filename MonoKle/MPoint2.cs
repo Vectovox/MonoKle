@@ -51,12 +51,12 @@ namespace MonoKle
         /// <summary>
         /// Gets a <see cref="MPoint2"/> with all components set to 1.
         /// </summary>
-        public static MPoint2 One => new MPoint2(1, 1);
+        public static MPoint2 One => new(1, 1);
 
         /// <summary>
         /// Gets a <see cref="MPoint2"/> with all components set to 0.
         /// </summary>
-        public static MPoint2 Zero => new MPoint2(0, 0);
+        public static MPoint2 Zero => new(0, 0);
 
         /// <summary>
         /// Gets the <see cref="Microsoft.Xna.Framework.Point"/> representation of the <see cref="MPoint2"/>.
@@ -72,7 +72,7 @@ namespace MonoKle
         /// <param name="a">Left operand.</param>
         /// <param name="b">Right operand.</param>
         /// <returns>Added result.</returns>
-        public static MPoint2 operator -(MPoint2 a, MPoint2 b) => new MPoint2(a.X - b.X, a.Y - b.Y);
+        public static MPoint2 operator -(MPoint2 a, MPoint2 b) => new(a.X - b.X, a.Y - b.Y);
 
         /// <summary>
         /// Unary operator for negating the components of the <see cref="MPoint2"/>.
@@ -95,7 +95,7 @@ namespace MonoKle
         /// <param name="a">Left operand.</param>
         /// <param name="b">Right operand.</param>
         /// <returns>Multiplied result.</returns>
-        public static MPoint2 operator *(MPoint2 a, int b) => new MPoint2(a.X * b, a.Y * b);
+        public static MPoint2 operator *(MPoint2 a, int b) => new(a.X * b, a.Y * b);
 
         /// <summary>
         /// Operator for multiplication with scalar.
@@ -103,7 +103,7 @@ namespace MonoKle
         /// <param name="a">Left operand.</param>
         /// <param name="b">Right operand.</param>
         /// <returns>Multiplied result.</returns>
-        public static MPoint2 operator *(int b, MPoint2 a) => new MPoint2(a.X * b, a.Y * b);
+        public static MPoint2 operator *(int b, MPoint2 a) => new(a.X * b, a.Y * b);
 
         /// <summary>
         /// Operator for division with a scalar.
@@ -111,7 +111,7 @@ namespace MonoKle
         /// <param name="a">Left operand.</param>
         /// <param name="b">Right operand.</param>
         /// <returns>Divided result.</returns>
-        public static MPoint2 operator /(MPoint2 a, int b) => new MPoint2(a.X / b, a.Y / b);
+        public static MPoint2 operator /(MPoint2 a, int b) => new(a.X / b, a.Y / b);
 
         /// <summary>
         /// Operator for addition with another <see cref="MPoint2"/>.
@@ -119,7 +119,7 @@ namespace MonoKle
         /// <param name="a">Left operand.</param>
         /// <param name="b">Right operand.</param>
         /// <returns>Added result.</returns>
-        public static MPoint2 operator +(MPoint2 a, MPoint2 b) => new MPoint2(a.X + b.X, a.Y + b.Y);
+        public static MPoint2 operator +(MPoint2 a, MPoint2 b) => new(a.X + b.X, a.Y + b.Y);
 
         /// <summary>
         /// Operator for memberwise multiplication with another <see cref="MPoint2"/>.
@@ -127,7 +127,7 @@ namespace MonoKle
         /// <param name="a">Left operand.</param>
         /// <param name="b">Right operand.</param>
         /// <returns>Multiplied result.</returns>
-        public static MPoint2 operator *(MPoint2 a, MPoint2 b) => new MPoint2(a.X * b.X, a.Y * b.Y);
+        public static MPoint2 operator *(MPoint2 a, MPoint2 b) => new(a.X * b.X, a.Y * b.Y);
 
         /// <summary>
         /// Operator for memberwise division with another <see cref="MPoint2"/>.
@@ -135,7 +135,7 @@ namespace MonoKle
         /// <param name="a">Left operand.</param>
         /// <param name="b">Right operand.</param>
         /// <returns>Division result.</returns>
-        public static MPoint2 operator /(MPoint2 a, MPoint2 b) => new MPoint2(a.X / b.X, a.Y / b.Y);
+        public static MPoint2 operator /(MPoint2 a, MPoint2 b) => new(a.X / b.X, a.Y / b.Y);
 
         /// <summary>
         /// Logic operator for equality.
@@ -151,7 +151,7 @@ namespace MonoKle
         /// <param name="a">Left operand.</param>
         /// <param name="b">Right operand.</param>
         /// <returns>Modulo result.</returns>
-        public static MPoint2 operator %(MPoint2 a, MPoint2 b) => new MPoint2(a.X % b.X, a.Y % b.Y);
+        public static MPoint2 operator %(MPoint2 a, MPoint2 b) => new(a.X % b.X, a.Y % b.Y);
 
         /// <summary>
         /// Performs an implicit conversion from <see cref="System.Drawing.Point"/> to <see cref="MPoint2"/>.
@@ -160,13 +160,13 @@ namespace MonoKle
         /// <returns>
         /// The result of the conversion.
         /// </returns>
-        public static implicit operator MPoint2(Point p) => new MPoint2(p.X, p.Y);
+        public static implicit operator MPoint2(Point p) => new(p.X, p.Y);
 
         /// <summary>
         /// Performs an implicit conversion from <see cref="MPoint2"/> to <see cref="System.Drawing.Point"/>.
         /// </summary>
         /// <param name="p">The point.</param>
-        public static implicit operator Point(MPoint2 p) => new Point(p.X, p.Y);
+        public static implicit operator Point(MPoint2 p) => new(p.X, p.Y);
 
         /// <summary>
         /// Parses the specified string.
@@ -231,6 +231,21 @@ namespace MonoKle
         }
 
         /// <summary>
+        /// Returns a new instance of the <see cref="MPoint2"/>, with the sign changed for the X and Y components.
+        /// </summary>
+        public MPoint2 Negate() => -this;
+
+        /// <summary>
+        /// Returns a new instance of the <see cref="MPoint2"/>, with the sign changed for the X component.
+        /// </summary>
+        public MPoint2 NegateX() => new(-X, Y);
+
+        /// <summary>
+        /// Returns a new instance of the <see cref="MPoint2"/>, with the sign changed for the Y component.
+        /// </summary>
+        public MPoint2 NegateY() => new(X, -Y);
+
+        /// <summary>
         /// Returns the length of the <see cref="MPoint2"/>, the distance to <see cref="Zero"/>.
         /// </summary>
         /// <returns>Length of the <see cref="MPoint2"/>.</returns>
@@ -246,7 +261,7 @@ namespace MonoKle
         /// Returns the <see cref="MVector2"/> representation.
         /// </summary>
         /// <returns><see cref="MVector2"/> representation.</returns>
-        public MVector2 ToMVector2() => new MVector2(this);
+        public MVector2 ToMVector2() => new(this);
 
         /// <summary>
         /// Returns the string representation of the <see cref="MPoint2"/>.
@@ -269,13 +284,13 @@ namespace MonoKle
         /// <param name="dx">The x translation.</param>
         /// <param name="dy">The y translation.</param>
         /// <returns></returns>
-        public MPoint2 Translate(int dx, int dy) => new MPoint2(X + dx, Y + dy);
+        public MPoint2 Translate(int dx, int dy) => new(X + dx, Y + dy);
 
         /// <summary>
         /// Translates the <see cref="MPoint2"/> with the specified delta.
         /// </summary>
         /// <param name="delta">The delta.</param>
         /// <returns></returns>
-        public MPoint2 Translate(MPoint2 delta) => new MPoint2(X + delta.X, Y + delta.Y);
+        public MPoint2 Translate(MPoint2 delta) => new(X + delta.X, Y + delta.Y);
     }
 }

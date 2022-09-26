@@ -53,7 +53,7 @@ namespace MonoKle.Asset
 
         public override bool Contains(string identifier) => _songByIdentifier.ContainsKey(identifier);
 
-        protected override bool FileSupported(string extension) =>
+        protected override bool ExtensionSupported(string extension) =>
             extension.Equals(".ogg", StringComparison.InvariantCultureIgnoreCase) ||
             extension.Equals(".mp3", StringComparison.InvariantCultureIgnoreCase);
 

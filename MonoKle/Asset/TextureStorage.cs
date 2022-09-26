@@ -175,7 +175,7 @@ namespace MonoKle.Asset
             return true;
         }
 
-        protected override bool FileSupported(string extension) =>
+        protected override bool ExtensionSupported(string extension) =>
             extension.Equals(".png", StringComparison.InvariantCultureIgnoreCase)
             || extension.Equals(".jpg", StringComparison.InvariantCultureIgnoreCase)
             || extension.Equals(".gif", StringComparison.InvariantCultureIgnoreCase);

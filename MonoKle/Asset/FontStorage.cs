@@ -21,7 +21,7 @@ namespace MonoKle.Asset
         /// <param name="logger">The logger to use.</param>
         public FontStorage(GraphicsDevice graphicsDevice, Logger logger) : base(logger) => _graphicsDevice = graphicsDevice;
 
-        protected override bool FileSupported(string extension) => extension.Equals(".mfnt", StringComparison.InvariantCultureIgnoreCase);
+        protected override bool ExtensionSupported(string extension) => extension.Equals(".mfnt", StringComparison.InvariantCultureIgnoreCase);
 
         protected override FontInstance GetInstance(FontData data) => new FontInstance(data);
 

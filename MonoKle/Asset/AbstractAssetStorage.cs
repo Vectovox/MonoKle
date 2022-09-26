@@ -24,7 +24,7 @@ namespace MonoKle.Asset
         /// <param name="identifier">The identifier to use for the asset.</param>
         public bool Load(string path, string identifier)
         {
-            if (FileSupported(new FileInfo(path).Extension))
+            if (ExtensionSupported(new FileInfo(path).Extension))
             {
                 return Load(path, identifier, Array.Empty<string>());
             }
@@ -72,7 +72,7 @@ namespace MonoKle.Asset
                 var identifier = lineParts[0];
                 var path = lineParts[1];
 
-                if (FileSupported(new FileInfo(path).Extension))
+                if (ExtensionSupported(new FileInfo(path).Extension))
                 {
                     // Load file and send remaining parts as arguments
                     if (Load(path, identifier, lineParts.Length > 2 ? lineParts[2..] : Array.Empty<string>()))
@@ -99,7 +99,8 @@ namespace MonoKle.Asset
         /// Unloads all assets, returning the amount of asset identifiers unloaded.
         /// </summary>
         public abstract int Unload();
-        protected abstract bool FileSupported(string extension);
+
+        protected abstract bool ExtensionSupported(string extension);
         protected abstract bool Load(string path, string identifier, string[] args);
     }
 }

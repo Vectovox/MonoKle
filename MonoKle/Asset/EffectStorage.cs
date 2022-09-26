@@ -20,7 +20,7 @@ namespace MonoKle.Asset
         /// <param name="logger">The logger to use.</param>
         public EffectStorage(GraphicsDevice graphicsDevice, Logger logger) : base(logger) => _graphicsDevice = graphicsDevice;
 
-        protected override bool FileSupported(string extension) => extension.Equals(".mfx");
+        protected override bool ExtensionSupported(string extension) => extension.Equals(".mfx");
 
         protected override bool Load(Stream stream, string identifier, out Effect? result)
         {

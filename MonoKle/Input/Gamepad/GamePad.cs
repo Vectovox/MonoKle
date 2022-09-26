@@ -149,5 +149,10 @@ namespace MonoKle.Input.Gamepad
             Buttons.LeftTrigger => LeftTrigger,
             _ => throw new NotImplementedException(),
         };
+
+        public bool AnyButtonDown() => A.IsDown || B.IsDown || X.IsDown || Y.IsDown
+            || Start.IsDown || Back.IsDown || LeftShoulder.IsDown || RightShoulder.IsDown
+            || DPad.Left.IsDown || DPad.Right.IsDown || DPad.Up.IsDown || DPad.Down.IsDown
+            || LeftThumbstick.Button.IsDown || RightThumbstick.Button.IsDown;
     }
 }

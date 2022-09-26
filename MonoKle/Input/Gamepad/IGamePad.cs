@@ -161,5 +161,10 @@ namespace MonoKle.Input.Gamepad
         /// <exception cref="NotSupportedException">Thrown if the button is not a supported pressable button.</exception>
         /// <param name="button">The button to get.</param>
         IPressable GetPressableButton(Buttons button);
+
+        /// <summary>
+        /// Returns whether any button is down.
+        /// </summary>
+        bool AnyButtonDown();
     }
 }

@@ -30,14 +30,14 @@ namespace MonoKle
         }
 
         /// <summary>
-        /// Returns true if the value is between the provided inclusive bounds.
-        /// </summary>
-        public static bool Between(this int value, int min, int max) => value >= min && value <= max;
-
-        /// <summary>
         /// Returning the clamped value. See <see cref="Math.Clamp(int, int, int)"/> for details.
         /// </summary>
         public static int Clamp(this int value, int min, int max) => Math.Clamp(value, min, max);
+
+        /// <summary>
+        /// Returning the clamped value. See <see cref="Math.Clamp(double, double, double)"/> for details.
+        /// </summary>
+        public static double Clamp(this double value, double min, double max) => Math.Clamp(value, min, max);
 
         /// <summary>
         /// Returns true if the value is between the provided inclusive bounds.
@@ -45,8 +45,13 @@ namespace MonoKle
         public static bool Between(this double value, double min, double max) => value >= min && value <= max;
 
         /// <summary>
-        /// Returning the clamped value. See <see cref="Math.Clamp(double, double, double)"/> for details.
+        /// Returns whether the value is inclusively within the given bounds.
         /// </summary>
-        public static double Clamp(this double value, double min, double max) => Math.Clamp(value, min, max);
+        public static bool Between(this float value, float min, float max) => value >= min && value <= max;
+
+        /// <summary>
+        /// Returns whether the value is inclusively within the given bounds.
+        /// </summary>
+        public static bool Between(this int value, int min, int max) => value >= min && value <= max;
     }
 }

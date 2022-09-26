@@ -180,6 +180,17 @@ namespace MonoKle.Asset
             return true;
         }
 
+        public bool Reload(string identifier)
+        {
+            if (_textureDataByIdentifier.TryGetValue(identifier, out var data))
+            {
+                Unload(identifier);
+                _textureByPath.Remove(data.Path);
+                return Load(identifier, data);
+            }
+            return false;
+        }
+
         protected override bool ExtensionSupported(string extension) =>
             extension.Equals(".png", StringComparison.InvariantCultureIgnoreCase)
             || extension.Equals(".jpg", StringComparison.InvariantCultureIgnoreCase)

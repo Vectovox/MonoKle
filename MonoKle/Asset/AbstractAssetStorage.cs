@@ -95,6 +95,10 @@ namespace MonoKle.Asset
         /// <param name="identifier">The identifier to check for.</param>
         /// <returns>True if present; otherwise false.</returns>
         public abstract bool ContainsIdentifier(string identifier);
+        /// <summary>
+        /// Unloads all assets, returning the amount of asset identifiers unloaded.
+        /// </summary>
+        public abstract int Unload();
         protected abstract bool FileSupported(string extension);
         protected abstract bool Load(string path, string identifier, string[] args);
     }

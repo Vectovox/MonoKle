@@ -44,10 +44,7 @@ namespace MonoKle.Asset
             return false;
         }
 
-        /// <summary>
-        /// Unloads all songs, returning the amount of songs unloaded.
-        /// </summary>
-        public int Unload()
+        public override int Unload()
         {
             var amount = _songByIdentifier.Count;
             _songByIdentifier.Clear();

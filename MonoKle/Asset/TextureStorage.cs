@@ -245,10 +245,7 @@ namespace MonoKle.Asset
             });
         }
 
-        /// <summary>
-        /// Unloads all textures, returning the amount of texture identifiers unloaded.
-        /// </summary>
-        public int Unload()
+        public override int Unload()
         {
             int amountUnloaded = _textureDataByIdentifier.Count;
             _textureByPath.Clear();

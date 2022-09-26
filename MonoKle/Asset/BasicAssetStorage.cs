@@ -110,10 +110,7 @@ namespace MonoKle.Asset
 
         protected abstract bool Load(Stream stream, string identifier, out TData? result);
 
-        /// <summary>
-        /// Unloads all assets, returning the amount of asset identifiers unloaded.
-        /// </summary>
-        public int Unload()
+        public override int Unload()
         {
             int amountUnloaded = _assetStorage.Count;
             _assetStorage.Clear();

@@ -57,5 +57,53 @@ namespace MonoKle.Input
             left.Update(leftDown, deltaTime);
             right.Update(rightDown, deltaTime);
         }
+
+        public MPoint2 PressedDirection()
+        {
+            int x = 0, y = 0;
+            if (Left.IsPressed)
+            {
+                x = -1;
+            }
+            else if (Right.IsPressed)
+            {
+                x = 1;
+            }
+
+            if (Up.IsPressed)
+            {
+                y = -1;
+            }
+            else if (Down.IsPressed)
+            {
+                y = 1;
+            }
+
+            return new MPoint2(x, y);
+        }
+
+        public MPoint2 DownDirection()
+        {
+            int x = 0, y = 0;
+            if (Left.IsDown)
+            {
+                x = -1;
+            }
+            else if (Right.IsDown)
+            {
+                x = 1;
+            }
+
+            if (Up.IsDown)
+            {
+                y = -1;
+            }
+            else if (Down.IsDown)
+            {
+                y = 1;
+            }
+
+            return new MPoint2(x, y);
+        }
     }
 }

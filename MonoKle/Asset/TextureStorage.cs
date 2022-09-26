@@ -191,6 +191,17 @@ namespace MonoKle.Asset
             return false;
         }
 
+        public IEnumerable<string> UnusedIdentifiers()
+        {
+            foreach (var identifier in Identifiers)
+            {
+                if (!_textureCache.ContainsKey(identifier))
+                {
+                    yield return identifier;
+                }
+            }
+        }
+
         protected override bool ExtensionSupported(string extension) =>
             extension.Equals(".png", StringComparison.InvariantCultureIgnoreCase)
             || extension.Equals(".jpg", StringComparison.InvariantCultureIgnoreCase)

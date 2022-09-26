@@ -12,6 +12,6 @@ namespace MonoKle.Engine.Console.Commands
 
         public void Call(IGameConsole console) => console.WriteLine(Text);
 
-        public ICollection<string> GetPositionalSuggestions() => Array.Empty<string>();
+        public ICollection<string> GetPositionalSuggestions(IGameConsole console) => Array.Empty<string>();
     }
 }

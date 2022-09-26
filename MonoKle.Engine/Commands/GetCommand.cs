@@ -22,6 +22,6 @@ namespace MonoKle.Engine.Commands
             }
         }
 
-        public ICollection<string> GetPositionalSuggestions() => MGame.Variables.Variables.Identifiers;
+        public ICollection<string> GetPositionalSuggestions(IGameConsole console) => MGame.Variables.Variables.Identifiers;
     }
 }

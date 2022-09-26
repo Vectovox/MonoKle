@@ -9,6 +9,6 @@ namespace MonoKle.Engine.Commands
     {
         public void Call(IGameConsole console) => MGame.GameInstance.Exit();
 
-        public ICollection<string> GetPositionalSuggestions() => Array.Empty<string>();
+        public ICollection<string> GetPositionalSuggestions(IGameConsole console) => Array.Empty<string>();
     }
 }

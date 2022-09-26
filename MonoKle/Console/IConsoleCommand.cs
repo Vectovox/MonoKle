@@ -16,6 +16,7 @@ namespace MonoKle.Console
         /// <summary>
         /// Gets input suggestions for arguments.
         /// </summary>
-        ICollection<string> GetPositionalSuggestions();
+        /// <param name="console">The console that the command is run in.</param>
+        ICollection<string> GetPositionalSuggestions(IGameConsole console);
     }
 }

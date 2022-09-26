@@ -24,7 +24,8 @@ namespace MonoKle.Engine.Console.Commands
             }
         }
 
-        public ICollection<string> GetPositionalSuggestions() => Array.Empty<string>();
+        public ICollection<string> GetPositionalSuggestions(IGameConsole console) =>
+            console.CommandBroker.Commands.OrderBy(c => c).ToList();
 
         private static void PrintHelp(IGameConsole console, string command)
         {
@@ -38,7 +39,7 @@ namespace MonoKle.Engine.Console.Commands
                 foreach (var positional in commandInfo.Positionals)
                 {
                     usageBuilder.Append($"[{positional.Position}]");
-                    usageBuilder.Append(" ");
+                    usageBuilder.Append(' ');
                 }
 
                 foreach (var argument in commandInfo.Arguments)
@@ -50,7 +51,7 @@ namespace MonoKle.Engine.Console.Commands
                 foreach (var flag in commandInfo.Flags)
                 {
                     usageBuilder.Append($"-{flag.Name}");
-                    usageBuilder.Append(" ");
+                    usageBuilder.Append(' ');
                 }
 
                 // Now start indented detailed information of desciption and each option
@@ -159,7 +160,7 @@ namespace MonoKle.Engine.Console.Commands
                 // Reuse stringbuilder per each command
                 sb.Clear();
 
-                sb.Append("\t");
+                sb.Append('\t');
                 sb.Append(new string(' ', longestCommandLength - command.Length));
                 sb.Append(command);
                 sb.Append(" \t");

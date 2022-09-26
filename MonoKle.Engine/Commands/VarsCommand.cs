@@ -20,6 +20,6 @@ namespace MonoKle.Engine.Commands
             MGame.Console.WriteLine(text, color);
         }
 
-        public ICollection<string> GetPositionalSuggestions() => Array.Empty<string>();
+        public ICollection<string> GetPositionalSuggestions(IGameConsole console) => Array.Empty<string>();
     }
 }

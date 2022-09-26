@@ -35,7 +35,7 @@ namespace MonoKle.Asset
         /// <returns>True if the song was successfully assigned; otherwise false.</returns>
         public bool TryGet(string identifier, out Song? asset)
         {
-            if (ContainsIdentifier(identifier))
+            if (Contains(identifier))
             {
                 asset = this[identifier];
                 return true;
@@ -51,7 +51,7 @@ namespace MonoKle.Asset
             return amount;
         }
 
-        public override bool ContainsIdentifier(string identifier) => _songByIdentifier.ContainsKey(identifier);
+        public override bool Contains(string identifier) => _songByIdentifier.ContainsKey(identifier);
 
         protected override bool FileSupported(string extension) =>
             extension.Equals(".ogg", StringComparison.InvariantCultureIgnoreCase) ||

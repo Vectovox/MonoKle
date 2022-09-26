@@ -80,7 +80,7 @@ namespace MonoKle.Asset
             }
         }
 
-        public override bool ContainsIdentifier(string identifier) => _textureDataByIdentifier.ContainsKey(identifier);
+        public override bool Contains(string identifier) => _textureDataByIdentifier.ContainsKey(identifier);
 
         /// <summary>
         /// Gets the texture with the given identifier.
@@ -90,7 +90,7 @@ namespace MonoKle.Asset
         /// <returns>True if the texture was successfully assigned; otherwise false.</returns>
         public bool TryGet(string identifier, out MTexture asset)
         {
-            if (ContainsIdentifier(identifier))
+            if (Contains(identifier))
             {
                 asset = this[identifier];
                 return true;

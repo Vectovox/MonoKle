@@ -364,11 +364,14 @@ namespace MonoKle.Engine
             }
         }
 
-        private static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private static void UnhandledException(object sender, UnhandledExceptionEventArgs unhandledException)
         {
-            Logger.Log(e.ExceptionObject.ToString(), LogLevel.Error);
-            var fs = new FileStream(Settings.CrashDumpPath, FileMode.OpenOrCreate | FileMode.Truncate);
-            Logger.WriteLog(fs);
+            Logger.Log(unhandledException.ExceptionObject.ToString(), LogLevel.Error);
+            var fs = new FileStream(Settings.CrashDumpPath, FileMode.Append);
+            using var separatorWriter = new StreamWriter(fs);
+            separatorWriter.WriteLine("=========== CRASH ===========");
+            separatorWriter.Flush();
+            Logger.WriteLog(fs);    // Closes stream
         }
     }
 }

@@ -114,12 +114,11 @@ namespace MonoKle.Logging
         /// <param name="stream">The stream to write to.</param>
         public void WriteLog(Stream stream)
         {
-            var writer = new StreamWriter(stream);
+            using var writer = new StreamWriter(stream);
             foreach (Log l in GetLogs())
             {
                 writer.WriteLine(l.ToString());
             }
-            writer.Close();
         }
 
         /// <summary>

@@ -141,6 +141,7 @@ namespace MonoKle.Asset
 
         /// <summary>
         /// Loads the provided in-memory texture using the provided <see cref="TextureData"/> and identifier.
+        /// If the identifier already exists, it is overwritten.
         /// </summary>
         /// <remarks>
         /// The <see cref="TextureData.Path"/> property needs to be populated as it serves as the in-memory path representation
@@ -152,26 +153,30 @@ namespace MonoKle.Asset
         /// <returns>True if loading was successful; otherwise false.</returns>
         public bool Load(string identifier, Texture2D texture, TextureData data)
         {
-            if (_textureDataByIdentifier.ContainsKey(identifier))
-            {
-                _logger.Log($"Identifier already loaded '{identifier}'. Skipping.", LogLevel.Error);
-                return false;
-            }
-
-            if (_textureByPath.ContainsKey(data.Path))
-            {
-                _logger.Log($"Path '{data.Path}' already loaded ({identifier}). Skipping.", LogLevel.Error);
-                return false;
-            }
-
             if (string.IsNullOrWhiteSpace(data.Path))
             {
                 _logger.Log($"Path must be proided for '{identifier}'. Skipping.", LogLevel.Error);
                 return false;
             }
 
-            _textureByPath.Add(data.Path, texture);
-            _textureDataByIdentifier.Add(identifier, data);
+            var overwrite = _textureByPath.ContainsKey(data.Path) || _textureDataByIdentifier.ContainsKey(identifier);
+
+            _textureByPath[data.Path] = texture;
+            _textureDataByIdentifier[identifier] = data;
+
+            // Clear cache of affected assets
+            if (overwrite)
+            {
+                _textureCache.Remove(identifier);
+                foreach (var test in _textureDataByIdentifier)
+                {
+                    if (test.Value.Path == data.Path)
+                    {
+                        _textureCache.Remove(test.Key);
+                    }
+                }
+            }
+
             return true;
         }
 

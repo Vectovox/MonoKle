@@ -38,6 +38,7 @@ namespace MonoKle.Asset
             Name = name;
             Size = data.Common.LineHeight;
             Outline = data.Info.OutLine;
+            Characters = data.Chars.Select(c => (char)c.ID).ToArray();
             _fontCharByChar = data.Chars.ToDictionary(ch => (char)ch.ID);
             _pageList = pageList;
         }
@@ -49,7 +50,19 @@ namespace MonoKle.Asset
         /// <param name="value">When this method returns, contains the associated value of the provided character</param>
         /// <returns>True if there was an associated value with the provided character</returns>
         // TODO: Do not expose internal data. New type please!
-        public bool TryGetChar(char character, out FontChar value) => _fontCharByChar.TryGetValue(character, out value);
+        // Internal for now since data is exposed
+        internal bool TryGetChar(char character, out FontChar value) => _fontCharByChar.TryGetValue(character, out value!);
+
+        /// <summary>
+        /// Gets whether the provided character is supported.
+        /// </summary>
+        /// <param name="character">The character to check.</param>
+        public bool ContainsChar(char character) => _fontCharByChar.ContainsKey(character);
+
+        /// <summary>
+        /// Gets all available characters.
+        /// </summary>
+        public IReadOnlyCollection<char> Characters { get; }
 
         /// <summary>
         /// Gets the <see cref="Texture2D"/> for the given page.

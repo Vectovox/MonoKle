@@ -28,6 +28,11 @@ namespace MonoKle.Asset
         }
 
         /// <summary>
+        /// Gets the underlying font data.
+        /// </summary>
+        public FontData FontData => _fontData;
+
+        /// <summary>
         /// Gets or sets the size, in pixels.
         /// </summary>
         public int Size { get; set; }

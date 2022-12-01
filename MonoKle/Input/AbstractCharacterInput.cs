@@ -7,7 +7,7 @@
     {
         public abstract char GetChar();
 
-        public bool GetChar(out char character)
+        public bool TryGetChar(out char character)
         {
             character = GetChar();
             return character != default(char);

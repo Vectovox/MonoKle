@@ -23,30 +23,38 @@ namespace MonoKle.Console
         private static readonly TimeSpan TypingActivationDelay = TimeSpan.FromMilliseconds(400);
         private static readonly TimeSpan TypingCycleDelay = TimeSpan.FromMilliseconds(2);
 
-        private readonly InputField _inputField;
+        private readonly KeyboardInputField _inputField;
         private readonly KeyboardTyper _keyboard;
+        private readonly NativeCharacterInput _characterInput;
         private readonly LinkedList<TextEntry> _textEntries = new();
         private readonly SpriteBatch _spriteBatch;
         private readonly IMouse _mouse;
         private readonly MTexture _whiteTexture;
 
         private int _scrollOffset = 0;
+        private bool _isOpen = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameConsole"/> class.
         /// </summary>
+        /// <param name="window">Game window.</param>
         /// <param name="area">The area.</param>
         /// <param name="graphicsDevice">The graphics device.</param>
-        /// <param name="keyboardInput">The keyboard input.</param>
+        /// <param name="keyboard">The keyboard input.</param>
         /// <param name="mouse">The mouse.</param>
         /// <param name="whiteTexture">The background texture.</param>
         /// <param name="font">The font used for rendering text.</param>
         /// <param name="logger">The logger to use.</param>
-        public GameConsole(MRectangleInt area, GraphicsDevice graphicsDevice, IKeyboard keyboardInput, IMouse mouse, MTexture whiteTexture, FontInstance font, Logger logger)
+        public GameConsole(GameWindow window, MRectangleInt area, GraphicsDevice graphicsDevice, IKeyboard keyboard, IMouse mouse,
+            MTexture whiteTexture, FontInstance font, Logger logger)
         {
             _spriteBatch = new SpriteBatch(graphicsDevice);
-            _keyboard = new KeyboardTyper(keyboardInput, TypingActivationDelay, TypingCycleDelay);
-            _inputField = new InputField("-", "$ ", TimeSpan.FromSeconds(0.25), 10, new KeyboardCharacterInput(_keyboard));
+            _keyboard = new KeyboardTyper(keyboard, TypingActivationDelay, TypingCycleDelay);
+            _characterInput = new NativeCharacterInput(window)
+            {
+                Enabled = false,
+            };
+            _inputField = new KeyboardInputField("-", "$ ", TimeSpan.FromSeconds(0.25), 10, _characterInput, new KeyboardTyper(keyboard));
 
             Area = area;
             _mouse = mouse;
@@ -54,7 +62,7 @@ namespace MonoKle.Console
             TextSize = 16;
             _whiteTexture = whiteTexture;
             logger.LogAddedEvent += LogAdded;
-            logger.Log("GameConsole activated.", LogLevel.Debug);
+            logger.Log($"{nameof(GameConsole)} activated.", LogLevel.Debug);
 
             // Add existing logs, in case any were added
             logger.GetLogs().ForEach(LogAdded);
@@ -78,7 +86,15 @@ namespace MonoKle.Console
         public Color ErrorTextColour { get; set; } = Color.Red;
 
         [CVar("console_isopen")]
-        public bool IsOpen { get; set; }
+        public bool IsOpen
+        {
+            get => _isOpen;
+            set
+            {
+                _isOpen = value;
+                _characterInput.Enabled = value;
+            }
+        }
 
         [CVar("console_size")]
         public uint Size { get; set; } = byte.MaxValue;
@@ -228,7 +244,7 @@ namespace MonoKle.Console
             {
                 _inputField.RememberCurrent();
 
-                if (CommandString.TryParse(_inputField.Text, out var commandString))
+                if (CommandString.TryParse(_inputField.Text.Trim(), out var commandString))
                 {
                     CommandBroker.Call(commandString);
                 }
@@ -248,18 +264,15 @@ namespace MonoKle.Console
             {
                 CallCommand();
             }
-
-            if (_keyboard.IsTyped(Keys.Tab))
+            else if (_keyboard.IsTyped(Keys.Tab))
             {
                 AutoComplete();
             }
-
-            if (_keyboard.IsTyped(Keys.PageUp))
+            else if (_keyboard.IsTyped(Keys.PageUp))
             {
                 ScrollUp();
             }
-
-            if (_keyboard.IsTyped(Keys.PageDown))
+            else if (_keyboard.IsTyped(Keys.PageDown))
             {
                 ScrollDown();
             }
@@ -271,8 +284,7 @@ namespace MonoKle.Console
             {
                 ScrollDown();
             }
-
-            if (_mouse.ScrollDirection == Input.MouseScrollDirection.Up)
+            else if (_mouse.ScrollDirection == Input.MouseScrollDirection.Up)
             {
                 ScrollUp();
             }

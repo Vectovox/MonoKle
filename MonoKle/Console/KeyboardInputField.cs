@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using MonoKle.Input;
 using MonoKle.Input.Keyboard;
 using System;
 using System.Collections.Generic;
@@ -9,13 +10,14 @@ namespace MonoKle.Console
     /// <summary>
     /// Class for a CLI-like input field.
     /// </summary>
-    public class InputField : KeyboardTextInput
+    public class KeyboardInputField : KeyboardTextInput
     {
         private readonly List<string> _history;
 
         private readonly Timer _cursorTimer;
 
         private readonly string _commandToken;
+        private readonly KeyboardTyper _keyboardTyper;
         private readonly string _cursorToken;
 
         private string _displayTextCursor = "";
@@ -24,11 +26,13 @@ namespace MonoKle.Console
         private int _historyIndex = 0;
         private bool _isBlinking;
 
-        public InputField(string cursorToken, string commandToken, TimeSpan cursorBlinkRate, int historyCapacity, KeyboardCharacterInput characterInput)
-            : base(characterInput)
+        public KeyboardInputField(string cursorToken, string commandToken, TimeSpan cursorBlinkRate,
+            int historyCapacity, ICharacterInput characterInput, KeyboardTyper keyboardTyper)
+            : base(characterInput, keyboardTyper)
         {
             _cursorToken = cursorToken;
             _commandToken = commandToken;
+            _keyboardTyper = keyboardTyper;
             _history = new List<string>(historyCapacity);
             _cursorTimer = new Timer(cursorBlinkRate);
             OnTextChange();
@@ -74,12 +78,12 @@ namespace MonoKle.Console
                 _cursorTimer.Reset();
             }
 
-            if (CharacterInput.KeyboardTyper.IsTyped(NextMemoryKey))
+            if (_keyboardTyper.IsTyped(NextMemoryKey))
             {
                 ChangeMemory(1);
             }
 
-            if (CharacterInput.KeyboardTyper.IsTyped(PreviousMemoryKey))
+            if (_keyboardTyper.IsTyped(PreviousMemoryKey))
             {
                 ChangeMemory(-1);
             }

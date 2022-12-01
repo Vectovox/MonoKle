@@ -327,7 +327,8 @@ namespace MonoKle.Engine
 
         private static void InitializeConsole()
         {
-            _console = new GameConsole(new Rectangle(0, 0, GraphicsManager.Resolution.X, GraphicsManager.Resolution.Y / 3),
+            _console = new GameConsole(GameInstance.Window,
+                new Rectangle(0, 0, GraphicsManager.Resolution.X, GraphicsManager.Resolution.Y / 3),
                 GraphicsManager.GraphicsDevice,
                 _keyboard,
                 _mouse,

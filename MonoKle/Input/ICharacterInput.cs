@@ -16,6 +16,6 @@
         /// </summary>
         /// <param name="character">When this method returns, contains either a typed character or the default <see cref="char"/> value.</param>
         /// <returns>True if a character was typed; otherwise false.</returns>
-        bool GetChar(out char character);
+        bool TryGetChar(out char character);
     }
 }

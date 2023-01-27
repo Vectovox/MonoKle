@@ -246,6 +246,14 @@ namespace MonoKle
         public MPoint2 NegateY() => new(X, -Y);
 
         /// <summary>
+        /// Returns an <see cref="MPoint2"/> with each component carrying the sign of the original.
+        /// </summary>
+        /// <remarks>
+        /// Negative values become -1, positive values 1. Zero becomes 0.
+        /// </remarks>
+        public MPoint2 Sign() => new(X < 0 ? -1 : X == 0 ? 0 : 1, Y < 0 ? -1 : Y == 0 ? 0 : 1);
+
+        /// <summary>
         /// Returns the length of the <see cref="MPoint2"/>, the distance to <see cref="Zero"/>.
         /// </summary>
         /// <returns>Length of the <see cref="MPoint2"/>.</returns>

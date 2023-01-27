@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 
 namespace MonoKle
 {
@@ -61,6 +62,15 @@ namespace MonoKle
         {
             var ticks = random.Next((int)(max.Ticks - min.Ticks));
             return new TimeSpan(min.Ticks + ticks);
+        }
+
+        /// <summary>
+        /// Returns a random unit-vector direction.
+        /// </summary>
+        public static MVector2 NextDirection(this Random random)
+        {
+            var direction = random.NextDouble() * MathHelper.TwoPi;
+            return new MVector2((float)Math.Cos(direction), (float)Math.Sin(direction));
         }
     }
 }

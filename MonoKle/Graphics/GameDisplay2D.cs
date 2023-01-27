@@ -191,6 +191,13 @@ namespace MonoKle.Graphics
             WorldRenderingArea.TransformRenderToDisplay(Camera.Transform(worldCoordinate)).ToMPoint2();
 
         /// <summary>
+        /// Transforms the given world delta vector to display space.
+        /// </summary>
+        /// <param name="worldDelta">The world delta vector.</param>
+        public MPoint2 WorldToDisplayDelta(MVector2 worldDelta) =>
+            WorldToDisplay(worldDelta) - WorldToDisplay(MPoint2.Zero);
+
+        /// <summary>
         /// Transforms the given display coordinate (screen pixel) to UI rendering coordinate space.
         /// </summary>
         /// <remarks>

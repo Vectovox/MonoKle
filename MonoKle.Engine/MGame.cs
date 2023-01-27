@@ -407,7 +407,9 @@ namespace MonoKle.Engine
             lineWriter.WriteLine("=========== CRASH ===========");
             foreach (var entry in _logData.TextEntries.Reverse())
             {
-                lineWriter.WriteLine(entry.Text);
+                var line = entry.Text;
+                lineWriter.WriteLine(line);
+                System.Console.Error.WriteLine(line);
             }
             lineWriter.Flush();
             lineWriter.Close();

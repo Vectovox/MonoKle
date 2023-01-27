@@ -1,4 +1,4 @@
-using MonoKle.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace MonoKle
 {
@@ -13,6 +13,6 @@ namespace MonoKle
         /// <value>
         /// The logger.
         /// </value>
-        Logger Logger { get; set; }
+        ILogger Logger { get; set; }
     }
 }

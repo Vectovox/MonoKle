@@ -30,46 +30,12 @@ namespace MonoKle.Console
         /// <summary>
         /// Gets the command broker. Used for executing console commands.
         /// </summary>
-        CommandBroker CommandBroker
-        {
-            get;
-        }
+        CommandBroker CommandBroker { get; }
 
         /// <summary>
-        /// Gets or sets the command text colour.
+        /// Gets the log data.
         /// </summary>
-        Color CommandTextColour
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets or sets the color that the text will be drawn with if no other colour is specified.
-        /// </summary>
-        Color DefaultTextColour
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets or sets the disabled text colour.
-        /// </summary>
-        Color DisabledTextColour
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets or sets the error text colour.
-        /// </summary>
-        Color ErrorTextColour
-        {
-            get;
-            set;
-        }
+        GameConsoleLogData Log { get; }
 
         /// <summary>
         /// Gets or sets wether the console is open.
@@ -83,19 +49,7 @@ namespace MonoKle.Console
         /// <summary>
         /// Gets or sets the maximum amount of entries to keep.
         /// </summary>
-        uint Size
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets or sets the length of the tabs.
-        /// </summary>
-        int TabLength
-        {
-            get; set;
-        }
+        uint Capacity { get; set; }
 
         /// <summary>
         /// Gets or sets the string identifier of the text font.
@@ -123,38 +77,6 @@ namespace MonoKle.Console
             get;
             set;
         }
-
-        /// <summary>
-        /// Gets or sets the warning text colour.
-        /// </summary>
-        Color WarningTextColour
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Clears all history.
-        /// </summary>
-        void Clear();
-
-        /// <summary>
-        /// Writes the provided text with the colour <see cref="GameConsole.ErrorTextColour"/>.
-        /// </summary>
-        /// <param name="message">The error message to write.</param>
-        void WriteError(string message);
-
-        /// <summary>
-        /// Writes the provided text with the colour <see cref="GameConsole.DefaultTextColour"/>.
-        /// </summary>
-        /// <param name="text">The text to write.</param>
-        void WriteLine(string text);
-
-        /// <summary>
-        /// Writes the provided text with the given color.
-        /// </summary>
-        /// <param name="text">The text to write.</param>
-        /// <param name="color">Color of the line.</param>
-        void WriteLine(string text, Color color);
+        Color CommandTextColour { get; set; }
     }
 }

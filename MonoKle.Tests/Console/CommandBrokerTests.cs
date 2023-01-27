@@ -257,6 +257,7 @@ namespace MonoKle.Console.Tests
         public void Call_ArgumentUsageTest_Failure(string input)
         {
             var console = new Mock<IGameConsole>();
+            console.SetupGet(c => c.Log).Returns(new GameConsoleLogData());
             var commandBroker = new CommandBroker(console.Object);
             commandBroker.Register<ArgumentUsageTestCommand>();
             CommandString.TryParse(input, out var commandString);
@@ -295,6 +296,7 @@ namespace MonoKle.Console.Tests
         public void Call_ArgumentAssignmentTest_Failure(string command)
         {
             var console = new Mock<IGameConsole>();
+            console.SetupGet(c => c.Log).Returns(new GameConsoleLogData());
             var commandBroker = new CommandBroker(console.Object);
             commandBroker.Register<ArgumentAssignmentTestCommand>();
             ArgumentAssignmentTestCommand.Reset();

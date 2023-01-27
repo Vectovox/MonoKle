@@ -6,7 +6,6 @@ using MonoKle.Configuration;
 using MonoKle.Graphics;
 using MonoKle.Input.Keyboard;
 using MonoKle.Input.Mouse;
-using MonoKle.Logging;
 using MoreLinq;
 using System;
 using System.Collections.Generic;
@@ -26,7 +25,6 @@ namespace MonoKle.Console
         private readonly KeyboardInputField _inputField;
         private readonly KeyboardTyper _keyboard;
         private readonly NativeCharacterInput _characterInput;
-        private readonly LinkedList<TextEntry> _textEntries = new();
         private readonly SpriteBatch _spriteBatch;
         private readonly IMouse _mouse;
         private readonly MTexture _whiteTexture;
@@ -37,16 +35,8 @@ namespace MonoKle.Console
         /// <summary>
         /// Initializes a new instance of the <see cref="GameConsole"/> class.
         /// </summary>
-        /// <param name="window">Game window.</param>
-        /// <param name="area">The area.</param>
-        /// <param name="graphicsDevice">The graphics device.</param>
-        /// <param name="keyboard">The keyboard input.</param>
-        /// <param name="mouse">The mouse.</param>
-        /// <param name="whiteTexture">The background texture.</param>
-        /// <param name="font">The font used for rendering text.</param>
-        /// <param name="logger">The logger to use.</param>
         public GameConsole(GameWindow window, MRectangleInt area, GraphicsDevice graphicsDevice, IKeyboard keyboard, IMouse mouse,
-            MTexture whiteTexture, FontInstance font, Logger logger)
+            MTexture whiteTexture, FontInstance font, GameConsoleLogData logData)
         {
             _spriteBatch = new SpriteBatch(graphicsDevice);
             _keyboard = new KeyboardTyper(keyboard, TypingActivationDelay, TypingCycleDelay);
@@ -61,29 +51,21 @@ namespace MonoKle.Console
             TextFont = font;
             TextSize = 16;
             _whiteTexture = whiteTexture;
-            logger.LogAddedEvent += LogAdded;
-            logger.Log($"{nameof(GameConsole)} activated.", LogLevel.Debug);
-
-            // Add existing logs, in case any were added
-            logger.GetLogs().ForEach(LogAdded);
+            Log = logData;
 
             CommandBroker = new CommandBroker(this);
             CommandBroker.RegisterCallingAssembly();
         }
 
+        public GameConsoleLogData Log { get; }
+
         public MRectangleInt Area { get; set; }
 
         public Color BackgroundColor { get; set; } = new Color(0, 0, 0, 0.7f);
 
-        public CommandBroker CommandBroker { get; }
-
         public Color CommandTextColour { get; set; } = Color.LightGreen;
 
-        public Color DefaultTextColour { get; set; } = Color.WhiteSmoke;
-
-        public Color DisabledTextColour { get; set; } = Color.Gray;
-
-        public Color ErrorTextColour { get; set; } = Color.Red;
+        public CommandBroker CommandBroker { get; }
 
         [CVar("console_isopen")]
         public bool IsOpen
@@ -96,10 +78,8 @@ namespace MonoKle.Console
             }
         }
 
-        [CVar("console_size")]
-        public uint Size { get; set; } = byte.MaxValue;
-
-        public int TabLength { get; set; } = 4;
+        [CVar("console_capacity")]
+        public uint Capacity { get => Log.Capacity; set => Log.Capacity = value; }
 
         public FontInstance TextFont { get; set; }
 
@@ -108,10 +88,6 @@ namespace MonoKle.Console
 
         [CVar("console_togglekey")]
         public Keys ToggleKey { get; set; } = Keys.F1;
-
-        public Color WarningTextColour { get; set; } = Color.Yellow;
-
-        public void Clear() => _textEntries.Clear();
 
         public void Draw(TimeSpan timeDelta)
         {
@@ -127,7 +103,7 @@ namespace MonoKle.Console
                 TextFont.Draw(_spriteBatch, _inputField.CursorDisplayText, textPosition, CommandTextColour);
 
                 // Draw all lines
-                foreach (var line in _textEntries.Skip(_scrollOffset))
+                foreach (var line in Log.TextEntries.Skip(_scrollOffset))
                 {
                     var stringToDraw = TextFont.Wrap(line.Text, Area.Width);
                     var stringHeight = TextFont.Measure(stringToDraw).Y;
@@ -156,46 +132,6 @@ namespace MonoKle.Console
                 UpdateKeyboard();
                 UpdateMouse();
                 _inputField.Update(timeDelta);
-            }
-        }
-
-        public void WriteError(string message) => WriteLine(message, ErrorTextColour);
-
-        public void WriteLine(string text) => WriteLine(text, DefaultTextColour);
-
-        public void WriteLine(string text, Color color)
-        {
-            var entryBuilder = new StringBuilder();
-
-            // Convert string to entries, based on newlines
-            foreach (var row in text.Split('\n'))
-            {
-                entryBuilder.Clear();
-                var column = 0;
-
-                // Add characters to entry
-                foreach (char character in row)
-                {
-                    // Convert tab characters to spaces
-                    if (character == '\t')
-                    {
-                        var spacesToAdd = TabLength - (column % TabLength);
-                        entryBuilder.Append(' ', spacesToAdd);
-                        column += spacesToAdd;
-                    }
-                    else
-                    {
-                        entryBuilder.Append(character);
-                        column++;
-                    }
-                }
-
-                _textEntries.AddFirst(new TextEntry(entryBuilder.ToString(), color));
-
-                while (_textEntries.Count > Size)
-                {
-                    _textEntries.RemoveLast();
-                }
             }
         }
 
@@ -231,14 +167,14 @@ namespace MonoKle.Console
             // Print possible continuations
             if (completions.Count > 1)
             {
-                WriteLine(_inputField.DisplayText, CommandTextColour);
-                completions.ForEach(completion => WriteLine("\t" + completion));
+                Log.WriteLine(_inputField.DisplayText, CommandTextColour);
+                completions.ForEach(completion => Log.WriteLine("\t" + completion));
             }
         }
 
         private void CallCommand()
         {
-            WriteLine(_inputField.DisplayText, CommandTextColour);
+            Log.WriteLine(_inputField.DisplayText, CommandTextColour);
 
             if (_inputField.Text.Any())
             {
@@ -250,7 +186,7 @@ namespace MonoKle.Console
                 }
                 else
                 {
-                    WriteLine("Command syntax incorrect. Try 'command [params] -arg val -flag'", WarningTextColour);
+                    Log.WriteWarning("Command syntax incorrect. Try 'command [params] -arg val -flag'");
                 }
             }
 
@@ -290,15 +226,6 @@ namespace MonoKle.Console
             }
         }
 
-        private void LogAdded(object sender, LogAddedEventArgs e) => LogAdded(e.Log);
-
-        private void LogAdded(Log log) => WriteLine(log.ToString(), log.Level switch
-        {
-            LogLevel.Warning => WarningTextColour,
-            LogLevel.Error => ErrorTextColour,
-            _ => DefaultTextColour,
-        });
-
         private string LongestCommonStartString(ICollection<string> strings)
         {
             string longestCommonString = strings.OrderBy(s => s.Length).LastOrDefault() ?? "";
@@ -325,21 +252,6 @@ namespace MonoKle.Console
 
         private int ScrollHeight => (int)(Area.Height / TextFont.Measure("M").Y) / 2;
 
-        private void Scroll(int delta) => _scrollOffset = MathHelper.Clamp(_scrollOffset + delta, 0, _textEntries.Count - 1);
-
-        /// <summary>
-        /// Class representing a text entry in the console.
-        /// </summary>
-        private class TextEntry
-        {
-            public TextEntry(string text, Color color)
-            {
-                Text = text;
-                Color = color;
-            }
-
-            public Color Color { get; private set; }
-            public string Text { get; private set; }
-        }
+        private void Scroll(int delta) => _scrollOffset = MathHelper.Clamp(_scrollOffset + delta, 0, Log.Count - 1);
     }
 }

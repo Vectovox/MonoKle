@@ -1,4 +1,4 @@
-﻿using MonoKle.Logging;
+﻿using Microsoft.Extensions.Logging;
 using MoreLinq;
 using System;
 using System.Collections.Generic;
@@ -18,7 +18,7 @@ namespace MonoKle.Configuration
         /// Initializes a new instance of the <see cref="CVarSystem"/> class.
         /// </summary>
         /// <param name="logger">The logger to use.</param>
-        public CVarSystem(Logger logger) => Logger = logger;
+        public CVarSystem(ILogger logger) => Logger = logger;
 
         /// <summary>
         /// Gets the variable identifiers.
@@ -34,7 +34,7 @@ namespace MonoKle.Configuration
         /// <value>
         /// The logger.
         /// </value>
-        public Logger Logger { get; set; }
+        public ILogger Logger { get; set; }
 
         /// <summary>
         /// Binds the specified instance to the specified variable identifier. Any existing values will be assigned the instance.
@@ -334,7 +334,7 @@ namespace MonoKle.Configuration
         /// </summary>
         /// <param name="message">The message to log.</param>
         /// <param name="level">The logging level.</param>
-        protected void Log(string message, LogLevel level) => Logger.Log(message, level);
+        protected void Log(string message, LogLevel level) => Logger.Log(level, message);
 
         /// <summary>
         /// Gets the variable associated with the given identifier.

@@ -1,4 +1,4 @@
-using MonoKle.Logging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 
@@ -9,7 +9,7 @@ namespace MonoKle.State
     /// </summary>
     public class StateSystem : IStateSystem, IUpdateable, IDrawable
     {
-        private readonly Logger _logger;
+        private readonly ILogger _logger;
 
         private string _currentState = string.Empty;
 
@@ -19,7 +19,7 @@ namespace MonoKle.State
 
         public ICollection<string> StateIdentifiers => _stateByString.Keys;
 
-        public StateSystem(Logger logger)
+        public StateSystem(ILogger logger)
         {
             _logger = logger;
         }
@@ -33,7 +33,7 @@ namespace MonoKle.State
 
             if (_stateByString.ContainsKey(identifier))
             {
-                _logger.Log($"Could not add state with identifier '{identifier}' as one with the same name already exists.", LogLevel.Error);
+                _logger.LogError($"Could not add state with identifier '{identifier}' as one with the same name already exists.");
                 return false;
             }
 
@@ -56,7 +56,7 @@ namespace MonoKle.State
                 return true;
             }
 
-            _logger.Log($"Could not remove state with identifier '{identifier}' as it does not exist.", LogLevel.Error);
+            _logger.LogError($"Could not remove state with identifier '{identifier}' as it does not exist.");
             return false;
         }
 
@@ -114,7 +114,7 @@ namespace MonoKle.State
 
                 if (!_stateByString.ContainsKey(_currentState))
                 {
-                    _logger.Log($"Switched to state '{_currentState}' but it does not exist.", LogLevel.Warning);
+                    _logger.LogWarning($"Switched to state '{_currentState}' but it does not exist.");
                 }
             }
         }

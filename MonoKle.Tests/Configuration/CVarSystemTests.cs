@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -12,7 +14,7 @@ namespace MonoKle.Configuration.Tests
         private CVarSystem _cvarSystem;
 
         [TestInitialize]
-        public void Init() => _cvarSystem = new CVarSystem(new Logging.Logger());
+        public void Init() => _cvarSystem = new CVarSystem(Mock.Of<ILogger>());
 
         [TestMethod]
         public void Clear_Cleared()

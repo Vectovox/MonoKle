@@ -135,22 +135,22 @@ namespace MonoKle.Engine.Console.Commands
                     }
                 }
 
-                console.WriteLine(usageBuilder.ToString());
+                console.Log.WriteLine(usageBuilder.ToString());
             }
             else
             {
-                console.WriteLine("There is no such command to get help for.");
+                console.Log.WriteLine("There is no such command to get help for.");
             }
         }
 
         private static void PrintHelpList(IGameConsole console)
         {
-            console.WriteLine("These are the registered commands. Type 'help' to see this list.");
-            console.WriteLine("For more information on a specific command, type 'help [command]'.");
+            console.Log.WriteLine("These are the registered commands. Type 'help' to see this list.");
+            console.Log.WriteLine("For more information on a specific command, type 'help [command]'.");
 
             var commands = console.CommandBroker.Commands.OrderBy(c => c).ToList();
 
-            console.WriteLine("");
+            console.Log.WriteLine("");
 
             // Go over all commands in order
             var longestCommandLength = commands.Max(o => o.Length);
@@ -167,11 +167,11 @@ namespace MonoKle.Engine.Console.Commands
                 sb.Append(console.CommandBroker.GetInformation(command).Command.Description);
 
                 // Print to console
-                console.WriteLine(sb.ToString());
+                console.Log.WriteLine(sb.ToString());
             }
 
             // Add newline
-            console.WriteLine("");
+            console.Log.WriteLine("");
         }
     }
 }

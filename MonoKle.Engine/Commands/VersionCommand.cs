@@ -9,7 +9,7 @@ namespace MonoKle.Engine.Commands
     {
         public const string Name = "version";
 
-        public void Call(IGameConsole console) => console.WriteLine(
+        public void Call(IGameConsole console) => console.Log.WriteLine(
             $"MonoKle version: {ThisAssembly.AssemblyInformationalVersion} [{ThisAssembly.AssemblyConfiguration}]",
                 console.CommandTextColour);
 

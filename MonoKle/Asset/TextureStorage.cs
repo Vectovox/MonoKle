@@ -1,7 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoKle.Graphics;
-using MonoKle.Logging;
 using System;
 using System.Collections.Generic;
 
@@ -32,7 +32,7 @@ namespace MonoKle.Asset
         /// </summary>
         /// <param name="graphicsDevice">The graphics device.</param>
         /// <param name="logger">The logger to use.</param>
-        public TextureStorage(GraphicsDevice graphicsDevice, Logger logger) : base(logger)
+        public TextureStorage(GraphicsDevice graphicsDevice, ILogger logger) : base(logger)
         {
             _graphicsDevice = graphicsDevice;
             Error = new MTexture(new Texture2D(graphicsDevice, 1, 1).Fill(Color.Purple), "error", "~Error");
@@ -69,12 +69,12 @@ namespace MonoKle.Asset
                     }
                     catch (Exception e)
                     {
-                        _logger.Log($"Error instantiating texture '{identifier}': {e.Message}", LogLevel.Error);
+                        _logger.LogError($"Error instantiating texture '{identifier}': {e.Message}");
                     }
                 }
                 else
                 {
-                    _logger.Log($"Accessed non-existing texture: '{identifier}'.", LogLevel.Warning);
+                    _logger.LogWarning($"Accessed non-existing texture: '{identifier}'.");
                 }
                 return Error;
             }
@@ -115,7 +115,7 @@ namespace MonoKle.Asset
             // Do not allow duplicate identifiers
             if (_textureDataByIdentifier.ContainsKey(identifier))
             {
-                _logger.Log($"Identifier already loaded '{identifier}'. Skipping.", LogLevel.Error);
+                _logger.LogError($"Identifier already loaded '{identifier}'. Skipping.");
                 return false;
             }
 
@@ -130,7 +130,7 @@ namespace MonoKle.Asset
                 }
                 catch (Exception e)
                 {
-                    _logger.Log($"Error reading texture '{e.Message}'. Skipping.", LogLevel.Error);
+                    _logger.LogError($"Error reading texture '{e.Message}'. Skipping.");
                     return false;
                 }
             }
@@ -155,7 +155,7 @@ namespace MonoKle.Asset
         {
             if (string.IsNullOrWhiteSpace(data.Path))
             {
-                _logger.Log($"Path must be proided for '{identifier}'. Skipping.", LogLevel.Error);
+                _logger.LogError($"Path must be proided for '{identifier}'. Skipping.");
                 return false;
             }
 
@@ -225,7 +225,7 @@ namespace MonoKle.Asset
                 }
                 else
                 {
-                    _logger.Log($"Error reading atlas rectangle for identifier '{identifier}'. Skipping.", LogLevel.Error);
+                    _logger.LogError($"Error reading atlas rectangle for identifier '{identifier}'. Skipping.");
                     return false;
                 }
             }
@@ -240,7 +240,7 @@ namespace MonoKle.Asset
                     !int.TryParse(sizeParts[0], out frameColumns) ||
                     !int.TryParse(sizeParts[1], out frameRows))
                 {
-                    _logger.Log($"Error reading columns and rows for identifier '{identifier}'. Skipping.", LogLevel.Error);
+                    _logger.LogError($"Error reading columns and rows for identifier '{identifier}'. Skipping.");
                     return false;
                 }
             }
@@ -249,7 +249,7 @@ namespace MonoKle.Asset
             int frameMargin = 0;
             if (args.Length > 2 && !int.TryParse(args[2], out frameMargin))
             {
-                _logger.Log($"Error reading frame margin for identifier '{identifier}'. Skipping.", LogLevel.Error);
+                _logger.LogError($"Error reading frame margin for identifier '{identifier}'. Skipping.");
                 return false;
             }
 
@@ -257,7 +257,7 @@ namespace MonoKle.Asset
             int frameRate = 1;
             if (args.Length > 3 && !int.TryParse(args[3], out frameRate))
             {
-                _logger.Log($"Error reading framerate for identifier '{identifier}'. Skipping.", LogLevel.Error);
+                _logger.LogError($"Error reading framerate for identifier '{identifier}'. Skipping.");
                 return false;
             }
 

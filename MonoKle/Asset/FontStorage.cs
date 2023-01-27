@@ -1,5 +1,5 @@
+using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework.Graphics;
-using MonoKle.Logging;
 using System;
 using System.IO;
 using System.Linq;
@@ -19,9 +19,11 @@ namespace MonoKle.Asset
         /// </summary>
         /// <param name="graphicsDevice">Graphics device</param>
         /// <param name="logger">The logger to use.</param>
-        public FontStorage(GraphicsDevice graphicsDevice, Logger logger) : base(logger) => _graphicsDevice = graphicsDevice;
+        public FontStorage(GraphicsDevice graphicsDevice, ILogger logger)
+            : base(logger) => _graphicsDevice = graphicsDevice;
 
-        protected override bool ExtensionSupported(string extension) => extension.Equals(".mfnt", StringComparison.InvariantCultureIgnoreCase);
+        protected override bool ExtensionSupported(string extension) =>
+            extension.Equals(".mfnt", StringComparison.InvariantCultureIgnoreCase);
 
         protected override FontInstance GetInstance(FontData data) => new(data);
 
@@ -36,7 +38,7 @@ namespace MonoKle.Asset
             }
             catch (Exception e)
             {
-                _logger.Log($"Error reading font: {e.Message}", LogLevel.Error);
+                _logger.LogError($"Error reading font: {e.Message}");
                 result = null;
                 return false;
             }

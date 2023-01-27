@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace MonoKle.Configuration.Tests
 {
@@ -11,7 +13,7 @@ namespace MonoKle.Configuration.Tests
         [TestInitialize()]
         public void Init()
         {
-            _system = new CVarSystem(new Logging.Logger());
+            _system = new CVarSystem(Mock.Of<ILogger>());
             _populator = new CVarFileLoader(_system);
         }
 

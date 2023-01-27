@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Input.Touch;
 using MonoKle.Configuration;
 using MonoKle.Input.Mouse;
-using MoreLinq;
 using System;
 using System.Collections.Generic;
 

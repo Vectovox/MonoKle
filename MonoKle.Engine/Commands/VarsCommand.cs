@@ -15,9 +15,11 @@ namespace MonoKle.Engine.Commands
 
         private static void PrintIdentifier(string identifier)
         {
-            var color = MGame.Variables.Variables.CanSet(identifier) ? MGame.Console.DefaultTextColour : MGame.Console.DisabledTextColour;
+            var color = MGame.Variables.Variables.CanSet(identifier)
+                ? MGame.Console.Log.DefaultTextColour
+                : MGame.Console.Log.DisabledTextColour;
             string text = $"\t{identifier} : {MGame.Variables.Variables.GetValue(identifier)}";
-            MGame.Console.WriteLine(text, color);
+            MGame.Console.Log.WriteLine(text, color);
         }
 
         public ICollection<string> GetPositionalSuggestions(IGameConsole console) => Array.Empty<string>();

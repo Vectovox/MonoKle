@@ -7,7 +7,7 @@ namespace MonoKle.Engine.Console.Commands
     [ConsoleCommand("clear", Description = "Clears the console output.")]
     public class ClearCommand : IConsoleCommand
     {
-        public void Call(IGameConsole console) => console.Clear();
+        public void Call(IGameConsole console) => console.Log.Clear();
 
         public ICollection<string> GetPositionalSuggestions(IGameConsole console) => Array.Empty<string>();
     }

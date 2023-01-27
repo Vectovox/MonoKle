@@ -11,7 +11,7 @@ namespace MonoKle.Engine.Commands
         {
             foreach(var identifier in MGame.Asset.Texture.UnusedIdentifiers())
             {
-                console.WriteLine(identifier);
+                console.Log.WriteLine(identifier);
             }
         }
 

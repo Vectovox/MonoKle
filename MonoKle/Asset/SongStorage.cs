@@ -1,5 +1,5 @@
-﻿using Microsoft.Xna.Framework.Media;
-using MonoKle.Logging;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
 
@@ -13,7 +13,7 @@ namespace MonoKle.Asset
     {
         private readonly Dictionary<string, Song> _songByIdentifier = new();
 
-        public SongStorage(Logger logger) : base(logger)
+        public SongStorage(ILogger logger) : base(logger)
         {
         }
 
@@ -62,7 +62,7 @@ namespace MonoKle.Asset
         {
             if (_songByIdentifier.ContainsKey(identifier))
             {
-                _logger.Log($"Identifier already loaded '{identifier}'. Skipping.", LogLevel.Error);
+                _logger.LogError($"Identifier already loaded '{identifier}'. Skipping.");
                 return false;
             }
 
@@ -73,7 +73,7 @@ namespace MonoKle.Asset
             }
             catch (Exception e)
             {
-                _logger.Log($"Error reading song '{e.Message}'. Skipping.", LogLevel.Error);
+                _logger.LogError($"Error reading song '{e.Message}'. Skipping.");
                 return false;
             }
 

@@ -1,5 +1,5 @@
-﻿using Microsoft.Xna.Framework;
-using MonoKle.Logging;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Xna.Framework;
 using System;
 using System.IO;
 
@@ -10,9 +10,9 @@ namespace MonoKle.Asset
     /// </summary>
     public abstract class AbstractAssetStorage
     {
-        protected readonly Logger _logger;
+        protected readonly ILogger _logger;
 
-        public AbstractAssetStorage(Logger logger)
+        public AbstractAssetStorage(ILogger logger)
         {
             _logger = logger;
         }
@@ -29,7 +29,7 @@ namespace MonoKle.Asset
                 return Load(path, identifier, Array.Empty<string>());
             }
 
-            _logger.Log($"File not supported '{path}'.", LogLevel.Error);
+            _logger.LogError($"File not supported '{path}'.");
             return false;
         }
 
@@ -99,7 +99,7 @@ namespace MonoKle.Asset
                 var lineParts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
                 if (lineParts.Length < 2)
                 {
-                    _logger.Log($"Manifest line '{line}' does not contain path and identifier", LogLevel.Error);
+                    _logger.LogError($"Manifest line '{line}' does not contain path and identifier");
                     continue;
                 }
                 var identifier = lineParts[0];
@@ -113,7 +113,7 @@ namespace MonoKle.Asset
                     }
                     else
                     {
-                        _logger.Log($"Could not operate on asset '{line}' from manifest", LogLevel.Error);
+                        _logger.LogError($"Could not operate on asset '{line}' from manifest");
                     }
                 }
             }

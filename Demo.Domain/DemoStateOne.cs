@@ -1,3 +1,5 @@
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -6,7 +8,6 @@ using MonoKle.Asset;
 using MonoKle.Engine;
 using MonoKle.Graphics;
 using MonoKle.Input.Keyboard;
-using MonoKle.Logging;
 using MonoKle.State;
 using System;
 
@@ -210,12 +211,12 @@ namespace Demo.Domain
 
                 if (MGame.Keyboard.AreKeysHeld(new Keys[] { Keys.R, Keys.T }, MonoKle.Input.CollectionQueryBehavior.All))
                 {
-                    MGame.Console.WriteLine("R + T held.");
+                    MGame.Console.Log.WriteLine("R + T held.");
                 }
 
                 if (MGame.Keyboard.AreKeysHeld(new Keys[] { Keys.LeftShift, Keys.RightShift }, MonoKle.Input.CollectionQueryBehavior.Any))
                 {
-                    MGame.Console.WriteLine("Any shift held.");
+                    MGame.Console.Log.WriteLine("Any shift held.");
                 }
 
                 if (MGame.Keyboard.IsKeyHeld(Keys.I))
@@ -300,7 +301,8 @@ namespace Demo.Domain
 
                 if (MGame.Keyboard.IsKeyPressed(Keys.N))
                 {
-                    Logger.Global.Log("I am logging");
+                    MGame.ServiceProvider.GetService<ILogger<DemoStateOne>>()
+                        .LogInformation("I am logging");
                 }
 
                 if (MGame.Keyboard.IsKeyPressed(Keys.R))
@@ -327,11 +329,11 @@ namespace Demo.Domain
                 MinScale = 0.3f
             };
             _gameDisplay = new GameDisplay2D<DynamicCamera2D>(MGame.GraphicsManager, camera, new MPoint2(900, 600), new MPoint2(1500, 768));
-            MGame.Console.WriteLine(MGame.Asset.Texture.LoadFromManifest("Data/assets.manifest") + " textures loaded.");
-            MGame.Console.WriteLine(MGame.Asset.Font.LoadFromManifest("Data/assets.manifest") + " fonts loaded.");
-            MGame.Console.WriteLine(MGame.Asset.Effect.LoadFromManifest("Data/assets.manifest") + " effects loaded.");
-            MGame.Console.WriteLine(MGame.Asset.SoundEffect.LoadFromManifest("Data/assets.manifest") + " sounds loaded.");
-            MGame.Console.WriteLine(MGame.Asset.Song.LoadFromManifest("Data/assets.manifest") + " songs loaded.");
+            MGame.Console.Log.WriteLine(MGame.Asset.Texture.LoadFromManifest("Data/assets.manifest") + " textures loaded.");
+            MGame.Console.Log.WriteLine(MGame.Asset.Font.LoadFromManifest("Data/assets.manifest") + " fonts loaded.");
+            MGame.Console.Log.WriteLine(MGame.Asset.Effect.LoadFromManifest("Data/assets.manifest") + " effects loaded.");
+            MGame.Console.Log.WriteLine(MGame.Asset.SoundEffect.LoadFromManifest("Data/assets.manifest") + " sounds loaded.");
+            MGame.Console.Log.WriteLine(MGame.Asset.Song.LoadFromManifest("Data/assets.manifest") + " songs loaded.");
 
             // In-memory loading
             MGame.Asset.Texture.Load("copy", MGame.Asset.Texture["colorAtlas"].Data, new TextureStorage.TextureData
@@ -348,7 +350,7 @@ namespace Demo.Domain
         protected override void Activated(StateSwitchData data)
         {
             _stateSwitchMessage = data.HasData ? (string)data.Data : string.Empty;
-            MGame.Console.WriteLine($"State one activated! Message: {_stateSwitchMessage}");
+            MGame.Console.Log.WriteLine($"State one activated! Message: {_stateSwitchMessage}");
             _spriteBatch = new SpriteBatch(MGame.GraphicsManager.GraphicsDevice);
             _timer.Reset();
             _primitive2D?.Dispose();

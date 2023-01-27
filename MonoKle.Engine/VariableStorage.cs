@@ -1,5 +1,5 @@
-﻿using MonoKle.Logging;
-using MonoKle.Configuration;
+﻿using MonoKle.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace MonoKle.Engine
 {
@@ -17,7 +17,7 @@ namespace MonoKle.Engine
         /// Initializes a new instance of the <see cref="VariableStorage"/> class.
         /// </summary>
         /// <param name="logger">The logger to use.</param>
-        internal VariableStorage(Logger logger)
+        internal VariableStorage(ILogger logger)
         {
             Logger = logger;
             Variables = new CVarSystem(logger);
@@ -30,7 +30,7 @@ namespace MonoKle.Engine
         /// <value>
         /// The logger.
         /// </value>
-        public Logger Logger { get; set; }
+        public ILogger Logger { get; set; }
 
         /// <summary>
         /// Gets the variable populator.

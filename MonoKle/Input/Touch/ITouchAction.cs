@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MonoKle.Input.Touch
+﻿namespace MonoKle.Input.Touch
 {
     /// <summary>
     /// Interface for a touch-based action.

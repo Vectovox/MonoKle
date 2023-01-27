@@ -1,3 +1,5 @@
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoKle.Asset;
@@ -8,10 +10,10 @@ using MonoKle.Input.Gamepad;
 using MonoKle.Input.Keyboard;
 using MonoKle.Input.Mouse;
 using MonoKle.Input.Touch;
-using MonoKle.Logging;
 using MonoKle.State;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace MonoKle.Engine
 {
@@ -24,165 +26,32 @@ namespace MonoKle.Engine
         private static readonly Callbacker _uiThreadCallbacker = new();
         private static PerformanceWidget _performanceWidget;
         private static bool _initializing = true;
+        private static readonly GameConsoleLogData _logData = new();
 
-        /// <summary>
-        /// Gets the game console, printing logs and accepting input.
-        /// </summary>
-        public static IGameConsole Console => _console;
         private static GameConsole _console;
-
-        /// <summary>
-        /// Gets the container of asset storages.
-        /// </summary>
-        public static AssetStorageContainer Asset { get; } = new AssetStorageContainer();
-
-        /// <summary>
-        /// Gets the graphics manager. This is in charge of screen settings (resolution, full-screen, etc.)
-        /// and provides the <see cref="GraphicsDevice"/>.
-        /// </summary>
-        public static GraphicsManager GraphicsManager { get; private set; }
-
-        /// <summary>
-        /// Gets wether the game is running slowly or not.
-        /// </summary>
-        public static bool IsRunningSlowly { get; private set; }
-
-        /// <summary>
-        /// Gets the hub for gamepad input.
-        /// </summary>
-        public static IGamePadHub GamePad => _gamepad;
         private static readonly GamePadHub _gamepad = new();
-
-        /// <summary>
-        /// Gets the keyboard input.
-        /// </summary>
-        public static IKeyboard Keyboard => _keyboard;
         private static readonly Keyboard _keyboard = new();
-
-        /// <summary>
-        /// Gets the current mouse input.
-        /// </summary>
-        public static IMouse Mouse => _mouse;
         private static readonly Mouse _mouse = new();
-
-        /// <summary>
-        /// Gets the touch screen input.
-        /// </summary>
-        public static ITouchScreen TouchScreen => _touchScreen;
         private static readonly TouchScreen _touchScreen = new(_mouse);
+        private static readonly StateSystem _stateSystem;
 
-        /// <summary>
-        /// Gets the most recently activated input mode.
-        /// </summary>
-        public static InputMode InputMode { get; private set; }
-
-        /// <summary>
-        /// Gets the logging utility, same as <see cref="Logger.Global"/>.
-        /// </summary>
-        public static Logger Logger { get; private set; } = Logger.Global;
-
-        /// <summary>
-        /// Gets the state system, which keeps track of the states and switches between them.
-        /// </summary>
-        public static IStateSystem StateSystem => _stateSystem;
-        private static readonly StateSystem _stateSystem = new(Logger);
-
-        /// <summary>
-        /// Gets the running game instance.
-        /// </summary>
-        public static MGame GameInstance { get; private set; }
-
-        /// <summary>
-        /// Gets or sets the global game settings.
-        /// </summary>
-        public static MonoKleSettings Settings { get; } = new MonoKleSettings();
-
-        /// <summary>
-        /// Gets the total time spent in the game.
-        /// </summary>
-        public static TimeSpan TotalGameTime { get; private set; }
-
-        /// <summary>
-        /// Gets the variable storage, handling all game variables, such as settings.
-        /// </summary>
-        public static VariableStorage Variables { get; private set; }
-
-        /// <summary>
-        /// Gets the sound mixer.
-        /// </summary>
-        public static Mixer Mixer { get; } = new Mixer();
-
-        /// <summary>
-        /// Callback for when the input mode changed. Supplies the previous mode and the new mode as input parameters.
-        /// </summary>
-        public static event Action<InputMode, InputMode> InputModeChanged;
-
-        /// <summary>
-        /// Event invoked when a gamepad has been disconnected.
-        /// </summary>
-        public static event Action GamepadDisconnected;
-
-        /// <summary>
-        /// Initializes the MonoKle backend, returning a runnable game instance.
-        /// </summary>
-        /// <param name="title">Title of the game window.</param>
-        /// <param name="graphicsMode">The initial graphics mode setting.</param>
-        /// <param name="arguments">Variable assignment strings. E.g. 'mySettingEnabled = false'.</param>
-        public static MGame Create(string title, GraphicsMode graphicsMode, string[] arguments) => Create(new MGame(), title, graphicsMode, arguments);
-
-        /// <summary>
-        /// Initializes the MonoKle backend with the given game instance.
-        /// </summary>
-        /// <param name="gameInstance">The instance to use for the MonoKle backend.</param>
-        /// <param name="title">Title of the game window.</param>
-        /// <param name="graphicsMode">The initial graphics mode setting.</param>
-        /// <param name="arguments">Variable assignment strings. E.g. 'mySettingEnabled = false'.</param>
-        public static MGame Create(MGame gameInstance, string title, GraphicsMode graphicsMode, string[] arguments)
+        static MGame()
         {
-            GameInstance = gameInstance;
+            var services = new ServiceCollection();
+            services.AddLogging((loggingBuilder) => loggingBuilder
+                .SetMinimumLevel(LogLevel.Information)
+                .AddMonoKleConsoleLogger(_logData));
 
-            _title = title;
+            ServiceProvider = services.BuildServiceProvider();
+            Logger = ServiceProvider.GetService<ILogger<MGame>>();
 
-            // Graphics device has to be created immediately but cannot be used before LoadContent
-            GraphicsManager = new GraphicsManager(GameInstance);
-            GraphicsManager.BackBufferChanged += ResolutionChanged;
-            GraphicsManager.GraphicsMode = graphicsMode;
-
-            Settings.GamePadEnabled = true;
-            Settings.KeyboardEnabled = true;
-            Settings.MouseEnabled = true;
-            Settings.TouchEnabled = true;
-            Settings.CrashLogPath = "./crash.log";
-
-            // Enable crashdumps
-            AppDomain.CurrentDomain.UnhandledException += UnhandledException;
-
-            InitializeVariables(arguments);
-
-            return GameInstance;
+            _stateSystem = new(Logger);
         }
 
         protected override void Initialize()
         {
             base.Initialize();
             Window.Title = _title;
-        }
-
-        /// <summary>
-        /// Runs the given action on the UI thread. Execution will occur at some future frame. Multiple calls are executed in a FIFO order. 
-        /// </summary>
-        /// <param name="action">The action to run.</param>
-        /// <param name="wait">If true, waits blockingly until the action has been executed.</param>
-        public static void RunOnUIThread(Action action, bool wait = true)
-        {
-            if (wait)
-            {
-                _uiThreadCallbacker.AddWait(action);
-            }
-            else
-            {
-                _uiThreadCallbacker.Add(action);
-            }
         }
 
         protected override void LoadContent()
@@ -195,7 +64,7 @@ namespace MonoKle.Engine
             Asset.Effect = new EffectStorage(GraphicsDevice, Logger);
             Asset.Song = new SongStorage(Logger);
             InitializeFontStorage();
-            
+
             // Initialize other services
             InitializeConsole();
             _performanceWidget = new PerformanceWidget(GraphicsDevice, Asset.Font.Default, Asset.Texture.White);
@@ -208,7 +77,7 @@ namespace MonoKle.Engine
             _mouse.VirtualRegion = new MRectangleInt(GraphicsManager.Resolution);   // TODO: Virtual mouse seems to have low fps? And the region may not work properly?
 
             // Done initializing
-            _console.WriteLine("MonoKle Engine initialized!", Console.CommandTextColour);
+            _logData.WriteLine("MonoKle Engine initialized!", Console.CommandTextColour);
             _console.CommandBroker.Call(Commands.VersionCommand.Name);
             _initializing = false;
         }
@@ -303,6 +172,159 @@ namespace MonoKle.Engine
             GraphicsManager.Dispose();
         }
 
+        /// <summary>
+        /// Gets the game console, printing logs and accepting input.
+        /// </summary>
+        public static IGameConsole Console => _console;
+
+        /// <summary>
+        /// Gets the container of asset storages.
+        /// </summary>
+        public static AssetStorageContainer Asset { get; } = new AssetStorageContainer();
+
+        /// <summary>
+        /// Gets the graphics manager. This is in charge of screen settings (resolution, full-screen, etc.)
+        /// and provides the <see cref="GraphicsDevice"/>.
+        /// </summary>
+        public static GraphicsManager GraphicsManager { get; private set; }
+
+        /// <summary>
+        /// Gets wether the game is running slowly or not.
+        /// </summary>
+        public static bool IsRunningSlowly { get; private set; }
+
+        /// <summary>
+        /// Gets the hub for gamepad input.
+        /// </summary>
+        public static IGamePadHub GamePad => _gamepad;
+
+        /// <summary>
+        /// Gets the keyboard input.
+        /// </summary>
+        public static IKeyboard Keyboard => _keyboard;
+
+        /// <summary>
+        /// Gets the current mouse input.
+        /// </summary>
+        public static IMouse Mouse => _mouse;
+
+        /// <summary>
+        /// Gets the touch screen input.
+        /// </summary>
+        public static ITouchScreen TouchScreen => _touchScreen;
+
+        /// <summary>
+        /// Gets the most recently activated input mode.
+        /// </summary>
+        public static InputMode InputMode { get; private set; }
+
+        /// <summary>
+        /// Gets the generic logger.
+        /// </summary>
+        public static ILogger Logger { get; private set; }
+
+        /// <summary>
+        /// Gets the state system, which keeps track of the states and switches between them.
+        /// </summary>
+        public static IStateSystem StateSystem => _stateSystem;
+
+        /// <summary>
+        /// Gets the registered service provider.
+        /// </summary>
+        public static ServiceProvider ServiceProvider { get; }
+
+        /// <summary>
+        /// Gets the running game instance.
+        /// </summary>
+        public static MGame GameInstance { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the global game settings.
+        /// </summary>
+        public static MonoKleSettings Settings { get; } = new MonoKleSettings();
+
+        /// <summary>
+        /// Gets the total time spent in the game.
+        /// </summary>
+        public static TimeSpan TotalGameTime { get; private set; }
+
+        /// <summary>
+        /// Gets the variable storage, handling all game variables, such as settings.
+        /// </summary>
+        public static VariableStorage Variables { get; private set; }
+
+        /// <summary>
+        /// Gets the sound mixer.
+        /// </summary>
+        public static Mixer Mixer { get; } = new Mixer();
+
+        /// <summary>
+        /// Callback for when the input mode changed. Supplies the previous mode and the new mode as input parameters.
+        /// </summary>
+        public static event Action<InputMode, InputMode> InputModeChanged;
+
+        /// <summary>
+        /// Event invoked when a gamepad has been disconnected.
+        /// </summary>
+        public static event Action GamepadDisconnected;
+
+        /// <summary>
+        /// Initializes the MonoKle backend, returning a runnable game instance.
+        /// </summary>
+        /// <param name="title">Title of the game window.</param>
+        /// <param name="graphicsMode">The initial graphics mode setting.</param>
+        /// <param name="arguments">Variable assignment strings. E.g. 'mySettingEnabled = false'.</param>
+        public static MGame Create(string title, GraphicsMode graphicsMode, string[] arguments) => Create(new MGame(), title, graphicsMode, arguments);
+
+        /// <summary>
+        /// Initializes the MonoKle backend with the given game instance.
+        /// </summary>
+        /// <param name="gameInstance">The instance to use for the MonoKle backend.</param>
+        /// <param name="title">Title of the game window.</param>
+        /// <param name="graphicsMode">The initial graphics mode setting.</param>
+        /// <param name="arguments">Variable assignment strings. E.g. 'mySettingEnabled = false'.</param>
+        public static MGame Create(MGame gameInstance, string title, GraphicsMode graphicsMode, string[] arguments)
+        {
+            GameInstance = gameInstance;
+
+            _title = title;
+
+            // Graphics device has to be created immediately but cannot be used before LoadContent
+            GraphicsManager = new GraphicsManager(GameInstance);
+            GraphicsManager.BackBufferChanged += ResolutionChanged;
+            GraphicsManager.GraphicsMode = graphicsMode;
+
+            Settings.GamePadEnabled = true;
+            Settings.KeyboardEnabled = true;
+            Settings.MouseEnabled = true;
+            Settings.TouchEnabled = true;
+            Settings.CrashLogPath = "./crash.log";
+
+            // Enable crashdumps
+            AppDomain.CurrentDomain.UnhandledException += UnhandledException;
+
+            InitializeVariables(arguments);
+
+            return GameInstance;
+        }
+
+        /// <summary>
+        /// Runs the given action on the UI thread. Execution will occur at some future frame. Multiple calls are executed in a FIFO order. 
+        /// </summary>
+        /// <param name="action">The action to run.</param>
+        /// <param name="wait">If true, waits blockingly until the action has been executed.</param>
+        public static void RunOnUIThread(Action action, bool wait = true)
+        {
+            if (wait)
+            {
+                _uiThreadCallbacker.AddWait(action);
+            }
+            else
+            {
+                _uiThreadCallbacker.Add(action);
+            }
+        }
+
         private static void SetInputMode(InputMode mode)
         {
             var prevMode = InputMode;
@@ -334,7 +356,7 @@ namespace MonoKle.Engine
                 _mouse,
                 Asset.Texture.White,
                 Asset.Font.Default,
-                Logger);
+                _logData);
             Console.ToggleKey = Microsoft.Xna.Framework.Input.Keys.F1;
             Console.TextFont = Asset.Font.Default;
         }
@@ -367,12 +389,16 @@ namespace MonoKle.Engine
 
         private static void UnhandledException(object sender, UnhandledExceptionEventArgs unhandledException)
         {
-            Logger.Log(unhandledException.ExceptionObject.ToString(), LogLevel.Error);
+            Logger.LogError(unhandledException.ExceptionObject.ToString());
             var fs = new FileStream(Settings.CrashLogPath, FileMode.Append);
-            using var separatorWriter = new StreamWriter(fs);
-            separatorWriter.WriteLine("=========== CRASH ===========");
-            separatorWriter.Flush();
-            Logger.WriteLog(fs);    // Closes stream
+            using var lineWriter = new StreamWriter(fs);
+            lineWriter.WriteLine("=========== CRASH ===========");
+            foreach (var entry in _logData.TextEntries.Reverse())
+            {
+                lineWriter.WriteLine(entry.Text);
+            }
+            lineWriter.Flush();
+            lineWriter.Close();
         }
     }
 }

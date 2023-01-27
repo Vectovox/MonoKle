@@ -33,20 +33,24 @@ namespace MonoKle.Engine
         private static readonly Keyboard _keyboard = new();
         private static readonly Mouse _mouse = new();
         private static readonly TouchScreen _touchScreen = new(_mouse);
-        private static readonly StateSystem _stateSystem;
+        private static StateSystem _stateSystem;
 
-        static MGame()
+        public MGame() : this(new ServiceCollection())
         {
-            var services = new ServiceCollection();
-            services.AddLogging((loggingBuilder) => loggingBuilder
-                .SetMinimumLevel(LogLevel.Information)
-                .AddMonoKleConsoleLogger(_logData));
-
-            ServiceProvider = services.BuildServiceProvider();
-            Logger = ServiceProvider.GetService<ILogger<MGame>>();
-
-            _stateSystem = new(Logger);
         }
+
+        public MGame(ServiceCollection serviceCollection)
+        {
+            Services = serviceCollection.AddLogging((loggingBuilder) => loggingBuilder
+                .SetMinimumLevel(LogLevel.Information)
+                .AddMonoKleConsoleLogger(_logData))
+                .BuildServiceProvider();
+        }
+
+        /// <summary>
+        /// Gets the service provider.
+        /// </summary>
+        public new ServiceProvider Services { get; }
 
         protected override void Initialize()
         {
@@ -229,11 +233,6 @@ namespace MonoKle.Engine
         public static IStateSystem StateSystem => _stateSystem;
 
         /// <summary>
-        /// Gets the registered service provider.
-        /// </summary>
-        public static ServiceProvider ServiceProvider { get; }
-
-        /// <summary>
         /// Gets the running game instance.
         /// </summary>
         public static MGame GameInstance { get; private set; }
@@ -274,7 +273,18 @@ namespace MonoKle.Engine
         /// <param name="title">Title of the game window.</param>
         /// <param name="graphicsMode">The initial graphics mode setting.</param>
         /// <param name="arguments">Variable assignment strings. E.g. 'mySettingEnabled = false'.</param>
-        public static MGame Create(string title, GraphicsMode graphicsMode, string[] arguments) => Create(new MGame(), title, graphicsMode, arguments);
+        public static MGame Create(string title, GraphicsMode graphicsMode, string[] arguments) =>
+            Create(new MGame(), title, graphicsMode, arguments);
+
+        /// <summary>
+        /// Initializes the MonoKle backend, returning a runnable game instance.
+        /// </summary>
+        /// <param name="title">Title of the game window.</param>
+        /// <param name="graphicsMode">The initial graphics mode setting.</param>
+        /// <param name="arguments">Variable assignment strings. E.g. 'mySettingEnabled = false'.</param>
+        /// <param name="serviceCollection">Service collection to use for dependency injection.</param>
+        public static MGame Create(string title, GraphicsMode graphicsMode, string[] arguments, ServiceCollection serviceCollection) =>
+            Create(new MGame(serviceCollection), title, graphicsMode, arguments);
 
         /// <summary>
         /// Initializes the MonoKle backend with the given game instance.
@@ -286,8 +296,10 @@ namespace MonoKle.Engine
         public static MGame Create(MGame gameInstance, string title, GraphicsMode graphicsMode, string[] arguments)
         {
             GameInstance = gameInstance;
-
             _title = title;
+
+            Logger = gameInstance.Services.GetService<ILogger<MGame>>();
+            _stateSystem = new(Logger);
 
             // Graphics device has to be created immediately but cannot be used before LoadContent
             GraphicsManager = new GraphicsManager(GameInstance);

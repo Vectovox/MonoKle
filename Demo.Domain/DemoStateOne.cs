@@ -301,7 +301,7 @@ namespace Demo.Domain
 
                 if (MGame.Keyboard.IsKeyPressed(Keys.N))
                 {
-                    MGame.ServiceProvider.GetService<ILogger<DemoStateOne>>()
+                    MGame.GameInstance.Services.GetService<ILogger<DemoStateOne>>()
                         .LogInformation("I am logging");
                 }
 

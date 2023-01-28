@@ -86,7 +86,7 @@ namespace MonoKle.Engine
             _mouse.VirtualRegion = new MRectangleInt(GraphicsManager.Resolution);   // TODO: Virtual mouse seems to have low fps? And the region may not work properly?
 
             // Done initializing
-            _logData.WriteLine("MonoKle Engine initialized!", Console.CommandTextColour);
+            _logData.WriteLine($"{ConfigData.Product} © {ConfigData.ProductYear} {ConfigData.Company}", Console.CommandTextColour);
             _console.CommandBroker.Call(Commands.VersionCommand.Name);
             _initializing = false;
         }
@@ -308,6 +308,13 @@ namespace MonoKle.Engine
             GameInstance = gameInstance;
             _title = title;
 
+            // Enable error logging first
+            AppDomain.CurrentDomain.UnhandledException += UnhandledException;
+
+            // Make sure we can create error logs (and other game data)
+            GameDataStorage.CreateFolders();
+
+            // Set up systems
             Logger = gameInstance.Services.GetService<ILogger<MGame>>();
             _stateSystem = new(Logger);
 
@@ -316,14 +323,13 @@ namespace MonoKle.Engine
             GraphicsManager.BackBufferChanged += ResolutionChanged;
             GraphicsManager.GraphicsMode = graphicsMode;
 
+            // Default settings
             Settings.GamePadEnabled = true;
             Settings.KeyboardEnabled = true;
             Settings.MouseEnabled = true;
             Settings.TouchEnabled = true;
 
-            // Enable crashdumps
-            AppDomain.CurrentDomain.UnhandledException += UnhandledException;
-
+            // Set game variables from program arguments
             InitializeVariables(arguments);
 
             return GameInstance;

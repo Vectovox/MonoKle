@@ -1,6 +1,5 @@
 ﻿using MonoKle.Configuration;
 using System;
-using System.Configuration;
 using System.IO;
 
 namespace MonoKle.Engine
@@ -33,7 +32,16 @@ namespace MonoKle.Engine
             return _cachedLogsPath;
         }
 
-        public static FileInfo GetLogFile(string name) => new FileInfo(Path.Combine(GetLogsPath(), name));
+        /// <summary>
+        /// Creates the required folders to contain the game data. Does nothing for pre-existing folders.
+        /// </summary>
+        public static void CreateFolders()
+        {
+            Directory.CreateDirectory(GetProjectPath());
+            Directory.CreateDirectory(GetLogsPath());
+        }
+
+        public static FileInfo GetLogFile(string name) => new(Path.Combine(GetLogsPath(), name));
 
         private static void VerifyCache()
         {
@@ -41,16 +49,13 @@ namespace MonoKle.Engine
             {
                 _dirty = false;
 
-                var company = ConfigurationManager.AppSettings["company"] ?? "MonoKle";
-                var project = ConfigurationManager.AppSettings["product"] ?? "Demo";
-
                 var root = Environment.GetFolderPath(Root);
                 if (string.IsNullOrWhiteSpace(root))
                 {
                     throw new InvalidOperationException($"Root path not accessible ({Root})!");
                 }
 
-                _cachedProjectPath = Path.Combine(Path.Combine(root, company), project);
+                _cachedProjectPath = Path.Combine(Path.Combine(root, ConfigData.Company), ConfigData.Product);
                 _cachedLogsPath = Path.Combine(_cachedProjectPath, "Logs");
             }
         }

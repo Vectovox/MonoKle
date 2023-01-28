@@ -280,33 +280,31 @@ namespace MonoKle.Engine
         /// <summary>
         /// Initializes the MonoKle backend, returning a runnable game instance.
         /// </summary>
-        /// <param name="title">Title of the game window.</param>
         /// <param name="graphicsMode">The initial graphics mode setting.</param>
         /// <param name="arguments">Variable assignment strings. E.g. 'mySettingEnabled = false'.</param>
-        public static MGame Create(string title, GraphicsMode graphicsMode, string[] arguments) =>
-            Create(new MGame(), title, graphicsMode, arguments);
+        public static MGame Create(GraphicsMode graphicsMode, string[] arguments) =>
+            Create(new MGame(), graphicsMode, arguments);
 
         /// <summary>
         /// Initializes the MonoKle backend, returning a runnable game instance.
         /// </summary>
-        /// <param name="title">Title of the game window.</param>
         /// <param name="graphicsMode">The initial graphics mode setting.</param>
         /// <param name="arguments">Variable assignment strings. E.g. 'mySettingEnabled = false'.</param>
         /// <param name="serviceCollection">Service collection to use for dependency injection.</param>
-        public static MGame Create(string title, GraphicsMode graphicsMode, string[] arguments, ServiceCollection serviceCollection) =>
-            Create(new MGame(serviceCollection), title, graphicsMode, arguments);
+        public static MGame Create(GraphicsMode graphicsMode, string[] arguments, ServiceCollection serviceCollection) =>
+            Create(new MGame(serviceCollection), graphicsMode, arguments);
 
         /// <summary>
         /// Initializes the MonoKle backend with the given game instance.
         /// </summary>
         /// <param name="gameInstance">The instance to use for the MonoKle backend.</param>
-        /// <param name="title">Title of the game window.</param>
         /// <param name="graphicsMode">The initial graphics mode setting.</param>
         /// <param name="arguments">Variable assignment strings. E.g. 'mySettingEnabled = false'.</param>
-        public static MGame Create(MGame gameInstance, string title, GraphicsMode graphicsMode, string[] arguments)
+        /// <param name="title">Title of the game window. Auto-generated if null.</param>
+        public static MGame Create(MGame gameInstance, GraphicsMode graphicsMode, string[] arguments, string title = null)
         {
             GameInstance = gameInstance;
-            _title = title;
+            _title = title ?? $"{ConfigData.Product} {ConfigData.ProductVersion}";
 
             // Enable error logging first
             AppDomain.CurrentDomain.UnhandledException += UnhandledException;

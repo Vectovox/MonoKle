@@ -9,9 +9,12 @@ namespace MonoKle.Engine.Commands
     {
         public const string Name = "version";
 
-        public void Call(IGameConsole console) => console.Log.WriteLine(
-            $"MonoKle version: {ThisAssembly.AssemblyInformationalVersion} [{ThisAssembly.AssemblyConfiguration}]",
+        public void Call(IGameConsole console)
+        {
+            console.Log.WriteLine($"Version: {ConfigData.ProductVersion}", console.CommandTextColour);
+            console.Log.WriteLine($"MonoKle version: {ThisAssembly.AssemblyInformationalVersion} [{ThisAssembly.AssemblyConfiguration}]",
                 console.CommandTextColour);
+        }
 
         public ICollection<string> GetPositionalSuggestions(IGameConsole console) => Array.Empty<string>();
     }

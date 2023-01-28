@@ -52,6 +52,11 @@ namespace MonoKle.Engine
         /// </summary>
         public new ServiceProvider Services { get; }
 
+        /// <summary>
+        /// If true, crashes the engine for testing purposes.
+        /// </summary>
+        public bool ShouldCrash { get; set; }
+
         protected override void Initialize()
         {
             base.Initialize();
@@ -110,6 +115,11 @@ namespace MonoKle.Engine
         {
             if (!_initializing)
             {
+                if (ShouldCrash)
+                {
+                    throw new Exception("We have crashed!");
+                }
+
                 _performanceWidget.BeginUpdate();
 
                 _uiThreadCallbacker.CallOne();

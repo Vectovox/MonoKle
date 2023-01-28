@@ -320,7 +320,6 @@ namespace MonoKle.Engine
             Settings.KeyboardEnabled = true;
             Settings.MouseEnabled = true;
             Settings.TouchEnabled = true;
-            Settings.CrashLogPath = "./crash.log";
 
             // Enable crashdumps
             AppDomain.CurrentDomain.UnhandledException += UnhandledException;
@@ -367,6 +366,7 @@ namespace MonoKle.Engine
             Variables.Variables.BindProperties(TouchScreen);
             Variables.Variables.BindProperties(_performanceWidget);
             Variables.Variables.BindProperties(Mixer);
+            Variables.Variables.BindProperties(typeof(GameDataStorage));
         }
 
         private static void InitializeConsole()
@@ -410,17 +410,38 @@ namespace MonoKle.Engine
             }
         }
 
+        /// <summary>
+        /// Print logs before we crash. App will still write stack-trace to stderr if this code fails.
+        /// </summary>
         private static void UnhandledException(object sender, UnhandledExceptionEventArgs unhandledException)
         {
-            Logger.LogError(unhandledException.ExceptionObject.ToString());
-            var fs = new FileStream(Settings.CrashLogPath, FileMode.Append);
-            using var lineWriter = new StreamWriter(fs);
+            // Add the exception to the logs
+            try
+            {
+                Logger.LogError(unhandledException.ExceptionObject.ToString());   
+            }
+            catch { }
+
+            var logs = _logData.TextEntries.Reverse().ToList();
+
+            // Write logs to stderr
+            try
+            {
+                foreach (var entry in logs)
+                {
+                    var line = entry.Text;
+                    System.Console.Error.WriteLine(line);
+                }
+            }
+            catch { }
+
+            // Write logs to error file
+            using var lineWriter = new StreamWriter(GameDataStorage.GetLogFile("crash.log").Open(FileMode.Append));
             lineWriter.WriteLine("=========== CRASH ===========");
             foreach (var entry in _logData.TextEntries.Reverse())
             {
                 var line = entry.Text;
                 lineWriter.WriteLine(line);
-                System.Console.Error.WriteLine(line);
             }
             lineWriter.Flush();
             lineWriter.Close();

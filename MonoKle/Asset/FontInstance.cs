@@ -48,6 +48,11 @@ namespace MonoKle.Asset
         public char ColorTag { get; set; } = '\\';
 
         /// <summary>
+        /// Gets or sets whether color tags should be processed.
+        /// </summary>
+        public bool ColorTagEnabled { get; set; } = true;
+
+        /// <summary>
         /// Gets or sets whether compact mode should be used. If true, line height is discarded and text is
         /// measured and drawn as close to the drawing position as possible.
         /// </summary>
@@ -65,7 +70,7 @@ namespace MonoKle.Asset
         /// <param name="size">The font size to use.</param>
         /// <returns>New instance of <see cref="FontInstance"/> with the provided size.</returns>
         public FontInstance WithSize(int size) => new(_fontData)
-            { Size = size, LinePadding = LinePadding, ColorTag = ColorTag, CompactHeight = CompactHeight };
+            { Size = size, LinePadding = LinePadding, ColorTag = ColorTag, CompactHeight = CompactHeight, ColorTagEnabled = ColorTagEnabled };
 
         /// <summary>
         /// Returns a new instance of the same font with the given line height padding.
@@ -73,7 +78,7 @@ namespace MonoKle.Asset
         /// <param name="padding">The line height padding to use.</param>
         /// <returns>New instance of <see cref="FontInstance"/> with the provided line height padding.</returns>
         public FontInstance WithLinePadding(int padding) => new(_fontData)
-            { Size = Size, LinePadding = padding, ColorTag = ColorTag, CompactHeight = CompactHeight };
+            { Size = Size, LinePadding = padding, ColorTag = ColorTag, CompactHeight = CompactHeight, ColorTagEnabled = ColorTagEnabled };
 
         /// <summary>
         /// Returns a new instance of the same font with the given compact height mode.
@@ -81,7 +86,14 @@ namespace MonoKle.Asset
         /// <param name="compactHeight">The compact height mode to use.</param>
         /// <returns>New instance of <see cref="FontInstance"/> with the provided compact height mode.</returns>
         public FontInstance WithCompactHeight(bool compactHeight) => new(_fontData)
-            { Size = Size, LinePadding = LinePadding, ColorTag = ColorTag, CompactHeight = compactHeight };
+            { Size = Size, LinePadding = LinePadding, ColorTag = ColorTag, CompactHeight = compactHeight, ColorTagEnabled = ColorTagEnabled };
+
+        /// <summary>
+        /// Returns a new instance of the same font with the given color tag.
+        /// </summary>
+        /// <returns>New instance of <see cref="FontInstance"/> with the provided color tag.</returns>
+        public FontInstance WithColorTag(char tag) => new(_fontData)
+            { Size = Size, LinePadding = LinePadding, ColorTag = tag, CompactHeight = CompactHeight, ColorTagEnabled = ColorTagEnabled };
 
         /// <summary>
         /// Returns the size of the given text.
@@ -110,7 +122,7 @@ namespace MonoKle.Asset
             // Iterate all characters to measure string
             foreach (char character in text)
             {
-                if (character == ColorTag)
+                if (character == ColorTag && ColorTagEnabled)
                 {
                     // Open/close color tag
                     tagOpen = !tagOpen;
@@ -309,7 +321,7 @@ namespace MonoKle.Asset
             // Iterate and draw characters
             foreach (char character in text)
             {
-                if (character == ColorTag)
+                if (character == ColorTag && ColorTagEnabled)
                 {
                     // Open/close color tag
                     tagOpen = !tagOpen;

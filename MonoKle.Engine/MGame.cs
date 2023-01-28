@@ -389,6 +389,7 @@ namespace MonoKle.Engine
             using var ms = new MemoryStream(Resources.FontResources.DefaultFont);
             Asset.Font.Load(ms, "default");
             Asset.Font.Default = Asset.Font["default"];
+            Asset.Font.Default.ColorTagEnabled = false;
         }
 
         private static void InitializeVariables(string[] arguments)

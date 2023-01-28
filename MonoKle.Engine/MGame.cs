@@ -441,7 +441,7 @@ namespace MonoKle.Engine
 
             // Write logs to error file
             using var lineWriter = new StreamWriter(GameDataStorage.GetLogFile("crash.log").Open(FileMode.Append));
-            lineWriter.WriteLine("=========== CRASH ===========");
+            lineWriter.WriteLine($"=========== {DateTime.Now} ===========");
             foreach (var entry in _logData.TextEntries.Reverse())
             {
                 var line = entry.Text;

@@ -8,7 +8,7 @@ namespace MonoKle.Input.Keyboard
     /// </summary>
     public class NativeCharacterInput : AbstractCharacterInput, IDisposable
     {
-        public static readonly char[] SPECIAL_CHARACTERS = { '\r', '\n', '\a', '\b', '\t', '\f', '\v' };
+        public static readonly char[] SPECIAL_CHARACTERS = { '\r', '\n', '\a', '\b', '\t', '\f', '\v', '\u007F' };
 
         private char _lastChar;
         private bool _disposedValue;

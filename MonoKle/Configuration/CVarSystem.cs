@@ -10,15 +10,16 @@ namespace MonoKle.Configuration
     /// <summary>
     /// Class binding and storing variables.
     /// </summary>
-    public class CVarSystem : ILogged
+    public class CVarSystem
     {
+        private readonly ILogger _logger;
         private readonly Dictionary<string, ICVar> _variables = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CVarSystem"/> class.
         /// </summary>
         /// <param name="logger">The logger to use.</param>
-        public CVarSystem(ILogger logger) => Logger = logger;
+        public CVarSystem(ILogger logger) => _logger = logger;
 
         /// <summary>
         /// Gets the variable identifiers.
@@ -27,14 +28,6 @@ namespace MonoKle.Configuration
         /// The variable identifiers.
         /// </value>
         public ICollection<string> Identifiers => _variables.Keys;
-
-        /// <summary>
-        /// Gets or sets the logger instance.
-        /// </summary>
-        /// <value>
-        /// The logger.
-        /// </value>
-        public ILogger Logger { get; set; }
 
         /// <summary>
         /// Binds the specified instance to the specified variable identifier. Any existing values will be assigned the instance.
@@ -323,9 +316,7 @@ namespace MonoKle.Configuration
             {
                 // No existing variable so add it
                 _variables.Add(identifier, new ValueCVar(value));
-                Log($"Added new variable '{identifier}'", LogLevel.Trace);
             }
-            Log($"Set value of variable '{identifier}' to '{value}'", LogLevel.Trace);
             return true;
         }
 
@@ -334,7 +325,7 @@ namespace MonoKle.Configuration
         /// </summary>
         /// <param name="message">The message to log.</param>
         /// <param name="level">The logging level.</param>
-        protected void Log(string message, LogLevel level) => Logger.Log(level, message);
+        protected void Log(string message, LogLevel level) => _logger.Log(level, message);
 
         /// <summary>
         /// Gets the variable associated with the given identifier.

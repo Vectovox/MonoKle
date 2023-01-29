@@ -11,12 +11,12 @@ namespace MonoKle.Engine.Commands
 
         public void Call(IGameConsole console)
         {
-            if (MGame.Variables.Variables.Unbind(Variable) == false)
+            if (MGame.Variables.System.Unbind(Variable) == false)
             {
                 MGame.Console.Log.WriteError("Could not remove variable since it does not exist.");
             }
         }
 
-        public ICollection<string> GetPositionalSuggestions(IGameConsole console) => MGame.Variables.Variables.Identifiers;
+        public ICollection<string> GetPositionalSuggestions(IGameConsole console) => MGame.Variables.System.Identifiers;
     }
 }

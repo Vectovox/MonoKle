@@ -1,4 +1,5 @@
-﻿using MonoKle.IO;
+﻿using Microsoft.Extensions.Logging;
+using MonoKle.IO;
 using System.IO;
 
 namespace MonoKle.Configuration
@@ -11,7 +12,7 @@ namespace MonoKle.Configuration
         /// <summary>
         /// The token for commented lines.
         /// </summary>
-        public const string CommentedLineToken = "//";
+        public const string CommentedLineToken = "#";
 
         /// <summary>
         /// The variable value divisor.
@@ -19,14 +20,17 @@ namespace MonoKle.Configuration
         public const char VariableValueDivisor = '=';
 
         private readonly CVarSystem _system;
+        private readonly ILogger _logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CVarFileLoader"/> class.
         /// </summary>
         /// <param name="system">The system to populate.</param>
-        public CVarFileLoader(CVarSystem system)
+        /// <param name="logger">Logger.</param>
+        public CVarFileLoader(CVarSystem system, ILogger logger)
         {
             _system = system;
+            _logger = logger;
         }
 
         /// <summary>
@@ -65,33 +69,34 @@ namespace MonoKle.Configuration
             }
 
             // Split variable and value
-            string[] parts = line.Split(VariableValueDivisor);
+            var parts = line.Split(VariableValueDivisor, System.StringSplitOptions.TrimEntries | System.StringSplitOptions.RemoveEmptyEntries);
             if (parts.Length != 2)
             {
+                _logger.LogWarning("Line format fault: {LINE}", line);
                 return false;
             }
-            string variableText = parts[0].Trim();
-            string valueText = parts[1].Trim();
 
             // Set value
+            var variableText = parts[0];
+            var valueText = parts[1];
             return _system.SetValue(variableText, valueText);
         }
 
         private void InterpretText(string text)
         {
-            var sr = new StringReader(text);
+            using var sr = new StringReader(text);
             while (sr.Peek() != -1)
             {
-                InterpretLine(sr.ReadLine());
+                InterpretLine(sr.ReadLine()!);
             }
         }
 
         private void OperateOnStream(Stream stream)
         {
-            var sr = new StreamReader(stream);
+            using var sr = new StreamReader(stream);
             while (sr.EndOfStream == false)
             {
-                InterpretLine(sr.ReadLine());
+                InterpretLine(sr.ReadLine()!);
             }
         }
     }

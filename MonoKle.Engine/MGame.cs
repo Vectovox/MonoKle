@@ -362,15 +362,15 @@ namespace MonoKle.Engine
 
         private static void BindSettings()
         {
-            Variables.Variables.BindProperties(Logger);
-            Variables.Variables.BindProperties(GraphicsManager);
-            Variables.Variables.BindProperties(Console);
-            Variables.Variables.BindProperties(Settings);
-            Variables.Variables.BindProperties(Mouse);
-            Variables.Variables.BindProperties(TouchScreen);
-            Variables.Variables.BindProperties(_performanceWidget);
-            Variables.Variables.BindProperties(Mixer);
-            Variables.Variables.BindProperties(typeof(GameDataStorage));
+            Variables.System.BindProperties(Logger);
+            Variables.System.BindProperties(GraphicsManager);
+            Variables.System.BindProperties(Console);
+            Variables.System.BindProperties(Settings);
+            Variables.System.BindProperties(Mouse);
+            Variables.System.BindProperties(TouchScreen);
+            Variables.System.BindProperties(_performanceWidget);
+            Variables.System.BindProperties(Mixer);
+            Variables.System.BindProperties(typeof(GameDataStorage));
         }
 
         private static void InitializeConsole()
@@ -399,10 +399,10 @@ namespace MonoKle.Engine
         private static void InitializeVariables(string[] arguments)
         {
             Variables = new VariableStorage(Logger);
-            Variables.LoadDefaultVariables();
+            Variables.LoadSettings();
             foreach (var line in arguments)
             {
-                Variables.VariablePopulator.LoadText(line);
+                Variables.Populator.LoadText(line);
             }
         }
 

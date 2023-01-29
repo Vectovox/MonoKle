@@ -16,7 +16,7 @@ namespace MonoKle.Engine.Commands
         public void Call(IGameConsole console)
         {
             // Value is read only
-            if (MGame.Variables.Variables.Contains(Variable) && !MGame.Variables.Variables.CanSet(Variable))
+            if (MGame.Variables.System.Contains(Variable) && !MGame.Variables.System.CanSet(Variable))
             {
                 console.Log.WriteError("Can not set variable since it is read-only");
                 return;
@@ -25,7 +25,7 @@ namespace MonoKle.Engine.Commands
             // Value has not been explicitly provided
             if (Value == default)
             {
-                if (MGame.Variables.Variables.TryGetVariable(Variable, out var cvar) && cvar.Type.IsValueType)
+                if (MGame.Variables.System.TryGetVariable(Variable, out var cvar) && cvar.Type.IsValueType)
                 {
                     // Automatically set default for existing value types to allow for shorthand:
                     // set myVariable -> set myVariable true
@@ -33,7 +33,7 @@ namespace MonoKle.Engine.Commands
                     var val = cvar.Type == typeof(bool)
                         ? true
                         : Activator.CreateInstance(cvar.Type);
-                    MGame.Variables.VariablePopulator.LoadItem(Variable, val.ToString());
+                    MGame.Variables.Populator.LoadItem(Variable, val.ToString());
                 }
                 else
                 {
@@ -43,12 +43,12 @@ namespace MonoKle.Engine.Commands
             }
 
             // Load the provided value
-            if (!MGame.Variables.VariablePopulator.LoadItem(Variable, Value))
+            if (!MGame.Variables.Populator.LoadItem(Variable, Value))
             {
                 console.Log.WriteError("Variable assignment failed");
             }
         }
 
-        public ICollection<string> GetPositionalSuggestions(IGameConsole console) => MGame.Variables.Variables.Identifiers;
+        public ICollection<string> GetPositionalSuggestions(IGameConsole console) => MGame.Variables.System.Identifiers;
     }
 }

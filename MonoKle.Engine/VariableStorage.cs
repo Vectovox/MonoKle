@@ -1,17 +1,19 @@
 ﻿using MonoKle.Configuration;
 using Microsoft.Extensions.Logging;
+using System;
+using System.IO;
 
 namespace MonoKle.Engine
 {
     /// <summary>
     /// Class containing variable systems.
     /// </summary>
-    public class VariableStorage : ILogged
+    public class VariableStorage
     {
         /// <summary>
         /// The default file path.
         /// </summary>
-        public const string DefaultFilePath = "settings.ini";
+        public const string SettingsFile = "settings.ini";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VariableStorage"/> class.
@@ -19,39 +21,28 @@ namespace MonoKle.Engine
         /// <param name="logger">The logger to use.</param>
         internal VariableStorage(ILogger logger)
         {
-            Logger = logger;
-            Variables = new CVarSystem(logger);
-            VariablePopulator = new CVarFileLoader(Variables);
+            System = new CVarSystem(logger);
+            Populator = new CVarFileLoader(System, logger);
         }
-
-        /// <summary>
-        /// Gets or sets the logger instance.
-        /// </summary>
-        /// <value>
-        /// The logger.
-        /// </value>
-        public ILogger Logger { get; set; }
 
         /// <summary>
         /// Gets the variable populator.
         /// </summary>
-        /// <value>
-        /// The variable populator.
-        /// </value>
-        public CVarFileLoader VariablePopulator { get; private set; }
+        public CVarFileLoader Populator { get; }
 
         /// <summary>
         /// Gets the variables.
         /// </summary>
-        /// <value>
-        /// The variables.
-        /// </value>
-        public CVarSystem Variables { get; private set; }
+        public CVarSystem System { get; }
 
         /// <summary>
-        /// Loads the default settings from the default path (<see cref="DefaultFilePath"/>).
+        /// Loads the default settings from the default path (<see cref="SettingsFile"/>).
         /// </summary>
         /// <returns>True if default path contained a setting file; otherwise false.</returns>
-        public bool LoadDefaultVariables() => VariablePopulator.LoadFile(DefaultFilePath).Successes == 1;
+        public bool LoadSettings()
+        {
+            var settingsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, SettingsFile);
+            return Populator.LoadFile(settingsPath).Successes == 1;
+        }
     }
 }

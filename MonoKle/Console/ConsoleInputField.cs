@@ -10,37 +10,27 @@ namespace MonoKle.Console
     /// <summary>
     /// Class for a CLI-like input field.
     /// </summary>
-    public class KeyboardInputField : KeyboardTextInput
+    public class ConsoleInputField : KeyboardTextInput
     {
         private readonly List<string> _history;
-
-        private readonly Timer _cursorTimer;
-
         private readonly string _commandToken;
         private readonly KeyboardTyper _keyboardTyper;
-        private readonly string _cursorToken;
-
-        private string _displayTextCursor = "";
-        private string _displayTextCursorNoToken = "";
-
+        
+        private string _line = string.Empty;
         private int _historyIndex = 0;
-        private bool _isBlinking;
 
-        public KeyboardInputField(string cursorToken, string commandToken, TimeSpan cursorBlinkRate,
-            int historyCapacity, ICharacterInput characterInput, KeyboardTyper keyboardTyper)
+        public ConsoleInputField(string commandToken, int historyCapacity, ICharacterInput characterInput, KeyboardTyper keyboardTyper)
             : base(characterInput, keyboardTyper)
         {
-            _cursorToken = cursorToken;
             _commandToken = commandToken;
             _keyboardTyper = keyboardTyper;
             _history = new List<string>(historyCapacity);
-            _cursorTimer = new Timer(cursorBlinkRate);
             OnTextChange();
         }
 
-        public string DisplayText { get; private set; } = "";
+        public int LineCursorPosition => CursorPosition + _commandToken.Length;
 
-        public string CursorDisplayText => _isBlinking ? _displayTextCursorNoToken : _displayTextCursor;
+        public ReadOnlySpan<char> Line => _line.AsSpan();
 
         public Keys NextMemoryKey { get; set; } = Keys.Down;
 
@@ -68,33 +58,24 @@ namespace MonoKle.Console
             _history.Add(text);
         }
 
-        public void Update(TimeSpan timeDelta)
+        public override void Update()
         {
-            Update();
-
-            if (_cursorTimer.Update(timeDelta))
-            {
-                _isBlinking = !_isBlinking;
-                _cursorTimer.Reset();
-            }
+            base.Update();
 
             if (_keyboardTyper.IsTyped(NextMemoryKey))
             {
                 ChangeMemory(1);
             }
-
-            if (_keyboardTyper.IsTyped(PreviousMemoryKey))
+            else if (_keyboardTyper.IsTyped(PreviousMemoryKey))
             {
                 ChangeMemory(-1);
             }
         }
 
-        protected override void OnCursorChange() => UpdateDisplayText();
-
         protected override void OnTextChange()
         {
             _historyIndex = _history.Count;
-            UpdateDisplayText();
+            _line = _commandToken + Text;
         }
 
         private void ChangeMemory(int delta)
@@ -107,15 +88,6 @@ namespace MonoKle.Console
                 // Overwrite history index after text update
                 _historyIndex = newIndex;
             }
-        }
-
-        private void UpdateDisplayText()
-        {
-            var beforeCursor = _commandToken + Text[..CursorPosition];
-            var afterCursor = Text[CursorPosition..];
-            DisplayText = beforeCursor + afterCursor;
-            _displayTextCursor = beforeCursor + _cursorToken + afterCursor;
-            _displayTextCursorNoToken = beforeCursor + " " + afterCursor;
         }
     }
 }

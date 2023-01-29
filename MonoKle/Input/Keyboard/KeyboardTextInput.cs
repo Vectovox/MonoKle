@@ -75,7 +75,7 @@ namespace MonoKle.Input.Keyboard
         /// <summary>
         /// Updates this instance to poll the keyboard state.
         /// </summary>
-        public void Update()
+        public virtual void Update()
         {
             if (CharacterInput.TryGetChar(out var typedCharacter))
             {

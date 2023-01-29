@@ -22,15 +22,17 @@ namespace MonoKle.Console
         private static readonly TimeSpan TypingActivationDelay = TimeSpan.FromMilliseconds(400);
         private static readonly TimeSpan TypingCycleDelay = TimeSpan.FromMilliseconds(2);
 
-        private readonly KeyboardInputField _inputField;
+        private readonly ConsoleInputField _inputField;
         private readonly KeyboardTyper _keyboard;
         private readonly NativeCharacterInput _characterInput;
         private readonly SpriteBatch _spriteBatch;
         private readonly IMouse _mouse;
         private readonly MTexture _whiteTexture;
+        private readonly Timer _caretTimer = new(TimeSpan.FromMilliseconds(100));
 
         private int _scrollOffset = 0;
         private bool _isOpen = false;
+        private bool _showCaret = true;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GameConsole"/> class.
@@ -44,7 +46,7 @@ namespace MonoKle.Console
             {
                 Enabled = false,
             };
-            _inputField = new KeyboardInputField("-", "$ ", TimeSpan.FromSeconds(0.25), 10, _characterInput, new KeyboardTyper(keyboard));
+            _inputField = new ConsoleInputField("$ ", 10, _characterInput, new KeyboardTyper(keyboard));
 
             Area = area;
             _mouse = mouse;
@@ -99,10 +101,20 @@ namespace MonoKle.Console
                 _spriteBatch.Draw(_whiteTexture, Area, BackgroundColor);
 
                 // Draw input field
-                var textPosition = new Vector2(Area.Left, Area.Bottom - TextFont.Measure(_inputField.CursorDisplayText).Y);
-                TextFont.Draw(_spriteBatch, _inputField.CursorDisplayText, textPosition, CommandTextColour);
+                // First text
+                var inputTextSize = TextFont.Measure(_inputField.Line);
+                var textPosition = new Vector2(Area.Left, Area.Bottom - inputTextSize.Y);
+                TextFont.Draw(_spriteBatch, _inputField.Line, textPosition, CommandTextColour);
+                // Then caret
+                if (_showCaret)
+                {
+                    var caretPositionText = _inputField.Line[0.._inputField.LineCursorPosition];
+                    var caretTextSize = TextFont.Measure(caretPositionText);
+                    var caretPosition = new Vector2(Area.Left + caretTextSize.X, Area.Bottom - inputTextSize.Y);
+                    TextFont.Draw(_spriteBatch, "_", caretPosition, Color.White);
+                }
 
-                // Draw all lines
+                // Draw log lines
                 foreach (var line in Log.TextEntries.Skip(_scrollOffset))
                 {
                     var stringToDraw = TextFont.Wrap(line.Text, Area.Width);
@@ -131,7 +143,11 @@ namespace MonoKle.Console
             {
                 UpdateKeyboard();
                 UpdateMouse();
-                _inputField.Update(timeDelta);
+                _inputField.Update();
+                if (_caretTimer.Update(timeDelta, true))
+                {
+                    _showCaret = !_showCaret;
+                }
             }
         }
 
@@ -167,14 +183,14 @@ namespace MonoKle.Console
             // Print possible continuations
             if (completions.Count > 1)
             {
-                Log.WriteLine(_inputField.DisplayText, CommandTextColour);
+                Log.WriteLine(_inputField.Line.ToString(), CommandTextColour);
                 completions.ForEach(completion => Log.WriteLine("\t" + completion));
             }
         }
 
         private void CallCommand()
         {
-            Log.WriteLine(_inputField.DisplayText, CommandTextColour);
+            Log.WriteLine(_inputField.Line.ToString(), CommandTextColour);
 
             if (_inputField.Text.Any())
             {

@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace MonoKle.Asset
 {
@@ -80,16 +81,17 @@ namespace MonoKle.Asset
             return true;
         }
 
-        private Song GetSong(string path)
+        public override bool Unload(string identifier) => _songByIdentifier.Remove(identifier);
+
+        private static Song GetSong(string path)
         {
-            var uri = new Uri(path, UriKind.Relative);
+            var fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path);
+            var uri = new Uri(fullPath, UriKind.Absolute);
             // NOTE: Name must be set as path for this to work on Android
             //       https://github.com/MonoGame/MonoGame/issues/3935
             //       Song.AssetUri is not set so MonoGame uses the name
             //       as input for asset storage
             return Song.FromUri(path, uri);
         }
-
-        public override bool Unload(string identifier) => _songByIdentifier.Remove(identifier);
     }
 }

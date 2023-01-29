@@ -84,10 +84,10 @@ namespace MonoKle.Asset
             }
 
             // Read manifest and load the files
-            int counter = 0;
+            var counter = 0;
             while (!reader.EndOfStream)
             {
-                var line = reader.ReadLine().Trim();
+                var line = reader.ReadLine()!.Trim();
 
                 // Skip commented lines
                 if (line.Length == 0 || line.StartsWith("#"))

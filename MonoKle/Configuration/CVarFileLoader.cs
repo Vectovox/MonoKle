@@ -69,7 +69,7 @@ namespace MonoKle.Configuration
             }
 
             // Split variable and value
-            var parts = line.Split(VariableValueDivisor, System.StringSplitOptions.TrimEntries | System.StringSplitOptions.RemoveEmptyEntries);
+            var parts = line.Split(VariableValueDivisor, System.StringSplitOptions.TrimEntries);
             if (parts.Length != 2)
             {
                 _logger.LogWarning("Line format fault: {LINE}", line);

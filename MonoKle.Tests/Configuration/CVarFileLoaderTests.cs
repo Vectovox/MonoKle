@@ -14,7 +14,7 @@ namespace MonoKle.Configuration.Tests
         public void Init()
         {
             _system = new CVarSystem(Mock.Of<ILogger>());
-            _populator = new CVarFileLoader(_system);
+            _populator = new CVarFileLoader(_system, Mock.Of<ILogger>());
         }
 
         [TestMethod]

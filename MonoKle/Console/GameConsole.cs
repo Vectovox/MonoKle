@@ -20,7 +20,7 @@ namespace MonoKle.Console
     public class GameConsole : IGameConsole, IUpdateable, IDrawable
     {
         private static readonly TimeSpan TypingActivationDelay = TimeSpan.FromMilliseconds(400);
-        private static readonly TimeSpan TypingCycleDelay = TimeSpan.FromMilliseconds(2);
+        private static readonly TimeSpan TypingCycleDelay = TimeSpan.FromMilliseconds(35);
 
         private readonly ConsoleInputField _inputField;
         private readonly KeyboardTyper _keyboard;
@@ -46,7 +46,7 @@ namespace MonoKle.Console
             {
                 Enabled = false,
             };
-            _inputField = new ConsoleInputField("$ ", 10, _characterInput, new KeyboardTyper(keyboard));
+            _inputField = new ConsoleInputField("$ ", 10, _characterInput, _keyboard);
 
             Area = area;
             _mouse = mouse;

@@ -15,7 +15,7 @@ namespace MonoKle.Input.Keyboard
         /// </summary>
         /// <param name="keyboard">The keyboard input to use.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="keyboard"/> is null.</exception>
-        public KeyboardTyper(IKeyboard keyboard) : this(keyboard, TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(50))
+        public KeyboardTyper(IKeyboard keyboard) : this(keyboard, TimeSpan.FromMilliseconds(400), TimeSpan.FromMilliseconds(35))
         {
         }
 

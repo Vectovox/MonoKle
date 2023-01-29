@@ -73,15 +73,16 @@ namespace MonoKle.Asset
         private int OperateOnManifest(string manifestPath, Func<string, string, string[], bool> operation)
         {
             // Open manifest
-            StreamReader reader;
+            Stream stream;
             try
             {
-                reader = new StreamReader(TitleContainer.OpenStream(manifestPath));
+                stream = TitleContainer.OpenStream(manifestPath);
             }
             catch (IOException e)
             {
                 throw new IOException($"Manifest file could not be read at '{manifestPath}'", e);
             }
+            using var reader = new StreamReader(stream);
 
             // Read manifest and load the files
             var counter = 0;

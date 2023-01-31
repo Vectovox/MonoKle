@@ -306,6 +306,21 @@ namespace MonoKle.Console.Tests
         }
 
         [TestMethod]
+        public void Call_ArgumentAssignmentTwice_FlagValueReset()
+        {
+            var console = new Mock<IGameConsole>();
+            var commandBroker = new CommandBroker(console.Object);
+            commandBroker.Register<ArgumentAssignmentTestCommand>();
+            ArgumentAssignmentTestCommand.Reset();
+            CommandString.TryParse("argumentAssignmentTest -flag", out var commandString);
+            commandBroker.Call(commandString);
+            Assert.IsTrue(ArgumentAssignmentTestCommand.LastFlag);
+            CommandString.TryParse("argumentAssignmentTest", out commandString);
+            commandBroker.Call(commandString);
+            Assert.IsFalse(ArgumentAssignmentTestCommand.LastFlag);
+        }
+
+        [TestMethod]
         public void Call_EnumParameter_Assigned()
         {
             // Setup

@@ -232,8 +232,9 @@ namespace MonoKle.Console
             ? _typeCommands[command]
             : null;
 
-        private ConsoleCommandAttribute GetCommandAttribute(Type type) => (ConsoleCommandAttribute)type.GetCustomAttributes(typeof(ConsoleCommandAttribute), false)
-                                                                                                       .FirstOrDefault();
+        private ConsoleCommandAttribute GetCommandAttribute(Type type) =>
+            (ConsoleCommandAttribute)type.GetCustomAttributes(typeof(ConsoleCommandAttribute), false)
+                .FirstOrDefault();
 
         private IEnumerable<ArgumentProperty<T>> GetArgumentProperties<T>(Type type) =>
             type.GetProperties()
@@ -277,7 +278,11 @@ namespace MonoKle.Console
             }
 
             // Assign flags
-            flags.Where(flag => commandString.Flags.Contains(flag.Argument.Name)).ForEach(flag => AssignArgument(command, flag.Property, "true"));
+            foreach (var flag in flags)
+            {
+                var flagExists = commandString.Flags.Contains(flag.Argument.Name);
+                AssignArgument(command, flag.Property, flagExists ? "true" : "false");
+            }
 
             // Assign named arguments
             foreach (var argument in namedArguments)

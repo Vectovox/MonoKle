@@ -16,6 +16,8 @@ namespace MonoKle.State
         public IServiceProvider ServiceProvider { get; internal set; }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
+        public bool IsTransient { get; internal set; } = true;
+
         /// <summary>
         /// Called when the state is being activated.
         /// </summary>

@@ -22,7 +22,8 @@ namespace MonoKle.State
         /// </summary>
         /// <param name="identifier">Identifier to use.</param>
         /// <param name="state">State to add.</param>
-        bool AddState(string identifier, GameState state);
+        /// <param name="transient">If true, state will be removed once switched away from.</param>
+        bool AddState(string identifier, GameState state, bool transient = true);
 
         /// <summary>
         /// Removes the state with the specified identifier.

@@ -255,6 +255,10 @@ namespace Demo.Domain
                 {
                     Microsoft.Xna.Framework.Media.MediaPlayer.Play(MGame.Asset.Song["testsong"]);
                 }
+                if (MGame.Keyboard.IsKeyPressed(Keys.F6))
+                {
+                    MGame.StateSystem.SwitchState("transientState", new DemoTransientState());
+                }
 
                 if (MGame.TouchScreen.Pinch.TryGetValues(out var pinchOrigin, out var pinchFactor))
                 {

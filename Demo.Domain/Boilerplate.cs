@@ -7,8 +7,9 @@ namespace Demo.Domain
     {
         public static void ConfigureStates()
         {
-            MGame.StateSystem.SwitchState("stateOne", new DemoStateOne());
-            MGame.StateSystem.AddState("stateTwo", new DemoStateTwo());
+            MGame.StateSystem.AddState("stateOne", new DemoStateOne(), false);
+            MGame.StateSystem.AddState("stateTwo", new DemoStateTwo(), false);
+            MGame.StateSystem.SwitchState("stateOne");
             MGame.TouchScreen.EnabledGestures = GestureType.Tap | GestureType.DoubleTap | GestureType.FreeDrag | GestureType.Hold | GestureType.Pinch;
         }
     }

@@ -24,7 +24,7 @@ namespace MonoKle.State
 
         public string Current { get; private set; } = string.Empty;
 
-        public bool AddState(string identifier, GameState state)
+        public bool AddState(string identifier, GameState state, bool transient = true)
         {
             if (identifier is null)
             {
@@ -36,6 +36,7 @@ namespace MonoKle.State
             }
 
             state.ServiceProvider = _serviceProvider;
+            state.IsTransient = transient;
 
             if (_stateByString.ContainsKey(identifier))
             {
@@ -115,8 +116,13 @@ namespace MonoKle.State
             while (_switchQueue.TryDequeue(out var switchData))
             {
                 switchData.From.Deactivated(switchData.Data);
-                switchData.To.Activate(switchData.Data);
+                if (switchData.From.IsTransient && _stateByString.ContainsKey(switchData.Data.PreviousState))
+                {
+                    RemoveState(switchData.Data.PreviousState);
+                }
+
                 Current = switchData.Data.NextState;
+                switchData.To.Activate(switchData.Data);
 
                 if (!_stateByString.ContainsKey(Current))
                 {

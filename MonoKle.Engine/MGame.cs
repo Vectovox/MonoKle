@@ -41,9 +41,11 @@ namespace MonoKle.Engine
 
         public MGame(ServiceCollection serviceCollection)
         {
-            Services = serviceCollection.AddLogging((loggingBuilder) => loggingBuilder
-                .SetMinimumLevel(LogLevel.Information)
-                .AddMonoKleConsoleLogger(_logData))
+            Services = serviceCollection
+                .AddSingleton<StateSystem>()
+                .AddLogging((loggingBuilder) => loggingBuilder
+                    .SetMinimumLevel(LogLevel.Information)
+                    .AddMonoKleConsoleLogger(_logData))
                 .BuildServiceProvider();
         }
 
@@ -314,7 +316,7 @@ namespace MonoKle.Engine
 
             // Set up systems
             Logger = gameInstance.Services.GetService<ILogger<MGame>>();
-            _stateSystem = new(Logger);
+            _stateSystem = gameInstance.Services.GetService<StateSystem>();
 
             // Graphics device has to be created immediately but cannot be used before LoadContent
             GraphicsManager = new GraphicsManager(GameInstance);

@@ -10,6 +10,13 @@ namespace MonoKle.State
         private bool _hasBeenActivated;
 
         /// <summary>
+        /// Gets the registered service provider.
+        /// </summary>
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        public IServiceProvider ServiceProvider { get; internal set; }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+
+        /// <summary>
         /// Called when the state is being activated.
         /// </summary>
         /// <param name="data">State data to receive.</param>

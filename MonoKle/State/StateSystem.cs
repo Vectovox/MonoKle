@@ -10,12 +10,14 @@ namespace MonoKle.State
     public class StateSystem : IStateSystem, IUpdateable, IDrawable
     {
         private readonly ILogger _logger;
+        private readonly IServiceProvider _serviceProvider;
         private readonly Dictionary<string, GameState> _stateByString = new();
         private readonly Queue<StateSwitch> _switchQueue = new();
 
-        public StateSystem(ILogger logger)
+        public StateSystem(ILogger<StateSystem> logger, IServiceProvider serviceProvider)
         {
             _logger = logger;
+            _serviceProvider = serviceProvider;
         }
 
         public ICollection<string> Identifiers => _stateByString.Keys;
@@ -24,14 +26,20 @@ namespace MonoKle.State
 
         public bool AddState(string identifier, GameState state)
         {
-            if (state == null || identifier == null)
+            if (identifier is null)
             {
-                throw new ArgumentNullException("State and identifier must not be null.");
+                throw new ArgumentNullException(nameof(identifier));
             }
+            if (state is null)
+            {
+                throw new ArgumentNullException(nameof(state));
+            }
+
+            state.ServiceProvider = _serviceProvider;
 
             if (_stateByString.ContainsKey(identifier))
             {
-                _logger.LogError($"Could not add state with identifier '{identifier}' as one with the same name already exists.");
+                _logger.LogError("Could not add state with identifier '{STATE}' as one with the same name already exists.", identifier);
                 return false;
             }
 
@@ -54,7 +62,7 @@ namespace MonoKle.State
                 return true;
             }
 
-            _logger.LogError($"Could not remove state with identifier '{identifier}' as it does not exist.");
+            _logger.LogError("Could not remove state with identifier '{STATE}' as it does not exist.", identifier);
             return false;
         }
 

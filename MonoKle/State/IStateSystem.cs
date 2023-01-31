@@ -10,7 +10,12 @@ namespace MonoKle.State
         /// <summary>
         /// Gets a collection of the identifiers for the existing states.
         /// </summary>
-        ICollection<string> StateIdentifiers { get; }
+        ICollection<string> Identifiers { get; }
+
+        /// <summary>
+        /// Gets the current state identifier.
+        /// </summary>
+        string Current { get; }
 
         /// <summary>
         /// Adds a state with the given identifier.

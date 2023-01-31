@@ -10,19 +10,17 @@ namespace MonoKle.State
     public class StateSystem : IStateSystem, IUpdateable, IDrawable
     {
         private readonly ILogger _logger;
-
-        private string _currentState = string.Empty;
-
         private readonly Dictionary<string, GameState> _stateByString = new();
-
         private readonly Queue<StateSwitch> _switchQueue = new();
-
-        public ICollection<string> StateIdentifiers => _stateByString.Keys;
 
         public StateSystem(ILogger logger)
         {
             _logger = logger;
         }
+
+        public ICollection<string> Identifiers => _stateByString.Keys;
+
+        public string Current { get; private set; } = string.Empty;
 
         public bool AddState(string identifier, GameState state)
         {
@@ -41,15 +39,15 @@ namespace MonoKle.State
             return true;
         }
 
-        public void Draw(TimeSpan timeDelta) => GetStateWithIdentifier(_currentState).Draw(timeDelta);
+        public void Draw(TimeSpan timeDelta) => GetStateWithIdentifier(Current).Draw(timeDelta);
 
         public bool RemoveState(string identifier)
         {
             if (_stateByString.ContainsKey(identifier))
             {
-                if (identifier == _currentState)
+                if (identifier == Current)
                 {
-                    _currentState = string.Empty;
+                    Current = string.Empty;
                 }
                 _stateByString[identifier].Removed();
                 _stateByString.Remove(identifier);
@@ -61,10 +59,10 @@ namespace MonoKle.State
         }
 
         public void SwitchState(string stateIdentifier) =>
-            SwitchState(new StateSwitchData(stateIdentifier, _currentState));
+            SwitchState(new StateSwitchData(stateIdentifier, Current));
 
         public void SwitchState(string stateIdentifier, object data) =>
-            SwitchState(new StateSwitchData(stateIdentifier, _currentState, data));
+            SwitchState(new StateSwitchData(stateIdentifier, Current, data));
 
         private void ReplaceState(string stateIdentifier, GameState state)
         {
@@ -103,18 +101,18 @@ namespace MonoKle.State
         public void Update(TimeSpan timeDelta)
         {
             // Update current state
-            GetStateWithIdentifier(_currentState).Update(timeDelta);
+            GetStateWithIdentifier(Current).Update(timeDelta);
 
             // Run activation logic on state updates
             while (_switchQueue.TryDequeue(out var switchData))
             {
                 switchData.From.Deactivated(switchData.Data);
                 switchData.To.Activate(switchData.Data);
-                _currentState = switchData.Data.NextState;
+                Current = switchData.Data.NextState;
 
-                if (!_stateByString.ContainsKey(_currentState))
+                if (!_stateByString.ContainsKey(Current))
                 {
-                    _logger.LogWarning($"Switched to state '{_currentState}' but it does not exist.");
+                    _logger.LogWarning("Switched to state '{STATE}' but it does not exist.", Current);
                 }
             }
         }

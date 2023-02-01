@@ -11,8 +11,8 @@ namespace MonoKle.Engine.Commands
 
         public void Call(IGameConsole console)
         {
-            console.Log.WriteLine($"Version: {ConfigData.ProductVersion}", console.CommandTextColour);
-            console.Log.WriteLine($"MonoKle version: {ThisAssembly.AssemblyInformationalVersion} [{ThisAssembly.AssemblyConfiguration}]",
+            console.Log.AddLine($"Version: {ConfigData.ProductVersion}", console.CommandTextColour);
+            console.Log.AddLine($"MonoKle version: {ThisAssembly.AssemblyInformationalVersion} [{ThisAssembly.AssemblyConfiguration}]",
                 console.CommandTextColour);
         }
 

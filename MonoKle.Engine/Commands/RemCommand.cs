@@ -13,7 +13,7 @@ namespace MonoKle.Engine.Commands
         {
             if (MGame.Variables.System.Unbind(Variable) == false)
             {
-                MGame.Console.Log.WriteError("Could not remove variable since it does not exist.");
+                MGame.Console.Log.AddError("Could not remove variable since it does not exist.");
             }
         }
 

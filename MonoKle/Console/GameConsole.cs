@@ -115,7 +115,7 @@ namespace MonoKle.Console
                 }
 
                 // Draw log lines
-                foreach (var line in Log.TextEntries.Skip(_scrollOffset))
+                foreach (var line in Log.Entries.Skip(_scrollOffset))
                 {
                     var stringToDraw = TextFont.Wrap(line.Text, Area.Width);
                     var stringHeight = TextFont.Measure(stringToDraw).Y;
@@ -183,14 +183,14 @@ namespace MonoKle.Console
             // Print possible continuations
             if (completions.Count > 1)
             {
-                Log.WriteLine(_inputField.Line.ToString(), CommandTextColour);
-                completions.ForEach(completion => Log.WriteLine("\t" + completion));
+                Log.AddLine(_inputField.Line.ToString(), CommandTextColour);
+                completions.ForEach(completion => Log.AddLine("\t" + completion));
             }
         }
 
         private void CallCommand()
         {
-            Log.WriteLine(_inputField.Line.ToString(), CommandTextColour);
+            Log.AddLine(_inputField.Line.ToString(), CommandTextColour);
 
             if (_inputField.Text.Any())
             {
@@ -202,7 +202,7 @@ namespace MonoKle.Console
                 }
                 else
                 {
-                    Log.WriteWarning("Command syntax incorrect. Try 'command [params] -arg val -flag'");
+                    Log.AddWarning("Command syntax incorrect. Try 'command [params] -arg val -flag'");
                 }
             }
 

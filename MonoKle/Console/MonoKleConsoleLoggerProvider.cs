@@ -4,25 +4,6 @@ using System;
 
 namespace MonoKle.Console
 {
-    public class MonoKleConsoleLoggerProvider : ILoggerProvider
-    {
-        private readonly GameConsoleLogData _logData;
-
-        public MonoKleConsoleLoggerProvider(GameConsoleLogData logData)
-        {
-            _logData = logData;
-        }
-
-        public ILogger CreateLogger(string categoryName)
-        {
-            return new MonoKleConsoleLogger(_logData);
-        }
-
-        public void Dispose()
-        {
-        }
-    }
-
     public class MonoKleConsoleLogger : ILogger
     {
         private readonly GameConsoleLogData _logData;
@@ -39,7 +20,7 @@ namespace MonoKle.Console
 
         public bool IsEnabled(LogLevel logLevel)
         {
-            return logLevel != LogLevel.None;
+            return _logData.LogLevel <= logLevel;
         }
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception,
@@ -54,16 +35,35 @@ namespace MonoKle.Console
 
             if (logLevel == LogLevel.Error || logLevel == LogLevel.Critical)
             {
-                _logData.WriteError(text);
+                _logData.AddError(text);
             }
             else if (logLevel == LogLevel.Warning)
             {
-                _logData.WriteWarning(text);
+                _logData.AddWarning(text);
             }
             else
             {
-                _logData.WriteLine(text);
+                _logData.AddLine(text);
             }
+        }
+    }
+
+    public class MonoKleConsoleLoggerProvider : ILoggerProvider
+    {
+        private readonly GameConsoleLogData _logData;
+
+        public MonoKleConsoleLoggerProvider(GameConsoleLogData logData)
+        {
+            _logData = logData;
+        }
+
+        public ILogger CreateLogger(string categoryName)
+        {
+            return new MonoKleConsoleLogger(_logData);
+        }
+
+        public void Dispose()
+        {
         }
     }
 

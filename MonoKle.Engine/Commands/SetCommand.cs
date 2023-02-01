@@ -18,7 +18,7 @@ namespace MonoKle.Engine.Commands
             // Value is read only
             if (MGame.Variables.System.Contains(Variable) && !MGame.Variables.System.CanSet(Variable))
             {
-                console.Log.WriteError("Can not set variable since it is read-only");
+                console.Log.AddError("Can not set variable since it is read-only");
                 return;
             }
 
@@ -37,7 +37,7 @@ namespace MonoKle.Engine.Commands
                 }
                 else
                 {
-                    console.Log.WriteError("Variable value not provided and type can not be inferred");
+                    console.Log.AddError("Variable value not provided and type can not be inferred");
                 }
                 return;
             }
@@ -45,7 +45,7 @@ namespace MonoKle.Engine.Commands
             // Load the provided value
             if (!MGame.Variables.Populator.LoadItem(Variable, Value))
             {
-                console.Log.WriteError("Variable assignment failed");
+                console.Log.AddError("Variable assignment failed");
             }
         }
 

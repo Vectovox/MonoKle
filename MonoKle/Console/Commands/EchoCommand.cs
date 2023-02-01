@@ -10,7 +10,7 @@ namespace MonoKle.Engine.Console.Commands
         [ConsolePositional(0, Description = "The text to output.")]
         public string Text { get; set; } = string.Empty;
 
-        public void Call(IGameConsole console) => console.Log.WriteLine(Text);
+        public void Call(IGameConsole console) => console.Log.AddLine(Text);
 
         public ICollection<string> GetPositionalSuggestions(IGameConsole console) => Array.Empty<string>();
     }

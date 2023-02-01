@@ -42,13 +42,13 @@ namespace MonoKle.Console
             // Check that the command exists
             if (instance == null)
             {
-                _console.Log.WriteError($"{commandString.Command} is not a recognized command.");
+                _console.Log.AddError($"{commandString.Command} is not a recognized command.");
                 return false;
             }
 
             if (!AssignArguments(instance, commandString))
             {
-                _console.Log.WriteError($"Arguments not provided correctly.");
+                _console.Log.AddError($"Arguments not provided correctly.");
                 return false;
             }
 
@@ -58,7 +58,7 @@ namespace MonoKle.Console
             }
             catch (Exception e)
             {
-                _console.Log.WriteError($"Command {commandString.Command} returned an error: {e.Message}");
+                _console.Log.AddError($"Command {commandString.Command} returned an error: {e.Message}");
                 return false;
             }
 
@@ -262,7 +262,7 @@ namespace MonoKle.Console
                 {
                     if (positional.Argument.IsRequired)
                     {
-                        _console.Log.WriteError($"Required argument on position '{positional.Argument.Position}' not found.");
+                        _console.Log.AddError($"Required argument on position '{positional.Argument.Position}' not found.");
                         return false;
                     }
 
@@ -272,7 +272,7 @@ namespace MonoKle.Console
 
                 if (argumentExists && !AssignArgument(command, positional.Property, commandString.PositionalArguments[positional.Argument.Position]))
                 {
-                    _console.Log.WriteError($"Could not assign '{commandString.PositionalArguments[positional.Argument.Position]}' to argument on position '{positional.Argument.Position}'.");
+                    _console.Log.AddError($"Could not assign '{commandString.PositionalArguments[positional.Argument.Position]}' to argument on position '{positional.Argument.Position}'.");
                     return false;
                 }
             }
@@ -293,7 +293,7 @@ namespace MonoKle.Console
                 {
                     if (argument.Argument.IsRequired)
                     {
-                        _console.Log.WriteError($"Required argument '{argument.Argument.Name}' not found.");
+                        _console.Log.AddError($"Required argument '{argument.Argument.Name}' not found.");
                         return false;
                     }
 
@@ -303,7 +303,7 @@ namespace MonoKle.Console
 
                 if (namedArgumentExists && !AssignArgument(command, argument.Property, commandString.NamedArguments[argument.Argument.Name]))
                 {
-                    _console.Log.WriteError($"Could not assign '{commandString.NamedArguments[argument.Argument.Name]}' to '{argument.Argument.Name}'.");
+                    _console.Log.AddError($"Could not assign '{commandString.NamedArguments[argument.Argument.Name]}' to '{argument.Argument.Name}'.");
                     return false;
                 }
             }
@@ -313,7 +313,7 @@ namespace MonoKle.Console
                 commandString.Flags.Any(name => !flags.Any(prop => prop.Argument.Name == name)) ||
                 positionals.Any() && commandString.PositionalArguments.Count > positionals.Max(pos => pos.Argument.Position) + 1)
             {
-                _console.Log.WriteError("Unknown arguments provided.");
+                _console.Log.AddError("Unknown arguments provided.");
                 return false;
             }
 

@@ -27,7 +27,7 @@ namespace MonoKle.Engine.Commands
             }
             else if (State == null)
             {
-                MGame.Console.Log.WriteLine($"Current state: {MGame.StateSystem.Current}");
+                MGame.Console.Log.AddLine($"Current state: {MGame.StateSystem.Current}");
             }
             else
             {
@@ -42,7 +42,7 @@ namespace MonoKle.Engine.Commands
             }
         }
 
-        private static void PrintIdentifier(string identifier) => MGame.Console.Log.WriteLine($"\t{identifier}");
+        private static void PrintIdentifier(string identifier) => MGame.Console.Log.AddLine($"\t{identifier}");
 
         public ICollection<string> GetPositionalSuggestions(IGameConsole console) => MGame.StateSystem.Identifiers;
     }

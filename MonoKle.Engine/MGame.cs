@@ -44,7 +44,7 @@ namespace MonoKle.Engine
             Services = serviceCollection
                 .AddSingleton<StateSystem>()
                 .AddLogging((loggingBuilder) => loggingBuilder
-                    .SetMinimumLevel(LogLevel.Information)
+                    .SetMinimumLevel(LogLevel.Debug)
                     .AddMonoKleConsoleLogger(_logData))
                 .BuildServiceProvider();
         }
@@ -88,7 +88,7 @@ namespace MonoKle.Engine
             _mouse.VirtualRegion = new MRectangleInt(GraphicsManager.Resolution);   // TODO: Virtual mouse seems to have low fps? And the region may not work properly?
 
             // Done initializing
-            _logData.WriteLine($"{ConfigData.Product} © {ConfigData.ProductYear} {ConfigData.Company}", Console.CommandTextColour);
+            _logData.AddLine($"{ConfigData.Product} © {ConfigData.ProductYear} {ConfigData.Company}", Console.CommandTextColour);
             _console.CommandBroker.Call(Commands.VersionCommand.Name);
             _initializing = false;
         }
@@ -373,6 +373,7 @@ namespace MonoKle.Engine
             Variables.System.BindProperties(_performanceWidget);
             Variables.System.BindProperties(Mixer);
             Variables.System.BindProperties(typeof(GameDataStorage));
+            Variables.System.BindProperties(_logData, true);
         }
 
         private static void InitializeConsole()
@@ -428,7 +429,7 @@ namespace MonoKle.Engine
             }
             catch { }
 
-            var logs = _logData.TextEntries.Reverse().ToList();
+            var logs = _logData.Entries.Reverse().ToList();
 
             // Write logs to stderr
             try
@@ -444,7 +445,7 @@ namespace MonoKle.Engine
             // Write logs to error file
             using var lineWriter = new StreamWriter(GameDataStorage.GetLogFile("crash.log").Open(FileMode.Append));
             lineWriter.WriteLine($"=========== {DateTime.Now} ===========");
-            foreach (var entry in _logData.TextEntries.Reverse())
+            foreach (var entry in _logData.Entries.Reverse())
             {
                 var line = entry.Text;
                 lineWriter.WriteLine(line);

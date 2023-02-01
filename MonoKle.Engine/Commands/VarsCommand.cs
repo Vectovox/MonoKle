@@ -19,7 +19,7 @@ namespace MonoKle.Engine.Commands
                 ? MGame.Console.Log.DefaultTextColour
                 : MGame.Console.Log.DisabledTextColour;
             string text = $"\t{identifier} : {MGame.Variables.System.GetValue(identifier)}";
-            MGame.Console.Log.WriteLine(text, color);
+            MGame.Console.Log.AddLine(text, color);
         }
 
         public ICollection<string> GetPositionalSuggestions(IGameConsole console) => Array.Empty<string>();

@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Xna.Framework;
+using MonoKle.Configuration;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,13 +8,18 @@ namespace MonoKle.Console
 {
     public class GameConsoleLogData
     {
-        private readonly LinkedList<TextEntry> _textEntries = new();
+        private readonly LinkedList<Entry> _entries = new();
 
-        public IEnumerable<TextEntry> TextEntries => _textEntries;
+        public IEnumerable<Entry> Entries => _entries;
 
+        [CVar("console_tabLength")]
         public int TabLength { get; set; } = 4;
 
-        public uint Capacity { get; set; } = byte.MaxValue;
+        [CVar("console_capacity")]
+        public uint Capacity { get; set; } = byte.MaxValue * 2;
+
+        [CVar("console_logLevel")]
+        public LogLevel LogLevel { get; set; } = LogLevel.Information;
 
         public Color DefaultTextColour { get; set; } = Color.WhiteSmoke;
 
@@ -22,15 +29,15 @@ namespace MonoKle.Console
 
         public Color ErrorTextColour { get; set; } = Color.Red;
 
-        public int Count => _textEntries.Count;
+        public int Count => _entries.Count;
 
-        public void WriteError(string message) => WriteLine(message, ErrorTextColour);
+        public void AddError(string message) => AddLine(message, ErrorTextColour);
 
-        public void WriteWarning(string message) => WriteLine(message, WarningTextColour);
+        public void AddWarning(string message) => AddLine(message, WarningTextColour);
 
-        public void WriteLine(string text) => WriteLine(text, DefaultTextColour);
+        public void AddLine(string text) => AddLine(text, DefaultTextColour);
 
-        public void WriteLine(string text, Color color)
+        public void AddLine(string text, Color color)
         {
             var entryBuilder = new StringBuilder();
 
@@ -57,17 +64,17 @@ namespace MonoKle.Console
                     }
                 }
 
-                _textEntries.AddFirst(new TextEntry(entryBuilder.ToString(), color));
+                _entries.AddFirst(new Entry(entryBuilder.ToString(), color));
 
-                while (_textEntries.Count > Capacity)
+                while (_entries.Count > Capacity)
                 {
-                    _textEntries.RemoveLast();
+                    _entries.RemoveLast();
                 }
             }
         }
 
-        public void Clear() => _textEntries.Clear();
+        public void Clear() => _entries.Clear();
 
-        public record class TextEntry (string Text, Color Color);
+        public record class Entry(string Text, Color Color);
     }
 }

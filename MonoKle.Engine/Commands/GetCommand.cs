@@ -14,11 +14,11 @@ namespace MonoKle.Engine.Commands
             object value = MGame.Variables.System.GetValue(Variable);
             if (value != null)
             {
-                console.Log.WriteLine(value.ToString());
+                console.Log.AddLine(value.ToString());
             }
             else
             {
-                console.Log.WriteError("No such variable exist");
+                console.Log.AddError("No such variable exist");
             }
         }
 

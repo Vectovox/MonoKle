@@ -6,10 +6,13 @@ namespace MonoKle.Console
 {
     public class MonoKleConsoleLogger : ILogger
     {
+        private readonly string _name;
         private readonly GameConsoleLogData _logData;
 
-        public MonoKleConsoleLogger(GameConsoleLogData logData)
+        public MonoKleConsoleLogger(string name, GameConsoleLogData logData)
         {
+            var startIndex = name.LastIndexOf('.') + 1;
+            _name = startIndex <= 0 ? name : name[startIndex..name.Length];
             _logData = logData;
         }
 
@@ -31,7 +34,7 @@ namespace MonoKle.Console
                 return;
             }
 
-            var text = formatter(state, exception);
+            var text = $"{DateTime.Now.ToString("HH:mm:ss")} : {_name} : {formatter(state, exception)}";
 
             if (logLevel == LogLevel.Error || logLevel == LogLevel.Critical)
             {
@@ -59,7 +62,7 @@ namespace MonoKle.Console
 
         public ILogger CreateLogger(string categoryName)
         {
-            return new MonoKleConsoleLogger(_logData);
+            return new MonoKleConsoleLogger(categoryName, _logData);
         }
 
         public void Dispose()

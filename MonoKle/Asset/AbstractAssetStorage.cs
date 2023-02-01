@@ -29,7 +29,7 @@ namespace MonoKle.Asset
                 return Load(path, identifier, Array.Empty<string>());
             }
 
-            _logger.LogError($"File not supported '{path}'.");
+            _logger.LogError("File not supported '{PATH}'.", path);
             return false;
         }
 
@@ -39,16 +39,32 @@ namespace MonoKle.Asset
         /// <param name="manifestPath">Path to the manifest file.</param>
         /// <remarks>Case sensitive on some platforms.</remarks>
         /// <returns>Amount of loaded assets.</returns>
-        public int LoadFromManifest(string manifestPath) =>
-            OperateOnManifest(manifestPath, (path, identifier, lineParts) => Load(path, identifier, lineParts));
+        public int LoadFromManifest(string manifestPath)
+        {
+            var sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+            var result = OperateOnManifest(manifestPath, Load);
+            sw.Stop();
+            _logger.LogInformation("Loaded {LOADED} from '{MANIFEST}' ({TIME}ms)",
+                result, Path.GetFileName(manifestPath), sw.ElapsedMilliseconds);
+            return result;
+        }
 
         /// <summary>
         /// Unloads assets specified in the provided manifest.
         /// </summary>
         /// <param name="manifestPath">Path to the manifest file.</param>
         /// <returns>Amount of unloaded assets.</returns>
-        public int UnloadFromManifest(string manifestPath) =>
-            OperateOnManifest(manifestPath, (path, identifier, lineParts) => Unload(identifier));
+        public int UnloadFromManifest(string manifestPath)
+        {
+            var sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+            var result = OperateOnManifest(manifestPath, (path, identifier, lineParts) => Unload(identifier));
+            sw.Stop();
+            _logger.LogInformation("Unloaded {UNLOADED} from '{MANIFEST}' ({TIME}ms)",
+                result, Path.GetFileName(manifestPath), sw.ElapsedMilliseconds);
+            return result;
+        }
 
         /// <summary>
         /// Returns whether the given identifier is present in the <see cref="AbstractAssetStorage"/>.
@@ -100,7 +116,7 @@ namespace MonoKle.Asset
                 var lineParts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
                 if (lineParts.Length < 2)
                 {
-                    _logger.LogError($"Manifest line '{line}' does not contain path and identifier");
+                    _logger.LogError("Manifest line '{MANIFESTLINE}' does not contain path and identifier", line);
                     continue;
                 }
                 var identifier = lineParts[0];
@@ -114,7 +130,7 @@ namespace MonoKle.Asset
                     }
                     else
                     {
-                        _logger.LogError($"Could not operate on asset '{line}' from manifest");
+                        _logger.LogError("Could not operate on asset '{MANIFESTLINE}' from manifest", line);
                     }
                 }
             }

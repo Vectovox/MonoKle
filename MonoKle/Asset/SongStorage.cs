@@ -14,7 +14,7 @@ namespace MonoKle.Asset
     {
         private readonly Dictionary<string, Song> _songByIdentifier = new();
 
-        public SongStorage(ILogger logger) : base(logger)
+        public SongStorage(ILogger<SongStorage> logger) : base(logger)
         {
         }
 

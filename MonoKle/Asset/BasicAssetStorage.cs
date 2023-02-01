@@ -6,12 +6,18 @@ using System.IO;
 
 namespace MonoKle.Asset
 {
+    /// <summary>
+    /// Basic asset storage returning types without conversion.
+    /// </summary>
     public abstract class BasicAssetStorage<T> : BasicAssetStorage<T, T> where T : class
     {
         public BasicAssetStorage(ILogger logger) : base(logger) { }
         protected override T GetInstance(T data) => data;
     }
 
+    /// <summary>
+    /// Basic asset storage converting from one type to another.
+    /// </summary>
     public abstract class BasicAssetStorage<TData, TInstance> : AbstractAssetStorage where TData : class
     {
         public BasicAssetStorage(ILogger logger) : base(logger) { }
@@ -36,7 +42,7 @@ namespace MonoKle.Asset
                 {
                     return GetInstance(value);
                 }
-                _logger.LogWarning("Tried to access non-existing identifier '{Identifier}'.", identifier);
+                _logger.LogWarning("Tried to access non-existing identifier '{IDENTIFIER}'.", identifier);
                 return Default;
             }
         }
@@ -72,7 +78,7 @@ namespace MonoKle.Asset
             // Do not allow duplicate identifiers
             if (_assetStorage.ContainsKey(identifier))
             {
-                _logger.LogError($"Identifier already loaded '{identifier}'.");
+                _logger.LogError("Identifier already loaded '{IDENTIFIER}'.", identifier);
                 return false;
             }
 
@@ -86,10 +92,10 @@ namespace MonoKle.Asset
             }
             catch (Exception e)
             {
-                _logger.LogError($"Unhandled exception reading asset '{identifier}': {e.Message}");
+                _logger.LogError(e, "Unhandled exception reading asset '{IDENTIFIER}': {MESSAGE}", identifier, e.Message);
             }
 
-            _logger.LogError($"Could not read asset file for '{identifier}'.");
+            _logger.LogError("Could not read asset file for '{IDENTIFIER}'.", identifier);
             return false;
         }
 
@@ -102,7 +108,7 @@ namespace MonoKle.Asset
             }
             catch (FileNotFoundException)
             {
-                _logger.LogError($"File not found in path '{path}'.");
+                _logger.LogError("File not found in path '{PATH}'.", path);
             }
 
             return false;

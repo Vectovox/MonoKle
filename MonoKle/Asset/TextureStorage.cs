@@ -32,7 +32,7 @@ namespace MonoKle.Asset
         /// </summary>
         /// <param name="graphicsDevice">The graphics device.</param>
         /// <param name="logger">The logger to use.</param>
-        public TextureStorage(GraphicsDevice graphicsDevice, ILogger logger) : base(logger)
+        public TextureStorage(GraphicsDevice graphicsDevice, ILogger<TextureStorage> logger) : base(logger)
         {
             _graphicsDevice = graphicsDevice;
             Error = new MTexture(new Texture2D(graphicsDevice, 1, 1).Fill(Color.Purple), "error", "~Error");

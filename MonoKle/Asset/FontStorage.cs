@@ -19,7 +19,7 @@ namespace MonoKle.Asset
         /// </summary>
         /// <param name="graphicsDevice">Graphics device</param>
         /// <param name="logger">The logger to use.</param>
-        public FontStorage(GraphicsDevice graphicsDevice, ILogger logger)
+        public FontStorage(GraphicsDevice graphicsDevice, ILogger<FontStorage> logger)
             : base(logger) => _graphicsDevice = graphicsDevice;
 
         protected override bool ExtensionSupported(string extension) =>

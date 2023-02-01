@@ -43,6 +43,8 @@ namespace MonoKle.Engine
         {
             Services = serviceCollection
                 .AddSingleton<StateSystem>()
+                .AddSingleton<SongStorage>()
+                .AddSingleton<SoundEffectStorage>()
                 .AddLogging((loggingBuilder) => loggingBuilder
                     .SetMinimumLevel(LogLevel.Debug)
                     .AddMonoKleConsoleLogger(_logData))
@@ -70,10 +72,10 @@ namespace MonoKle.Engine
             base.LoadContent();
 
             // Initialize storages
-            Asset.Texture = new TextureStorage(GraphicsDevice, Logger);
-            Asset.SoundEffect = new SoundEffectStorage(Logger);
-            Asset.Effect = new EffectStorage(GraphicsDevice, Logger);
-            Asset.Song = new SongStorage(Logger);
+            Asset.Texture = new TextureStorage(GraphicsDevice, Services.GetService<ILogger<TextureStorage>>());
+            Asset.SoundEffect = Services.GetService<SoundEffectStorage>();
+            Asset.Effect = new EffectStorage(GraphicsDevice, Services.GetService<ILogger<EffectStorage>>());
+            Asset.Song = Services.GetService<SongStorage>();
             InitializeFontStorage();
 
             // Initialize other services
@@ -392,7 +394,7 @@ namespace MonoKle.Engine
 
         private static void InitializeFontStorage()
         {
-            Asset.Font = new FontStorage(GraphicsManager.GraphicsDevice, Logger);
+            Asset.Font = new FontStorage(GraphicsManager.GraphicsDevice, GameInstance.Services.GetService<ILogger<FontStorage>>());
             using var ms = new MemoryStream(Resources.FontResources.DefaultFont);
             Asset.Font.Load(ms, "default");
             Asset.Font.Default = Asset.Font["default"];

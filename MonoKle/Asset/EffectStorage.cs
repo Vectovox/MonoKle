@@ -18,7 +18,8 @@ namespace MonoKle.Asset
         /// </summary>
         /// <param name="graphicsDevice">Graphics device.</param>
         /// <param name="logger">The logger to use.</param>
-        public EffectStorage(GraphicsDevice graphicsDevice, ILogger logger) : base(logger) => _graphicsDevice = graphicsDevice;
+        public EffectStorage(GraphicsDevice graphicsDevice, ILogger<EffectStorage> logger) : base(logger)
+            => _graphicsDevice = graphicsDevice;
 
         protected override bool ExtensionSupported(string extension) => extension.Equals(".mfx");
 

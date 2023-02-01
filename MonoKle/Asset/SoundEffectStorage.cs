@@ -16,7 +16,7 @@ namespace MonoKle.Asset
     /// </summary>
     public class SoundEffectStorage : BasicAssetStorage<SoundEffect, MSoundEffectInstance>
     {
-        public SoundEffectStorage(ILogger logger) : base(logger)
+        public SoundEffectStorage(ILogger<SoundEffectStorage> logger) : base(logger)
         {
         }
 

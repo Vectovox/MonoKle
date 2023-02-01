@@ -33,6 +33,7 @@ namespace MonoKle.Engine
         private static readonly Keyboard _keyboard = new();
         private static readonly Mouse _mouse = new();
         private static readonly TouchScreen _touchScreen = new(_mouse);
+        private static ILogger<MGame> _logger;
         private static StateSystem _stateSystem;
 
         public MGame() : this(new ServiceCollection())
@@ -237,11 +238,6 @@ namespace MonoKle.Engine
         public static InputMode InputMode { get; private set; }
 
         /// <summary>
-        /// Gets the generic logger.
-        /// </summary>
-        public static ILogger Logger { get; private set; }
-
-        /// <summary>
         /// Gets the state system, which keeps track of the states and switches between them.
         /// </summary>
         public static IStateSystem StateSystem => _stateSystem;
@@ -317,7 +313,7 @@ namespace MonoKle.Engine
             GameDataStorage.CreateFolders();
 
             // Set up systems
-            Logger = gameInstance.Services.GetService<ILogger<MGame>>();
+            _logger = gameInstance.Services.GetService<ILogger<MGame>>();
             _stateSystem = gameInstance.Services.GetService<StateSystem>();
 
             // Graphics device has to be created immediately but cannot be used before LoadContent
@@ -366,7 +362,6 @@ namespace MonoKle.Engine
 
         private static void BindSettings()
         {
-            Variables.System.BindProperties(Logger);
             Variables.System.BindProperties(GraphicsManager);
             Variables.System.BindProperties(Console);
             Variables.System.BindProperties(Settings);
@@ -404,7 +399,7 @@ namespace MonoKle.Engine
 
         private static void InitializeVariables(string[] arguments)
         {
-            Variables = new VariableStorage(Logger);
+            Variables = new VariableStorage(GameInstance.Services.GetService<ILogger<VariableStorage>>());
             Variables.LoadSettings();
             foreach (var line in arguments)
             {
@@ -428,7 +423,7 @@ namespace MonoKle.Engine
             // Add the exception to the logs
             try
             {
-                Logger.LogError(unhandledException.ExceptionObject.ToString());   
+                _logger.LogError(unhandledException.ExceptionObject.ToString());   
             }
             catch { }
 

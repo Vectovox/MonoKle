@@ -13,7 +13,7 @@ namespace MonoKle.State
         /// Gets the registered service provider.
         /// </summary>
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public IServiceProvider ServiceProvider { get; internal set; }
+        public IServiceProvider Services { get; internal set; }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         public bool IsTransient { get; internal set; } = true;

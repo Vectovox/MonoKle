@@ -35,7 +35,7 @@ namespace MonoKle.State
                 throw new ArgumentNullException(nameof(state));
             }
 
-            state.ServiceProvider = _serviceProvider;
+            state.Services = _serviceProvider;
             state.IsTransient = transient;
 
             if (_stateByString.ContainsKey(identifier))

@@ -431,7 +431,7 @@ namespace MonoKle.Engine
             }
             catch { }
 
-            var logs = _logData.Entries.Reverse().ToList();
+            var logs = _logData.CopyEntries().Reverse().ToList();
 
             // Write logs to stderr
             try
@@ -447,7 +447,7 @@ namespace MonoKle.Engine
             // Write logs to error file
             using var lineWriter = new StreamWriter(GameDataStorage.GetLogFile("crash.log").Open(FileMode.Append));
             lineWriter.WriteLine($"=========== {DateTime.Now} ===========");
-            foreach (var entry in _logData.Entries.Reverse())
+            foreach (var entry in logs)
             {
                 var line = entry.Text;
                 lineWriter.WriteLine(line);

@@ -115,16 +115,19 @@ namespace MonoKle.Console
                 }
 
                 // Draw log lines
-                foreach (var line in Log.Entries.Skip(_scrollOffset))
+                lock (Log.SyncRoot)
                 {
-                    var stringToDraw = TextFont.Wrap(line.Text, Area.Width);
-                    var stringHeight = TextFont.Measure(stringToDraw).Y;
-                    textPosition.Y -= stringHeight;
-                    TextFont.Draw(_spriteBatch, stringToDraw, textPosition, line.Color);
-
-                    if (textPosition.Y + stringHeight < 0)
+                    foreach (var line in Log.Entries.Skip(_scrollOffset))
                     {
-                        break;
+                        var stringToDraw = TextFont.Wrap(line.Text, Area.Width);
+                        var stringHeight = TextFont.Measure(stringToDraw).Y;
+                        textPosition.Y -= stringHeight;
+                        TextFont.Draw(_spriteBatch, stringToDraw, textPosition, line.Color);
+
+                        if (textPosition.Y + stringHeight < 0)
+                        {
+                            break;
+                        }
                     }
                 }
 

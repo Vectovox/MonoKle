@@ -39,7 +39,7 @@ namespace MonoKle.Engine
         {
         }
 
-        public MGame(ServiceCollection serviceCollection)
+        public MGame(ServiceCollection serviceCollection) : base()
         {
             Services = serviceCollection
                 .AddSingleton<StateSystem>()

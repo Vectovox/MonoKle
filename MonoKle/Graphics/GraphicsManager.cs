@@ -178,14 +178,6 @@ namespace MonoKle.Graphics
             {
                 if (disposing)
                 {
-                    // Workaround for HDR issue in Windows. Without it, windows becomes washed out.
-                    // Technically doesn't work when having borderless at some point but then switching to another mode when exiting
-                    if (_graphicsMode == GraphicsMode.Borderless)
-                    {
-                        GraphicsDeviceManager.IsFullScreen = true;
-                        GraphicsDeviceManager.HardwareModeSwitch = true;
-                        GraphicsDeviceManager.ApplyChanges();
-                    }
                     // Free managed resources
                     GraphicsDeviceManager.Dispose();
                 }

@@ -374,6 +374,7 @@ namespace MonoKle.Engine
             Variables.System.BindProperties(TouchScreen);
             Variables.System.BindProperties(_performanceWidget);
             Variables.System.BindProperties(Mixer);
+            Variables.System.BindProperties(typeof(ConfigData));
             Variables.System.BindProperties(typeof(GameDataStorage));
             Variables.System.BindProperties(_logData, true);
         }

@@ -39,7 +39,7 @@ namespace MonoKle.Engine
         {
         }
 
-        public MGame(ServiceCollection serviceCollection) : base()
+        public MGame(IServiceCollection serviceCollection) : base()
         {
             Services = serviceCollection
                 .AddSingleton<StateSystem>()
@@ -295,7 +295,7 @@ namespace MonoKle.Engine
         /// <param name="graphicsMode">The initial graphics mode setting.</param>
         /// <param name="arguments">Variable assignment strings. E.g. 'mySettingEnabled = false'.</param>
         /// <param name="serviceCollection">Service collection to use for dependency injection.</param>
-        public static MGame Create(GraphicsMode graphicsMode, string[] arguments, ServiceCollection serviceCollection) =>
+        public static MGame Create(GraphicsMode graphicsMode, string[] arguments, IServiceCollection serviceCollection) =>
             Create(new MGame(serviceCollection), graphicsMode, arguments);
 
         /// <summary>

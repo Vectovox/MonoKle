@@ -90,7 +90,7 @@ namespace MonoKle.Engine
             _mouse.VirtualRegion = new MRectangleInt(GraphicsManager.Resolution);   // TODO: Virtual mouse seems to have low fps? And the region may not work properly?
 
             // Done initializing
-            _logData.AddLine($"{ConfigData.Product} © {ConfigData.ProductYear} {ConfigData.Company}", Console.CommandTextColour);
+            _logData.AddLine($"{ConfigData.Product} © {ConfigData.ProductYear} {ConfigData.CompanyFull}", Console.CommandTextColour);
             _console.CommandBroker.Call(Commands.VersionCommand.Name);
             _initializing = false;
         }

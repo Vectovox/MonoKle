@@ -8,6 +8,8 @@ namespace MonoKle.Engine
     {
         [CVar("company")]
         public static string Company => ConfigurationManager.AppSettings["company"] ?? "MonoKle";
+        [CVar("companyFull")]
+        public static string CompanyFull => ConfigurationManager.AppSettings["companyFull"] ?? "MonoKle XYZ";
         [CVar("product")]
         public static string Product => ConfigurationManager.AppSettings["product"] ?? "Demo";
         [CVar("productYear")]

@@ -157,20 +157,21 @@ namespace MonoKle.Console
             var commandParts = commandLine.Split(new char[] { ' ' });
             string commandString = commandParts.First();
             string argumentString = commandParts.Last();
-            var hasEnteredCommand = CommandBroker.Commands.Any(command => command == argumentString);
+            var hasEnteredCommand = CommandBroker.Commands.Contains(argumentString);
 
             // Get possible completions
             var completions = hasEnteredCommand || commandParts.Length > 1
                 ? CommandBroker.GetPositionalSuggestions(commandString)
                 : CommandBroker.Commands.ToList();
 
+            // Filter out valid completions
             if (commandParts.Length > 1)
             {
-                completions = completions.Where(completion => completion.StartsWith(argumentString)).ToList();
+                completions = completions.Where(completion => completion.ToLower().StartsWith(argumentString.ToLower())).ToList();
             }
             else if (!hasEnteredCommand)
             {
-                completions = completions.Where(completion => completion.StartsWith(commandString)).ToList();
+                completions = completions.Where(completion => completion.ToLower().StartsWith(commandString.ToLower())).ToList();
             }
 
             // Fill in input
@@ -253,8 +254,8 @@ namespace MonoKle.Console
         {
             var result = new StringBuilder();
 
-            string shortest = first.Length > second.Length ? second : first;
-            for (int index = 0; index < shortest.Length && first[index] == second[index]; index++)
+            var shortest = first.Length > second.Length ? second : first;
+            for (int index = 0; index < shortest.Length && char.ToLower(first[index]) == char.ToLower(second[index]); index++)
             {
                 result.Append(first[index]);
             }

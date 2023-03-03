@@ -7,7 +7,7 @@ namespace MonoKle
     /// Struct for storing an immutable, serializable, normalized (positive width and height), floating point precision area.
     /// </summary>
     [Serializable]
-    public struct MRectangle : IEquatable<MRectangle>
+    public readonly struct MRectangle : IEquatable<MRectangle>
     {
         /// <summary>
         /// The bottom right coordinate of the <see cref="MRectangle"/>.

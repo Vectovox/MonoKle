@@ -6,7 +6,7 @@ namespace MonoKle
     /// Immutable, serializable, and normalized (positive radius) ellipse.
     /// </summary>
     [Serializable]
-    public struct MEllipse
+    public readonly struct MEllipse
     {
         public readonly MVector2 HalfDimensions;
         public readonly MVector2 Position;

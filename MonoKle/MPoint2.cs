@@ -13,7 +13,7 @@ namespace MonoKle
     /// </summary>
     [Serializable]
     [TypeConverter(typeof(MPoint2Converter))]
-    public struct MPoint2 : IEquatable<MPoint2>
+    public readonly struct MPoint2 : IEquatable<MPoint2>
     {
         /// <summary>
         /// The X component of the <see cref="MPoint2"/>.

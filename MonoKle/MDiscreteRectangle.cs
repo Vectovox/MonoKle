@@ -13,7 +13,7 @@ namespace MonoKle
     /// coordinates are equivalent, the <see cref="Width"/> and <see cref="Height"/> will be 1.
     /// </remarks>
     [Serializable]
-    public struct MDiscreteRectangle : IEquatable<MDiscreteRectangle>
+    public readonly struct MDiscreteRectangle : IEquatable<MDiscreteRectangle>
     {
         /// <summary>
         /// The bottom right coordinate of the <see cref="MDiscreteRectangle"/>.

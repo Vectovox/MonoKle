@@ -6,7 +6,7 @@ namespace MonoKle
     /// Immutable, serializable, and normalized (positive radius) circle type.
     /// </summary>
     [Serializable]
-    public struct MCircle
+    public readonly struct MCircle
     {
         /// <summary>
         /// The origin of the <see cref="MCircle"/>.

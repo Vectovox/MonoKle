@@ -11,7 +11,7 @@ namespace MonoKle
     /// Two-dimensional, immutable, serializable, floating-point vector. Has implicit operator to <see cref="Vector2"/>.
     /// </summary>
     [Serializable]
-    public struct MVector2 : IEquatable<MVector2>
+    public readonly struct MVector2 : IEquatable<MVector2>
     {
         /// <summary>
         /// The X component of the <see cref="MVector2"/>.

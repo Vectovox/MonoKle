@@ -17,7 +17,7 @@ namespace MonoKle.Engine
         [CVar]
         public static string ProductVersion => VersionOverride ?? ConfigurationManager.AppSettings["productVersion"] ?? "1.0.0";
         [CVar]
-        public static string InternalVersion => InternalVersionOverride ?? ConfigurationManager.AppSettings["internalVersion"] ?? "1.0.0";
+        public static string InternalVersion => InternalVersionOverride ?? ConfigurationManager.AppSettings["internalVersion"] ?? string.Empty;
 
         public static string VersionOverride { get; set; } = null;
         public static string InternalVersionOverride { get; set; } = null;

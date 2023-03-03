@@ -300,5 +300,17 @@ namespace MonoKle
         /// <param name="delta">The delta.</param>
         /// <returns></returns>
         public MPoint2 Translate(MPoint2 delta) => new(X + delta.X, Y + delta.Y);
+
+        /// <summary>
+        /// Translates the <see cref="MPoint2"/> with the specified delta.
+        /// </summary>
+        /// <param name="dx">The x translation.</param>
+        public MPoint2 TranslateX(int dx) => new(X + dx, Y);
+
+        /// <summary>
+        /// Translates the <see cref="MPoint2"/> with the specified delta.
+        /// </summary>
+        /// <param name="dy">The y translation.</param>
+        public MPoint2 TranslateY(int dy) => new(X, Y + dy);
     }
 }

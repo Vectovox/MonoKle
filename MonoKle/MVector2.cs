@@ -348,6 +348,18 @@ namespace MonoKle
         /// <summary>
         /// Translates the <see cref="MVector2"/> with the specified delta.
         /// </summary>
+        /// <param name="dx">The x translation.</param>
+        public MVector2 TranslateX(float dx) => new(X + dx, Y);
+
+        /// <summary>
+        /// Translates the <see cref="MVector2"/> with the specified delta.
+        /// </summary>
+        /// <param name="dy">The y translation.</param>
+        public MVector2 TranslateY(float dy) => new(X, Y + dy);
+
+        /// <summary>
+        /// Translates the <see cref="MVector2"/> with the specified delta.
+        /// </summary>
         /// <param name="delta">The delta.</param>
         public MVector2 Translate(MVector2 delta) => this + delta;
     }

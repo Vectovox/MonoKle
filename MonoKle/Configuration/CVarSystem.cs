@@ -356,31 +356,45 @@ namespace MonoKle.Configuration
         private static IEnumerable<PropertyInfo> GetInstanceProperties(object instance) =>
             instance.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
 
-        private static IEnumerable<(PropertyInfo Property, string Identifier)> GetInstanceCVarProperties(object instance)
+        private static IEnumerable<PropertyInfo> GetClassProperties(Type type) =>
+            type.GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
+
+        private static IEnumerable<(PropertyInfo Property, string Identifier)> GetInstanceCVarProperties(object instance) =>
+            GetCVarIdentifiers(GetInstanceProperties(instance));
+
+        private static IEnumerable<(PropertyInfo Property, string Identifier)> GetClassCVarProperties(Type type) =>
+            GetCVarIdentifiers(GetClassProperties(type));
+
+        private static IEnumerable<(PropertyInfo Property, string Identifier)> GetCVarIdentifiers(IEnumerable<PropertyInfo> properties)
         {
-            foreach (var property in GetInstanceProperties(instance))
+            foreach (var property in properties)
             {
-                var attribute = property.GetCustomAttribute<CVarAttribute>();
-                if (attribute != null)
+                if (TryGetCVarIdentifier(property, out var identifier))
                 {
-                    yield return (property, attribute.Identifier);
+                    yield return (property, identifier);
                 }
             }
         }
 
-        private static IEnumerable<PropertyInfo> GetClassProperties(Type type) =>
-            type.GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
-
-        private static IEnumerable<(PropertyInfo Property, string Identifier)> GetClassCVarProperties(Type type)
+        private static bool TryGetCVarIdentifier(PropertyInfo property, out string identifier)
         {
-            foreach (var property in GetClassProperties(type))
+            identifier = string.Empty;
+
+            var attribute = property.GetCustomAttribute<CVarAttribute>();
+            if (attribute != null)
             {
-                var attribute = property.GetCustomAttribute<CVarAttribute>();
-                if (attribute != null)
-                {
-                    yield return (property, attribute.Identifier);
-                }
+                // Check for prefix
+                var prefixAttribute = property.DeclaringType!.GetCustomAttribute<CVarPrefixAttribute>();
+                var prefix = prefixAttribute?.Prefix ?? string.Empty;
+
+                // Assign identifier
+                identifier = prefix + (string.IsNullOrEmpty(attribute.Identifier)
+                    ? property.Name             // Autogen fallback
+                    : attribute.Identifier);    // Specified
+                return true;
             }
+
+            return false;
         }
     }
 }

@@ -6,17 +6,20 @@ namespace MonoKle.Engine
 {
     public static class ConfigData
     {
-        [CVar("company")]
+        [CVar]
         public static string Company => ConfigurationManager.AppSettings["company"] ?? "MonoKle";
-        [CVar("companyFull")]
+        [CVar]
         public static string CompanyFull => ConfigurationManager.AppSettings["companyFull"] ?? "MonoKle XYZ";
-        [CVar("product")]
+        [CVar]
         public static string Product => ConfigurationManager.AppSettings["product"] ?? "Demo";
-        [CVar("productYear")]
+        [CVar]
         public static string ProductYear => ConfigurationManager.AppSettings["productYear"] ?? DateTime.Now.Year.ToString();
-        [CVar("productVersion")]
+        [CVar]
         public static string ProductVersion => VersionOverride ?? ConfigurationManager.AppSettings["productVersion"] ?? "1.0.0";
+        [CVar]
+        public static string InternalVersion => InternalVersionOverride ?? ConfigurationManager.AppSettings["internalVersion"] ?? "1.0.0";
 
         public static string VersionOverride { get; set; } = null;
+        public static string InternalVersionOverride { get; set; } = null;
     }
 }

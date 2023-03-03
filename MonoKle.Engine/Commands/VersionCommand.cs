@@ -11,7 +11,15 @@ namespace MonoKle.Engine.Commands
 
         public void Call(IGameConsole console)
         {
-            console.Log.AddLine($"Version: {ConfigData.ProductVersion}", console.CommandTextColour);
+            if (string.IsNullOrWhiteSpace(ConfigData.InternalVersion))
+            {
+                console.Log.AddLine($"Version: {ConfigData.ProductVersion}", console.CommandTextColour);
+            }
+            else
+            {
+                console.Log.AddLine($"Version: {ConfigData.ProductVersion} | {ConfigData.InternalVersion}",
+                    console.CommandTextColour);
+            }
             console.Log.AddLine($"MonoKle version: {ThisAssembly.AssemblyInformationalVersion} [{ThisAssembly.AssemblyConfiguration}]",
                 console.CommandTextColour);
         }

@@ -10,7 +10,7 @@ namespace MonoKle.Configuration
     /// <summary>
     /// Class binding and storing variables.
     /// </summary>
-    public class CVarSystem
+    public sealed class CVarSystem
     {
         private readonly ILogger _logger;
         private readonly Dictionary<string, ICVar> _variables = new();
@@ -83,13 +83,17 @@ namespace MonoKle.Configuration
         /// <param name="instance">The object instance to bind.</param>
         /// <param name="assignOld">If set to true, assigns any existing value to the bound instance.</param>
         /// <param name="recursive">If true, binds member properties recursively.</param>
-        public void BindProperties(object instance, bool assignOld, bool recursive) => BindProperties(instance, assignOld, recursive, new HashSet<object>());
+        public void BindProperties(object instance, bool assignOld, bool recursive)
+            => BindProperties(instance, assignOld, recursive, new HashSet<object>());
 
         private void BindProperties(object instance, bool assignOld, bool recursive, HashSet<object> visited)
         {
-            GetInstanceCVarProperties(instance).ForEach(t => Bind(new PropertyCVar(t.Property, instance), t.Attribute.Identifier, assignOld));
+            // Bind the properties on the instance
+            GetInstanceCVarProperties(instance)
+                .ForEach(t => Bind(new PropertyCVar(t.Property, instance), t.Identifier, assignOld));
+            // Bind static properties of the instance
             BindProperties(instance.GetType());
-
+            // Recurse through children to bind their
             if (recursive)
             {
                 visited.Add(instance);
@@ -157,8 +161,11 @@ namespace MonoKle.Configuration
         /// <param name="recursive">If true, binds class properties recursively.</param>
         public void BindProperties(Type type, bool assignOld, bool recursive)
         {
-            GetClassCVarProperties(type).ForEach(t => Bind(new PropertyCVar(t.Property, null), t.Attribute.Identifier, assignOld));
+            // Bind the static properties of the type
+            GetClassCVarProperties(type)
+                .ForEach(t => Bind(new PropertyCVar(t.Property, null), t.Identifier, assignOld));
 
+            // Recurse through children to bind their
             if (recursive)
             {
                 foreach (var childProperty in GetClassProperties(type).Where(p => !p.PropertyType.IsValueType))
@@ -257,7 +264,7 @@ namespace MonoKle.Configuration
 
         private int UnbindProperties(object instance, bool recursive, HashSet<object> visited)
         {
-            var unbound = GetInstanceCVarProperties(instance).Sum(t => Unbind(t.Attribute.Identifier) ? 1 : 0) + UnbindProperties(instance.GetType());
+            var unbound = GetInstanceCVarProperties(instance).Sum(t => Unbind(t.Identifier) ? 1 : 0) + UnbindProperties(instance.GetType());
 
             if (recursive)
             {
@@ -294,7 +301,7 @@ namespace MonoKle.Configuration
         /// </summary>
         /// <param name="type">The type to unbind static properties from.</param>
         /// <returns>The amount of variables unbound.</returns>
-        public int UnbindProperties(Type type) => GetClassCVarProperties(type).Sum(t => Unbind(t.Attribute.Identifier) ? 1 : 0);
+        public int UnbindProperties(Type type) => GetClassCVarProperties(type).Sum(t => Unbind(t.Identifier) ? 1 : 0);
 
         /// <summary>
         /// Sets the value of the specified variable.
@@ -346,40 +353,32 @@ namespace MonoKle.Configuration
 
         private static ICVar VoidVariable { get; } = new ValueCVar(new object());
 
-        private IEnumerable<PropertyInfo> GetInstanceProperties(object instance)
-        {
-            foreach (var property in instance.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic))
-            {
-                yield return property;
-            }
-        }
+        private static IEnumerable<PropertyInfo> GetInstanceProperties(object instance) =>
+            instance.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
 
-        private IEnumerable<(PropertyInfo Property, CVarAttribute Attribute)> GetInstanceCVarProperties(object instance)
+        private static IEnumerable<(PropertyInfo Property, string Identifier)> GetInstanceCVarProperties(object instance)
         {
             foreach (var property in GetInstanceProperties(instance))
             {
-                foreach (CVarAttribute attribute in property.GetCustomAttributes(typeof(CVarAttribute)))
+                var attribute = property.GetCustomAttribute<CVarAttribute>();
+                if (attribute != null)
                 {
-                    yield return (property, attribute);
+                    yield return (property, attribute.Identifier);
                 }
             }
         }
 
-        private IEnumerable<PropertyInfo> GetClassProperties(Type type)
-        {
-            foreach (var property in type.GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic))
-            {
-                yield return property;
-            }
-        }
+        private static IEnumerable<PropertyInfo> GetClassProperties(Type type) =>
+            type.GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
 
-        private IEnumerable<(PropertyInfo Property, CVarAttribute Attribute)> GetClassCVarProperties(Type type)
+        private static IEnumerable<(PropertyInfo Property, string Identifier)> GetClassCVarProperties(Type type)
         {
             foreach (var property in GetClassProperties(type))
             {
-                foreach (CVarAttribute attribute in property.GetCustomAttributes(typeof(CVarAttribute)))
+                var attribute = property.GetCustomAttribute<CVarAttribute>();
+                if (attribute != null)
                 {
-                    yield return (property, attribute);
+                    yield return (property, attribute.Identifier);
                 }
             }
         }

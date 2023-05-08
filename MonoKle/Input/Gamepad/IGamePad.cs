@@ -166,5 +166,13 @@ namespace MonoKle.Input.Gamepad
         /// Returns whether any button is down.
         /// </summary>
         bool AnyButtonDown();
+
+        /// <summary>
+        /// Gets the corresponding pressable button.
+        /// </summary>
+        /// <param name="button">The button to get.</param>
+        /// <param name="result">The resulting button. Null if button not supported.</param>
+        /// <returns>True if button supported and therefore result populated; otherwise false.</returns>
+        bool TryGetPressableButton(Buttons button, out IPressable? result);
     }
 }

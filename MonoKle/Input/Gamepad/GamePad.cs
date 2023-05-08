@@ -128,27 +128,40 @@ namespace MonoKle.Input.Gamepad
 
         public Span<Buttons> GetPressableButtons() => _pressableButtons;
 
-        public IPressable GetPressableButton(Buttons button) => button switch
+        public IPressable GetPressableButton(Buttons button)
         {
-            Buttons.DPadUp => DPad.Up,
-            Buttons.DPadDown => DPad.Down,
-            Buttons.DPadLeft => DPad.Left,
-            Buttons.DPadRight => DPad.Right,
-            Buttons.Start => Start,
-            Buttons.Back => Back,
-            Buttons.LeftStick => LeftThumbstick.Button,
-            Buttons.RightStick => RightThumbstick.Button,
-            Buttons.LeftShoulder => LeftShoulder,
-            Buttons.RightShoulder => RightShoulder,
-            Buttons.BigButton => Big,
-            Buttons.A => A,
-            Buttons.B => B,
-            Buttons.X => X,
-            Buttons.Y => Y,
-            Buttons.RightTrigger => RightTrigger,
-            Buttons.LeftTrigger => LeftTrigger,
-            _ => throw new NotImplementedException(),
-        };
+            if (TryGetPressableButton(button, out var result))
+            {
+                return result!;
+            }
+            throw new NotSupportedException();
+        }
+
+        public bool TryGetPressableButton(Buttons button, out IPressable? result)
+        {
+            result = button switch
+            {
+                Buttons.DPadUp => DPad.Up,
+                Buttons.DPadDown => DPad.Down,
+                Buttons.DPadLeft => DPad.Left,
+                Buttons.DPadRight => DPad.Right,
+                Buttons.Start => Start,
+                Buttons.Back => Back,
+                Buttons.LeftStick => LeftThumbstick.Button,
+                Buttons.RightStick => RightThumbstick.Button,
+                Buttons.LeftShoulder => LeftShoulder,
+                Buttons.RightShoulder => RightShoulder,
+                Buttons.BigButton => Big,
+                Buttons.A => A,
+                Buttons.B => B,
+                Buttons.X => X,
+                Buttons.Y => Y,
+                Buttons.RightTrigger => RightTrigger,
+                Buttons.LeftTrigger => LeftTrigger,
+                _ => null,
+            };
+            return result != null;
+        }
 
         public bool AnyButtonDown() => A.IsDown || B.IsDown || X.IsDown || Y.IsDown
             || Start.IsDown || Back.IsDown || LeftShoulder.IsDown || RightShoulder.IsDown

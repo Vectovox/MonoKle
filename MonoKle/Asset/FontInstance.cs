@@ -12,7 +12,6 @@ namespace MonoKle.Asset
     {
         private static readonly StringBuilder _stringBuilderCache = new();
         private static readonly Func<char, Color, Color> _defaultColorFunc = new(DefaultColorMethod);
-        private static readonly char[] _wrapCharacters = new char[] { ' ' };
 
         private readonly FontData _fontData;
         
@@ -179,26 +178,38 @@ namespace MonoKle.Asset
                 _stringBuilderCache.Clear();
                 var wrappedText = _stringBuilderCache.Append(text);
                 var lineStartIndex = 0;
+                var insertPadding = 0;  // Non-replacing newlines need to apply padding on subsequent lines
 
                 // Iterate all characters and update the new string as we go
-                for (int i = 1; i <= text.Length; i++)
+                for (var currentIndex = 0; currentIndex < text.Length; currentIndex++)
                 {
                     // Measure the current line to the pointer index
-                    var lineWidth = Measure(text[lineStartIndex..i]).X;
+                    var currentText = text[lineStartIndex..(currentIndex + 1)];
+                    var lineWidth = Measure(currentText).X;
 
                     if (lineWidth > maximumWidth)
                     {
-                        // Too wide so put a newline in the last previous space
-                        int lastPlaceToCut = LastIndexOfAny(text, _wrapCharacters, i - 1, i - lineStartIndex);
-                        if (lastPlaceToCut == -1)
+                        // Find break point
+                        var breakData = GetBreak(text, lineStartIndex, currentIndex - 1);
+                        if (breakData.Index == -1)
                         {
-                            // No good place to cut the text so end it here already
+                            // No good place to break, so end it here already
                             break;
                         }
-                        wrappedText.Remove(lastPlaceToCut, 1).Insert(lastPlaceToCut, '\n');
 
-                        // Update indices
-                        lineStartIndex = lastPlaceToCut + 1;
+                        // Apply break point
+                        if (breakData.Replace)
+                        {
+                            wrappedText.Remove(breakData.Index, 1);
+                            wrappedText.Insert(breakData.Index, '\n');
+                            lineStartIndex = breakData.Index + 1;
+                        }
+                        else
+                        {
+                            wrappedText.Insert(breakData.Index + insertPadding + 1, '\n');
+                            lineStartIndex = breakData.Index + 1;
+                            insertPadding++;
+                        }
                     }
                 }
 
@@ -206,23 +217,47 @@ namespace MonoKle.Asset
             }
 
             return text;
+        }
 
-            // Helper for span that emulates the string version
-            static int LastIndexOfAny(ReadOnlySpan<char> text, char[] characters, int startIndex, int count)
+        /// <summary>
+        /// Helper to find a suitable text break point.
+        /// </summary>
+        private static (int Index, bool Replace) GetBreak(ReadOnlySpan<char> text, int inclusiveStart, int inclusiveEnd)
+        {
+            for (int i = inclusiveEnd; i >= inclusiveStart; i--)
             {
-                var end = startIndex - count;
-                for (int i = startIndex; i > end; i--)
+                var currentChar = text[i];
+                var nextChar = text[i + 1];
+
+                // Replace upcoming space
+                if (nextChar == ' ')
                 {
-                    for (int j = 0; j < characters.Length; j++)
-                    {
-                        if (characters[j] == text[i])
-                        {
-                            return i;
-                        }
-                    }
+                    return (i + 1, true);
                 }
-                return -1;
+
+                // Check for specific languages
+                if (IsJapanese(currentChar))
+                {
+                    // Japanese can break anywhere
+                    return (i, false);
+                }
             }
+
+            // If first character was a space, we can break that one (it's not checked above)
+            if (text[inclusiveStart] == ' ')
+            {
+                return (inclusiveStart, true);
+            }
+
+            // Found no break index
+            return (-1, false);
+
+            static bool IsJapanese(char c) =>
+                (c >= 0x300 && c <= 0x303f)
+                || (c >= 0x3040 && c <= 0x309f)
+                || (c >= 0x30a0 && c <= 0x30ff)
+                || (c >= 0x4e00 && c <= 0x9faf)
+                || (c >= 0xff00 && c <= 0xffef);
         }
 
         /// <summary>

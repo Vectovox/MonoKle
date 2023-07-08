@@ -348,7 +348,7 @@ namespace MonoKle.Asset
         /// <param name="position">The position to draw the text in.</param>
         /// <param name="color">The color with which to draw the text.</param>
         public void Draw(SpriteBatch spriteBatch, ReadOnlySpan<char> text, Vector2 position, Color color) =>
-            Draw(spriteBatch, text, position, color, 0f, MVector2.Zero, 0, SpriteEffects.None);
+            Draw(spriteBatch, text, position, color, 0f, SpriteEffects.None);
 
         /// <summary>
         /// Draws the given string with an active spritebatch.
@@ -359,20 +359,7 @@ namespace MonoKle.Asset
         /// <param name="color">The color with which to draw the text.</param>
         /// <param name="colorSelector">Color selector function called on color tags.</param>
         public void Draw(SpriteBatch spriteBatch, ReadOnlySpan<char> text, Vector2 position, Color color, Func<char, Color, Color> colorSelector) =>
-            Draw(spriteBatch, text, position, color, 0f, MVector2.Zero, 0, SpriteEffects.None, colorSelector);
-
-        /// <summary>
-        /// Draws the given string with an active spritebatch, applying rotation.
-        /// </summary>
-        /// <param name="spriteBatch">The spritebatch to draw with.</param>
-        /// <param name="text">The text to draw.</param>
-        /// <param name="position">The position to draw the text in.</param>
-        /// <param name="color">The color with which to draw the text.</param>
-        /// <param name="rotation">The rotation of the text.</param>
-        /// <param name="origin">The origin of the text rotation.</param>
-        public void Draw(SpriteBatch spriteBatch, ReadOnlySpan<char> text, Vector2 position, Color color,
-            float rotation, Vector2 origin) =>
-                Draw(spriteBatch, text, position, color, rotation, origin, 0, SpriteEffects.None);
+            Draw(spriteBatch, text, position, color, 0f, SpriteEffects.None, colorSelector);
 
         /// <summary>
         /// Draws the given string with an active spritebatch.
@@ -381,12 +368,9 @@ namespace MonoKle.Asset
         /// <param name="text">The text to draw.</param>
         /// <param name="position">The position to draw the text in.</param>
         /// <param name="color">The color with which to draw the text.</param>
-        /// <param name="rotation">The rotation of the text.</param>
-        /// <param name="origin">The origin of the text rotation.</param>
         /// <param name="layerDepth">The layer depth.</param>
-        public void Draw(SpriteBatch spriteBatch, ReadOnlySpan<char> text, Vector2 position, Color color,
-            float rotation, Vector2 origin, int layerDepth) =>
-                Draw(spriteBatch, text, position, color, rotation, origin, layerDepth, SpriteEffects.None);
+        public void Draw(SpriteBatch spriteBatch, ReadOnlySpan<char> text, Vector2 position, Color color, int layerDepth) =>
+            Draw(spriteBatch, text, position, color, layerDepth, SpriteEffects.None);
 
         /// <summary>
         /// Draws the given string with an active spritebatch.
@@ -395,13 +379,11 @@ namespace MonoKle.Asset
         /// <param name="text">The text to draw.</param>
         /// <param name="position">The position to draw the text in.</param>
         /// <param name="color">The color with which to draw the text.</param>
-        /// <param name="rotation">The rotation of the text.</param>
-        /// <param name="origin">The origin of the text rotation.</param>
         /// <param name="layerDepth">The layer depth.</param>
         /// <param name="effect">The sprite effects to apply.</param>
         public void Draw(SpriteBatch spriteBatch, ReadOnlySpan<char> text, Vector2 position, Color color,
-            float rotation, Vector2 origin, float layerDepth, SpriteEffects effect) =>
-            Draw(spriteBatch, text, position, color, rotation, origin, layerDepth, effect, _defaultColorFunc);
+            float layerDepth, SpriteEffects effect) =>
+                Draw(spriteBatch, text, position, color, layerDepth, effect, _defaultColorFunc);
 
         /// <summary>
         /// Draws the given string with an active spritebatch.
@@ -410,13 +392,11 @@ namespace MonoKle.Asset
         /// <param name="text">The text to draw.</param>
         /// <param name="position">The position to draw the text in.</param>
         /// <param name="color">The color with which to draw the text.</param>
-        /// <param name="rotation">The rotation of the text.</param>
-        /// <param name="origin">The origin of the text rotation.</param>
         /// <param name="layerDepth">The layer depth.</param>
         /// <param name="effect">The sprite effects to apply.</param>
         /// <param name="colorSelector">Color selector function called on color tags.</param>
         public void Draw(SpriteBatch spriteBatch, ReadOnlySpan<char> text, Vector2 position, Color color,
-            float rotation, Vector2 origin, float layerDepth, SpriteEffects effect, Func<char, Color, Color> colorSelector)
+            float layerDepth, SpriteEffects effect, Func<char, Color, Color> colorSelector)
         {
             if (CompactHeight)
             {
@@ -455,25 +435,9 @@ namespace MonoKle.Asset
                 else if (_fontData.TryGetChar(character, out FontChar fontCharacter))
                 {
                     var destinationVector = new Vector2(drawPosition.X + fontCharacter.XOffset * scaleFactor, drawPosition.Y + fontCharacter.YOffset * scaleFactor);
-
-                    // Apply rotation
-                    if (rotation != 0)
-                    {
-                        var xd = destinationVector.X - origin.X - position.X;
-                        var yd = destinationVector.Y - origin.Y - position.Y;
-
-                        var x = origin.X + (xd * Math.Cos(rotation)) - (yd * Math.Sin(rotation));
-                        var y = origin.Y + (xd * Math.Sin(rotation)) + (yd * Math.Cos(rotation));
-
-                        // Translate back
-                        destinationVector.X = (float)x + position.X;
-                        destinationVector.Y = (float)y + position.Y;
-                    }
-
                     var sourceRectangle = new Rectangle(fontCharacter.X, fontCharacter.Y, fontCharacter.Width, fontCharacter.Height);
-
                     spriteBatch.Draw(_fontData.GetPage(fontCharacter.Page), destinationVector, sourceRectangle,
-                        currentColor, rotation, Vector2.Zero, scaleFactor, effect, layerDepth);
+                        currentColor, 0f, Vector2.Zero, scaleFactor, effect, layerDepth);
                     drawPosition.X += fontCharacter.XAdvance * scaleFactor + singleOutline;
                 }
             }

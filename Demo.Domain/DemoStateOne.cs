@@ -110,22 +110,10 @@ namespace Demo.Domain
             _spriteBatch.Draw(MGame.Asset.Texture.White, new MRectangleInt(500, 250, 100, 64), Color.DarkGray);
             font.WithSize(64).Draw(_spriteBatch, "Text size test", new Vector2(500, 250), Color.Green);
 
-            // Test rotation
-            font.Draw(_spriteBatch, "Rotating text",
-                 new Vector2(50, 350), Color.Green, (float)MGame.TotalGameTime.TotalSeconds, Vector2.Zero);
-
-            // Rotation with sizing change
-            font.WithSize(64).Draw(_spriteBatch, "Rotating scaled text",
-                 new Vector2(350, 350), Color.Green, (float)MGame.TotalGameTime.TotalSeconds, Vector2.Zero);
-
-            // Rotation with scale and origin
-            Vector2 orig = font.WithSize(64).Measure("Rotating origin scale") * 0.5f;
-            font.WithSize(64).Draw(_spriteBatch, "Rotating origin scale",
-                 new Vector2(550, 150), Color.Green, (float)MGame.TotalGameTime.TotalSeconds, orig);
-
+            
             // Text input test
             Vector2 o = font.Measure(_textInput.Text) * 0.5f;
-            font.Draw(_spriteBatch, _textInput.Text, new Vector2(000, 600), Color.Green, 0f, o);
+            font.Draw(_spriteBatch, _textInput.Text, new Vector2(000, 600), Color.Green);
 
             MGame.Asset.Font.Default.Draw(_spriteBatch, _stateSwitchMessage, new Vector2(0, 700), Color.Green);
 

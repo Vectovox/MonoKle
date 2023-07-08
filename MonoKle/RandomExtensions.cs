@@ -72,5 +72,10 @@ namespace MonoKle
             var direction = random.NextDouble() * MathHelper.TwoPi;
             return new MVector2((float)Math.Cos(direction), (float)Math.Sin(direction));
         }
+
+        /// <summary>
+        /// Returns a random boolean value.
+        /// </summary>
+        public static bool NextBool(this Random random) => random.Next(2) == 0;
     }
 }

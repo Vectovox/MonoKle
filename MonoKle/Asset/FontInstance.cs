@@ -134,6 +134,10 @@ namespace MonoKle.Asset
                 {
                     // Update totals on linebreak
                     // X-component
+                    if (rowWidth > 0)
+                    {
+                        rowWidth += _fontData.Outline;
+                    }
                     totalSize.X = Math.Max(totalSize.X, rowWidth);
                     rowWidth = 0f;
 
@@ -153,6 +157,10 @@ namespace MonoKle.Asset
             }
 
             // Final update to total size
+            if (rowWidth > 0)
+            {
+                rowWidth += _fontData.Outline;
+            }
             totalSize.X = Math.Max(totalSize.X, rowWidth) * scaleFactor;
             if (CompactHeight)
             {

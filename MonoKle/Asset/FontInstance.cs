@@ -230,13 +230,14 @@ namespace MonoKle.Asset
                 var nextChar = text[i + 1];
 
                 // Replace upcoming space
-                if (nextChar == ' ')
+                // whitespace, ideographic space
+                if (nextChar == ' ' || nextChar == 0x3000)
                 {
                     return (i + 1, true);
                 }
 
                 // Check for specific languages
-                if (IsJapanese(currentChar))
+                if (IsJapanese(currentChar) && AllowedJapaneseBreak(currentChar, nextChar))
                 {
                     // Japanese can break anywhere
                     return (i, false);
@@ -258,6 +259,77 @@ namespace MonoKle.Asset
                 || (c >= 0x30a0 && c <= 0x30ff)
                 || (c >= 0x4e00 && c <= 0x9faf)
                 || (c >= 0xff00 && c <= 0xffef);
+
+            static bool AllowedJapaneseBreak(char lineEnd, char lineStart)
+            {
+                // NOTE: https://en.wikipedia.org/wiki/Line_breaking_rules_in_East_Asian_languages
+                // NOTE: Quotations 0x0022 + 0x0027 are not checked for now since start and end overlap
+                //       and it's probably (HEH) not a big thing.
+                // Perf: Try to evaluate early by checking ranges
+
+                // Check start
+                if (lineStart == 0x2010 || lineStart == 0x2013 || lineStart == 0x203c
+                    || lineStart == 0xff1f || lineStart == 0xff5d || lineStart == 0xff60)
+                {
+                    return false;
+                }
+                if (lineStart >= 0x2047 && lineStart <= 0x2049)
+                {
+                    return false;
+                }
+                if (lineStart >= 0x31f0 && lineStart <= 0x31ff)
+                {
+                    return false;
+                }
+                if (lineStart >= 0x30fb && lineStart <= 0x30fe)
+                {
+                    return false;
+                }
+                if (lineStart <= 0x00bb)
+                {
+                    if (lineStart == 0x0021 || lineStart == 0x0029
+                        || lineStart == 0x002c || lineStart == 0x002e || lineStart == 0x003a || lineStart == 0x003b
+                        || lineStart == 0x005d || lineStart == 0x00bb)
+                    {
+                        return false;
+                    }
+                }
+                if (lineStart >= 0x3001 && lineStart <= 0x30f6)
+                {
+                    if (lineStart == 0x3001 || lineStart == 0x3002 || lineStart == 0x3005
+                        || lineStart == 0x3009 || lineStart == 0x300b || lineStart == 0x300d || lineStart == 0x300f
+                        || lineStart == 0x3011 || lineStart == 0x3015 || lineStart == 0x3017 || lineStart == 0x3019
+                        || lineStart == 0x301c || lineStart == 0x301f || lineStart == 0x303b || lineStart == 0x3041
+                        || lineStart == 0x3043 || lineStart == 0x3045 || lineStart == 0x3047 || lineStart == 0x3049
+                        || lineStart == 0x3063 || lineStart == 0x3083 || lineStart == 0x3085 || lineStart == 0x3087
+                        || lineStart == 0x308e || lineStart == 0x3095 || lineStart == 0x3096 || lineStart == 0x30a0
+                        || lineStart == 0x30a1 || lineStart == 0x30a3 || lineStart == 0x30a5 || lineStart == 0x30a7
+                        || lineStart == 0x30a9 || lineStart == 0x30c3 || lineStart == 0x30e3 || lineStart == 0x30e5
+                        || lineStart == 0x30e7 || lineStart == 0x30ee || lineStart == 0x30f5 || lineStart == 0x30f6)
+                    {
+                        return false;
+                    }
+                }
+
+                // Check end
+                if (lineEnd >= 0x3008 && lineEnd <= 0x301d)
+                {
+                    if (lineEnd == 0x3008 || lineEnd == 0x300a || lineEnd == 0x300c
+                    || lineEnd == 0x300e || lineEnd == 0x3008 || lineEnd == 0x3010 || lineEnd == 0x3014
+                    || lineEnd == 0x3016 || lineEnd == 0x3018 || lineEnd == 0x301d)
+                    {
+                        return false;
+                    }
+                }
+                if (lineEnd == 0x0022 || lineEnd == 0x0027 || lineEnd == 0x0028 || lineEnd == 0x005b
+                    || lineEnd == 0x00ab || lineEnd == 0xff5b || lineEnd == 0xff5f)
+                {
+                    return false;
+                }
+
+                // Good to go
+                return true;
+            }
         }
 
         /// <summary>

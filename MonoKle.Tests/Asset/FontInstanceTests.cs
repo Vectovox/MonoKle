@@ -119,6 +119,15 @@ namespace MonoKle.Asset
         }
 
         [TestMethod]
+        public void WrapString_MixedWrapMethods_CorrectWrapping()
+        {
+            var toTest = "すすすすすすすす す";
+            var expected = "すすす\nすすす\nすす\nす";
+            var wrapped = _japaneseFont.Wrap(toTest, 3);
+            Assert.AreEqual(expected, wrapped.ToString());
+        }
+
+        [TestMethod]
         public void FluentSettings_Chained_SettingsRetained()
         {
             var expected = new FontInstance(_defaultFont.FontData)
@@ -208,7 +217,7 @@ namespace MonoKle.Asset
                     .Concat(InclusiveRange(0x30a0, 0x31ff))
                     .Concat(InclusiveRange(0x4e00, 0x9faf))
                     .Concat(InclusiveRange(0xff00, 0xffef))
-                    .Concat(InclusiveRange(0x0021, 0x00bb))
+                    .Concat(InclusiveRange(0x0020, 0x00bb))
                     .Concat(InclusiveRange(0x2010, 0x2049))
                     .Select(id => new FontChar
                     {

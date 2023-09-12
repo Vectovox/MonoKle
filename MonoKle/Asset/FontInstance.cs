@@ -208,8 +208,8 @@ namespace MonoKle.Asset
                         // Apply break point
                         if (breakData.Replace)
                         {
-                            wrappedText.Remove(breakData.Index, 1);
-                            wrappedText.Insert(breakData.Index, '\n');
+                            wrappedText.Remove(breakData.Index + insertPadding, 1);
+                            wrappedText.Insert(breakData.Index + insertPadding, '\n');
                             lineStartIndex = breakData.Index + 1;
                         }
                         else

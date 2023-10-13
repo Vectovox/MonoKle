@@ -304,7 +304,7 @@ namespace MonoKle.Engine
         public static MGame Create(MGame gameInstance, GraphicsMode graphicsMode, string[] arguments, string title = null)
         {
             GameInstance = gameInstance;
-            _title = title ?? $"{ConfigData.Product} {ConfigData.ProductVersion}";
+            _title = title ?? $"{ConfigData.Product}";
 
             // Enable error logging first
             AppDomain.CurrentDomain.UnhandledException += UnhandledException;

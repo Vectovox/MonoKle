@@ -10,9 +10,3 @@ then
 	echo "Build error! Aborting..."
 	exit 1
 fi
-
-if ! dotnet build MonoKle.Utilities -c Release
-then
-	echo "Build error! Aborting..."
-	exit 1
-fi

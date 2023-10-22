@@ -15,5 +15,4 @@ else
   echo "Pushing version: $VERSION"
   push_package ./MonoKle/bin/Release/MonoKle.$VERSION.nupkg
   push_package ./MonoKle.Engine/bin/Release/MonoKle.Engine.$VERSION.nupkg
-  push_package ./MonoKle.Utilities/bin/Release/MonoKle.Utilities.$VERSION.nupkg
 fi

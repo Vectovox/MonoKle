@@ -2,7 +2,7 @@
 using System.Drawing.Imaging;
 using System.IO;
 
-namespace MonoKle.Utilities
+namespace MonoKle.FontOven
 {
     /// <summary>
     /// Serializes <see cref="Image"/> instances to byte arrays.

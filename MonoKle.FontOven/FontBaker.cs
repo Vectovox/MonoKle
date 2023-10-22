@@ -4,9 +4,9 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Xml.Serialization;
-using MonoKle.Utilities;
+using MonoKle.Asset;
 
-namespace MonoKle.Asset
+namespace MonoKle.FontOven
 {
     /// <summary>
     /// Bakes MonoKle fonts using the output from the BMFont tool.

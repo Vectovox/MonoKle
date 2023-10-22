@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using MonoKle.Asset;
+﻿using System.IO;
 
 namespace MonoKle.FontOven
 {
@@ -10,8 +8,8 @@ namespace MonoKle.FontOven
     /// </summary>
     internal class Program
     {
-        private const string _detailedFlag = "--detailed";
-        private const string _bakedExtension = ".mfnt";
+        private const string DetailedFlag = "--detailed";
+        private const string BakedExtension = ".mfnt";
 
         private static void Main(string[] args)
         {
@@ -26,19 +24,19 @@ namespace MonoKle.FontOven
             var inputFileInfo = new FileInfo(inputPath);
 
             // Get the output path. If none is provided, just use input path with a new extension
-            string output = args.Length > 1 && !args[1].Equals(_detailedFlag)
+            string output = args.Length > 1 && !args[1].Equals(DetailedFlag)
                 ? args[1]
                 : inputFileInfo.FullName.Remove(inputFileInfo.FullName.Length - inputFileInfo.Extension.Length,
-                    inputFileInfo.Extension.Length) + _bakedExtension;
+                    inputFileInfo.Extension.Length) + BakedExtension;
 
             // If they forgot to provide the extension we help by adding it
-            if (!output.EndsWith(_bakedExtension))
+            if (!output.EndsWith(BakedExtension))
             {
-                output += _bakedExtension;
+                output += BakedExtension;
             }
 
             // Get the detailed flag
-            bool detailed = args.Length > 2 && args[2].Equals(_detailedFlag);
+            bool detailed = args.Length > 2 && args[2].Equals(DetailedFlag);
 
             var baker = new FontBaker();
             if (baker.Bake(inputPath, output))
@@ -66,7 +64,7 @@ namespace MonoKle.FontOven
             System.Console.WriteLine("Remember to select .png and .xml as output in BMFont before baking!");
             System.Console.WriteLine("");
             System.Console.WriteLine("## Usage");
-            System.Console.WriteLine($"> fontoven <inputPath> [outputPath] [{_detailedFlag}]");
+            System.Console.WriteLine($"> fontoven <inputPath> [outputPath] [{DetailedFlag}]");
             System.Console.WriteLine("If outputPath is not provided the input path will be used," +
                 " appending the new file extension.");
         }

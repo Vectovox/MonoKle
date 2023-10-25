@@ -1,3 +1,6 @@
+# Deprecated
+While functional, deprecated for the forseeable future.
+
 ## Description
 MonoKle is an open-source library for [MonoGame](https://github.com/MonoGame/MonoGame). Its main purpose is to make development and prototyping both easier and faster by implementing common functionality for reuse across projects, regardless of platform or game idea.
 
